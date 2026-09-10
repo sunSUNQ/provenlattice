@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "experiment": "provenlattice-v1.0-r1-retrieval",
+  "tasks": [
+    "T01",
+    "T02",
+    "T03",
+    "T04",
+    "T05",
+    "T06"
+  ],
+  "expected_cells": 18,
+  "observed_runs": 18,
+  "qualification": "PASS",
+  "gates": [
+    {
+      "gate": "task_matrix",
+      "status": "PASS",
+      "detail": "tasks=6"
+    },
+    {
+      "gate": "cells:T01",
+      "status": "PASS",
+      "detail": "18-cell checks"
+    },
+    {
+      "gate": "cells:T02",
+      "status": "PASS",
+      "detail": "18-cell checks"
+    },
+    {
+      "gate": "cells:T03",
+      "status": "PASS",
+      "detail": "18-cell checks"
+    },
+    {
+      "gate": "cells:T04",
+      "status": "PASS",
+      "detail": "18-cell checks"
+    },
+    {
+      "gate": "cells:T05",
+      "status": "PASS",
+      "detail": "18-cell checks"
+    },
+    {
+      "gate": "cells:T06",
+      "status": "PASS",
+      "detail": "18-cell checks"
+    },
+    {
+      "gate": "identical_prompt",
+      "status": "PASS",
+      "detail": "same prompt per task across observed arms"
+    },
+    {
+      "gate": "native_no_graph",
+      "status": "PASS",
+      "detail": "native events contain no graph/knowledge operation"
+    },
+    {
+      "gate": "codegraph_no_knowledge",
+      "status": "PASS",
+      "detail": "codegraph events contain no knowledge operation"
+    },
+    {
+      "gate": "knowledge_capability",
+      "status": "PASS",
+      "detail": "knowledge arm advertises all permitted tools"
+    },
+    {
+      "gate": "event_accounting",
+      "status": "PASS",
+      "detail": "events.ndjson count matches run.tool_calls"
+    },
+    {
+      "gate": "ground_truth_reproducible",
+      "status": "PASS",
+      "detail": "deterministic evaluator"
+    },
+    {
+      "gate": "failure_logs",
+      "status": "PASS",
+      "detail": "failed and completed runs retain all artifacts"
+    },
+    {
+      "gate": "run_replayable",
+      "status": "PASS",
+      "detail": "stored output and events reproduce evaluation"
+    }
+  ],
+  "summary_by_arm": {
+    "native": {
+      "runs": 6,
+      "task_success_rate": 0.0,
+      "median_tool_turns": 12.0,
+      "median_unique_files": 6.0
+    },
+    "codegraph": {
+      "runs": 6,
+      "task_success_rate": 0.0,
+      "median_tool_turns": 16.0,
+      "median_unique_files": 4.0
+    },
+    "knowledge": {
+      "runs": 6,
+      "task_success_rate": 0.0,
+      "median_tool_turns": 15.0,
+      "median_unique_files": 4.5
+    }
+  },
+  "native_exploration_avoided_by_task": {
+    "T01": {
+      "codegraph": 0.2,
+      "knowledge": 0.2
+    },
+    "T02": {
+      "codegraph": 0.0,
+      "knowledge": 0.0
+    },
+    "T03": {
+      "codegraph": -1.5,
+      "knowledge": -0.5
+    },
+    "T04": {
+      "codegraph": 0.0,
+      "knowledge": 0.75
+    },
+    "T05": {
+      "codegraph": 0.6363636363636364,
+      "knowledge": 0.36363636363636365
+    },
+    "T06": {
+      "codegraph": 0.0,
+      "knowledge": 0.25
+    }
+  }
+}

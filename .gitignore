@@ -8,3 +8,8 @@ __pycache__/
 
 # Local benchmark checkout and generated temporary databases live outside this repository.
 benchmark-repos/
+
+# R1 raw agent artifacts remain local; top-level audited summaries are versioned explicitly.
+experiments/retrieval-v1/results/T*/
+experiments/retrieval-v1/results/_invalid*/
+experiments/retrieval-v1/results/_attempts/

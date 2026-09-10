@@ -1,0 +1,622 @@
+{
+  "schema_version": 1,
+  "run_count": 54,
+  "tasks": [
+    "T01",
+    "T02",
+    "T03",
+    "T04",
+    "T05",
+    "T06"
+  ],
+  "arms": [
+    "native",
+    "codegraph",
+    "knowledge"
+  ],
+  "repetitions": [
+    1,
+    2,
+    3
+  ],
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_version": "2.1.267",
+  "provenlattice_commit": "ba4f87b29e616dd28d1aa4939dbc805dbb296cb4",
+  "repo_commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "runs": [
+    {
+      "run_key": "T01.native.r1",
+      "path": "T01/native/r1",
+      "artifacts": {
+        "run.json": "f775707e3c32e22bc81cc08b7135cfcd6515890b52af388426ec5d3ded7c1012",
+        "events.ndjson": "d547ac8f1892fd68e5d8e7e8ca64cfa9f26a9ba157353b8b2518f554e0545c1f",
+        "agent-output.txt": "d6cba5d23043fc3618ded5b9f2de85c392643279b10d04d6ac4f483ccb513641",
+        "metrics.json": "26326f1def6bdaa570a60b2406cabf838adde46c637fc8ee48c5824751d5150e",
+        "evaluation.json": "a51e75bb7dcce5b61f40936d47cac5946ad3728424dc24f6b0f6b00f7970b998"
+      }
+    },
+    {
+      "run_key": "T01.native.r2",
+      "path": "T01/native/r2",
+      "artifacts": {
+        "run.json": "405d2bb61928ec50cb61d47e8fa85b8e27203f079dc3e38dbf1e74e23462e9b7",
+        "events.ndjson": "0ed3d892150f34747874a52c91ddbc9b903e1036e754d05970c834a93d76ed1a",
+        "agent-output.txt": "67d7b08179f5b76b1b5539dbde4a835eb183c8bdeeb39075fd3aec1a7c6b6d29",
+        "metrics.json": "80268caf697650394dde5a9decfa0a5a055ed250f15ac3ac7e8a2e362cddffe1",
+        "evaluation.json": "649edcc79952d74dd4bde033e844513d2eec2206f491b90c5999196f8baaf955"
+      }
+    },
+    {
+      "run_key": "T01.native.r3",
+      "path": "T01/native/r3",
+      "artifacts": {
+        "run.json": "966f7239f84312652b0563c3b0e88bde4cc38a5a1a4ad7aa50d62b5975365a73",
+        "events.ndjson": "e2a4bf4e5c3457e56af471b59a37c32281543c200ae7c7c479c99385792ef0ef",
+        "agent-output.txt": "b6e46115ac3aff0611363976b679bd93b34ade555b66719d2545c2d5f72197c1",
+        "metrics.json": "c3516bf7f2139cc98556131b0183c6ef0cc5bfe9fe5f4225e9517ca8fee19627",
+        "evaluation.json": "33ddb15ed0e7bd4824e3ec1de8340c5ac6bf15faf95b9a99f0c41f2e95fac6cf"
+      }
+    },
+    {
+      "run_key": "T01.codegraph.r1",
+      "path": "T01/codegraph/r1",
+      "artifacts": {
+        "run.json": "d90fb9ccd6b9608f106362a2109922cb54b47c90d6be28449f70a0c5abed1806",
+        "events.ndjson": "a726491f6109721619233c3f8caf4ba138e1dc9019e632c6b742cc3334bbdb39",
+        "agent-output.txt": "7e9c1a735171d0937378703e1fcef1c0c087d7c86274ffe87602c3928cb9ca81",
+        "metrics.json": "1bf015565dca4938a67c4d8bf962092957fd585323c0a7630ffdd627d1361eca",
+        "evaluation.json": "fbab92437be0f0ba18e6968cfbbfd1c9e1a5798bc8f7830e4871fd94d71fa637"
+      }
+    },
+    {
+      "run_key": "T01.codegraph.r2",
+      "path": "T01/codegraph/r2",
+      "artifacts": {
+        "run.json": "f3346db70eeaa55a874718be5ceeef2979fb964d5e0120ae69570600c6e04ed7",
+        "events.ndjson": "957b816c1110f6005687bbab09471f9ec39329703727acf4a3a40323b6797c1f",
+        "agent-output.txt": "668dad587d3e47d45cdb14c5d39592d3905d54687b67032d68580b1ffb954252",
+        "metrics.json": "cf274d3051dfe0f2819ddef8848470ee0cf8a89660cc2525f87e19598e339f25",
+        "evaluation.json": "fa209c7b485dcf75ead97cbac9a75cfc6ca7a198492501110623894f9f6610ed"
+      }
+    },
+    {
+      "run_key": "T01.codegraph.r3",
+      "path": "T01/codegraph/r3",
+      "artifacts": {
+        "run.json": "a6eb12c5b3d6429a2d7c9f9aded9277e1f01c4b28e8b21b76ed3178c43bb4665",
+        "events.ndjson": "6a8d2f9fca0d80b57c5ac01a14444238c978f7b537ec3dda7306d7b185716fc2",
+        "agent-output.txt": "2db868cb5a9e3fbe37ef316be6cc9b9d7ab5838739c0753f09c548eecb5cb779",
+        "metrics.json": "05aa4e0c0f932879e165b1b06e1355369d94a438badf09ea5b69f82694ecf1c7",
+        "evaluation.json": "49249dc5bcc91edeeff89bacdeba494b3bf6d85186f12594ce774e5dd859e17f"
+      }
+    },
+    {
+      "run_key": "T01.knowledge.r1",
+      "path": "T01/knowledge/r1",
+      "artifacts": {
+        "run.json": "fa720131dc50294b5a2d7cd3c86533dafca93e81d2b7cfd9a0771dabdfddba89",
+        "events.ndjson": "595149a47a6e4903972fca42b19e282f3e051f328ba127bc028e8bae6b37378d",
+        "agent-output.txt": "108bacf34d64fbf483f194e5d81f88ee7b1a747a5c21e971e6d0b6c8fa26a27d",
+        "metrics.json": "bbc20514bce802edbe2f20a00cc21921f362729665f06cedd61d82dbe3aa9878",
+        "evaluation.json": "19509d7f83fc38b5011c09d1026485bbc4ce4131c89ef89c19d2d9531e474b0d"
+      }
+    },
+    {
+      "run_key": "T01.knowledge.r2",
+      "path": "T01/knowledge/r2",
+      "artifacts": {
+        "run.json": "386b593f9c49f1da33a4fbd6a7d446ccc46c46d34adb88c6cd2bba7b2f10cbcb",
+        "events.ndjson": "4bb364eb5a589cac8cfc7d903e907c03a2773c08db88b9a2538f61a714abf288",
+        "agent-output.txt": "1cd753b0cf17a714fe5072662fb8ab8483ad0c622dc533033c5e49578beffec1",
+        "metrics.json": "466c36df855ad5be610e6d77c6d27413acc52cba4d319c3eab7da6c776e2603d",
+        "evaluation.json": "c3349c98c85c590ee539fb308d251c29a1afc440c0a85c6aa3e3cbe89edb2a47"
+      }
+    },
+    {
+      "run_key": "T01.knowledge.r3",
+      "path": "T01/knowledge/r3",
+      "artifacts": {
+        "run.json": "7c316e5f0f68fbd64ea2d18737775105951a341ae90762d0c75455965c9df726",
+        "events.ndjson": "4afbacc79dfabe761a2dbc3a88f3d539e813dceac6cdae8bb488e56772f554f1",
+        "agent-output.txt": "cc736d1a8f964e258ad0f38e86f91fc4c4e53300d78766d9f27c3a2a03b0f24f",
+        "metrics.json": "bb437fa6034adab8044ea5d05ecfd9a65dbf72625b1723773b4481db1d62a584",
+        "evaluation.json": "292b22ab4cdb6f1b00ab1203ad1513b27cd51f19d771df03938a460af9b691bd"
+      }
+    },
+    {
+      "run_key": "T02.native.r1",
+      "path": "T02/native/r1",
+      "artifacts": {
+        "run.json": "b90ee06ae8fb6ce6029c244475b558eea268f391baa611867053b9a3d8eb3264",
+        "events.ndjson": "f8bc4bd90dd656a43641d19ed7c91b8ffc31379cc8dd91570e21a247e4b1cc09",
+        "agent-output.txt": "5e0c7c8dafbdd17e641bf3e7e94825360b74f74a0b50693662d9eff5160e9430",
+        "metrics.json": "ad9e2d37a2f969ed76fb0c9425fc8bdb09cbb9c25982bf80fcb12f80d603bfc3",
+        "evaluation.json": "b43e5a101e7e20d8922182440277c44831cd3c8f52b4b8efa5cb8e9c39d7b744"
+      }
+    },
+    {
+      "run_key": "T02.native.r2",
+      "path": "T02/native/r2",
+      "artifacts": {
+        "run.json": "b384ca737a2e138478134e3581fda57a43a13b916b0b577270febd3361062172",
+        "events.ndjson": "0bdc8a3dc5cacaab302a54e7a8112f3c720a31cf774043748ef0da48d57c1404",
+        "agent-output.txt": "baeda4c5175c0fec94ff39ec214ba526d657812623abcbf2d0dd4189adf7d764",
+        "metrics.json": "d376ffdba680719d3239355d5d744f50c30b299a1097af7dc293049785950698",
+        "evaluation.json": "817c20bd8792b4e992e87f491fd1463b4638fbf96c3f56f966037f85620736ff"
+      }
+    },
+    {
+      "run_key": "T02.native.r3",
+      "path": "T02/native/r3",
+      "artifacts": {
+        "run.json": "134698ba4ac8fed8598294651a2cdc382cae9b6d13fd46ab2af4ac48ce102f4e",
+        "events.ndjson": "dc65828e14d5d647cc054adffc2c939158105f8c48a7c47426d1e5c59ab34512",
+        "agent-output.txt": "a508fb843442f823f5c1e271e7b2f1581327be230fd1d4e546f193b27c475f1e",
+        "metrics.json": "03ee0e517bf4b0c1f161f0feba3426c3787ddc4c21c9c84b1c8028f22eeb477e",
+        "evaluation.json": "09a268f161ad6978f1c95d36e35995606a6bb08cd50933ee0fba4364512aff17"
+      }
+    },
+    {
+      "run_key": "T02.codegraph.r1",
+      "path": "T02/codegraph/r1",
+      "artifacts": {
+        "run.json": "7e5222b3e52f705d4a301dbfbdef6c3105f8afb467b6044f5b8a7aa2104b7ae6",
+        "events.ndjson": "47fe06bda1257c54c725fc3d79d310c8821954b92fadf2bc0491ac505b423f13",
+        "agent-output.txt": "c4d932cbb1f16f198bc997538ca7c11278257eb3ba0f6711b58739b04842d7d3",
+        "metrics.json": "834a74c7044374f6e2ee1e2dff6c4bc85beab9308d40f5309aeb5949558cbe14",
+        "evaluation.json": "1dd7a8d01452d2baa5b0050c9505685872cbede93f646eadae8356481094e4b3"
+      }
+    },
+    {
+      "run_key": "T02.codegraph.r2",
+      "path": "T02/codegraph/r2",
+      "artifacts": {
+        "run.json": "a57a641452c66e478b8b4c54bc572b7c17fbb5268f94e487bcc34d86e77e02e7",
+        "events.ndjson": "2c80b24ee7e064b3dbdf9e0fa2e18aae684bd65715714d70cce8c17779ea9b27",
+        "agent-output.txt": "40814b1e9f3e19ab89032c9999804a89d3ceef203a64c979023a8adcd0f3f30e",
+        "metrics.json": "8db8b066a2f6699d216d3b3a690b2a660774a3b30d330508390d4fb666ccb2f9",
+        "evaluation.json": "53fbc6f83be924a2518a81f77b01cef5be98aada3706b3076d6b4fe6c3c2ead6"
+      }
+    },
+    {
+      "run_key": "T02.codegraph.r3",
+      "path": "T02/codegraph/r3",
+      "artifacts": {
+        "run.json": "abb1a9836b138e46364eed114739dcb870c6a428b68c8e9aac9e7e4cdc7c89cc",
+        "events.ndjson": "7473c5d5e8d2f9a7b322be6d425dfe62fe69a8b4f6bdb67dbeb5c8c6bd7065eb",
+        "agent-output.txt": "e988800e618004eb10fa4899020e698cba83931e4fdd458ef5c6d7abcbea38a8",
+        "metrics.json": "b174b4d7aa48c936eb5fa21ada7d7c6fe46f9e6cad518d3bc6399f551a6e2276",
+        "evaluation.json": "1dd7a8d01452d2baa5b0050c9505685872cbede93f646eadae8356481094e4b3"
+      }
+    },
+    {
+      "run_key": "T02.knowledge.r1",
+      "path": "T02/knowledge/r1",
+      "artifacts": {
+        "run.json": "13e4d51195063217842cf3858a98beb630b72a986fd16861f6b40180dc95136b",
+        "events.ndjson": "18f2f52b75dd0e0c326a260578c927a84295713db688eafb8ef97e099c17e437",
+        "agent-output.txt": "b9fe31185fb41f3c8dd6e198448645c50be435c0e07c1d84d67976e049236553",
+        "metrics.json": "0602b7b28dd3f38c714f8e184aa36a65caf4b4ded9d4516382771458e02e181e",
+        "evaluation.json": "c9a02f6b31d440126c2e18da36cc64586d37b28f6d463ad0dada4e03707212b2"
+      }
+    },
+    {
+      "run_key": "T02.knowledge.r2",
+      "path": "T02/knowledge/r2",
+      "artifacts": {
+        "run.json": "d8475cd9f3b8dd993aea6edea099eda412975030da4a85a3905b2c5569247819",
+        "events.ndjson": "a815ebea12203bfbfddca97bf7a735d9c6d1ce3135c970458d5dd6de7777b8c0",
+        "agent-output.txt": "9e442911be436535c6f754d2f283be35a5646dea3217e7c7983c98e372050df3",
+        "metrics.json": "e432bad36c1850f22b05ff5fb63887ede34403b7a48f370fddff6bb56c02bb79",
+        "evaluation.json": "ba02c9eb453c700445be5d7e9135f520d2a2569cb29f441b9d1e4d265fe74302"
+      }
+    },
+    {
+      "run_key": "T02.knowledge.r3",
+      "path": "T02/knowledge/r3",
+      "artifacts": {
+        "run.json": "1a45a55e79e65436625d692af98415937cf468f9a3636655f99e8a18f0f1d397",
+        "events.ndjson": "a2b7aff2e6953d088e51f2f5640a9bc855c3e1124e53dadcc2cf666708f5ba61",
+        "agent-output.txt": "706bf4efb655371f01b9d4e9ac8a2dbc0ed4c33621b2e9c3b71cdff830a0619f",
+        "metrics.json": "c9432e10fdf3f0e375fae8dd5b67c6ab8eae2f5d5a7e666436b68d7994bf72e7",
+        "evaluation.json": "d5c8bfbf3477afffda885f402b698b6699653b175c2c13ed9b093fe39c35c802"
+      }
+    },
+    {
+      "run_key": "T03.native.r1",
+      "path": "T03/native/r1",
+      "artifacts": {
+        "run.json": "c69bf86129b682e31cf47c870ba5fee5396fc796d292b1a6f3b272e5948ba1f4",
+        "events.ndjson": "50de90aeed88bfa13b2d106e1b6ce072714a13c6ba4f04fb92d798841703d75b",
+        "agent-output.txt": "4923131fb02d112203bba783b8f715307eb75fe5f7fc0f95bdb621ba04ad525f",
+        "metrics.json": "922f95f9ea6b6d7c0f1ab8a5eddc8879591e1077f7a5b3d0d6cf16a4d58d5809",
+        "evaluation.json": "8fbe1b33b1cb1c2782d271517e4d5cfdd62ffbb20bdbbbf491374b4b6e32799e"
+      }
+    },
+    {
+      "run_key": "T03.native.r2",
+      "path": "T03/native/r2",
+      "artifacts": {
+        "run.json": "b7c4c4e40c5634e3931092fc918d10b1598be6bf75dbe9aeabf3b09a0d3eb452",
+        "events.ndjson": "f3106d1c0362d458e11949a7c4385cc5b67a23d0edef44c5b87d06a2db80761f",
+        "agent-output.txt": "e3da97d70274c9a81c407db19579f5118f1d4907b36cd0969712e700002822c0",
+        "metrics.json": "3ed8418b466654ce48f15dbcc2f7bad1fa2422f9457c98c01942c54e8917c343",
+        "evaluation.json": "395b05f46a026d5c3a6e26efb5d2329a2494617009de010212162b8044d1c40f"
+      }
+    },
+    {
+      "run_key": "T03.native.r3",
+      "path": "T03/native/r3",
+      "artifacts": {
+        "run.json": "6d2bdb9ad169a560506236dd09567cea4ba1c760a3827e05b1ee392e4953e8a6",
+        "events.ndjson": "abb65b708b920e8135b567988f1cdedd7c697d94a486fec8a4cfd021583ba566",
+        "agent-output.txt": "db065c99c1612991454bd4bada856a913253fa357fbe61605fc481ff88f7c889",
+        "metrics.json": "0a69d2c1635722572e3fd8e51e739c0055b27a0de7e955992a4f8ac2c04bed61",
+        "evaluation.json": "9d46833b1f47a83eeaf60ccdc405f19c3a693af72987686d410f46f8bf5f87cd"
+      }
+    },
+    {
+      "run_key": "T03.codegraph.r1",
+      "path": "T03/codegraph/r1",
+      "artifacts": {
+        "run.json": "154ad305e08058ff10199561de4dc323c054797025ab736acf93a7ff044c62d1",
+        "events.ndjson": "372efdae0d4e456116d06313fb357c600b7119d3be53fbd418c4115860b39592",
+        "agent-output.txt": "8f9a07b09221e78b6fe1ac54681937d012a89d767dafa809ad8275ed1845c253",
+        "metrics.json": "a60fc3934f49584d1198439491804dd685413e24867129a29a0e1513782e7049",
+        "evaluation.json": "2f39c44d62505441a177c125e1dee9306105ef6e1b2ed4e9abdc68d68bba8440"
+      }
+    },
+    {
+      "run_key": "T03.codegraph.r2",
+      "path": "T03/codegraph/r2",
+      "artifacts": {
+        "run.json": "14251eb84e4e3cdcb62db590df733830ce91c880629e1bdb5f07a9ba08a16274",
+        "events.ndjson": "ab1440d67a03caa09895d375b8ca95037c47372eb3fa7a8b499fb8eaea3fbec5",
+        "agent-output.txt": "b8c4cd0e192f829337f6d65e98c3c483a9c6665641aad1d0f1f4bd77a67219fe",
+        "metrics.json": "d3567d0226cf5ded4dd052b3a9c33447be473f6a9c1b6be74912d1977fe78f91",
+        "evaluation.json": "e9eca774b034026353ba656406febb1d24f2aaa74c8e03205abae18a0d332d1c"
+      }
+    },
+    {
+      "run_key": "T03.codegraph.r3",
+      "path": "T03/codegraph/r3",
+      "artifacts": {
+        "run.json": "81185b3e4e141cfd4adf968be248d764b869c45a5a5dc56632e82cdf4cf89823",
+        "events.ndjson": "09e79fb2658df13b48f2758fba032407b68ca72fc0e4224d21a9dedb194b1ab1",
+        "agent-output.txt": "3af737af3ef771ca72f95a2971f99b532d4372891145a980a4bc3407685627e2",
+        "metrics.json": "077ee8e556794a7406eedda68a01500756fa363c0e8327573323b7cb0de6a0ac",
+        "evaluation.json": "d4affca9b145df51f9f3a07532d14ba679a0886f339842cef1879db324483553"
+      }
+    },
+    {
+      "run_key": "T03.knowledge.r1",
+      "path": "T03/knowledge/r1",
+      "artifacts": {
+        "run.json": "6c1d3e4c7d0bcf2e0693d858ca903aaaa657681bafe96483e2b1f8387a17a8ee",
+        "events.ndjson": "90357d3c424e390fdd341bd049bcc05df9a317471f2c39770804ef234cd6f603",
+        "agent-output.txt": "7251d0bdf6d58fcf13a5609ec6775dafe5089a4f86d39392b5622d3507ef212f",
+        "metrics.json": "00363b65c107e795dcc989d537b2a623eff309c6794947c8a4ddea06c5a28d6a",
+        "evaluation.json": "15d62a734481a16747878170aa3e28eabbbf6b72da51fa7f927b10c45e32c85d"
+      }
+    },
+    {
+      "run_key": "T03.knowledge.r2",
+      "path": "T03/knowledge/r2",
+      "artifacts": {
+        "run.json": "acf42d643948e100efdefdf8f3ca219aea4dead8127ccf89b295bd2293fbb7ad",
+        "events.ndjson": "aab61930c785e8a47ad8c4496ad9e81a6630be47cd0b607fd2fc7b47a24a6a81",
+        "agent-output.txt": "5120f885de852854fa5d6664786a8a5b09e0ab29d23c5f30a86f196f440cd435",
+        "metrics.json": "f3a2b9a133fdd481329cfe8b7c8fdf600779bc7330aa7dc9f1bfdd05b6d0682d",
+        "evaluation.json": "548ad722df58f3050004f790afa3106a392c426302b3c856d7ec410f1b930ade"
+      }
+    },
+    {
+      "run_key": "T03.knowledge.r3",
+      "path": "T03/knowledge/r3",
+      "artifacts": {
+        "run.json": "f8da089c34a5fb9b95f4ccda702d1be25eddc02d597885cc19cdc2f76d136f89",
+        "events.ndjson": "68ec6e9693826a41904dab46775bbeb263a6172fe48e3df62f2f4bb92d2cd39f",
+        "agent-output.txt": "3fc1d6a79d94ee0eb27c4fea7531311d2cc69bb20439d50c5a2d8539ed0c299f",
+        "metrics.json": "19872205008e31f0baa197e843aeddc717ac21c0d778c370e21e75402ea82943",
+        "evaluation.json": "45855a0bc34218cac457ed3ebc60379d154f22a967e2096ff70d87453ae635fd"
+      }
+    },
+    {
+      "run_key": "T04.native.r1",
+      "path": "T04/native/r1",
+      "artifacts": {
+        "run.json": "0575811d01736a09f5346ec07fa6c1d5486eff40c593ca02c3b120efebf8e559",
+        "events.ndjson": "2a69c8fb138e986db07a04af186059dd8393f57c1d5898bd1788ace86c92d1b9",
+        "agent-output.txt": "25a33669a9880f5acd9957ccd0068a2075eabb585666d95432f2e814c7abd258",
+        "metrics.json": "f46f9774b52fbf365f54c6237b3c4af716f201ad82d241d170f89578946464ee",
+        "evaluation.json": "33180762e0f1b708e171f10618424537cac8b47d513db89dd8aef38d3eacde45"
+      }
+    },
+    {
+      "run_key": "T04.native.r2",
+      "path": "T04/native/r2",
+      "artifacts": {
+        "run.json": "5211f5e9f423ec99f22fc33478628a44eea3c23f5d70fd3100871c4c71bc50b1",
+        "events.ndjson": "cc30e3346ba6afe965f0dc330dcc73d0d311824528a28bfd415a4f0205f64299",
+        "agent-output.txt": "572cd23ca151e3694ff92b7e801680486c5463bb51b875f78fb500ede406b146",
+        "metrics.json": "a25ecfbe47cd6d7dcb1b6398d279f3d08adad95ca349e5921e67573377a559c1",
+        "evaluation.json": "a7d3f2920a6e7805be8f6584a230f8af8a816fb379ec9cd7b441b4dd7b710941"
+      }
+    },
+    {
+      "run_key": "T04.native.r3",
+      "path": "T04/native/r3",
+      "artifacts": {
+        "run.json": "20a8056ba1d75d5b6ce6c6a76a047bd34922e2f5701c3081cbedbd78c74d3dcd",
+        "events.ndjson": "009556bdb078f53ffa7cbc29810179f2043e3b9a1d5d0c3f312c179472ea45e6",
+        "agent-output.txt": "a5f90c4c14a7f63f50a77dd17072be3c8c6b901be71557edb34a80b920000b3f",
+        "metrics.json": "17f9011d2234b4b2391a11440ace21b7655331a07d626aee7d762e091862e60f",
+        "evaluation.json": "01bf59f3dc08f6ae05acafedf473a5c4ac95db9c987682e2bced6310aee29161"
+      }
+    },
+    {
+      "run_key": "T04.codegraph.r1",
+      "path": "T04/codegraph/r1",
+      "artifacts": {
+        "run.json": "cc5625ae20321ab14490d3791f1e44a6a241ce04c50a173024851b4dbf0f83d1",
+        "events.ndjson": "c0d647567e20e6f9f12ed79658c10672bdc2ff0bcdbac96257a0d2cdae5374df",
+        "agent-output.txt": "2f83205be6442e8453ff8c6773a7686d1667f10276168b3543c0e7e304ac7149",
+        "metrics.json": "91ed300591d09a4fca88d5f6b02b88dc9d55a81bf5ff5449bf70e249ebeabf9f",
+        "evaluation.json": "5acd5d09a2b210d7e22a038f316c3857b9129992a77ea10e319401fe299d4555"
+      }
+    },
+    {
+      "run_key": "T04.codegraph.r2",
+      "path": "T04/codegraph/r2",
+      "artifacts": {
+        "run.json": "9567f8f5099d5f2364c1c70c40d5a967541c5154e7c652945b43e22e5eba7db9",
+        "events.ndjson": "4e68a5c64c00de53e761088d8757dba00412fc814341a0321cbe8bd367526602",
+        "agent-output.txt": "4d30941f51a4c9b2792579a7d1ce7a7f22101216597e815e2a2987b5610123f9",
+        "metrics.json": "4116700b07e2cc2d4bd02b56e42ce733174ada0bcdef9355a7ba88356a00d677",
+        "evaluation.json": "bf3d36b1b99745f517428210335dce64535b7694f5853fa9734f6304c389a13b"
+      }
+    },
+    {
+      "run_key": "T04.codegraph.r3",
+      "path": "T04/codegraph/r3",
+      "artifacts": {
+        "run.json": "f693883caca1c532057874342543fa9059b44cb4325bba0ac19d22cc883fa822",
+        "events.ndjson": "1f540ec69763e6ce11557743e13027f15319828a6ddf6c9ff7a7433dd7794881",
+        "agent-output.txt": "7edce8d906de16993f852c8435cea748149e028cf598ddfb56aeb62376cbe688",
+        "metrics.json": "15bf662e0e31b2dda5d126b4c566e5a06d851aa84c2a7da92b20d0f70ae19fef",
+        "evaluation.json": "bc6f7ab58ca2c627a36e6e446342fae2bb034938abbe134e317c46fae5a93935"
+      }
+    },
+    {
+      "run_key": "T04.knowledge.r1",
+      "path": "T04/knowledge/r1",
+      "artifacts": {
+        "run.json": "f09f717a4b3db6ac3eab11fe923d3f66f7d162dcbb0e3261c7863d36051d05a6",
+        "events.ndjson": "e457783829607b3b67712ab32475953019b0876a1a377d2bed3a9c6d7babd7c4",
+        "agent-output.txt": "546c2f8f9c72886dec09197e732d8377de33a4131c1c9a4d733c00f3ad98e112",
+        "metrics.json": "9274ed006f823b79795028f250fad41b0596410f9f49d90a6f12c65d2eaf704e",
+        "evaluation.json": "915d093e803158b82297af5d39b39c57bc4f1ca2938f2071bc96acbc86a2be54"
+      }
+    },
+    {
+      "run_key": "T04.knowledge.r2",
+      "path": "T04/knowledge/r2",
+      "artifacts": {
+        "run.json": "0395ff8b14852debe3a6b3b636a942dec80437bc1cfc81eb934924b702968644",
+        "events.ndjson": "5124e70528ef9f481d2f4b73f8f40c79bbd1c1a5fe6751d2d23fbae12059f677",
+        "agent-output.txt": "046017d30eac85ee59f1db8556ecb70f29a6ee276e0e25ca0fbc4443c521ea36",
+        "metrics.json": "77fdb7209be7cb59251c7ac3e0f1154f0cc1673300d2f240afea5f84978c4854",
+        "evaluation.json": "b42a2a94a3da01b3ef1d7859d9327517a59b7ae1861483ec51c6d3ea909a5698"
+      }
+    },
+    {
+      "run_key": "T04.knowledge.r3",
+      "path": "T04/knowledge/r3",
+      "artifacts": {
+        "run.json": "cf37a8bb6df657ba7a8621064bbd7f168f90a0df08036d662b1529d123843aff",
+        "events.ndjson": "b32a54f1f1b367a842adf6c31af0d8fc9d53572b9f5c7dbc73372d1aa8628df7",
+        "agent-output.txt": "b6b45eb76e17265ba11ff3c2844553056522862dcc5817a2b89b9e69c3540bbb",
+        "metrics.json": "3de51e37502bdfd8662c20cb2d125a8a8a3683bb5c8cb91571302c3135bb8d56",
+        "evaluation.json": "4e9305fdd51471658e4c97ad71618d9e3186ddc8449ea15f51ea33c6fb75aae8"
+      }
+    },
+    {
+      "run_key": "T05.native.r1",
+      "path": "T05/native/r1",
+      "artifacts": {
+        "run.json": "de3192a65687050763ccf45a19fbe2ccb2a746b6ee2e39cee65c9ad1e8db9ea2",
+        "events.ndjson": "432e99ece98bc46678b21c2eb1323b6533f4529d2ebd1fea917dfb7a6f82e4cd",
+        "agent-output.txt": "252793cad0d94661051f1763dad5af0de6a24b1dfc7b2254720d7f2ec6097826",
+        "metrics.json": "806710fc6372b8beb1e547fe9dbc370bbd05c8480b3a32e5a166e1f31e6f4edc",
+        "evaluation.json": "2c6a2b8ce29442bba9409d28cdb3f106033d3950b97d50adda1383600fef72e0"
+      }
+    },
+    {
+      "run_key": "T05.native.r2",
+      "path": "T05/native/r2",
+      "artifacts": {
+        "run.json": "c1ecf1e1c61f326e0360745a6155b93864adafcddd89f388e7b641fdcaee2266",
+        "events.ndjson": "5170e6aac82237d872ab7a86ee09e7a50e03d2fc9a445427353997ee77c2def5",
+        "agent-output.txt": "5bc1337d1352a9ee8c3a7ce85965e6c0a9a6cc846e40ad71348f9f6fd3f3dda1",
+        "metrics.json": "b35c056c44e7b738bcdf3c519feea13858d179331d34f96755d225567902c0b4",
+        "evaluation.json": "d0cfa13a83a81bda06f6c96dec064be1b10f7e03dd11cbcc9917db240ac195df"
+      }
+    },
+    {
+      "run_key": "T05.native.r3",
+      "path": "T05/native/r3",
+      "artifacts": {
+        "run.json": "8eef303a0c4e2a91c5653e73bc033281e2c65cc6e22e6f2ac80d53a3adf3fe66",
+        "events.ndjson": "34ca8bf5ffff877ba601410d136ab457449b8fb01e07c870a769924eb8f05051",
+        "agent-output.txt": "fcae0bbd0e4c4e1feb0a7ec51f15be6a101da2b3e9639da0a6880a52dbb81b78",
+        "metrics.json": "853185ba01eab3f4f46a5f5af914c4b82d292ce319ec8b1e8d2386fc60b1d9b5",
+        "evaluation.json": "583eb8486ae55dc8cbdf38d95eb4a581c9b9f1e757f39225f9c905c122026a3f"
+      }
+    },
+    {
+      "run_key": "T05.codegraph.r1",
+      "path": "T05/codegraph/r1",
+      "artifacts": {
+        "run.json": "2a9c9be8ec61bf20b9ee90611064a30fff824a0278a8046f602eab8403f64da4",
+        "events.ndjson": "adf94849af7b214ef2bc8a9389ec0366e0865e98a83f5d20b072e6cfb602b1f4",
+        "agent-output.txt": "f7f02b5e998c904336318daca50fd7654a64739b12367cd902866f56a78c2164",
+        "metrics.json": "afdffedc2eded0824dced9a2a7385de388252357dae93b377b9296dbeb087b1d",
+        "evaluation.json": "67fcab478920f2bd24a3a7904462785b28b755274339033c3dabc5438e40c65d"
+      }
+    },
+    {
+      "run_key": "T05.codegraph.r2",
+      "path": "T05/codegraph/r2",
+      "artifacts": {
+        "run.json": "ffea06feb93557b2e372aa89bc4c84dd223df87317234b94ee306038a71a79f3",
+        "events.ndjson": "83259c99115fddbcf0da7c29cc340d4573096bc3c8e0165563a38e18db549506",
+        "agent-output.txt": "8ac6466a56ab47165340aee3ca3140a39895c033343715e53953e4665bfa9cfa",
+        "metrics.json": "0e4ec203456d2a42231a5863aee4514b0944bc5d9bc64c98afaa305c9f975f6f",
+        "evaluation.json": "877c8e34eab144b3d5970a3f9468253b9acbcc33915a6d27f4993af5163e9ccb"
+      }
+    },
+    {
+      "run_key": "T05.codegraph.r3",
+      "path": "T05/codegraph/r3",
+      "artifacts": {
+        "run.json": "65e229fc25afc39552c4083cc3b32818ae1b7e5f2cc29a402600bc3c4c7120e3",
+        "events.ndjson": "fd151f24992dd01a417ef693a7454f23f2cdac961988bdf68c35074939c94094",
+        "agent-output.txt": "fe786659aaa4f4336ce2ba599191821b3ef17cbe9c2117510c3eb95bc2d889d9",
+        "metrics.json": "474b422483cb51b18a04acdc8d4d277b910781f89205173d051347408c793d85",
+        "evaluation.json": "ff0e55f55011c2abb0d264a7b373b89e4bdd8d892bd6ab966e7a2500fd8e9bd9"
+      }
+    },
+    {
+      "run_key": "T05.knowledge.r1",
+      "path": "T05/knowledge/r1",
+      "artifacts": {
+        "run.json": "97faaa9c65d0d83dbb6be9d85ddbbe5d02ab1560109a97599cd4bcd50deeb0b1",
+        "events.ndjson": "acdb33f074da26fc1e79a97aae9851402a25296af8de016b5350caf7cdc49d76",
+        "agent-output.txt": "413623e101c316b6a540134e8fd31c956e2f6c804bcbb42b612ce33d665c1dab",
+        "metrics.json": "5185efcd1707b33c27c6b7db732eba426fb86e7c76b7d525fcda10de6075a8fe",
+        "evaluation.json": "e94b04aa405e41b00d8022291af79d1e701049391c164e67c3251238fc5b8b0c"
+      }
+    },
+    {
+      "run_key": "T05.knowledge.r2",
+      "path": "T05/knowledge/r2",
+      "artifacts": {
+        "run.json": "a74587104eee48dcd0826c524168b6bf877d1394fcc8d995f286bbd27772c3e3",
+        "events.ndjson": "4a54c436d803ede35d115d367b0651909afc4f4326d0875e51f5339c23917250",
+        "agent-output.txt": "0c1be8147a314bb1148d6b081f1d507c3c92a82431fe7705b59ba2a90009eaa3",
+        "metrics.json": "22644a3b9b55436ed73d7fdc06d241dcda5b9cb69b5a9cbb96b8622cdae9942e",
+        "evaluation.json": "e5ff3ba51f384aca6a0c31cec1b3b0671170ce17ec311005b0faaf4b9e6680a8"
+      }
+    },
+    {
+      "run_key": "T05.knowledge.r3",
+      "path": "T05/knowledge/r3",
+      "artifacts": {
+        "run.json": "12b82336f7cf11acc5e34d663c0f885b94ab25cd01e7e4abb24574d6638f29aa",
+        "events.ndjson": "f75ff2ec14c127d4ec76c7d58aecd46298aac17be6acc791e7ce1812f21bf92b",
+        "agent-output.txt": "55b3f76282173caabf89ab5f1caaefaf84ae4808d434e16b58e750506a01682c",
+        "metrics.json": "ecd4b523abb18ffb0691259c926365f960dbdaed76eabd27ae078dffbc8dd78b",
+        "evaluation.json": "403b27dad3030c2367ac8009bde8c16c53289ba3d0f6d7ecfc4a58ed37d6b431"
+      }
+    },
+    {
+      "run_key": "T06.native.r1",
+      "path": "T06/native/r1",
+      "artifacts": {
+        "run.json": "cff56d4ea8b5b01ecf1c56a4f9ef3aa9a63abd6ce1fb27033112d30aaf5d1899",
+        "events.ndjson": "cc7b815f431dffa9c55a2645ffe9f21e938940e8458677fcdbc5da6443ed548f",
+        "agent-output.txt": "8a264dc84f63877e5b1c5c9a0c091047a7b0b6609f080a5d2e52efe7b7600f65",
+        "metrics.json": "12ae2c872a6d457eeebd6af1a28c2ea2be5230d2f7b3b745570d4121bdc046ba",
+        "evaluation.json": "89c5eb0e00c0d69f2e0ecb9b3bf78266ada3cfb43a5f3a5eb352087dbf374828"
+      }
+    },
+    {
+      "run_key": "T06.native.r2",
+      "path": "T06/native/r2",
+      "artifacts": {
+        "run.json": "750f521ed0344d2764b8fbbc8d8bf294bbdf122c2a8d9d25179aa616d0de2b4f",
+        "events.ndjson": "a6975b2c983ca5a76c7aef942089d97d8c26fe28fca36642a813564da73c5e50",
+        "agent-output.txt": "4d525acde977d0e9e2881eba9fa1d1abe3fc18166792d726afc6ffea62f6b20a",
+        "metrics.json": "b10bb1d70bad3a3d0d03864d323b1a1a16da1b3ad0ee930db503e552ba9749ea",
+        "evaluation.json": "05f36edf158f5f69a97e6f7e5bd18602240574c2a29e0338f0aa2a174c66a57a"
+      }
+    },
+    {
+      "run_key": "T06.native.r3",
+      "path": "T06/native/r3",
+      "artifacts": {
+        "run.json": "fc4e6ea7232d1727dbbbbd3f95f4b6d7fa34140c3b0bbc2d00608004b755c466",
+        "events.ndjson": "33d98265124c3c023b7ebe3fa4c73846071a526c94b301cdc0770db96b2db792",
+        "agent-output.txt": "cd120c7be256821e71a29469c240bba390cd35a0325459e4badb1e81545b2fce",
+        "metrics.json": "903a0e36d2c4fdffb53a859aa78163a927c00babe0b9dc54000c21cc03642117",
+        "evaluation.json": "83917db05efe578ec4c894e2be38d85537e31f09329463d837177d1b5b5ca3af"
+      }
+    },
+    {
+      "run_key": "T06.codegraph.r1",
+      "path": "T06/codegraph/r1",
+      "artifacts": {
+        "run.json": "38defbe6a324a5cc87314db544fc228c305099260df05764228d5a3ef94b58df",
+        "events.ndjson": "241cb8ce04e80ebb9c12818ccb9dbeb29a2c937ca6c9ecefee0eca570b8e7ad9",
+        "agent-output.txt": "df2ad6fe1a2b8adbbe60b2caf1e1dd94125de0e908bb4e38dbcdc1ea3ac11ca0",
+        "metrics.json": "2f772408647aaec79ab679d2fc8ef9b888a0afebe4e11d02a6b8e346c3daa5d1",
+        "evaluation.json": "1d83a4c4990492c9207e1ce17f3a5cc69cb4ecc3c4d54ff501bda99f298d814c"
+      }
+    },
+    {
+      "run_key": "T06.codegraph.r2",
+      "path": "T06/codegraph/r2",
+      "artifacts": {
+        "run.json": "f48d81ebd0d6fe308156a207bb40e239c363a88b7ae931fd310c7c0e3565539d",
+        "events.ndjson": "979735b4cb083c5445468b93fe7710d439f619b60abe4af1636e1b8984e8f10a",
+        "agent-output.txt": "2c1cc69d158b3d61bad853fafd4ae0cdb622e41869603512b72392229d3aa7aa",
+        "metrics.json": "e6fd36ce9446543abcd26a639065a163ca6788fdd3dd55e8b908174fb645b99e",
+        "evaluation.json": "885d006d81c68118a8552a46fda0bf022024664d6e00dfd125cbf25e5a415712"
+      }
+    },
+    {
+      "run_key": "T06.codegraph.r3",
+      "path": "T06/codegraph/r3",
+      "artifacts": {
+        "run.json": "9e0d0c559ec38a67d0fabd66a9ac0f4b7d2f20c4c6011e1b40dbf30e45e27f42",
+        "events.ndjson": "9ffe98d7895f51eda5595e26ad28443220cd3446505e6fcae2c2150801ed6089",
+        "agent-output.txt": "b7d6e1126e6d7775afd0ba9d477ed4699fde58715c3f9820802a5b3927a9f8da",
+        "metrics.json": "d984d54bba00c013907772351346fd8c0d5543daac3a1abfd9aae55a40136e28",
+        "evaluation.json": "fc884717631cfc46fc6535154aa799b6896967ba3af8e108f182009390ee7b07"
+      }
+    },
+    {
+      "run_key": "T06.knowledge.r1",
+      "path": "T06/knowledge/r1",
+      "artifacts": {
+        "run.json": "dfbdd54c64940be75655e72d3cace7d846b9b1912ff99370d06b04f9097033c2",
+        "events.ndjson": "a987b23e8c79b38b211b772ab2c6b84d6b1dbc92228356a9441838c9d4cace2a",
+        "agent-output.txt": "690c4085a3bd72f9237c2ab216ee65438e6ea047b49a4cdb5efbb4820b6e7684",
+        "metrics.json": "f05fcd5cd3ef409bd017afe6d8efb859581551c417eac0ca8aceaedb6245b71a",
+        "evaluation.json": "2e11c027385afcc5f9acd8983fa905d862d746a262ea359129117b2c6ddfc0f2"
+      }
+    },
+    {
+      "run_key": "T06.knowledge.r2",
+      "path": "T06/knowledge/r2",
+      "artifacts": {
+        "run.json": "4b95a8411a83844392eae3ba275acc96e8cfff2c26ea02ed39b304e16014f77d",
+        "events.ndjson": "56a9a934119b1bcc4748303200477de29d34d3bdf5b0c62095c938fe6879b56e",
+        "agent-output.txt": "30d1983d0960b6644aa949ecee98ce61d041c2b8827466cdeea30d814fb30815",
+        "metrics.json": "c683daffc0369a079afea933133a81ec73de69f76ffb615c04e62fcfb8a61075",
+        "evaluation.json": "3b9375b0831f95f5702e0b4130613e3bea80c0159de9b24fa164cee38de05d5a"
+      }
+    },
+    {
+      "run_key": "T06.knowledge.r3",
+      "path": "T06/knowledge/r3",
+      "artifacts": {
+        "run.json": "1a7da91604c89f50d9d09d1640e2a6eae0875d6f1c4f6bb4d63a2b23399526b3",
+        "events.ndjson": "d1e7482042c6c0b8af30af9d6b2b54215609e676e88bf5adeab0f968f86e0aeb",
+        "agent-output.txt": "3f344fd707e40b853f71af58e4f94294ea109b09767b323f5ccc9fbaffe1a9e7",
+        "metrics.json": "0c230154e93f245225184d130bc9dad69eef93a5e082d5996987bbcc687d8611",
+        "evaluation.json": "2ccecee14f0beb6bbc076582e80893a949e9d498697c2681864e8243d5594338"
+      }
+    }
+  ]
+}

@@ -1,113 +1,58 @@
 {
-  "schema_version": 1,
-  "experiment": "provenlattice-v1.0-r1-retrieval",
-  "tasks": [
-    "T01",
-    "T02",
-    "T03",
-    "T04",
-    "T05",
-    "T06"
-  ],
-  "expected_cells": 18,
-  "observed_runs": 0,
-  "qualification": "PENDING",
-  "gates": [
-    {
-      "gate": "task_matrix",
-      "status": "PASS",
-      "detail": "tasks=6"
-    },
-    {
-      "gate": "cells:T01",
-      "status": "PENDING",
-      "detail": "runs=0/3"
-    },
-    {
-      "gate": "cells:T02",
-      "status": "PENDING",
-      "detail": "runs=0/3"
-    },
-    {
-      "gate": "cells:T03",
-      "status": "PENDING",
-      "detail": "runs=0/3"
-    },
-    {
-      "gate": "cells:T04",
-      "status": "PENDING",
-      "detail": "runs=0/3"
-    },
-    {
-      "gate": "cells:T05",
-      "status": "PENDING",
-      "detail": "runs=0/3"
-    },
-    {
-      "gate": "cells:T06",
-      "status": "PENDING",
-      "detail": "runs=0/3"
-    },
-    {
-      "gate": "identical_prompt",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    },
-    {
-      "gate": "native_no_graph",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    },
-    {
-      "gate": "codegraph_no_knowledge",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    },
-    {
-      "gate": "knowledge_capability",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    },
-    {
-      "gate": "event_accounting",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    },
-    {
-      "gate": "ground_truth_reproducible",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    },
-    {
-      "gate": "failure_logs",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    },
-    {
-      "gate": "run_replayable",
-      "status": "PENDING",
-      "detail": "no completed runs"
-    }
-  ],
-  "summary_by_arm": {
-    "native": {
-      "runs": 0,
-      "task_success_rate": null,
-      "median_tool_turns": null,
-      "median_unique_files": null
-    },
-    "codegraph": {
-      "runs": 0,
-      "task_success_rate": null,
-      "median_tool_turns": null,
-      "median_unique_files": null
-    },
-    "knowledge": {
-      "runs": 0,
-      "task_success_rate": null,
-      "median_tool_turns": null,
-      "median_unique_files": null
-    }
+  "status": "R1 COMPLETE",
+  "qualification": "PASS",
+  "qualification_runs": 18,
+  "valid_runs": 54,
+  "tasks": 6,
+  "arms": ["native", "codegraph", "knowledge"],
+  "repetitions": 3,
+  "provenlattice_commit": "ba4f87b29e616dd28d1aa4939dbc805dbb296cb4",
+  "repo_commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_version": "2.1.267",
+  "task_success": {
+    "native": "0/18",
+    "codegraph": "0/18",
+    "knowledge": "0/18",
+    "interpretation": "saturated by the frozen wrong_path rule; not Arm-discriminative"
   },
-  "native_exploration_avoided_by_task": {}
+  "evidence_precision": {
+    "native_median": 1.0,
+    "codegraph_median": 1.0,
+    "knowledge_median": 1.0
+  },
+  "query_usage": {
+    "codegraph_runs_with_graph_query": "18/18",
+    "knowledge_runs_with_graph_query": "15/18",
+    "knowledge_runs_with_knowledge_query": "9/18",
+    "native_graph_queries": 0,
+    "native_knowledge_queries": 0,
+    "codegraph_knowledge_queries": 0,
+    "codegraph_graph_queries": 42,
+    "knowledge_graph_queries": 34,
+    "knowledge_evidence_or_requirements_queries": 11
+  },
+  "measurement_gaps": {
+    "time_to_first_relevant_evidence": "unavailable for 54/54 runs",
+    "cross_layer_edge_utilization": "unavailable for 54/54 runs",
+    "hallucinated_symbol_and_relation_counts": "unavailable"
+  },
+  "conclusions": {
+    "codegraph_correctness_improvement": "not demonstrated",
+    "retrieval_efficiency": "task-dependent; strongest reduction in T05 CodeGraph",
+    "knowledge_incremental_value": "not demonstrated",
+    "positive_zone": [],
+    "neutral_zone": ["T01", "T02", "T03", "T04", "T06"],
+    "negative_or_unstable_zone": ["T05"],
+    "next_priority": "structured Query Interface and evidence instrumentation"
+  },
+  "artifacts": {
+    "manifest": "experiments/retrieval-v1/results/manifest.json",
+    "qualification": "experiments/retrieval-v1/results/qualification.json",
+    "aggregate": "experiments/retrieval-v1/results/aggregate.json",
+    "aggregate_csv": "experiments/retrieval-v1/results/aggregate.csv",
+    "pairwise_deltas": "experiments/retrieval-v1/results/pairwise-deltas.json",
+    "failure_attribution": "experiments/retrieval-v1/results/failure-attribution.md",
+    "execution_log": "experiments/retrieval-v1/results/execution-log.ndjson"
+  }
 }
