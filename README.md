@@ -53,9 +53,9 @@ Structured Engineering Context
 
 > **更少搜索、更短任务路径、更高信息密度，以及更低的 Agent 上下文成本。**
 
-## Core V0.4
+## V1.0 Knowledge Layer
 
-Core V0.4 已经支持 Python、C 与 C++ 仓库的本地 CodeGraph 闭环，并在 V0.3 的 Shard/Impact Foundation 上增加 Base + Branch Overlay + Session Overlay：
+V1.0 在已冻结的 Core V0.4 上加入最小 Knowledge Layer，将 Markdown Spec、Requirement、Architecture 与 Document Section 复用同一套 Node / Edge / Overlay contract 接入 CodeGraph：
 
 ```text
 scan -> parse -> graph -> shard -> SQLite -> query -> incremental update
@@ -63,17 +63,22 @@ scan -> parse -> graph -> shard -> SQLite -> query -> incremental update
 
 V0.1 将语法引用持久化为 RawReference，明确区分 `resolved`、`ambiguous` 与 `unresolved`；只有证据充分的 resolved reference 才形成 Edge。V0.2 增加 `.h/.hpp/.c/.cc/.cpp` 等 C/C++ adapter，保守提取 namespace、class/struct、function/method、typedef/using、include 与 call expression，并保持 Full/Incremental parity。宏、模板实例化、虚调用与复杂重载允许保留 ambiguous/unresolved。
 
-V0.4 的 Overlay SQLite 只保存 ADD/UPDATE/DELETE delta 与 tombstone；`GraphView` 统一按 Session > Branch > Base 合成查询，并提供 stale/rebase、session commit/discard、entity/boundary conflict detection 与 Full Materialization parity。
+V0.4 的 Overlay SQLite 只保存 ADD/UPDATE/DELETE delta 与 tombstone；`GraphView` 统一按 Session > Branch > Base 合成查询，并提供 stale/rebase、session commit/discard、entity/boundary conflict detection 与 Full Materialization parity。V1.0 进一步把 Knowledge Node、Cross-layer Edge 与 RawEvidenceLink 纳入同一 Overlay。
 
-架构与 contract 见 [docs/design-v0.md](docs/design-v0.md)，开源技术选择见 [docs/open-source-survey.md](docs/open-source-survey.md)，V0.3 Shard 基线见 [docs/benchmarks/provenlattice-v0.3-shard.md](docs/benchmarks/provenlattice-v0.3-shard.md)，V0.4 Overlay 基线见 [docs/benchmarks/provenlattice-v0.4-overlay.md](docs/benchmarks/provenlattice-v0.4-overlay.md)。
+Knowledge Layer 只使用显式 requirement ID、文件路径、qualified symbol 和 module anchor 等确定性证据。每条原始证据均保留 `resolved / ambiguous / unresolved`、候选、策略、provenance 与 confidence；只有唯一 resolved 证据生成跨层 Edge。当前不包含语义/Embedding/LLM linker。
+
+V1.0 架构与 contract 见 [docs/design-v1.md](docs/design-v1.md)，真实仓结果见 [docs/benchmarks/provenlattice-v1.0-knowledge.md](docs/benchmarks/provenlattice-v1.0-knowledge.md)。V0.x 设计仍保留在 [docs/design-v0.md](docs/design-v0.md)。
 
 ### Quick start
 
 ```bash
 python -m pip install -e .
 provenlattice index /path/to/repo --json
+provenlattice knowledge /path/to/repo --json
 provenlattice status --database /path/to/repo/.provenlattice/codegraph.db --json
 provenlattice symbol run --database /path/to/repo/.provenlattice/codegraph.db --json
+provenlattice implemented REQ-RECOVERY-001 --database /path/to/repo/.provenlattice/codegraph.db --json
+provenlattice evidence --status unresolved --database /path/to/repo/.provenlattice/codegraph.db --json
 provenlattice update /path/to/repo --json
 ```
 
@@ -88,9 +93,9 @@ Windows PowerShell 中先执行 `$env:PYTHONPATH='src'`。
 
 ## Status
 
-🚧 **Research / Core V0.4**
+🚧 **Research / V1.0 Knowledge Layer**
 
-当前实现专注最小、可扩展的 Python/C/C++ CodeGraph；Spec、Log、Commit、Embedding、MCP、UI、TASCO 与 Agent 集成等能力尚未开始。
+当前实现覆盖 Python/C/C++ CodeGraph，以及 Markdown Spec/Requirement/Document 到代码的可追溯确定性证据。Runtime Log、Commit History、Validation Result、Embedding、Vector DB、LLM linker、MCP、UI、TASCO 与 Agent 集成均未引入。
 
 ---
 

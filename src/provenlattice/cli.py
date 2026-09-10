@@ -7,6 +7,7 @@ from pprint import pprint
 
 from .graph import full_index
 from .incremental import incremental_update
+from .knowledge import index_knowledge
 from .query import GraphQuery
 from .shard import BuildAwareShardStrategy, DirectoryShardStrategy, StructuralShardStrategy
 
@@ -34,6 +35,9 @@ def build_parser() -> argparse.ArgumentParser:
     update = command("update")
     update.add_argument("repo", nargs="?", default=".")
     update.add_argument("--shard-strategy", choices=("directory", "build-aware", "structural"), default="directory")
+    knowledge = command("knowledge")
+    knowledge.add_argument("repo", nargs="?", default=".")
+    knowledge.add_argument("--full", action="store_true", help="rebuild all knowledge documents")
     command("status")
     symbol = command("symbol")
     symbol.add_argument("name")
@@ -41,6 +45,12 @@ def build_parser() -> argparse.ArgumentParser:
     callers.add_argument("symbol")
     callees = command("callees")
     callees.add_argument("symbol")
+    implemented = command("implemented")
+    implemented.add_argument("requirement")
+    requirements = command("requirements")
+    requirements.add_argument("symbol")
+    evidence = command("evidence")
+    evidence.add_argument("--status", choices=("resolved", "ambiguous", "unresolved"))
     shard = command("shard")
     shard.add_argument("name")
     subgraph = command("subgraph")
@@ -62,6 +72,8 @@ def run(args: argparse.Namespace) -> dict:
         return full_index(args.repo, database, strategy=strategy)
     if args.command == "update":
         return incremental_update(args.repo, database, strategy=strategy)
+    if args.command == "knowledge":
+        return index_knowledge(args.repo, database, incremental=not args.full)
     with GraphQuery(database) as query:
         if args.command == "status":
             return query.status()
@@ -71,6 +83,12 @@ def run(args: argparse.Namespace) -> dict:
             return query.get_callers(args.symbol)
         if args.command == "callees":
             return query.get_callees(args.symbol)
+        if args.command == "implemented":
+            return query.get_implemented_code(args.requirement)
+        if args.command == "requirements":
+            return query.get_requirements(args.symbol)
+        if args.command == "evidence":
+            return query.get_evidence_links(status=args.status)
         if args.command == "shard":
             return {
                 "graph_generation": query.graph_generation,

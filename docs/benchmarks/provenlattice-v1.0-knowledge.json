@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "benchmark": "B2-brpc-knowledge",
+  "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+  "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "source_codegraph_database": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+  "codegraph_database_size_bytes": 240123904,
+  "combined_database_size_bytes": 245264384,
+  "knowledge_database_growth_bytes": 5140480,
+  "peak_working_set_bytes": 163143680,
+  "metrics": {
+    "documents_reparsed": 149,
+    "sections_reprocessed": 1255,
+    "sections_reused": 0,
+    "evidence_links_reprocessed": 736,
+    "evidence_links_reused": 0,
+    "cross_layer_edges_added": 80,
+    "cross_layer_edges_removed": 0,
+    "knowledge_nodes": 1404,
+    "document_sections": 1255,
+    "requirements": 0,
+    "raw_evidence_links": 736,
+    "resolved_evidence": 80,
+    "ambiguous_evidence": 202,
+    "unresolved_evidence": 454,
+    "cross_layer_edges": 80,
+    "knowledge_index_time_ms": 26641.66039999691
+  },
+  "query_latency": {
+    "evidence_lookup": {
+      "p50_ms": 0.5578,
+      "p95_ms": 1.2693,
+      "samples": 30
+    },
+    "document_to_code": {
+      "p50_ms": 24.4154,
+      "p95_ms": 27.2017,
+      "samples": 30
+    },
+    "cross_layer_subgraph": {
+      "p50_ms": 23.1982,
+      "p95_ms": 26.2102,
+      "samples": 30
+    }
+  },
+  "notes": [
+    "Existing V0.2 CodeGraph database was copied; C/C++ Full Index was not rerun.",
+    "The benchmark checkout was read only and no synthetic requirements were added.",
+    "Missing query classes mean the real repository contained no resolvable source of that kind."
+  ]
+}

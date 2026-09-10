@@ -131,6 +131,64 @@ class GraphQuery:
         rows.sort(key=lambda row: (row["file_id"], row.get("start_line") or 0, row["id"]))
         return self._result([decode_row(row) for row in rows], started)
 
+    def get_evidence_links(
+        self, *, source_node_id: str | None = None,
+        resolved_target_id: str | None = None, status: str | None = None,
+        anchor_type: str | None = None,
+    ) -> dict:
+        started = time.perf_counter()
+        filters = {"source_node_id": source_node_id, "resolved_target_id": resolved_target_id,
+                   "resolution_status": status, "anchor_type": anchor_type}
+        active = {key: value for key, value in filters.items() if value is not None}
+        where = " AND ".join(f"{key}=?" for key in active)
+        sql = "SELECT * FROM raw_evidence_links" + (f" WHERE {where}" if where else "")
+        rows = self.view.query(
+            "RawEvidenceLink", sql, tuple(active.values()),
+            lambda row: all(row.get(key) == value for key, value in active.items()),
+        )
+        rows.sort(key=lambda row: (row["source_node_id"], row["raw_anchor"], row["id"]))
+        return self._result([decode_row(row) for row in rows], started)
+
+    def _cross_layer_neighbors(self, anchor: str, relations: set[str], incoming: bool) -> dict:
+        started = time.perf_counter()
+        node = self._resolve(anchor)
+        if not node:
+            return self._result([], started)
+        edge_column, node_column = (("dst_id", "src_id") if incoming
+                                    else ("src_id", "dst_id"))
+        edges = self.view.query(
+            "Edge", f"SELECT * FROM edges WHERE {edge_column}=?",
+            (node["id"],),
+            lambda row: row.get(edge_column) == node["id"] and row.get("type") in relations,
+        )
+        targets = {row["id"]: row for row in self.view.by_ids(
+            "Node", (edge[node_column] for edge in edges)
+        )}
+        result = []
+        for edge in edges:
+            target = targets.get(edge[node_column])
+            if target:
+                item = decode_row(target)
+                item["relation"] = edge["type"]
+                item["edge_metadata"] = decode_row(edge).get("metadata", {})
+                result.append(item)
+        result.sort(key=lambda item: (item["qualified_name"], item["id"]))
+        return self._result(result, started)
+
+    def get_implemented_code(self, requirement: str) -> dict:
+        return self._cross_layer_neighbors(requirement, {"IMPLEMENTED_BY"}, False)
+
+    def get_requirements(self, symbol: str) -> dict:
+        result = self._cross_layer_neighbors(symbol, {"IMPLEMENTED_BY"}, True)
+        result["data"] = [item for item in result["data"] if item.get("kind") == "Requirement"]
+        return result
+
+    def get_document_targets(self, document: str) -> dict:
+        return self._cross_layer_neighbors(
+            document, {"DESCRIBES", "CONSTRAINS", "IMPLEMENTED_BY", "VERIFIED_BY",
+                       "BELONGS_TO", "DOCUMENTS"}, False,
+        )
+
     def _shard(self, shard: str) -> dict | None:
         rows = self.view.query(
             "Shard", "SELECT * FROM shards WHERE shard_id=? OR path=?", (shard, shard),
@@ -215,7 +273,8 @@ class GraphQuery:
         counts = {"files": self.storage.row("SELECT COUNT(*) AS count FROM files")["count"],
                   "shards": len(self.view.all("Shard")), "nodes": len(self.view.all("Node")),
                   "edges": len(self.view.all("Edge")),
-                  "raw_references": len(self.view.all("RawReference"))}
+                  "raw_references": len(self.view.all("RawReference")),
+                  "raw_evidence_links": len(self.view.all("RawEvidenceLink"))}
         latest = self.storage.row("SELECT * FROM graph_generation ORDER BY generation DESC LIMIT 1")
         return self._result({"repository": decode_row(repository) if repository else None,
                              "counts": counts,

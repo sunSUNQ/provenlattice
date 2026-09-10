@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "benchmark": "V1-knowledge-fixture",
+  "initial": {
+    "documents_reparsed": 2,
+    "sections_reprocessed": 5,
+    "sections_reused": 0,
+    "evidence_links_reprocessed": 6,
+    "evidence_links_reused": 0,
+    "cross_layer_edges_added": 4,
+    "cross_layer_edges_removed": 0,
+    "knowledge_nodes": 7,
+    "document_sections": 5,
+    "requirements": 1,
+    "raw_evidence_links": 6,
+    "resolved_evidence": 4,
+    "ambiguous_evidence": 1,
+    "unresolved_evidence": 1,
+    "cross_layer_edges": 4,
+    "knowledge_index_time_ms": 3.714100006618537
+  },
+  "document_change": {
+    "documents_reparsed": 1,
+    "sections_reprocessed": 1,
+    "sections_reused": 2,
+    "evidence_links_reprocessed": 3,
+    "evidence_links_reused": 3,
+    "cross_layer_edges_added": 1,
+    "cross_layer_edges_removed": 1,
+    "knowledge_nodes": 7,
+    "document_sections": 5,
+    "requirements": 1,
+    "raw_evidence_links": 6,
+    "resolved_evidence": 4,
+    "ambiguous_evidence": 1,
+    "unresolved_evidence": 1,
+    "cross_layer_edges": 4,
+    "knowledge_index_time_ms": 3.7012999964645132
+  },
+  "code_signature_change": {
+    "code_update": {
+      "files_scanned": 3,
+      "files_parsed": 1,
+      "parse_failures": 0,
+      "syntax_error_files": 0,
+      "nodes_created": 13,
+      "edges_created": 12,
+      "raw_references": 0,
+      "resolved_references": 0,
+      "ambiguous_references": 0,
+      "unresolved_references": 0,
+      "shards_created": 2,
+      "boundary_edges": 0,
+      "files_reparsed": 1,
+      "files_reused": 2,
+      "references_reprocessed": 0,
+      "references_reused": 0,
+      "shards_updated": 1,
+      "shards_reused": 1,
+      "boundary_edges_reprocessed": 0,
+      "boundary_edges_reused": 0,
+      "impact_frontier_size": 0,
+      "wide_impact": false,
+      "index_time_ms": 0.0,
+      "query_time_ms": 0.0,
+      "incremental_time_ms": 7.2579999978188425,
+      "changed_files": 1,
+      "affected_nodes": 13,
+      "affected_edges": 11,
+      "database_size": 212992
+    },
+    "knowledge_update": {
+      "documents_reparsed": 0,
+      "sections_reprocessed": 0,
+      "sections_reused": 0,
+      "evidence_links_reprocessed": 6,
+      "evidence_links_reused": 0,
+      "cross_layer_edges_added": 4,
+      "cross_layer_edges_removed": 4,
+      "knowledge_nodes": 7,
+      "document_sections": 5,
+      "requirements": 1,
+      "raw_evidence_links": 6,
+      "resolved_evidence": 4,
+      "ambiguous_evidence": 1,
+      "unresolved_evidence": 1,
+      "cross_layer_edges": 4,
+      "knowledge_index_time_ms": 3.3186999935423955
+    }
+  },
+  "query_latency": {
+    "requirement_to_code": {
+      "p50_ms": 0.1087,
+      "p95_ms": 0.147,
+      "samples": 30
+    },
+    "code_to_requirement": {
+      "p50_ms": 0.1389,
+      "p95_ms": 0.179,
+      "samples": 30
+    },
+    "cross_layer_subgraph": {
+      "p50_ms": 0.2117,
+      "p95_ms": 0.2716,
+      "samples": 30
+    }
+  }
+}

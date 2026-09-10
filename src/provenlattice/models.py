@@ -220,6 +220,26 @@ class OverlayConflict:
         return asdict(self)
 
 
+@dataclass(slots=True)
+class RawEvidenceLink:
+    id: str
+    repository_id: str
+    source_node_id: str
+    raw_anchor: str
+    anchor_type: str
+    candidate_targets: list[str]
+    resolved_target_id: str | None
+    resolution_status: str
+    resolution_strategy: str
+    provenance: str
+    confidence: float
+    generation: int
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 # Compatibility names for the initial V0 public surface.
 SymbolDraft = ParsedSymbol
 RelationDraft = ParsedReference

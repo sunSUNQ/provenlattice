@@ -52,6 +52,21 @@ CREATE TABLE IF NOT EXISTS raw_references (
     resolution_strategy TEXT NOT NULL, provenance TEXT NOT NULL,
     confidence REAL NOT NULL, generation INTEGER NOT NULL, metadata TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS raw_evidence_links (
+    id TEXT PRIMARY KEY, repository_id TEXT NOT NULL,
+    source_node_id TEXT NOT NULL, raw_anchor TEXT NOT NULL,
+    anchor_type TEXT NOT NULL, candidate_targets TEXT NOT NULL,
+    resolved_target_id TEXT,
+    resolution_status TEXT NOT NULL CHECK(resolution_status IN ('resolved','ambiguous','unresolved')),
+    resolution_strategy TEXT NOT NULL, provenance TEXT NOT NULL,
+    confidence REAL NOT NULL, generation INTEGER NOT NULL, metadata TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS document_state (
+    document_id TEXT PRIMARY KEY, repository_id TEXT NOT NULL,
+    path TEXT NOT NULL, content_hash TEXT NOT NULL,
+    document_version INTEGER NOT NULL, generation INTEGER NOT NULL,
+    UNIQUE(repository_id, path)
+);
 CREATE TABLE IF NOT EXISTS file_state (
     file_id TEXT PRIMARY KEY, path TEXT NOT NULL, source_hash TEXT NOT NULL,
     generation INTEGER NOT NULL
@@ -74,6 +89,10 @@ CREATE INDEX IF NOT EXISTS idx_raw_references_name ON raw_references(raw_name);
 CREATE INDEX IF NOT EXISTS idx_raw_references_file ON raw_references(file_id);
 CREATE INDEX IF NOT EXISTS idx_raw_references_owner ON raw_references(owner_symbol_id);
 CREATE INDEX IF NOT EXISTS idx_raw_references_resolved ON raw_references(resolved_symbol_id);
+CREATE INDEX IF NOT EXISTS idx_evidence_source ON raw_evidence_links(source_node_id);
+CREATE INDEX IF NOT EXISTS idx_evidence_anchor ON raw_evidence_links(raw_anchor);
+CREATE INDEX IF NOT EXISTS idx_evidence_resolved ON raw_evidence_links(resolved_target_id);
+CREATE INDEX IF NOT EXISTS idx_document_state_path ON document_state(repository_id, path);
 """
 
 
@@ -193,10 +212,14 @@ class SQLiteStorage:
         metrics: Metrics,
     ) -> None:
         with self.transaction() as connection:
-            connection.execute("DELETE FROM edges")
+            connection.execute(
+                "DELETE FROM edges WHERE COALESCE(json_extract(metadata, '$.layer'), 'code') != 'knowledge'"
+            )
             connection.execute("DELETE FROM shard_edges")
             connection.execute("DELETE FROM raw_references")
-            connection.execute("DELETE FROM nodes")
+            connection.execute(
+                "DELETE FROM nodes WHERE COALESCE(json_extract(metadata, '$.layer'), 'code') != 'knowledge'"
+            )
             connection.execute("DELETE FROM shards")
             connection.execute("DELETE FROM files")
             connection.execute("DELETE FROM file_state")
@@ -298,7 +321,8 @@ class SQLiteStorage:
 
 def decode_row(row: dict) -> dict:
     result = dict(row)
-    for key in ("metadata", "public_symbols", "metrics", "candidate_symbols"):
+    for key in ("metadata", "public_symbols", "metrics", "candidate_symbols",
+                "candidate_targets"):
         if key in result and isinstance(result[key], str):
             result[key] = json.loads(result[key])
     return result

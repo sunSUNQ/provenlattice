@@ -20,6 +20,7 @@ ENTITY_TABLES = {
     "Node": ("nodes", "id"),
     "Edge": ("edges", "id"),
     "RawReference": ("raw_references", "id"),
+    "RawEvidenceLink": ("raw_evidence_links", "id"),
     "Shard": ("shards", "shard_id"),
     "BoundaryEdge": ("shard_edges", "edge_id"),
 }
