@@ -178,6 +178,48 @@ class RawReference:
         return asdict(self)
 
 
+@dataclass(slots=True)
+class OverlayMetadata:
+    overlay_id: str
+    overlay_type: str
+    repository_id: str
+    base_commit: str
+    base_generation: int
+    branch_name: str | None
+    parent_overlay_id: str | None
+    status: str
+    created_at: str
+    updated_at: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(slots=True)
+class OverlayDelta:
+    overlay_id: str
+    entity_type: str
+    entity_id: str
+    operation: str
+    base_version: str | None
+    new_value: dict[str, Any] | None
+    generation: int
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(slots=True)
+class OverlayConflict:
+    conflict_type: str
+    entity_type: str | None = None
+    entity_id: str | None = None
+    details: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 # Compatibility names for the initial V0 public surface.
 SymbolDraft = ParsedSymbol
 RelationDraft = ParsedReference

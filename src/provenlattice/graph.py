@@ -64,9 +64,10 @@ def build_graph(
     cached_references: dict[str, dict] | None = None,
     changed_file_ids: set[str] | None = None,
     affected_reference_ids: set[str] | None = None,
+    repository_id_override: str | None = None,
 ) -> tuple[str, list[dict], list[Node], list[Edge], list, object]:
     root = root.resolve()
-    repo_id = repository_id(root)
+    repo_id = repository_id_override or repository_id(root)
     strategy = strategy or DirectoryShardStrategy()
     prepare = getattr(strategy, "prepare", None)
     if prepare is not None:
@@ -171,7 +172,8 @@ def build_graph(
 
 
 def full_index(
-    repo: str | Path, database: str | Path | None = None, *, strategy: ShardStrategy | None = None
+    repo: str | Path, database: str | Path | None = None, *, strategy: ShardStrategy | None = None,
+    repository_id_override: str | None = None,
 ) -> dict:
     started = time.perf_counter()
     root = Path(repo).resolve()
@@ -191,11 +193,12 @@ def full_index(
             parse_failures += 1
         parsed_files[source.relative_path] = parsed
         syntax_error_files += int(has_error)
-    repo_id = repository_id(root)
+    repo_id = repository_id_override or repository_id(root)
     with SQLiteStorage(database) as storage:
         generation = storage.current_generation(repo_id) + 1
         repo_id, files, nodes, edges, shards, resolution = build_graph(
-            root, sources, parsed_files, generation, strategy=strategy
+            root, sources, parsed_files, generation, strategy=strategy,
+            repository_id_override=repo_id,
         )
         status_counts = {status: 0 for status in ("resolved", "ambiguous", "unresolved")}
         for reference in resolution.references:

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "benchmarks": [
+    {
+      "benchmark": "B1-aria2",
+      "different_shards": true,
+      "no_conflict_merge": "NO_CONFLICT",
+      "same_entity_conflicts": [
+        "ENTITY_CONFLICT"
+      ],
+      "boundary_conflicts": [
+        "BOUNDARY_CONFLICT"
+      ],
+      "rebase": {
+        "status": "ACTIVE",
+        "conflicts": [],
+        "shards_recomputed": 1,
+        "boundary_edges_recomputed": 0
+      },
+      "rebase_time_ms": 8.669,
+      "session_commit": {
+        "committed_deltas": 1,
+        "session_status": "DISCARDED"
+      },
+      "commit_time_ms": 4.769,
+      "session_status": "DISCARDED",
+      "stale_status": "REBASE_REQUIRED"
+    },
+    {
+      "benchmark": "B2-brpc",
+      "different_shards": true,
+      "no_conflict_merge": "NO_CONFLICT",
+      "same_entity_conflicts": [
+        "ENTITY_CONFLICT"
+      ],
+      "boundary_conflicts": [
+        "BOUNDARY_CONFLICT"
+      ],
+      "rebase": {
+        "status": "ACTIVE",
+        "conflicts": [],
+        "shards_recomputed": 1,
+        "boundary_edges_recomputed": 0
+      },
+      "rebase_time_ms": 11.663,
+      "session_commit": {
+        "committed_deltas": 1,
+        "session_status": "DISCARDED"
+      },
+      "commit_time_ms": 3.197,
+      "session_status": "DISCARDED",
+      "stale_status": "REBASE_REQUIRED"
+    }
+  ]
+}

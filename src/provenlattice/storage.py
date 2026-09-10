@@ -84,6 +84,19 @@ class SQLiteStorage:
         self.connection = sqlite3.connect(self.path)
         self.connection.row_factory = sqlite3.Row
         self.connection.executescript(SCHEMA)
+        # V0.3 introduced the reverse boundary index. Backfill snapshots created
+        # by V0.2 once, before they are frozen as an Overlay base.
+        self.connection.execute(
+            """INSERT OR IGNORE INTO shard_edges
+               SELECT id, json_extract(metadata, '$.src_shard_id'),
+                      json_extract(metadata, '$.dst_shard_id'), type,
+                      json_extract(metadata, '$.raw_reference_id')
+               FROM edges
+               WHERE json_extract(metadata, '$.scope')='boundary'
+                 AND json_extract(metadata, '$.src_shard_id') IS NOT NULL
+                 AND json_extract(metadata, '$.dst_shard_id') IS NOT NULL"""
+        )
+        self.connection.commit()
 
     def close(self) -> None:
         self.connection.close()

@@ -15,12 +15,13 @@ from .storage import SQLiteStorage
 
 
 def incremental_update(
-    repo: str | Path, database: str | Path | None = None, *, strategy: ShardStrategy | None = None
+    repo: str | Path, database: str | Path | None = None, *, strategy: ShardStrategy | None = None,
+    repository_id_override: str | None = None,
 ) -> dict:
     started = time.perf_counter()
     root = Path(repo).resolve()
     database = Path(database).resolve() if database else root / ".provenlattice" / "codegraph.db"
-    repo_id = repository_id(root)
+    repo_id = repository_id_override or repository_id(root)
     sources = scan_repository(root)
     source_by_path = {source.relative_path: source for source in sources}
     with SQLiteStorage(database) as storage:
@@ -113,6 +114,7 @@ def incremental_update(
             cached_references=old_references,
             changed_file_ids=changed_file_ids,
             affected_reference_ids=affected_reference_ids,
+            repository_id_override=repo_id,
         )
         new_nodes = {node.id: node for node in nodes}
         new_edges = {edge.id: edge for edge in edges}

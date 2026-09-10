@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "benchmarks": [
+    {
+      "benchmark": "B1-aria2",
+      "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "changed_file": "src/AbstractCommand.cc",
+      "metrics": {
+        "base_db_size": 132984832,
+        "overlay_db_size": 245760,
+        "overlay_to_base_ratio": 0.0018480303076970463,
+        "delta_count": 72,
+        "shards_touched": 1,
+        "node_add": 0,
+        "node_update": 72,
+        "node_delete": 0,
+        "edge_add": 0,
+        "edge_update": 0,
+        "edge_delete": 0,
+        "rawreference_add": 0,
+        "rawreference_update": 0,
+        "rawreference_delete": 0,
+        "shard_add": 0,
+        "shard_update": 0,
+        "shard_delete": 0,
+        "boundaryedge_add": 0,
+        "boundaryedge_update": 0,
+        "boundaryedge_delete": 0,
+        "session_overlay_size": 28672,
+        "overlay_apply_time_ms": 2312.295,
+        "materialization_parity": true,
+        "query_latency": {
+          "base": {
+            "p50_ms": 14.999,
+            "p95_ms": 15.6992
+          },
+          "branch": {
+            "p50_ms": 15.2349,
+            "p95_ms": 15.7874
+          },
+          "branch_session": {
+            "p50_ms": 15.1761,
+            "p95_ms": 16.5191
+          }
+        },
+        "query_overhead_p95": {
+          "branch": 0.005618120668569038,
+          "branch_session": 0.05222559111292302
+        },
+        "elapsed_ms": 9973.197
+      }
+    },
+    {
+      "benchmark": "B2-brpc",
+      "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "changed_file": "src/brpc/builtin/common.cpp",
+      "metrics": {
+        "base_db_size": 240123904,
+        "overlay_db_size": 135168,
+        "overlay_to_base_ratio": 0.0005629093886462882,
+        "delta_count": 60,
+        "shards_touched": 1,
+        "node_add": 0,
+        "node_update": 60,
+        "node_delete": 0,
+        "edge_add": 0,
+        "edge_update": 0,
+        "edge_delete": 0,
+        "rawreference_add": 0,
+        "rawreference_update": 0,
+        "rawreference_delete": 0,
+        "shard_add": 0,
+        "shard_update": 0,
+        "shard_delete": 0,
+        "boundaryedge_add": 0,
+        "boundaryedge_update": 0,
+        "boundaryedge_delete": 0,
+        "session_overlay_size": 28672,
+        "overlay_apply_time_ms": 3953.028,
+        "materialization_parity": true,
+        "query_latency": {
+          "base": {
+            "p50_ms": 24.2098,
+            "p95_ms": 24.5272
+          },
+          "branch": {
+            "p50_ms": 24.2842,
+            "p95_ms": 25.9891
+          },
+          "branch_session": {
+            "p50_ms": 24.2855,
+            "p95_ms": 25.0597
+          }
+        },
+        "query_overhead_p95": {
+          "branch": 0.05960321602139662,
+          "branch_session": 0.021710590691151
+        },
+        "elapsed_ms": 18033.702
+      }
+    },
+    {
+      "benchmark": "B3-rocksdb",
+      "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+      "changed_file": "db/db_impl/db_impl.cc",
+      "metrics": {
+        "base_db_size": 884084736,
+        "overlay_db_size": 2355200,
+        "overlay_to_base_ratio": 0.002663998035591014,
+        "delta_count": 1067,
+        "shards_touched": 1,
+        "node_add": 0,
+        "node_update": 1067,
+        "node_delete": 0,
+        "edge_add": 0,
+        "edge_update": 0,
+        "edge_delete": 0,
+        "rawreference_add": 0,
+        "rawreference_update": 0,
+        "rawreference_delete": 0,
+        "shard_add": 0,
+        "shard_update": 0,
+        "shard_delete": 0,
+        "boundaryedge_add": 0,
+        "boundaryedge_update": 0,
+        "boundaryedge_delete": 0,
+        "session_overlay_size": 28672,
+        "overlay_apply_time_ms": 15013.565,
+        "materialization_parity": true,
+        "query_latency": {
+          "base": {
+            "p50_ms": 59.8151,
+            "p95_ms": 61.1938
+          },
+          "branch": {
+            "p50_ms": 60.3154,
+            "p95_ms": 62.3601
+          },
+          "branch_session": {
+            "p50_ms": 60.6853,
+            "p95_ms": 64.7972
+          }
+        },
+        "query_overhead_p95": {
+          "branch": 0.019059120368403404,
+          "branch_session": 0.058885050446287
+        },
+        "elapsed_ms": 59919.944
+      }
+    }
+  ]
+}

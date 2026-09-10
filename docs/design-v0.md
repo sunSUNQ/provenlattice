@@ -74,8 +74,12 @@ V0.1 起只有 `resolved` reference 可以形成语义 Edge。Edge provenance �
 - `raw_references(id PK, repo_id, file_id, owner_symbol_id, raw_name, reference_type, target_module, range, status, candidate_symbols, resolved_symbol_id, resolution_strategy, provenance, confidence, generation, metadata)`
 - `file_state(file_id PK, path, source_hash, generation)`
 - `graph_generation(repo_id, generation, created_at, mode, metrics, PK(repo_id,generation))`
+- `overlay_metadata(overlay_id PK, overlay_type, repository_id, base_commit, base_generation, branch_name, parent_overlay_id, status, created_at, updated_at)`
+- `overlay_deltas(overlay_id, entity_type, entity_id, operation, base_version, new_value, generation, PK(overlay_id,entity_type,entity_id))`
 
 索引覆盖 qualified name、file、shard 以及 edge 的 source、destination、type。当前图采用原位快照；`graph_generation` 保留每次发布记录，为未来版本快照/overlay 留出演进点。
+
+V0.4 中 Base Graph 保持共享只读；Branch/Session Overlay 使用独立小型 SQLite，仅保存 Node、Edge、RawReference、Shard 和 BoundaryEdge 的 ADD/UPDATE/DELETE。DELETE 是 tombstone。所有查询统一经过 `GraphView`，按 Session > Branch > Base 覆盖，不在各 Query 中重复 merge 逻辑。Overlay 同时绑定 base commit 与 generation，不匹配时进入 `REBASE_REQUIRED`。
 
 ## 查询与安全边界
 
