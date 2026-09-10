@@ -14,7 +14,10 @@ Arms are `native`, `codegraph`, and `knowledge`. The task prompt, repository, co
 
 ## Run one cell
 
-The adapter command receives a JSON `RunRequest` on stdin. It may emit tool events as NDJSON lines with `event_type: "tool"`; remaining stdout is treated as the final answer.
+Generic adapter commands receive a JSON `RunRequest` on stdin. Claude Code receives the
+frozen task prompt as text while the complete request remains available in
+`PL_R1_RUN_REQUEST`. Tool events are parsed from Claude `stream-json`; remaining output is
+treated as the final answer.
 
 ```bash
 python -m experiments.retrieval-v1.harness.runner \
@@ -22,6 +25,10 @@ python -m experiments.retrieval-v1.harness.runner \
   --repo /path/to/brpc \
   --arm knowledge \
   --agent-command "your-agent-command" \
+  --model-id claude-sonnet-4-5-20250929 \
+  --claude-version 2.1.267 \
+  --provenlattice-commit HARNESS_COMMIT \
+  --database /path/to/brpc-knowledge.db \
   --results experiments/retrieval-v1/results
 ```
 
@@ -36,7 +43,9 @@ python -m experiments.retrieval-v1.run_matrix \
   --repetitions 1
 ```
 
-Use `--repetitions 3` only after the first 18 cells pass qualification.
+The autonomous matrix runner stages `T01.native.r1`, the remaining T01 arms, and the
+remaining r1 cells. It enters r2/r3 only after all eight qualification gates pass. Valid
+runs are resumed without overwrite; corrupt runs are quarantined.
 
 ## Qualification report
 

@@ -11,25 +11,35 @@ from .agent_adapter import CommandAgentAdapter
 from .evaluator import evaluate
 from .metrics import collect_metrics
 from .models import ARM_TOOLS, WRITE_OPERATIONS, RunRequest, RunResult, TaskDefinition, ToolEvent
-from .provenance_tools import repository_head, utc_now, write_events
+from .provenance_tools import repository_head, repository_status, sha256_text, utc_now, write_events
 
 
 def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root: str | Path,
-             adapter, timeout: float = 900, verify_commit: bool = True) -> dict:
+             adapter, timeout: float = 900, verify_commit: bool = True, repetition: int = 1,
+             model_id: str = "unknown", claude_version: str = "unknown",
+             provenlattice_commit: str | None = None, database: str | None = None,
+             attempt: int = 1) -> dict:
     if arm not in ARM_TOOLS:
         raise ValueError(f"unknown arm: {arm}")
-    run_id = f"{task.task_id}-{arm}-r1-{uuid.uuid4().hex[:8]}"
-    run_dir = Path(output_root) / task.task_id / arm / "r1"
+    run_key = f"{task.task_id}.{arm}.r{repetition}"
+    run_id = f"{task.task_id}-{arm}-r{repetition}-{uuid.uuid4().hex[:8]}"
+    run_dir = Path(output_root) / task.task_id / arm / f"r{repetition}"
     run_dir.mkdir(parents=True, exist_ok=True)
     start_time = utc_now()
     started = perf_counter()
     repo_path = str(Path(repo_path).resolve())
     actual_commit = repository_head(repo_path)
+    status_before = repository_status(repo_path)
     errors: list[str] = []
     if verify_commit and actual_commit and actual_commit != task.commit:
         errors.append(f"REPO_COMMIT_MISMATCH expected={task.commit} actual={actual_commit}")
+    if status_before:
+        errors.append("DIRTY_WORKTREE_BEFORE_RUN")
+    environment = {"PL_R1_ARM": arm}
+    if database:
+        environment["PL_R1_DATABASE"] = str(Path(database).resolve())
     request = RunRequest(run_id, task.task_id, repo_path, task.commit, arm, task.prompt,
-                         sorted(ARM_TOOLS[arm]), {"PL_R1_ARM": arm}, timeout)
+                         sorted(ARM_TOOLS[arm]), environment, timeout)
     if errors:
         adapter_result = type("AdapterResult", (), {"output": "", "events": [],
                                                      "exit_reason": "preflight_failed",
@@ -56,9 +66,13 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
                 "document", "evidence", "related-code", "cross-layer", "implemented", "requirements",
             }:
                 violations.append(f"KNOWLEDGE_ACCESS_IN_CODEGRAPH:{event.operation}")
+    status_after = repository_status(repo_path)
+    if status_after != status_before:
+        violations.append("POLICY_VIOLATION:WORKTREE_MODIFIED")
     ended = utc_now()
     duration_ms = (perf_counter() - started) * 1000
-    status = ("failed" if violations or adapter_result.exit_reason not in {"completed"}
+    usable_timeout = adapter_result.exit_reason == "timeout" and bool(events or adapter_result.output)
+    status = ("failed" if violations or (adapter_result.exit_reason not in {"completed"} and not usable_timeout)
               else "completed")
     metrics = collect_metrics(task, events, duration_ms, adapter_result.output)
     evaluation = evaluate(task, adapter_result.output, events, metrics)
@@ -67,9 +81,15 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
                        start_time, ended, duration_ms, len(events), adapter_result.output,
                        adapter_result.exit_reason, adapter_result.error, sorted(ARM_TOOLS[arm]), violations)
     run_record = result.to_dict()
-    run_record.update({"repo_path": repo_path, "repo_commit": task.commit,
+    run_record.update({"run_key": run_key, "repetition": repetition,
+                       "repo_path": repo_path, "repo_commit": task.commit,
                        "prompt": task.prompt, "environment": request.environment,
                        "agent_actual_commit": actual_commit,
+                       "prompt_hash": sha256_text(task.prompt),
+                       "model_id": model_id, "claude_version": claude_version,
+                       "provenlattice_commit": provenlattice_commit,
+                       "ground_truth_version": "r1-frozen-v1", "attempt": attempt,
+                       "git_status_before": status_before, "git_status_after": status_after,
                        "adapter": type(adapter).__name__})
     (run_dir / "run.json").write_text(json.dumps(run_record, indent=2, ensure_ascii=False), encoding="utf-8")
     write_events(run_dir / "events.ndjson", events)
@@ -87,11 +107,18 @@ def main() -> int:
     parser.add_argument("--agent-command", required=True)
     parser.add_argument("--results", type=Path, default=Path("experiments/retrieval-v1/results"))
     parser.add_argument("--timeout", type=float, default=900)
+    parser.add_argument("--repetition", type=int, default=1)
+    parser.add_argument("--model-id", required=True)
+    parser.add_argument("--claude-version", required=True)
+    parser.add_argument("--provenlattice-commit", required=True)
+    parser.add_argument("--database")
     parser.add_argument("--skip-commit-check", action="store_true")
     args = parser.parse_args()
     result = run_task(TaskDefinition.load(args.task), args.arm, args.repo, args.results,
                       CommandAgentAdapter(args.agent_command), args.timeout,
-                      verify_commit=not args.skip_commit_check)
+                      verify_commit=not args.skip_commit_check, repetition=args.repetition,
+                      model_id=args.model_id, claude_version=args.claude_version,
+                      provenlattice_commit=args.provenlattice_commit, database=args.database)
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result["run"]["status"] == "completed" else 1
 

@@ -48,7 +48,9 @@ def collect_metrics(task: TaskDefinition, events: Iterable[ToolEvent], duration_
         "total_tool_output_chars": sum(event.result_size or 0 for event in events),
         "duration_ms": round(duration_ms, 4),
         "input_tokens": tokens.get("input", None), "output_tokens": tokens.get("output", None),
-        "cache_tokens": tokens.get("cache", None), "total_tokens": tokens.get("total", None),
+        "cache_tokens": (tokens.get("cache_read", 0) + tokens.get("cache_creation", 0)
+                         if tokens.get("cache_read") is not None or tokens.get("cache_creation") is not None
+                         else None), "total_tokens": tokens.get("total", None),
         "returned_graph_evidence": returned_evidence,
         "returned_graph_edges": returned_edges,
         "observed_evidence_ids": sorted(all_evidence),

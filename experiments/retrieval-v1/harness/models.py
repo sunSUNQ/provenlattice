@@ -120,9 +120,15 @@ class ToolEvent:
         value.update({
             "run_id": self.run_id, "task_id": self.task_id, "arm": self.arm,
             "timestamp": self.timestamp, "tool": self.tool, "operation": self.operation,
-            "query": self.query, "target": self.target, "result_size": self.result_size,
+            "query": self.query, "target": self.target,
             "duration": self.duration, "evidence_ids": self.evidence_ids,
             "used_evidence_ids": self.used_evidence_ids,
+            "result_size": self.result_size, "graph_generation": self.graph_generation,
+            "returned_nodes": self.returned_nodes, "returned_edges": self.returned_edges,
+            "returned_evidence": self.returned_evidence,
+            "resolved_count": self.resolved_count, "ambiguous_count": self.ambiguous_count,
+            "unresolved_count": self.unresolved_count, "files": self.files,
+            "tokens": self.tokens,
         })
         return value
 

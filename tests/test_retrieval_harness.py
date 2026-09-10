@@ -4,6 +4,7 @@ import json
 import importlib
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ReplayAdapter = importlib.import_module(
@@ -14,6 +15,10 @@ TaskDefinition = importlib.import_module(
     "experiments.retrieval-v1.harness.models").TaskDefinition
 run_task = importlib.import_module(
     "experiments.retrieval-v1.harness.runner").run_task
+adapter_module = importlib.import_module(
+    "experiments.retrieval-v1.harness.agent_adapter")
+audit_run = importlib.import_module(
+    "experiments.retrieval-v1.harness.audit").audit_run
 
 
 class RetrievalHarnessTests(unittest.TestCase):
@@ -83,6 +88,47 @@ class RetrievalHarnessTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(first["required_evidence_recall"], 1.0)
         self.assertEqual(first["cross_layer_edge_utilization"], 1.0)
+
+    def test_claude_adapter_sends_frozen_prompt_not_run_request_json(self) -> None:
+        models = importlib.import_module("experiments.retrieval-v1.harness.models")
+        request = models.RunRequest("run", self.task.task_id, str(self.temp.name), self.task.commit,
+                                    "native", self.task.prompt, ["read"], {}, 10)
+        completed = type("Completed", (), {"stdout": '{"type":"result","result":"ok","usage":{}}\n',
+                                             "stderr": "", "returncode": 0})()
+        with patch.object(adapter_module.shutil, "which", return_value="C:/npm/claude.cmd"), \
+             patch.object(adapter_module.subprocess, "run", return_value=completed) as mocked:
+            result = adapter_module.CommandAgentAdapter(["claude", "-p"]).run(request)
+        self.assertEqual(mocked.call_args.kwargs["input"], self.task.prompt)
+        self.assertEqual(mocked.call_args.kwargs["encoding"], "utf-8")
+        self.assertEqual(mocked.call_args.kwargs["errors"], "replace")
+        self.assertEqual(mocked.call_args.args[0][0], "C:/npm/claude.cmd")
+        self.assertIn("--append-system-prompt", mocked.call_args.args[0])
+        self.assertEqual(result.output, "ok")
+
+    def test_repetition_and_frozen_metadata_are_recorded(self) -> None:
+        result = run_task(self.task, "native", Path(self.temp.name), Path(self.temp.name),
+                          ReplayAdapter(self._output(), []), verify_commit=False, repetition=2,
+                          model_id="claude-sonnet-4-5-20250929", claude_version="2.1.267",
+                          provenlattice_commit="abc123")
+        self.assertTrue(result["run_dir"].endswith(str(Path("native") / "r2")))
+        self.assertEqual(result["run"]["run_key"], "T01.native.r2")
+        self.assertEqual(result["run"]["model_id"], "claude-sonnet-4-5-20250929")
+
+    def test_audit_accepts_complete_metadata_and_rejects_mismatch(self) -> None:
+        result = run_task(self.task, "native", Path(self.temp.name), Path(self.temp.name),
+                          ReplayAdapter(self._output(), []), verify_commit=False,
+                          model_id="claude-sonnet-4-5-20250929", claude_version="2.1.267",
+                          provenlattice_commit="abc123")
+        run_path = Path(result["run_dir"]) / "run.json"
+        run = json.loads(run_path.read_text(encoding="utf-8"))
+        run["agent_actual_commit"] = self.task.commit
+        run_path.write_text(json.dumps(run), encoding="utf-8")
+        audit = audit_run(result["run_dir"], self.task, "native", 1,
+                          "claude-sonnet-4-5-20250929", "2.1.267", "abc123")
+        self.assertTrue(audit["valid"], audit["errors"])
+        mismatch = audit_run(result["run_dir"], self.task, "native", 1,
+                             "claude-opus-4-5-20251101", "2.1.267", "abc123")
+        self.assertFalse(mismatch["valid"])
 
 
 if __name__ == "__main__":
