@@ -1,0 +1,244 @@
+from __future__ import annotations
+
+import re
+from bisect import bisect_right
+from pathlib import PurePosixPath
+from typing import Any
+
+from ..models import ParsedFile, ParsedImport, ParsedReference, ParsedSymbol
+from .base import ParseOutcome
+
+try:  # Keep the Python-only installation usable until C grammars are installed.
+    import tree_sitter_c
+    import tree_sitter_cpp
+    from tree_sitter import Language, Parser
+except ImportError:  # pragma: no cover - exercised only in incomplete environments.
+    tree_sitter_c = tree_sitter_cpp = None
+    Language = Parser = None
+
+
+CPP_EXTENSIONS = frozenset({".h", ".hh", ".hpp", ".hxx", ".inc", ".c", ".cc", ".cpp", ".cxx", ".c++"})
+
+
+def module_name(relative_path: str) -> str:
+    return ".".join(PurePosixPath(relative_path).with_suffix("").parts)
+
+
+class CppExtractor:
+    """Normalize the conservative, syntax-only C/C++ Tree-sitter facts."""
+
+    def __init__(self, source: bytes, relative_path: str) -> None:
+        self.source = source
+        self.line_starts = [0, *(index + 1 for index, value in enumerate(source) if value == 10)]
+        self.module = module_name(relative_path)
+        self.scope: list[tuple[str, str]] = []
+        self.symbols: list[ParsedSymbol] = []
+        self.references: list[ParsedReference] = []
+        self.imports: list[ParsedImport] = []
+
+    def text(self, node: Any | None) -> str:
+        return "" if node is None else self.source[node.start_byte:node.end_byte].decode("utf-8", "replace")
+
+    def qualified(self, name: str | None = None) -> str:
+        return ".".join(part for part in (*(item[0] for item in self.scope), name) if part)
+
+    def owner(self) -> str:
+        return self.qualified()
+
+    def line(self, node: Any, *, end: bool = False) -> int:
+        return bisect_right(self.line_starts, node.end_byte if end else node.start_byte)
+
+    @staticmethod
+    def same_node(left: Any | None, right: Any | None) -> bool:
+        return (
+            left is not None and right is not None
+            and left.type == right.type
+            and left.start_byte == right.start_byte
+            and left.end_byte == right.end_byte
+        )
+
+    def extract(self, root: Any) -> ParsedFile:
+        self._walk(root)
+        deduplicated: dict[tuple[str, str, str], ParsedSymbol] = {}
+        for symbol in self.symbols:
+            key = (symbol.kind, symbol.qualified_name, symbol.signature)
+            existing = deduplicated.get(key)
+            if existing is None:
+                deduplicated[key] = symbol
+                continue
+            declaration_lines = existing.metadata.setdefault("declaration_lines", [])
+            declaration_lines.append(existing.start_line)
+            if symbol.metadata.get("definition"):
+                symbol.metadata["declaration_lines"] = sorted(set(declaration_lines))
+                deduplicated[key] = symbol
+        return ParsedFile(list(deduplicated.values()), self.references, self.imports, parser="tree-sitter-cpp")
+
+    def _walk(self, node: Any) -> None:
+        kind = node.type
+        if kind == "preproc_include":
+            self._include(node)
+            return
+        if kind == "namespace_definition":
+            self._namespace(node)
+            return
+        if kind in {"class_specifier", "struct_specifier"}:
+            self._class(node)
+            return
+        if kind in {"function_definition", "declaration", "field_declaration"} and self._function(node):
+            return
+        if kind in {"type_definition", "alias_declaration", "using_declaration"}:
+            self._type(node)
+            return
+        if kind == "call_expression":
+            self._call(node)
+            return
+        for child in node.named_children:
+            self._walk(child)
+
+    def _namespace(self, node: Any) -> None:
+        name = self.text(node.child_by_field_name("name")) or "anonymous"
+        qualified = self.qualified(name)
+        self.symbols.append(ParsedSymbol("Namespace", name, qualified, self.line(node), self.line(node, end=True),
+                                         "namespace", True, {"syntax": "namespace_definition"}))
+        self.scope.append((name, "Namespace"))
+        body = node.child_by_field_name("body")
+        if body:
+            for child in body.named_children:
+                self._walk(child)
+        self.scope.pop()
+
+    def _class(self, node: Any) -> None:
+        name = self.text(node.child_by_field_name("name"))
+        if not name:
+            return
+        kind = "Struct" if node.type == "struct_specifier" or any(self.text(child) == "struct" for child in node.children) else "Class"
+        bases = self.text(node.child_by_field_name("base_class_clause"))
+        self.symbols.append(ParsedSymbol(kind, name, self.qualified(name), self.line(node), self.line(node, end=True),
+                                         bases or kind.lower(), True, {"bases": [item.strip() for item in bases.split(",") if item.strip()]}))
+        self.scope.append((name, kind))
+        body = node.child_by_field_name("body")
+        if body:
+            for child in body.named_children:
+                self._walk(child)
+        self.scope.pop()
+
+    def _function(self, node: Any) -> bool:
+        declarator = node.child_by_field_name("declarator")
+        if declarator is None:
+            declarator = next((child for child in node.named_children if "declarator" in child.type), None)
+        name = self._declarator_name(declarator)
+        if not name:
+            return False
+        explicit_scope, short_name = self._split_qualified(name)
+        qualified = ".".join(part for part in (*(item[0] for item in self.scope), *explicit_scope, short_name) if part)
+        kind = "Method" if any(item[1] in {"Class", "Struct"} for item in self.scope) or explicit_scope else "Function"
+        signature = self._signature(declarator, short_name)
+        self.symbols.append(ParsedSymbol(kind, short_name, qualified, self.line(node), self.line(node, end=True),
+                                         signature, not short_name.startswith("_"),
+                                         {"definition": node.type == "function_definition"}))
+        self.scope.append((short_name, kind))
+        body = node.child_by_field_name("body")
+        if body:
+            for child in body.named_children:
+                self._walk(child)
+        self.scope.pop()
+        return True
+
+    def _type(self, node: Any) -> None:
+        name_node = node.child_by_field_name("name") or node.child_by_field_name("declarator")
+        name = self._declarator_name(name_node) or self.text(name_node)
+        if not name or "(" in name:
+            return
+        name = name.split("::")[-1]
+        self.symbols.append(ParsedSymbol("Type", name, self.qualified(name), self.line(node), self.line(node, end=True),
+                                         self._normalize(self.text(node)), True, {"syntax": node.type}))
+
+    def _include(self, node: Any) -> None:
+        path = self.text(node.child_by_field_name("path")) or self.text(node)
+        path = path.removeprefix("#include").strip().strip('<>"')
+        if path:
+            self.imports.append(ParsedImport(self.owner(), path, path,
+                                             metadata={"start_line": self.line(node), "end_line": self.line(node, end=True),
+                                                      "syntax": "preproc_include"}))
+
+    def _call(self, node: Any) -> None:
+        target = self._normalize(self.text(node.child_by_field_name("function"))).replace("::", ".")
+        if target:
+            self.references.append(ParsedReference(self.owner(), "CALLS", target,
+                                                   start_line=self.line(node), end_line=self.line(node, end=True),
+                                                   metadata={"syntax": "call_expression"}))
+        function = node.child_by_field_name("function")
+        for child in node.named_children:
+            if not self.same_node(child, function):
+                self._walk(child)
+
+    def _declarator_name(self, node: Any | None) -> str:
+        if node is None:
+            return ""
+        if node.type in {"identifier", "field_identifier", "type_identifier", "namespace_identifier", "operator_name"}:
+            return self.text(node)
+        if node.type in {"qualified_identifier", "qualified_type_identifier", "template_function"}:
+            return self._normalize(self.text(node))
+        for field in ("declarator", "name", "function"):
+            child = node.child_by_field_name(field)
+            result = self._declarator_name(child)
+            if result:
+                return result
+        for child in node.named_children:
+            result = self._declarator_name(child)
+            if result:
+                return result
+        return ""
+
+    def _split_qualified(self, name: str) -> tuple[list[str], str]:
+        parts = [item for item in re.split(r"::|\.", name) if item]
+        return parts[:-1], parts[-1] if parts else ""
+
+    def _signature(self, declarator: Any | None, name: str) -> str:
+        function = self._find_function_declarator(declarator)
+        if function is None:
+            return "()"
+        parameters = function.child_by_field_name("parameters")
+        if parameters is None:
+            return self._normalize(self.text(function)) or "()"
+        suffix = self.source[parameters.end_byte:function.end_byte].decode("utf-8", "replace")
+        return self._normalize(f"{self.text(parameters)} {suffix}")
+
+    def _find_function_declarator(self, node: Any | None) -> Any | None:
+        if node is None:
+            return None
+        if node.type == "function_declarator":
+            return node
+        for child in node.named_children:
+            result = self._find_function_declarator(child)
+            if result is not None:
+                return result
+        return None
+
+    @staticmethod
+    def _normalize(value: str) -> str:
+        return " ".join(value.replace("\n", " ").split())
+
+
+class CppTreeSitterParser:
+    language = "cpp"
+    extensions = CPP_EXTENSIONS
+
+    def __init__(self, language: str = "cpp") -> None:
+        if Language is None or tree_sitter_cpp is None or tree_sitter_c is None:
+            raise RuntimeError("C/C++ Tree-sitter grammars are not installed; install tree-sitter-c and tree-sitter-cpp")
+        grammar = tree_sitter_c.language() if language == "c" else tree_sitter_cpp.language()
+        self.language = language
+        self._parser = Parser(Language(grammar))
+
+    def parse(self, path: Any, relative_path: str) -> ParsedFile:
+        return self.parse_bytes(path.read_bytes(), relative_path).parsed
+
+    def parse_bytes(self, source: bytes, relative_path: str, old_tree: Any | None = None) -> ParseOutcome:
+        tree = self._parser.parse(source) if old_tree is None else self._parser.parse(source, old_tree)
+        changed_ranges = []
+        if old_tree is not None:
+            changed_ranges = [{"start_byte": item.start_byte, "end_byte": item.end_byte,
+                               "start_point": tuple(item.start_point), "end_point": tuple(item.end_point)}
+                              for item in old_tree.changed_ranges(tree)]
+        return ParseOutcome(CppExtractor(source, relative_path).extract(tree.root_node), tree, changed_ranges)

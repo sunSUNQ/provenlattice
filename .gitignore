@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.provenlattice/
+*.db
+
+# Local benchmark checkout and generated temporary databases live outside this repository.
+benchmark-repos/

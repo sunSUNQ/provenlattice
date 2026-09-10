@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "benchmarks": [
+    {
+      "benchmark": "B1-aria2",
+      "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+      "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "c_cpp_loc": 118926,
+      "files_scanned": 1168,
+      "files_parsed": 1168,
+      "parse_failures": 0,
+      "syntax_error_files": 388,
+      "parse_coverage_percent": 100.0,
+      "syntax_clean_percent": 66.781,
+      "nodes": 29117,
+      "raw_references": 49109,
+      "resolved_references": 10804,
+      "ambiguous_references": 13966,
+      "unresolved_references": 24339,
+      "edges": 37074,
+      "shards": 8,
+      "boundary_edges": 1356,
+      "full_index_time_ms": 3953.631,
+      "peak_memory_bytes": 195563520,
+      "database_size_bytes": 132034560,
+      "query_anchor": {
+        "id": "symbol:89523111e5baa81245166eb375aa98e6422c0676ebc197d991c34fb5d83b68ac",
+        "name": "move",
+        "qualified_name": "aria2.IndexedList.move",
+        "degree": 219
+      },
+      "query_latency": {
+        "symbol": {
+          "p50_ms": 87.4046,
+          "p95_ms": 92.9569
+        },
+        "caller": {
+          "p50_ms": 50.676,
+          "p95_ms": 54.0689
+        },
+        "callee": {
+          "p50_ms": 15.8981,
+          "p95_ms": 16.5524
+        },
+        "subgraph": {
+          "p50_ms": 25.8543,
+          "p95_ms": 28.0203
+        }
+      },
+      "query_samples": 30,
+      "diagnostics": {
+        "syntax_error_files_by_extension": {
+          ".c": 1,
+          ".cc": 100,
+          ".h": 287
+        },
+        "reference_status_by_type": {
+          "ambiguous:CALLS": 13643,
+          "ambiguous:REFERENCES": 323,
+          "resolved:CALLS": 4824,
+          "resolved:IMPORTS": 5961,
+          "resolved:REFERENCES": 19,
+          "unresolved:CALLS": 22393,
+          "unresolved:IMPORTS": 1607,
+          "unresolved:REFERENCES": 339
+        },
+        "resolution_strategy_status": {
+          "ambiguous:ambiguous": 13140,
+          "import_resolution:unresolved": 13,
+          "include_resolution:resolved": 5961,
+          "include_resolution:unresolved": 1594,
+          "qualified_name_resolution:ambiguous": 250,
+          "qualified_name_resolution:resolved": 164,
+          "same_file_resolution:ambiguous": 576,
+          "same_file_resolution:resolved": 2285,
+          "same_file_resolution:unresolved": 34,
+          "unique_symbol_resolution:resolved": 2394,
+          "unresolved:unresolved": 22698
+        },
+        "unresolved_shape": {
+          "template_or_cast": 10276,
+          "macro_like_call": 7328,
+          "member_or_qualified_call": 3394,
+          "simple_call": 1734,
+          "include": 1607
+        },
+        "ambiguous_shape": {
+          "member_or_qualified_call": 9935,
+          "simple_call": 3619,
+          "template_or_cast": 411,
+          "macro_like_call": 1
+        }
+      }
+    },
+    {
+      "benchmark": "B2-brpc",
+      "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+      "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "c_cpp_loc": 227154,
+      "files_scanned": 1168,
+      "files_parsed": 1168,
+      "parse_failures": 0,
+      "syntax_error_files": 305,
+      "parse_coverage_percent": 100.0,
+      "syntax_clean_percent": 73.887,
+      "nodes": 48929,
+      "raw_references": 84941,
+      "resolved_references": 17210,
+      "ambiguous_references": 28421,
+      "unresolved_references": 39310,
+      "edges": 59614,
+      "shards": 46,
+      "boundary_edges": 4291,
+      "full_index_time_ms": 7590.77,
+      "peak_memory_bytes": 323907584,
+      "database_size_bytes": 237162496,
+      "query_anchor": {
+        "id": "symbol:16d336159fa2e6d6f4a5ea9b5c3f1d4c2ca25a6fe22e3e18c738ca4fcd450d4f",
+        "name": "bthread_usleep",
+        "qualified_name": "bthread_usleep",
+        "degree": 169
+      },
+      "query_latency": {
+        "symbol": {
+          "p50_ms": 159.7985,
+          "p95_ms": 171.1404
+        },
+        "caller": {
+          "p50_ms": 39.6123,
+          "p95_ms": 40.8666
+        },
+        "callee": {
+          "p50_ms": 30.2223,
+          "p95_ms": 32.3249
+        },
+        "subgraph": {
+          "p50_ms": 27.3641,
+          "p95_ms": 28.9022
+        }
+      },
+      "query_samples": 30,
+      "diagnostics": {
+        "syntax_error_files_by_extension": {
+          ".cc": 54,
+          ".cpp": 95,
+          ".h": 155,
+          ".hpp": 1
+        },
+        "reference_status_by_type": {
+          "ambiguous:CALLS": 28062,
+          "ambiguous:IMPORTS": 77,
+          "ambiguous:REFERENCES": 282,
+          "resolved:CALLS": 12693,
+          "resolved:IMPORTS": 4408,
+          "resolved:REFERENCES": 109,
+          "unresolved:CALLS": 36278,
+          "unresolved:IMPLEMENTS": 9,
+          "unresolved:IMPORTS": 2532,
+          "unresolved:REFERENCES": 491
+        },
+        "resolution_strategy_status": {
+          "ambiguous:ambiguous": 23979,
+          "import_resolution:unresolved": 4,
+          "include_resolution:ambiguous": 77,
+          "include_resolution:resolved": 4408,
+          "include_resolution:unresolved": 2528,
+          "qualified_name_resolution:ambiguous": 1936,
+          "qualified_name_resolution:resolved": 2772,
+          "same_file_resolution:ambiguous": 2429,
+          "same_file_resolution:resolved": 7073,
+          "same_file_resolution:unresolved": 160,
+          "unique_symbol_resolution:resolved": 2957,
+          "unresolved:unresolved": 36618
+        },
+        "unresolved_shape": {
+          "macro_like_call": 20987,
+          "template_or_cast": 8750,
+          "simple_call": 5302,
+          "include": 2532,
+          "member_or_qualified_call": 1739
+        },
+        "ambiguous_shape": {
+          "member_or_qualified_call": 20814,
+          "simple_call": 5874,
+          "template_or_cast": 1404,
+          "macro_like_call": 244,
+          "include": 77,
+          "operator_call": 8
+        }
+      }
+    },
+    {
+      "benchmark": "B3-rocksdb",
+      "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+      "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+      "c_cpp_loc": 622772,
+      "files_scanned": 1478,
+      "files_parsed": 1478,
+      "parse_failures": 0,
+      "syntax_error_files": 248,
+      "parse_coverage_percent": 100.0,
+      "syntax_clean_percent": 83.221,
+      "nodes": 118655,
+      "raw_references": 311111,
+      "resolved_references": 54481,
+      "ambiguous_references": 101090,
+      "unresolved_references": 155540,
+      "edges": 143585,
+      "shards": 64,
+      "boundary_edges": 11692,
+      "full_index_time_ms": 26190.219,
+      "peak_memory_bytes": 1121484800,
+      "database_size_bytes": 876105728,
+      "query_anchor": {
+        "id": "symbol:cb618bfa4c3323b4e748bc80c4df43792ec8ce837d4491a3c392577bc8959b40",
+        "name": "c_str",
+        "qualified_name": "ROCKSDB_NAMESPACE.TEST_F.c_str",
+        "degree": 553
+      },
+      "query_latency": {
+        "symbol": {
+          "p50_ms": 420.2613,
+          "p95_ms": 448.9518
+        },
+        "caller": {
+          "p50_ms": 154.4715,
+          "p95_ms": 165.0693
+        },
+        "callee": {
+          "p50_ms": 69.7679,
+          "p95_ms": 72.4499
+        },
+        "subgraph": {
+          "p50_ms": 66.3325,
+          "p95_ms": 68.0671
+        }
+      },
+      "query_samples": 30,
+      "diagnostics": {
+        "syntax_error_files_by_extension": {
+          ".c": 1,
+          ".cc": 152,
+          ".h": 81,
+          ".inc": 14
+        },
+        "reference_status_by_type": {
+          "ambiguous:CALLS": 90654,
+          "ambiguous:IMPLEMENTS": 14,
+          "ambiguous:IMPORTS": 13,
+          "ambiguous:REFERENCES": 10409,
+          "resolved:CALLS": 42881,
+          "resolved:IMPLEMENTS": 43,
+          "resolved:IMPORTS": 8666,
+          "resolved:REFERENCES": 2891,
+          "unresolved:CALLS": 140530,
+          "unresolved:IMPLEMENTS": 2,
+          "unresolved:IMPORTS": 4174,
+          "unresolved:REFERENCES": 10834
+        },
+        "resolution_strategy_status": {
+          "ambiguous:ambiguous": 86829,
+          "import_resolution:unresolved": 416,
+          "include_resolution:ambiguous": 13,
+          "include_resolution:resolved": 8666,
+          "include_resolution:unresolved": 3758,
+          "qualified_name_resolution:ambiguous": 6914,
+          "qualified_name_resolution:resolved": 1257,
+          "same_file_resolution:ambiguous": 7334,
+          "same_file_resolution:resolved": 26121,
+          "same_file_resolution:unresolved": 303,
+          "unique_symbol_resolution:resolved": 18437,
+          "unresolved:unresolved": 151063
+        },
+        "unresolved_shape": {
+          "macro_like_call": 61307,
+          "template_or_cast": 55738,
+          "simple_call": 26226,
+          "member_or_qualified_call": 8095,
+          "include": 4174
+        },
+        "ambiguous_shape": {
+          "member_or_qualified_call": 49079,
+          "simple_call": 47945,
+          "template_or_cast": 3999,
+          "macro_like_call": 54,
+          "include": 13
+        }
+      }
+    }
+  ]
+}

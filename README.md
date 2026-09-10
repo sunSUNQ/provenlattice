@@ -53,11 +53,42 @@ Structured Engineering Context
 
 > **更少搜索、更短任务路径、更高信息密度，以及更低的 Agent 上下文成本。**
 
+## Core V0.3
+
+Core V0.3 已经支持 Python、C 与 C++ 仓库的本地 CodeGraph 闭环，解析层基于 Tree-sitter，并增加可插拔 Shard、API fingerprint、reverse boundary index 与一跳 impact frontier：
+
+```text
+scan -> parse -> graph -> shard -> SQLite -> query -> incremental update
+```
+
+V0.1 将语法引用持久化为 RawReference，明确区分 `resolved`、`ambiguous` 与 `unresolved`；只有证据充分的 resolved reference 才形成 Edge。V0.2 增加 `.h/.hpp/.c/.cc/.cpp` 等 C/C++ adapter，保守提取 namespace、class/struct、function/method、typedef/using、include 与 call expression，并保持 Full/Incremental parity。宏、模板实例化、虚调用与复杂重载允许保留 ambiguous/unresolved。
+
+架构与 contract 见 [docs/design-v0.md](docs/design-v0.md)，开源技术选择见 [docs/open-source-survey.md](docs/open-source-survey.md)，V0.3 benchmark 结果见 [docs/benchmarks/provenlattice-v0.3-shard.md](docs/benchmarks/provenlattice-v0.3-shard.md)。
+
+### Quick start
+
+```bash
+python -m pip install -e .
+provenlattice index /path/to/repo --json
+provenlattice status --database /path/to/repo/.provenlattice/codegraph.db --json
+provenlattice symbol run --database /path/to/repo/.provenlattice/codegraph.db --json
+provenlattice update /path/to/repo --json
+```
+
+运行测试和完整 demo：
+
+```bash
+PYTHONPATH=src python -m unittest discover -s tests -v
+PYTHONPATH=src python examples/demo/run_demo.py
+```
+
+Windows PowerShell 中先执行 `$env:PYTHONPATH='src'`。
+
 ## Status
 
-🚧 **Research / Early Exploration**
+🚧 **Research / Core V0.3**
 
-项目目前处于早期研究与设计阶段，后续将逐步开放原型、实验和技术文档。
+当前实现专注最小、可扩展的 Python/C/C++ CodeGraph；Spec、Log、Commit、Embedding、MCP、UI、TASCO 与 Agent 集成等能力尚未开始。
 
 ---
 

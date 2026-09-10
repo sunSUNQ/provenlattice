@@ -1,0 +1,1218 @@
+{
+  "schema_version": 1,
+  "stage": "ProvenLattice Core V0.3 — Shard Qualification and Incremental Foundation",
+  "generated_at": "2026-09-10",
+  "scope": [
+    "pluggable shard strategies",
+    "API fingerprint qualification",
+    "reverse boundary index",
+    "one-hop impact frontier",
+    "B1 mutation parity"
+  ],
+  "repository_validation": [
+    {
+      "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+      "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "expected_commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "commit_matches": true,
+      "shallow_clone": true,
+      "git_status_clean": true
+    },
+    {
+      "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+      "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "commit_matches": true,
+      "shallow_clone": true,
+      "git_status_clean": true
+    },
+    {
+      "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+      "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+      "expected_commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+      "commit_matches": true,
+      "shallow_clone": true,
+      "git_status_clean": true
+    }
+  ],
+  "qualification": {
+    "schema_version": 1,
+    "strategies": [
+      {
+        "shard_count": 8,
+        "files_per_shard": {
+          "min": 1,
+          "median": 1,
+          "p95": 947,
+          "max": 947
+        },
+        "nodes_per_shard": {
+          "min": 2,
+          "median": 24,
+          "p95": 21570,
+          "max": 21570
+        },
+        "internal_edges": 35718,
+        "boundary_edges": 1356,
+        "boundary_ratio": 0.036575,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.74083,
+        "full_index_time_ms": 4257.681200004299,
+        "database_size_bytes": 132984832,
+        "benchmark": "B1-aria2",
+        "strategy": "directory",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+        "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f"
+      },
+      {
+        "shard_count": 8,
+        "files_per_shard": {
+          "min": 1,
+          "median": 1,
+          "p95": 947,
+          "max": 947
+        },
+        "nodes_per_shard": {
+          "min": 2,
+          "median": 24,
+          "p95": 21570,
+          "max": 21570
+        },
+        "internal_edges": 35718,
+        "boundary_edges": 1356,
+        "boundary_ratio": 0.036575,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.74083,
+        "full_index_time_ms": 5210.342899998068,
+        "database_size_bytes": 132984832,
+        "benchmark": "B1-aria2",
+        "strategy": "build-aware",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+        "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f"
+      },
+      {
+        "shard_count": 21,
+        "files_per_shard": {
+          "min": 1,
+          "median": 79,
+          "p95": 79,
+          "max": 79
+        },
+        "nodes_per_shard": {
+          "min": 2,
+          "median": 1719,
+          "p95": 2393,
+          "max": 2544
+        },
+        "internal_edges": 29694,
+        "boundary_edges": 7380,
+        "boundary_ratio": 0.199061,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.087375,
+        "full_index_time_ms": 5414.028600003803,
+        "database_size_bytes": 137142272,
+        "benchmark": "B1-aria2",
+        "strategy": "structural",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+        "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f"
+      },
+      {
+        "shard_count": 46,
+        "files_per_shard": {
+          "min": 1,
+          "median": 2,
+          "p95": 216,
+          "max": 421
+        },
+        "nodes_per_shard": {
+          "min": 5,
+          "median": 53,
+          "p95": 9989,
+          "max": 18496
+        },
+        "internal_edges": 55323,
+        "boundary_edges": 4291,
+        "boundary_ratio": 0.07198,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.378025,
+        "full_index_time_ms": 10233.672899994417,
+        "database_size_bytes": 240123904,
+        "benchmark": "B2-brpc",
+        "strategy": "directory",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+        "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e"
+      },
+      {
+        "shard_count": 40,
+        "files_per_shard": {
+          "min": 1,
+          "median": 2,
+          "p95": 10,
+          "max": 842
+        },
+        "nodes_per_shard": {
+          "min": 5,
+          "median": 38,
+          "p95": 228,
+          "max": 33892
+        },
+        "internal_edges": 56858,
+        "boundary_edges": 2756,
+        "boundary_ratio": 0.046231,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.692691,
+        "full_index_time_ms": 10081.547200010391,
+        "database_size_bytes": 239067136,
+        "benchmark": "B2-brpc",
+        "strategy": "build-aware",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+        "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e"
+      },
+      {
+        "shard_count": 56,
+        "files_per_shard": {
+          "min": 1,
+          "median": 2,
+          "p95": 78,
+          "max": 78
+        },
+        "nodes_per_shard": {
+          "min": 5,
+          "median": 67,
+          "p95": 3761,
+          "max": 4884
+        },
+        "internal_edges": 52365,
+        "boundary_edges": 7249,
+        "boundary_ratio": 0.121599,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.09982,
+        "full_index_time_ms": 10047.499299995252,
+        "database_size_bytes": 242143232,
+        "benchmark": "B2-brpc",
+        "strategy": "structural",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+        "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e"
+      },
+      {
+        "shard_count": 64,
+        "files_per_shard": {
+          "min": 1,
+          "median": 11,
+          "p95": 101,
+          "max": 209
+        },
+        "nodes_per_shard": {
+          "min": 3,
+          "median": 461,
+          "p95": 5867,
+          "max": 28960
+        },
+        "internal_edges": 131893,
+        "boundary_edges": 11692,
+        "boundary_ratio": 0.081429,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.244071,
+        "full_index_time_ms": 34394.591799995396,
+        "database_size_bytes": 884084736,
+        "benchmark": "B3-rocksdb",
+        "strategy": "directory",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+        "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544"
+      },
+      {
+        "shard_count": 59,
+        "files_per_shard": {
+          "min": 1,
+          "median": 12,
+          "p95": 124,
+          "max": 209
+        },
+        "nodes_per_shard": {
+          "min": 3,
+          "median": 610,
+          "p95": 8459,
+          "max": 28960
+        },
+        "internal_edges": 132018,
+        "boundary_edges": 11567,
+        "boundary_ratio": 0.080559,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.244071,
+        "full_index_time_ms": 34533.900199996424,
+        "database_size_bytes": 883933184,
+        "benchmark": "B3-rocksdb",
+        "strategy": "build-aware",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+        "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544"
+      },
+      {
+        "shard_count": 70,
+        "files_per_shard": {
+          "min": 1,
+          "median": 14,
+          "p95": 65,
+          "max": 70
+        },
+        "nodes_per_shard": {
+          "min": 3,
+          "median": 732,
+          "p95": 5234,
+          "max": 12153
+        },
+        "internal_edges": 130266,
+        "boundary_edges": 13319,
+        "boundary_ratio": 0.09276,
+        "isolated_shards": 0,
+        "giant_shard_ratio": 0.102424,
+        "full_index_time_ms": 35636.12229999853,
+        "database_size_bytes": 886341632,
+        "benchmark": "B3-rocksdb",
+        "strategy": "structural",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+        "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544"
+      }
+    ]
+  },
+  "mutations": {
+    "schema_version": 1,
+    "repository": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+    "mutations": [
+      {
+        "mutation": "M1-local-body",
+        "parity": true,
+        "api_fingerprint_changed": false,
+        "boundary_edge_added": 0,
+        "boundary_edge_removed": 0,
+        "delta": {
+          "nodes_added": 0,
+          "nodes_removed": 0,
+          "nodes_updated": 71,
+          "edges_added": 0,
+          "edges_removed": 0,
+          "old_api_fingerprint": {
+            "shard:00cf6a8c0154f4fd75dca86e99da070927881732e674aa78afe877ed21885fdc": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:192ea9d4facb34b7943249a3d80150ed8cfed7871fd6e8284bfab9c753ea313e": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:1bbfb0eaa41d85f81b849e9a5bfe3292b2136ce686968f32083832eaf78744d2": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:2219e15981f32708890ad0859fd04be48cff9f4ea12fe678f48c9cb1f10cbc79": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:24ffe69f90ee3707065f74cc92088a5cf3fb895e48dc6dcd44b9b0208ef763aa": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:52482047b353725ab5c8b7330d58ca13ebcf5092c8150f160fd821fb10750f7b": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:53c6d0a58d56dc472400aed7c80cb3c448306c890fe319586c011514403cbd35": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:5d043fa13321553d7e151689db816e5e1499c0c966a26be5c748fe02a15be764": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:67e48b86089ebe77ba88d768defc1e532df665c01527f8fc69612e3bd1376a8f": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:70dca48121395afc52eab3d2a4af7bf19f686e96b8a97db05821fc71e723a1a9": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:7642fe9a5374146bfc336c0ec521e4c90c8963feef0969f51aab135c0ac476b4": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:8dca877f0c51383c8fd361ba93931a8c007ff200cb0e830ee3844888e507f603": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:98baa13e81cb7c4cbe426f21c95052b2a30fd75cc36089e32c0245872bdd9a80": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:98edc6ed40ba982e4aca7f042732b8533fa1ef462e38ce3d9c9ac73bd92d4613": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:9c0ddb044eeec44eaacb2438c8e507d01bd8d72fe643f328e4c4ed065a3af7df": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:b7d68d50002f9d7f3a8d1682240c080208c22e972c0bbfe69a81281886514442": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:d830ae3f713d45f5dd99de29efcd6d1c9ea2a3709031f4c35487678d5753df23": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:e03d77aeffd4e2c9fd0e6c420fc4715807fd820c356afbe44c96b1362c5d9e5b": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:ee88afa4ee0f42162436c3fb6af2b0c4d99abda76ee04a9501c08a6242061dce": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:f0ceb95e1716bdb4d6f5516107ffa759d3f313429668f337c2c1a56617823147": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:f49de170862f32823aaa8ab200e3f82ae0df729ab3e8135854e639fa2357bf4a": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6"
+          },
+          "new_api_fingerprint": {
+            "shard:00cf6a8c0154f4fd75dca86e99da070927881732e674aa78afe877ed21885fdc": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:192ea9d4facb34b7943249a3d80150ed8cfed7871fd6e8284bfab9c753ea313e": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:1bbfb0eaa41d85f81b849e9a5bfe3292b2136ce686968f32083832eaf78744d2": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:2219e15981f32708890ad0859fd04be48cff9f4ea12fe678f48c9cb1f10cbc79": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:24ffe69f90ee3707065f74cc92088a5cf3fb895e48dc6dcd44b9b0208ef763aa": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:52482047b353725ab5c8b7330d58ca13ebcf5092c8150f160fd821fb10750f7b": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:53c6d0a58d56dc472400aed7c80cb3c448306c890fe319586c011514403cbd35": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:5d043fa13321553d7e151689db816e5e1499c0c966a26be5c748fe02a15be764": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:67e48b86089ebe77ba88d768defc1e532df665c01527f8fc69612e3bd1376a8f": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:70dca48121395afc52eab3d2a4af7bf19f686e96b8a97db05821fc71e723a1a9": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:7642fe9a5374146bfc336c0ec521e4c90c8963feef0969f51aab135c0ac476b4": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:8dca877f0c51383c8fd361ba93931a8c007ff200cb0e830ee3844888e507f603": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:98baa13e81cb7c4cbe426f21c95052b2a30fd75cc36089e32c0245872bdd9a80": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:98edc6ed40ba982e4aca7f042732b8533fa1ef462e38ce3d9c9ac73bd92d4613": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:9c0ddb044eeec44eaacb2438c8e507d01bd8d72fe643f328e4c4ed065a3af7df": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:b7d68d50002f9d7f3a8d1682240c080208c22e972c0bbfe69a81281886514442": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:d830ae3f713d45f5dd99de29efcd6d1c9ea2a3709031f4c35487678d5753df23": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:e03d77aeffd4e2c9fd0e6c420fc4715807fd820c356afbe44c96b1362c5d9e5b": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:ee88afa4ee0f42162436c3fb6af2b0c4d99abda76ee04a9501c08a6242061dce": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:f0ceb95e1716bdb4d6f5516107ffa759d3f313429668f337c2c1a56617823147": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:f49de170862f32823aaa8ab200e3f82ae0df729ab3e8135854e639fa2357bf4a": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6"
+          },
+          "boundary_dirty": [],
+          "shards_updated": [
+            "shard:e03d77aeffd4e2c9fd0e6c420fc4715807fd820c356afbe44c96b1362c5d9e5b"
+          ],
+          "references_reprocessed": 442,
+          "references_reused": 48667,
+          "directly_affected_shards": [],
+          "affected_boundary_edges": [],
+          "impact_frontier_size": 0,
+          "wide_impact": false
+        },
+        "metrics": {
+          "files_scanned": 1168,
+          "files_parsed": 1,
+          "parse_failures": 0,
+          "syntax_error_files": 1,
+          "nodes_created": 29117,
+          "edges_created": 37074,
+          "raw_references": 49109,
+          "resolved_references": 10804,
+          "ambiguous_references": 13966,
+          "unresolved_references": 24339,
+          "shards_created": 21,
+          "boundary_edges": 7380,
+          "files_reparsed": 1,
+          "files_reused": 1167,
+          "references_reprocessed": 442,
+          "references_reused": 48667,
+          "shards_updated": 1,
+          "shards_reused": 20,
+          "boundary_edges_reprocessed": 0,
+          "boundary_edges_reused": 7380,
+          "impact_frontier_size": 0,
+          "wide_impact": false,
+          "index_time_ms": 0.0,
+          "query_time_ms": 0.0,
+          "incremental_time_ms": 4664.397999993525,
+          "changed_files": 1,
+          "affected_nodes": 71,
+          "affected_edges": 0,
+          "database_size": 137330688
+        },
+        "clean_restored": true
+      },
+      {
+        "mutation": "M2-internal-call",
+        "parity": true,
+        "api_fingerprint_changed": false,
+        "boundary_edge_added": 0,
+        "boundary_edge_removed": 0,
+        "delta": {
+          "nodes_added": 2,
+          "nodes_removed": 0,
+          "nodes_updated": 71,
+          "edges_added": 3,
+          "edges_removed": 0,
+          "old_api_fingerprint": {
+            "shard:092290a3d389eb9935119d7b03dc08d969b3826258f6b04134feb23fceb27290": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:108a8dd137f644c20762c54217fe67fc855aa76a4b16469cc95df6899933577f": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:284cced6bb8ba88f179eb0a6da65911944d833a92e66ab13dd30909c78935193": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:3576336154b70eded44645c821e0586a4447dbbcd5e5ae9634e381869c6c5506": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:41311a61b3fcac80c3c487ea5dc0f760ea676f4094d675acc72a594d83857968": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:483b2cfd8da46821338d5c3d48552190692e4b5b6170a6de966b32e7c6ae510c": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:4b3d4d824d0eb67ccb3215014ef09002e2e8c58392925d2cab31d8467bdc8de5": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:6b5bc061d793c5cb91cbb9ed3eb3674f0ebd2dd8d885879b5b8c9e9c29599fd1": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:8ec43f4d0a1a497b515dae0dc2ac8bd9a29dfe122b4b0db7bc72a7f826ec2eb7": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:912342547efbcb4b3b778d0ca4dc53005081b82e7f9d0c8ab1e983394c495f1e": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:95b4cc874e98f7b075ab184c7069def7c9edc96c55f559558d62b077283dcb6b": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:aba38bb3d5b34c9c612f825b2d4a65ebb8bcb254244cf19cc656420e0ef4c04f": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:adc1af6f0cd1d1e88a55680adf126d0a90264a81ab3fa7795b9e19cb977efa09": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:b1bf7f9b53701a10aa11c5c1009d055f49e7bf0e71a1b5c053fed254433cebaf": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:c18387add13f119079a17d642b29719fdb50c721eaa553eccf2882b110c2c7e8": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:c3148a48afdcb4259b9fcf452e5103956046a9424f0ff0ab99a57b51651ea4ec": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:c54aab377a92b58ddc8a7616343e79c51556a5f792c34e149bb528d0c7c1f1b9": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:c60c76bf9a717c634fa6e1498c00580649b417f8e2388d1b73b35e5e3330a67a": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:d7f3becd902b9253d3806c4175a097fa1759772575d4712acc46870888a1350c": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:e0f0ac5522c8a37680668bea0b4a90096f43704e9e89656db753227cddc09a44": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:f76a24d21025173f082ba18ba4fe404387a6330cd71c0d355397332582abc81a": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7"
+          },
+          "new_api_fingerprint": {
+            "shard:092290a3d389eb9935119d7b03dc08d969b3826258f6b04134feb23fceb27290": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:108a8dd137f644c20762c54217fe67fc855aa76a4b16469cc95df6899933577f": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:284cced6bb8ba88f179eb0a6da65911944d833a92e66ab13dd30909c78935193": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:3576336154b70eded44645c821e0586a4447dbbcd5e5ae9634e381869c6c5506": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:41311a61b3fcac80c3c487ea5dc0f760ea676f4094d675acc72a594d83857968": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:483b2cfd8da46821338d5c3d48552190692e4b5b6170a6de966b32e7c6ae510c": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:4b3d4d824d0eb67ccb3215014ef09002e2e8c58392925d2cab31d8467bdc8de5": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:6b5bc061d793c5cb91cbb9ed3eb3674f0ebd2dd8d885879b5b8c9e9c29599fd1": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:8ec43f4d0a1a497b515dae0dc2ac8bd9a29dfe122b4b0db7bc72a7f826ec2eb7": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:912342547efbcb4b3b778d0ca4dc53005081b82e7f9d0c8ab1e983394c495f1e": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:95b4cc874e98f7b075ab184c7069def7c9edc96c55f559558d62b077283dcb6b": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:aba38bb3d5b34c9c612f825b2d4a65ebb8bcb254244cf19cc656420e0ef4c04f": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:adc1af6f0cd1d1e88a55680adf126d0a90264a81ab3fa7795b9e19cb977efa09": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:b1bf7f9b53701a10aa11c5c1009d055f49e7bf0e71a1b5c053fed254433cebaf": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:c18387add13f119079a17d642b29719fdb50c721eaa553eccf2882b110c2c7e8": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:c3148a48afdcb4259b9fcf452e5103956046a9424f0ff0ab99a57b51651ea4ec": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:c54aab377a92b58ddc8a7616343e79c51556a5f792c34e149bb528d0c7c1f1b9": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:c60c76bf9a717c634fa6e1498c00580649b417f8e2388d1b73b35e5e3330a67a": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:d7f3becd902b9253d3806c4175a097fa1759772575d4712acc46870888a1350c": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:e0f0ac5522c8a37680668bea0b4a90096f43704e9e89656db753227cddc09a44": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:f76a24d21025173f082ba18ba4fe404387a6330cd71c0d355397332582abc81a": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7"
+          },
+          "boundary_dirty": [],
+          "shards_updated": [
+            "shard:b1bf7f9b53701a10aa11c5c1009d055f49e7bf0e71a1b5c053fed254433cebaf"
+          ],
+          "references_reprocessed": 443,
+          "references_reused": 48667,
+          "directly_affected_shards": [],
+          "affected_boundary_edges": [],
+          "impact_frontier_size": 0,
+          "wide_impact": false
+        },
+        "metrics": {
+          "files_scanned": 1168,
+          "files_parsed": 1,
+          "parse_failures": 0,
+          "syntax_error_files": 1,
+          "nodes_created": 29119,
+          "edges_created": 37077,
+          "raw_references": 49110,
+          "resolved_references": 10805,
+          "ambiguous_references": 13966,
+          "unresolved_references": 24339,
+          "shards_created": 21,
+          "boundary_edges": 7380,
+          "files_reparsed": 1,
+          "files_reused": 1167,
+          "references_reprocessed": 443,
+          "references_reused": 48667,
+          "shards_updated": 1,
+          "shards_reused": 20,
+          "boundary_edges_reprocessed": 0,
+          "boundary_edges_reused": 7380,
+          "impact_frontier_size": 0,
+          "wide_impact": false,
+          "index_time_ms": 0.0,
+          "query_time_ms": 0.0,
+          "incremental_time_ms": 4694.18140000198,
+          "changed_files": 1,
+          "affected_nodes": 73,
+          "affected_edges": 3,
+          "database_size": 137240576
+        },
+        "clean_restored": true
+      },
+      {
+        "mutation": "M3-public-signature",
+        "parity": true,
+        "api_fingerprint_changed": true,
+        "boundary_edge_added": 0,
+        "boundary_edge_removed": 0,
+        "delta": {
+          "nodes_added": 1,
+          "nodes_removed": 1,
+          "nodes_updated": 70,
+          "edges_added": 1,
+          "edges_removed": 1,
+          "old_api_fingerprint": {
+            "shard:032ba45957ae5ce66f4b311be2ef38ce506956dad962a20889ca1ca620f99cfe": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:168238c9f050db569fe6f6a839a26c18738cad34e911d42e1aa68fdefd8e0417": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:3014a20c3132b9ec1be2b85e3a1336dc011b6f392edb7b1f9d26b594cc55e37d": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:354489acab192949ac0f03916b1f9fb759471dc2ff004871270a4f1c1474a4c8": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:4a5b302a36bf661bd80fa439d8d8e302709e4bf4a41a6a3b3f3615c623d6e025": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:5c248d933e266996fefa6c9d07bbb876df6904b9e6ac0543e00bf942ff9fbdd7": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:5fca5fb06c72080e8f1c1ae47ad719ca433f18e89eaf542bc82a3ae0b20e9cf4": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:60cced243a341a60a3c21bb9a3cdab13e521589a3fe2de167193e60ac3b0fc0d": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:6a4ef809b2239064488d7287b95c4fd189fed81fd8041c9b74b161951a49cc05": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:6fdb3c822f77c3398405618175c12373a9a5ccd966ca47a3c3292fce5eb27be5": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:8aca22e715557a123b1ae55c4e2a51f1e60bd2c2e7ce2a6659985bf0837440ef": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:8af9125466e508ae20d8e6708113d6bf41147462724bd5b7fb2a200d8f8ac79e": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:92fe024e083d2102f93ee9c88f3955fedf752f4839bc50eb8d6ded1fd972b943": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:96c667b1eb33b8d2320bab35c01389957885c1762a6d40b45ce5758f8116e3ba": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:9ee73f813545f573de8cf62fdb94f2cedac88b76e910ac3d8372565206eff35c": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:b7704c334c59eb0d5002106ce0d5de2891313bd868d6d7c0ed3b42547e481b32": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:c5688a28e12107827ee58f0f9780ca5c9e8a8e4ad2e3ff293a00ab81ea1e962c": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:cb51803ffaab7a309c843a7e5719c0dbcc863de6cd6981a3df1d30ea9fa768c7": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:d074cf3176ba9d1d55430ec89ff979cadbca90b91e1b4c3c5972b64a9ee2703f": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:e726063dff750e81216563f84eaa8193225f9b16496a04be7f3b93b6950d00a7": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:fbabf25a5f44bfcdee34da9312a21499d55ee6a90b2696ba92feb5821a3d8b01": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f"
+          },
+          "new_api_fingerprint": {
+            "shard:032ba45957ae5ce66f4b311be2ef38ce506956dad962a20889ca1ca620f99cfe": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:168238c9f050db569fe6f6a839a26c18738cad34e911d42e1aa68fdefd8e0417": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:3014a20c3132b9ec1be2b85e3a1336dc011b6f392edb7b1f9d26b594cc55e37d": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:354489acab192949ac0f03916b1f9fb759471dc2ff004871270a4f1c1474a4c8": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:4a5b302a36bf661bd80fa439d8d8e302709e4bf4a41a6a3b3f3615c623d6e025": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:5c248d933e266996fefa6c9d07bbb876df6904b9e6ac0543e00bf942ff9fbdd7": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:5fca5fb06c72080e8f1c1ae47ad719ca433f18e89eaf542bc82a3ae0b20e9cf4": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:60cced243a341a60a3c21bb9a3cdab13e521589a3fe2de167193e60ac3b0fc0d": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:6a4ef809b2239064488d7287b95c4fd189fed81fd8041c9b74b161951a49cc05": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:6fdb3c822f77c3398405618175c12373a9a5ccd966ca47a3c3292fce5eb27be5": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:8aca22e715557a123b1ae55c4e2a51f1e60bd2c2e7ce2a6659985bf0837440ef": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:8af9125466e508ae20d8e6708113d6bf41147462724bd5b7fb2a200d8f8ac79e": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:92fe024e083d2102f93ee9c88f3955fedf752f4839bc50eb8d6ded1fd972b943": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:96c667b1eb33b8d2320bab35c01389957885c1762a6d40b45ce5758f8116e3ba": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:9ee73f813545f573de8cf62fdb94f2cedac88b76e910ac3d8372565206eff35c": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:b7704c334c59eb0d5002106ce0d5de2891313bd868d6d7c0ed3b42547e481b32": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:c5688a28e12107827ee58f0f9780ca5c9e8a8e4ad2e3ff293a00ab81ea1e962c": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:cb51803ffaab7a309c843a7e5719c0dbcc863de6cd6981a3df1d30ea9fa768c7": "f708f543fe188ef7e49507a48ca3a9475e6c6d1769a721e28c601cefe1ac9e75",
+            "shard:d074cf3176ba9d1d55430ec89ff979cadbca90b91e1b4c3c5972b64a9ee2703f": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:e726063dff750e81216563f84eaa8193225f9b16496a04be7f3b93b6950d00a7": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:fbabf25a5f44bfcdee34da9312a21499d55ee6a90b2696ba92feb5821a3d8b01": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f"
+          },
+          "boundary_dirty": [
+            "shard:cb51803ffaab7a309c843a7e5719c0dbcc863de6cd6981a3df1d30ea9fa768c7"
+          ],
+          "shards_updated": [
+            "shard:cb51803ffaab7a309c843a7e5719c0dbcc863de6cd6981a3df1d30ea9fa768c7"
+          ],
+          "references_reprocessed": 443,
+          "references_reused": 48666,
+          "directly_affected_shards": [],
+          "affected_boundary_edges": [],
+          "impact_frontier_size": 0,
+          "wide_impact": false
+        },
+        "metrics": {
+          "files_scanned": 1168,
+          "files_parsed": 1,
+          "parse_failures": 0,
+          "syntax_error_files": 1,
+          "nodes_created": 29117,
+          "edges_created": 37074,
+          "raw_references": 49109,
+          "resolved_references": 10804,
+          "ambiguous_references": 13966,
+          "unresolved_references": 24339,
+          "shards_created": 21,
+          "boundary_edges": 7380,
+          "files_reparsed": 1,
+          "files_reused": 1167,
+          "references_reprocessed": 443,
+          "references_reused": 48666,
+          "shards_updated": 1,
+          "shards_reused": 20,
+          "boundary_edges_reprocessed": 0,
+          "boundary_edges_reused": 7380,
+          "impact_frontier_size": 0,
+          "wide_impact": false,
+          "index_time_ms": 0.0,
+          "query_time_ms": 0.0,
+          "incremental_time_ms": 4707.517499991809,
+          "changed_files": 1,
+          "affected_nodes": 72,
+          "affected_edges": 2,
+          "database_size": 137428992
+        },
+        "clean_restored": true
+      },
+      {
+        "mutation": "M4-cross-shard-add",
+        "parity": true,
+        "api_fingerprint_changed": false,
+        "boundary_edge_added": 1,
+        "boundary_edge_removed": 0,
+        "delta": {
+          "nodes_added": 1,
+          "nodes_removed": 0,
+          "nodes_updated": 17,
+          "edges_added": 2,
+          "edges_removed": 0,
+          "old_api_fingerprint": {
+            "shard:0fb8ce16f841e84dd4e55460b4c4d09aa6c954170c7ffca5f1b3968264b7e0c8": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:0fd509c165eae2b4c7de8f2a75bd61362670761dc71ae0e2cf09284b1794b7d9": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:12b17efb308615ab72e6fd37f4e6caf51665fa8847559cff4ce7e3faa9fd3759": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:1b7868b83930649e867ba1a8c797bac86687622c54bb744855d6631cfabe9acc": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:21667dea327351b7596b4d7ee99e68e72c240a104a80bb705459b477628fc06e": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:34f0e88457e4973e1e45f54f43dc8048cb409388519b0fa099e68e0be8f2fe13": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:499838a97e0002b893f254e6037bebb6e7be7ca335373fa4d18f4d5fab6879a3": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:5a364497659b43db0aaa2482faef463337ab617d80217cf185e3e79dab6e9762": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:5f183a15fcee979e82da913797d9a068fdd9a129312ebabf6f02f57c2d927ebe": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:65cb7fdba669c3594cecb13d3f093ea60a840a911d810a8acaca61f0f6abb1fe": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:7590631f73a932ef6ff656227c4f5694777275d27b3b9550e0463947a49dc899": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:7e2eee2ee6c9b0ac4fde730d67f577e0c9e3f80209902bcbfe087d35cc9efb4a": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:9372051cf11913736c58cf6c86609689f8ef85cef005793ed5f701d966c72d05": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:a439de851f9d775f66a3f0613bd532843fd0ccd9798fc0adb6c6c00ee0325402": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:a5bfd6b6c4d0b531bbd0038018b3623ae8de482efc0c85d2fb11519fa0035c0f": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:af35f20083a1b15d2002443f3fa3a73d432781faf9ed3fd0cca8207091819813": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:c7592140e1ff0d55823ac5deac56b48327b3d2fdcbed735578218795f5de37d4": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:ec6e01512bc559810033844f8892f44c8445e8e2313e7eaa1cd39e27e825b708": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:f0bbe57d1e405dd3beea63c5b978493a7214531254005f157bfa37723a725e76": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:fdfdefa237caa13afd5c13c45af9f7529f115008812af0f92b2b0dd8e168ad3f": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:fe16e61902d8adfca4d7059883a6f2b53fdd6da992bc5f19b2e039abb2d3b828": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed"
+          },
+          "new_api_fingerprint": {
+            "shard:0fb8ce16f841e84dd4e55460b4c4d09aa6c954170c7ffca5f1b3968264b7e0c8": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:0fd509c165eae2b4c7de8f2a75bd61362670761dc71ae0e2cf09284b1794b7d9": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:12b17efb308615ab72e6fd37f4e6caf51665fa8847559cff4ce7e3faa9fd3759": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:1b7868b83930649e867ba1a8c797bac86687622c54bb744855d6631cfabe9acc": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:21667dea327351b7596b4d7ee99e68e72c240a104a80bb705459b477628fc06e": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:34f0e88457e4973e1e45f54f43dc8048cb409388519b0fa099e68e0be8f2fe13": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:499838a97e0002b893f254e6037bebb6e7be7ca335373fa4d18f4d5fab6879a3": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:5a364497659b43db0aaa2482faef463337ab617d80217cf185e3e79dab6e9762": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:5f183a15fcee979e82da913797d9a068fdd9a129312ebabf6f02f57c2d927ebe": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:65cb7fdba669c3594cecb13d3f093ea60a840a911d810a8acaca61f0f6abb1fe": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:7590631f73a932ef6ff656227c4f5694777275d27b3b9550e0463947a49dc899": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:7e2eee2ee6c9b0ac4fde730d67f577e0c9e3f80209902bcbfe087d35cc9efb4a": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:9372051cf11913736c58cf6c86609689f8ef85cef005793ed5f701d966c72d05": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:a439de851f9d775f66a3f0613bd532843fd0ccd9798fc0adb6c6c00ee0325402": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:a5bfd6b6c4d0b531bbd0038018b3623ae8de482efc0c85d2fb11519fa0035c0f": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:af35f20083a1b15d2002443f3fa3a73d432781faf9ed3fd0cca8207091819813": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:c7592140e1ff0d55823ac5deac56b48327b3d2fdcbed735578218795f5de37d4": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:ec6e01512bc559810033844f8892f44c8445e8e2313e7eaa1cd39e27e825b708": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:f0bbe57d1e405dd3beea63c5b978493a7214531254005f157bfa37723a725e76": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282",
+            "shard:fdfdefa237caa13afd5c13c45af9f7529f115008812af0f92b2b0dd8e168ad3f": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:fe16e61902d8adfca4d7059883a6f2b53fdd6da992bc5f19b2e039abb2d3b828": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed"
+          },
+          "boundary_dirty": [],
+          "shards_updated": [
+            "shard:12b17efb308615ab72e6fd37f4e6caf51665fa8847559cff4ce7e3faa9fd3759"
+          ],
+          "references_reprocessed": 26,
+          "references_reused": 49084,
+          "directly_affected_shards": [],
+          "affected_boundary_edges": [
+            "edge:1043700d337ad35082bf6a32176cc0201446af4fa6d91ac74a1e0895f99287c5"
+          ],
+          "impact_frontier_size": 0,
+          "wide_impact": false
+        },
+        "metrics": {
+          "files_scanned": 1168,
+          "files_parsed": 1,
+          "parse_failures": 0,
+          "syntax_error_files": 0,
+          "nodes_created": 29118,
+          "edges_created": 37076,
+          "raw_references": 49110,
+          "resolved_references": 10805,
+          "ambiguous_references": 13966,
+          "unresolved_references": 24339,
+          "shards_created": 21,
+          "boundary_edges": 7381,
+          "files_reparsed": 1,
+          "files_reused": 1167,
+          "references_reprocessed": 26,
+          "references_reused": 49084,
+          "shards_updated": 1,
+          "shards_reused": 20,
+          "boundary_edges_reprocessed": 1,
+          "boundary_edges_reused": 7380,
+          "impact_frontier_size": 0,
+          "wide_impact": false,
+          "index_time_ms": 0.0,
+          "query_time_ms": 0.0,
+          "incremental_time_ms": 4568.273800003226,
+          "changed_files": 1,
+          "affected_nodes": 18,
+          "affected_edges": 2,
+          "database_size": 137392128
+        },
+        "clean_restored": true
+      },
+      {
+        "mutation": "M5-cross-shard-remove",
+        "parity": true,
+        "api_fingerprint_changed": false,
+        "boundary_edge_added": 0,
+        "boundary_edge_removed": 1,
+        "delta": {
+          "nodes_added": 0,
+          "nodes_removed": 1,
+          "nodes_updated": 17,
+          "edges_added": 0,
+          "edges_removed": 2,
+          "old_api_fingerprint": {
+            "shard:019683c4f734f78d7baa80dec592c3d7a6a3d24956f0d52a8007cc7e1fde8c42": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:12dc46f7b844314cbc55eef7d507294d14008ec0e55f95fe947cc0013d59d768": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:14f4c07e4f9477c43af82c3772f8c9ec1cadab8f6484a902d45afccab3644a96": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:3db718ff492fc51dad74fb74dd5f1a2582cdd52d4f001238bd74e715b9a4be8a": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:432a5de6d401358d3348c7ad7c7bc2631caa26666dce6e2d6925fcebea7a11c7": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:4ef0d5107911efbc3e40d2a5f053c51e13bf6a92dabab2372eb825f8555e17ae": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:53a6140ae9c6d95199b3c42a92c4d84621af1634a2c9b3271eb64c2171ad7fc2": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:5cbd8ddf96119000d93dca5385e0a2dd38da857d2b01752dfc26d1f2deb0d077": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:6094c11b3f0278c97d44473be9c6e30c806e7e3245cad06a14cd2b24386048f5": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:636d98c71b0878c3a50729f026152b482b3742a4c596434ef748a82e0de1bb9b": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:63c60e5292d58afcc0b71d4b427fc0edeac3a040df204c7338154934084e0ae9": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:7aa79cbbe2c385fc256392c3358411ce376da2383bd684c6a2bad2d17b498f4f": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:7b3632a640e89be7d464548149154a32487fe7423b4c5a879cdffa9994f467d9": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:88f1c3673b79af768c89f3b41837e0811d495ecdf77035a79775347b17779e6a": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:a2d7de568f87227f852f7266abcc39312ec42eba89e0d326acc40ffd0eb60a15": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:ab643b5f2698a0a6776df9c77719cabc9914d4beb5b0692dbc24f028974213a9": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:b5728072e919ba4f995056bdcaeafde247566b8ed2d9b18c5de28701d496f2da": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:bf69cdf269122904f26f77695edca5c81b67eaafd1b380a56abce244032a8835": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:d9680948b309c172a5cd1c7223483e545f40d3c31fa7bf813ee8ad10ef6b3dd1": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:f1f21eabb3d2608611d288783c3f0e0a1ca41d0aca64a26c44a034bfb9bb4862": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:f83266282ef86a98076100244b2be6717d03c9683d30ffaa6682b08693a481ad": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282"
+          },
+          "new_api_fingerprint": {
+            "shard:019683c4f734f78d7baa80dec592c3d7a6a3d24956f0d52a8007cc7e1fde8c42": "2ec0d8bcc2fa9986ccbd5c1b16242f24347c30e218472347538ceacdf1d260cf",
+            "shard:12dc46f7b844314cbc55eef7d507294d14008ec0e55f95fe947cc0013d59d768": "46d1e6c043d3e3713815cff3b1c67be0d62b2ce59f237d67ea4e563e441627ed",
+            "shard:14f4c07e4f9477c43af82c3772f8c9ec1cadab8f6484a902d45afccab3644a96": "401610c48eea0d05a197a98b488a2e4d0bdf0fdb88bf94a4d0870f88aa927484",
+            "shard:3db718ff492fc51dad74fb74dd5f1a2582cdd52d4f001238bd74e715b9a4be8a": "f65debddd63742716317e475df03e314eea0dc2abe6f16067d21dc05e4de7a20",
+            "shard:432a5de6d401358d3348c7ad7c7bc2631caa26666dce6e2d6925fcebea7a11c7": "01f0b675997e507ef68e0ffb6aea627e0c015c758dc8b80450d321a046b3a649",
+            "shard:4ef0d5107911efbc3e40d2a5f053c51e13bf6a92dabab2372eb825f8555e17ae": "204d7496b81efc2d36bf4adcfbddf5a70e3b68d50e4209cf6358b3a7e2ac47c3",
+            "shard:53a6140ae9c6d95199b3c42a92c4d84621af1634a2c9b3271eb64c2171ad7fc2": "63e38b52b142258ffd4e1b8fa928f978f4b8abf76bac02561892896ae423a491",
+            "shard:5cbd8ddf96119000d93dca5385e0a2dd38da857d2b01752dfc26d1f2deb0d077": "6d7e8cd0e668ffd20e0bce1b8ea676596c8835cd543aed11a0fcd54efd57b4fb",
+            "shard:6094c11b3f0278c97d44473be9c6e30c806e7e3245cad06a14cd2b24386048f5": "47fa458e54951b0699a7ebd49d860ed5c77f579e57c52fedcaecd77c1c8e97f7",
+            "shard:636d98c71b0878c3a50729f026152b482b3742a4c596434ef748a82e0de1bb9b": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "shard:63c60e5292d58afcc0b71d4b427fc0edeac3a040df204c7338154934084e0ae9": "3d7a0045eaaf996baeaa495aa8382cf79838e02c111e7b637e77496be6de6ab7",
+            "shard:7aa79cbbe2c385fc256392c3358411ce376da2383bd684c6a2bad2d17b498f4f": "7090a8e8b93d64203b40b71eb7e011117958ee62ad24f03cc60a63d9d679ef12",
+            "shard:7b3632a640e89be7d464548149154a32487fe7423b4c5a879cdffa9994f467d9": "7c0b699ea370aea088266c1d860af69e76b9daaa17ac6df4bd86b47eb875e022",
+            "shard:88f1c3673b79af768c89f3b41837e0811d495ecdf77035a79775347b17779e6a": "1363e5503b32d5e5dc9cda793a31e8c49c6e4949771e6ebc51fbc3a74a9de0a9",
+            "shard:a2d7de568f87227f852f7266abcc39312ec42eba89e0d326acc40ffd0eb60a15": "e1d0bcddb631fe307eb0679684d00155c23341efc23c1231dab810c47692726f",
+            "shard:ab643b5f2698a0a6776df9c77719cabc9914d4beb5b0692dbc24f028974213a9": "63a42ffc1af86a48bb5d28cb7b70f4fe6dbfc0e363ff46fc8fe94ae4b25eb8ba",
+            "shard:b5728072e919ba4f995056bdcaeafde247566b8ed2d9b18c5de28701d496f2da": "c796b591ab8a66a6b0aaf48c5dbca2428e4b8225e4c02be909d24a529ba0cceb",
+            "shard:bf69cdf269122904f26f77695edca5c81b67eaafd1b380a56abce244032a8835": "15cc92e4e8ad6ca70de310d57004cc7cc024c7f55348cd7879f52ce1eca1ac46",
+            "shard:d9680948b309c172a5cd1c7223483e545f40d3c31fa7bf813ee8ad10ef6b3dd1": "c76960350368192846acaaac949f1097781f349fd487b65bd9fdabf09811eef8",
+            "shard:f1f21eabb3d2608611d288783c3f0e0a1ca41d0aca64a26c44a034bfb9bb4862": "baa364eefd52455c623d1c47d8c9e2e6d9a93e63ac89e8c3a71b6a2c10b4c0f6",
+            "shard:f83266282ef86a98076100244b2be6717d03c9683d30ffaa6682b08693a481ad": "052e43ae1561cabd77a414b8da502fae3230935e07bd82554f17cbe7e8051282"
+          },
+          "boundary_dirty": [],
+          "shards_updated": [
+            "shard:a2d7de568f87227f852f7266abcc39312ec42eba89e0d326acc40ffd0eb60a15"
+          ],
+          "references_reprocessed": 25,
+          "references_reused": 49084,
+          "directly_affected_shards": [],
+          "affected_boundary_edges": [
+            "edge:d0627c610077d0a4d26bdeb51375fb8e0395d0a8b0892a1abed9b7a4863c79b1"
+          ],
+          "impact_frontier_size": 0,
+          "wide_impact": false
+        },
+        "metrics": {
+          "files_scanned": 1168,
+          "files_parsed": 1,
+          "parse_failures": 0,
+          "syntax_error_files": 0,
+          "nodes_created": 29117,
+          "edges_created": 37074,
+          "raw_references": 49109,
+          "resolved_references": 10804,
+          "ambiguous_references": 13966,
+          "unresolved_references": 24339,
+          "shards_created": 21,
+          "boundary_edges": 7380,
+          "files_reparsed": 1,
+          "files_reused": 1167,
+          "references_reprocessed": 25,
+          "references_reused": 49084,
+          "shards_updated": 1,
+          "shards_reused": 20,
+          "boundary_edges_reprocessed": 1,
+          "boundary_edges_reused": 7379,
+          "impact_frontier_size": 0,
+          "wide_impact": false,
+          "index_time_ms": 0.0,
+          "query_time_ms": 0.0,
+          "incremental_time_ms": 4625.245899995207,
+          "changed_files": 1,
+          "affected_nodes": 18,
+          "affected_edges": 2,
+          "database_size": 137310208
+        },
+        "clean_restored": true
+      }
+    ]
+  },
+  "representative_mutations": [
+    {
+      "mutation": "B2-body",
+      "file": "src/brpc/builtin/common.cpp",
+      "parity": true,
+      "metrics": {
+        "files_scanned": 1168,
+        "files_parsed": 1,
+        "parse_failures": 0,
+        "syntax_error_files": 0,
+        "nodes_created": 48929,
+        "edges_created": 59614,
+        "raw_references": 84941,
+        "resolved_references": 17210,
+        "ambiguous_references": 28421,
+        "unresolved_references": 39310,
+        "shards_created": 56,
+        "boundary_edges": 7249,
+        "files_reparsed": 1,
+        "files_reused": 1167,
+        "references_reprocessed": 71,
+        "references_reused": 84870,
+        "shards_updated": 1,
+        "shards_reused": 55,
+        "boundary_edges_reprocessed": 0,
+        "boundary_edges_reused": 7249,
+        "impact_frontier_size": 0,
+        "wide_impact": false,
+        "index_time_ms": 0.0,
+        "query_time_ms": 0.0,
+        "incremental_time_ms": 8558.260599995265,
+        "changed_files": 1,
+        "affected_nodes": 59,
+        "affected_edges": 0,
+        "database_size": 242597888
+      },
+      "delta": {
+        "nodes_added": 0,
+        "nodes_removed": 0,
+        "nodes_updated": 59,
+        "edges_added": 0,
+        "edges_removed": 0,
+        "boundary_dirty": [],
+        "impact_frontier_size": 0,
+        "wide_impact": false
+      },
+      "clean_restored": true
+    },
+    {
+      "mutation": "B3-body",
+      "file": "db/db_impl/db_impl.cc",
+      "parity": true,
+      "metrics": {
+        "files_scanned": 1478,
+        "files_parsed": 1,
+        "parse_failures": 0,
+        "syntax_error_files": 1,
+        "nodes_created": 118655,
+        "edges_created": 143585,
+        "raw_references": 311111,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "shards_created": 70,
+        "boundary_edges": 13319,
+        "files_reparsed": 1,
+        "files_reused": 1477,
+        "references_reprocessed": 2266,
+        "references_reused": 308845,
+        "shards_updated": 1,
+        "shards_reused": 69,
+        "boundary_edges_reprocessed": 0,
+        "boundary_edges_reused": 13319,
+        "impact_frontier_size": 0,
+        "wide_impact": false,
+        "index_time_ms": 0.0,
+        "query_time_ms": 0.0,
+        "incremental_time_ms": 30590.293400004157,
+        "changed_files": 1,
+        "affected_nodes": 1066,
+        "affected_edges": 0,
+        "database_size": 887304192
+      },
+      "delta": {
+        "nodes_added": 0,
+        "nodes_removed": 0,
+        "nodes_updated": 1066,
+        "edges_added": 0,
+        "edges_removed": 0,
+        "boundary_dirty": [],
+        "impact_frontier_size": 0,
+        "wide_impact": false
+      },
+      "clean_restored": true
+    }
+  ],
+  "v0_2_baseline": {
+    "schema_version": 1,
+    "benchmarks": [
+      {
+        "benchmark": "B1-aria2",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+        "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+        "c_cpp_loc": 118926,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 388,
+        "parse_coverage_percent": 100.0,
+        "syntax_clean_percent": 66.781,
+        "nodes": 29117,
+        "raw_references": 49109,
+        "resolved_references": 10804,
+        "ambiguous_references": 13966,
+        "unresolved_references": 24339,
+        "edges": 37074,
+        "shards": 8,
+        "boundary_edges": 1356,
+        "full_index_time_ms": 3953.631,
+        "peak_memory_bytes": 195563520,
+        "database_size_bytes": 132034560,
+        "query_anchor": {
+          "id": "symbol:89523111e5baa81245166eb375aa98e6422c0676ebc197d991c34fb5d83b68ac",
+          "name": "move",
+          "qualified_name": "aria2.IndexedList.move",
+          "degree": 219
+        },
+        "query_latency": {
+          "symbol": {
+            "p50_ms": 87.4046,
+            "p95_ms": 92.9569
+          },
+          "caller": {
+            "p50_ms": 50.676,
+            "p95_ms": 54.0689
+          },
+          "callee": {
+            "p50_ms": 15.8981,
+            "p95_ms": 16.5524
+          },
+          "subgraph": {
+            "p50_ms": 25.8543,
+            "p95_ms": 28.0203
+          }
+        },
+        "query_samples": 30,
+        "diagnostics": {
+          "syntax_error_files_by_extension": {
+            ".c": 1,
+            ".cc": 100,
+            ".h": 287
+          },
+          "reference_status_by_type": {
+            "ambiguous:CALLS": 13643,
+            "ambiguous:REFERENCES": 323,
+            "resolved:CALLS": 4824,
+            "resolved:IMPORTS": 5961,
+            "resolved:REFERENCES": 19,
+            "unresolved:CALLS": 22393,
+            "unresolved:IMPORTS": 1607,
+            "unresolved:REFERENCES": 339
+          },
+          "resolution_strategy_status": {
+            "ambiguous:ambiguous": 13140,
+            "import_resolution:unresolved": 13,
+            "include_resolution:resolved": 5961,
+            "include_resolution:unresolved": 1594,
+            "qualified_name_resolution:ambiguous": 250,
+            "qualified_name_resolution:resolved": 164,
+            "same_file_resolution:ambiguous": 576,
+            "same_file_resolution:resolved": 2285,
+            "same_file_resolution:unresolved": 34,
+            "unique_symbol_resolution:resolved": 2394,
+            "unresolved:unresolved": 22698
+          },
+          "unresolved_shape": {
+            "template_or_cast": 10276,
+            "macro_like_call": 7328,
+            "member_or_qualified_call": 3394,
+            "simple_call": 1734,
+            "include": 1607
+          },
+          "ambiguous_shape": {
+            "member_or_qualified_call": 9935,
+            "simple_call": 3619,
+            "template_or_cast": 411,
+            "macro_like_call": 1
+          }
+        }
+      },
+      {
+        "benchmark": "B2-brpc",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+        "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+        "c_cpp_loc": 227154,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 305,
+        "parse_coverage_percent": 100.0,
+        "syntax_clean_percent": 73.887,
+        "nodes": 48929,
+        "raw_references": 84941,
+        "resolved_references": 17210,
+        "ambiguous_references": 28421,
+        "unresolved_references": 39310,
+        "edges": 59614,
+        "shards": 46,
+        "boundary_edges": 4291,
+        "full_index_time_ms": 7590.77,
+        "peak_memory_bytes": 323907584,
+        "database_size_bytes": 237162496,
+        "query_anchor": {
+          "id": "symbol:16d336159fa2e6d6f4a5ea9b5c3f1d4c2ca25a6fe22e3e18c738ca4fcd450d4f",
+          "name": "bthread_usleep",
+          "qualified_name": "bthread_usleep",
+          "degree": 169
+        },
+        "query_latency": {
+          "symbol": {
+            "p50_ms": 159.7985,
+            "p95_ms": 171.1404
+          },
+          "caller": {
+            "p50_ms": 39.6123,
+            "p95_ms": 40.8666
+          },
+          "callee": {
+            "p50_ms": 30.2223,
+            "p95_ms": 32.3249
+          },
+          "subgraph": {
+            "p50_ms": 27.3641,
+            "p95_ms": 28.9022
+          }
+        },
+        "query_samples": 30,
+        "diagnostics": {
+          "syntax_error_files_by_extension": {
+            ".cc": 54,
+            ".cpp": 95,
+            ".h": 155,
+            ".hpp": 1
+          },
+          "reference_status_by_type": {
+            "ambiguous:CALLS": 28062,
+            "ambiguous:IMPORTS": 77,
+            "ambiguous:REFERENCES": 282,
+            "resolved:CALLS": 12693,
+            "resolved:IMPORTS": 4408,
+            "resolved:REFERENCES": 109,
+            "unresolved:CALLS": 36278,
+            "unresolved:IMPLEMENTS": 9,
+            "unresolved:IMPORTS": 2532,
+            "unresolved:REFERENCES": 491
+          },
+          "resolution_strategy_status": {
+            "ambiguous:ambiguous": 23979,
+            "import_resolution:unresolved": 4,
+            "include_resolution:ambiguous": 77,
+            "include_resolution:resolved": 4408,
+            "include_resolution:unresolved": 2528,
+            "qualified_name_resolution:ambiguous": 1936,
+            "qualified_name_resolution:resolved": 2772,
+            "same_file_resolution:ambiguous": 2429,
+            "same_file_resolution:resolved": 7073,
+            "same_file_resolution:unresolved": 160,
+            "unique_symbol_resolution:resolved": 2957,
+            "unresolved:unresolved": 36618
+          },
+          "unresolved_shape": {
+            "macro_like_call": 20987,
+            "template_or_cast": 8750,
+            "simple_call": 5302,
+            "include": 2532,
+            "member_or_qualified_call": 1739
+          },
+          "ambiguous_shape": {
+            "member_or_qualified_call": 20814,
+            "simple_call": 5874,
+            "template_or_cast": 1404,
+            "macro_like_call": 244,
+            "include": 77,
+            "operator_call": 8
+          }
+        }
+      },
+      {
+        "benchmark": "B3-rocksdb",
+        "repository_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+        "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+        "c_cpp_loc": 622772,
+        "files_scanned": 1478,
+        "files_parsed": 1478,
+        "parse_failures": 0,
+        "syntax_error_files": 248,
+        "parse_coverage_percent": 100.0,
+        "syntax_clean_percent": 83.221,
+        "nodes": 118655,
+        "raw_references": 311111,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "edges": 143585,
+        "shards": 64,
+        "boundary_edges": 11692,
+        "full_index_time_ms": 26190.219,
+        "peak_memory_bytes": 1121484800,
+        "database_size_bytes": 876105728,
+        "query_anchor": {
+          "id": "symbol:cb618bfa4c3323b4e748bc80c4df43792ec8ce837d4491a3c392577bc8959b40",
+          "name": "c_str",
+          "qualified_name": "ROCKSDB_NAMESPACE.TEST_F.c_str",
+          "degree": 553
+        },
+        "query_latency": {
+          "symbol": {
+            "p50_ms": 420.2613,
+            "p95_ms": 448.9518
+          },
+          "caller": {
+            "p50_ms": 154.4715,
+            "p95_ms": 165.0693
+          },
+          "callee": {
+            "p50_ms": 69.7679,
+            "p95_ms": 72.4499
+          },
+          "subgraph": {
+            "p50_ms": 66.3325,
+            "p95_ms": 68.0671
+          }
+        },
+        "query_samples": 30,
+        "diagnostics": {
+          "syntax_error_files_by_extension": {
+            ".c": 1,
+            ".cc": 152,
+            ".h": 81,
+            ".inc": 14
+          },
+          "reference_status_by_type": {
+            "ambiguous:CALLS": 90654,
+            "ambiguous:IMPLEMENTS": 14,
+            "ambiguous:IMPORTS": 13,
+            "ambiguous:REFERENCES": 10409,
+            "resolved:CALLS": 42881,
+            "resolved:IMPLEMENTS": 43,
+            "resolved:IMPORTS": 8666,
+            "resolved:REFERENCES": 2891,
+            "unresolved:CALLS": 140530,
+            "unresolved:IMPLEMENTS": 2,
+            "unresolved:IMPORTS": 4174,
+            "unresolved:REFERENCES": 10834
+          },
+          "resolution_strategy_status": {
+            "ambiguous:ambiguous": 86829,
+            "import_resolution:unresolved": 416,
+            "include_resolution:ambiguous": 13,
+            "include_resolution:resolved": 8666,
+            "include_resolution:unresolved": 3758,
+            "qualified_name_resolution:ambiguous": 6914,
+            "qualified_name_resolution:resolved": 1257,
+            "same_file_resolution:ambiguous": 7334,
+            "same_file_resolution:resolved": 26121,
+            "same_file_resolution:unresolved": 303,
+            "unique_symbol_resolution:resolved": 18437,
+            "unresolved:unresolved": 151063
+          },
+          "unresolved_shape": {
+            "macro_like_call": 61307,
+            "template_or_cast": 55738,
+            "simple_call": 26226,
+            "member_or_qualified_call": 8095,
+            "include": 4174
+          },
+          "ambiguous_shape": {
+            "member_or_qualified_call": 49079,
+            "simple_call": 47945,
+            "template_or_cast": 3999,
+            "macro_like_call": 54,
+            "include": 13
+          }
+        }
+      }
+    ]
+  },
+  "benchmark_selection": {
+    "target": {
+      "disk_size_mb": 16.4,
+      "total_files": 1301,
+      "c_cpp_files": 1097,
+      "c_cpp_loc": 307000,
+      "c_family_ratio": 0.903,
+      "average_source_file_loc": 280,
+      "assumed_directory_depth": 6,
+      "assumed_module_count_for_scoring": 15,
+      "assumed_test_file_ratio_for_scoring": 0.15
+    },
+    "similarity_weights": {
+      "scale": 0.3,
+      "language": 0.2,
+      "file_structure": 0.2,
+      "module_structure": 0.15,
+      "test_structure": 0.1,
+      "build_system": 0.05
+    },
+    "frozen_set": {
+      "B1": "aria2/aria2",
+      "B2": "apache/brpc",
+      "B3": "facebook/rocksdb"
+    }
+  },
+  "recommendations": {
+    "B1": "structural when giant_shard_ratio is the constraint; directory remains the low-boundary baseline",
+    "B2": "directory baseline; build-aware lowers boundary ratio but creates a giant shard",
+    "B3": "build-aware for slightly lower boundary ratio; structural is the balanced alternative when giant shards are capped",
+    "policy": "Keep strategy pluggable and select per repository/profile; do not silently replace the directory baseline."
+  }
+}
