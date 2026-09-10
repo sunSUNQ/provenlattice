@@ -1,0 +1,64 @@
+{
+  "task_id": "T05",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "category": "T3-module-understanding",
+  "difficulty": "Hard",
+  "prompt": "Explain the responsibilities and key entry points of the module described by docs/cn/backup_request.md (当后端server可以挂在一个命名服务内时 / Backup Request 限流 / 使用内置限流策略). Identify its important code symbols, dependency/call relationships, and provide both code and documentation evidence.",
+  "ground_truth": {
+    "required_evidence": [
+      {
+        "type": "document_section",
+        "value": "documentsection:dcf07b60c9d54b6886a55e652c19b75f9f8bca778462868f93047202eabf1cff",
+        "heading_path": "当后端server可以挂在一个命名服务内时 / Backup Request 限流 / 使用内置限流策略",
+        "file": "docs/cn/backup_request.md"
+      },
+      {
+        "type": "symbol",
+        "value": "brpc.RateLimitedBackupPolicyOptions"
+      }
+    ],
+    "optional_evidence": [
+      {
+        "type": "symbol",
+        "value": "brpc.RateLimitedBackupPolicyOptions.max_backup_ratio"
+      },
+      {
+        "type": "symbol",
+        "value": "brpc.RateLimitedBackupPolicyOptions.window_size_seconds"
+      }
+    ],
+    "distractor": []
+  },
+  "expected_files": [
+    "src/brpc/backup_request_policy.h"
+  ],
+  "expected_symbols": [
+    "brpc.RateLimitedBackupPolicyOptions",
+    "brpc.RateLimitedBackupPolicyOptions.max_backup_ratio",
+    "brpc.RateLimitedBackupPolicyOptions.window_size_seconds"
+  ],
+  "expected_documents": [
+    "docs/cn/backup_request.md"
+  ],
+  "expected_relationships": [
+    {
+      "edge_id": "edge:7a9a7e6880176489ebd82706815c202d24d9727fc23c8a649b87e42c55c7026f",
+      "type": "DOCUMENTS"
+    },
+    {
+      "edge_id": "edge:a0b60222b9b6695d223b5ed500f94da3f0ad718b59fc344d134644f3882e0fa7",
+      "type": "DOCUMENTS"
+    },
+    {
+      "edge_id": "edge:adf9ef519fe39466662e24659fd5425757eae0c0bc26942227708a8bcd20b171",
+      "type": "DOCUMENTS"
+    }
+  ],
+  "success_criteria": [
+    "describes the module role",
+    "identifies a required entry point",
+    "explains at least one grounded relationship",
+    "cites code and documentation evidence"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "task_id": "T04",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "category": "T2-code-to-document",
+  "difficulty": "Medium",
+  "prompt": "Starting from the code symbol brpc.policy.SetParameters.tau_ms, analyze its role and find the repository documentation that describes its design or use. Cite the relevant document section and explain the code/document evidence.",
+  "ground_truth": {
+    "required_evidence": [
+      {
+        "type": "symbol",
+        "value": "brpc.policy.SetParameters.tau_ms"
+      },
+      {
+        "type": "document_section",
+        "value": "documentsection:d936de7a2d735d5960fb56cab917155f702022c0fdda72cfdb91fa4632ec014e",
+        "heading_path": "此行会被忽略 / 负载均衡 / p2c",
+        "file": "docs/cn/client.md"
+      }
+    ],
+    "optional_evidence": [
+      {
+        "type": "file",
+        "value": "docs/cn/client.md"
+      }
+    ],
+    "distractor": []
+  },
+  "expected_files": [
+    "src/brpc/policy/p2c_ewma_load_balancer.cpp"
+  ],
+  "expected_symbols": [
+    "brpc.policy.SetParameters.tau_ms"
+  ],
+  "expected_documents": [
+    "docs/cn/client.md"
+  ],
+  "expected_relationships": [
+    {
+      "edge_id": "edge:eda88bab895a3d7c6041898fefc0efe6ac8ded37374bd50044d9f515f8d0d434",
+      "type": "DOCUMENTS"
+    }
+  ],
+  "success_criteria": [
+    "identifies the required symbol",
+    "cites the required section",
+    "does not invent a document relationship"
+  ]
+}

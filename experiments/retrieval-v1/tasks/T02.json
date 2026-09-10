@@ -1,0 +1,49 @@
+{
+  "task_id": "T02",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "category": "T1-document-to-code",
+  "difficulty": "Medium",
+  "prompt": "Read the documentation in docs/cn/client.md and its relevant section (此行会被忽略 / 负载均衡 / p2c). Identify the core implementation of the described behavior, name the main code symbol and file, and explain the relationship.",
+  "ground_truth": {
+    "required_evidence": [
+      {
+        "type": "document_section",
+        "value": "documentsection:d936de7a2d735d5960fb56cab917155f702022c0fdda72cfdb91fa4632ec014e",
+        "heading_path": "此行会被忽略 / 负载均衡 / p2c",
+        "file": "docs/cn/client.md"
+      },
+      {
+        "type": "symbol",
+        "value": "brpc.policy.SetParameters.tau_ms"
+      },
+      {
+        "type": "file",
+        "value": "src/brpc/policy/p2c_ewma_load_balancer.cpp"
+      }
+    ],
+    "optional_evidence": [],
+    "distractor": []
+  },
+  "expected_files": [
+    "src/brpc/policy/p2c_ewma_load_balancer.cpp"
+  ],
+  "expected_symbols": [
+    "brpc.policy.SetParameters.tau_ms"
+  ],
+  "expected_documents": [
+    "docs/cn/client.md"
+  ],
+  "expected_relationships": [
+    {
+      "edge_id": "edge:eda88bab895a3d7c6041898fefc0efe6ac8ded37374bd50044d9f515f8d0d434",
+      "type": "DOCUMENTS"
+    }
+  ],
+  "success_criteria": [
+    "identifies the required symbol",
+    "identifies the required file",
+    "cites the documentation section",
+    "explains a grounded relationship"
+  ]
+}

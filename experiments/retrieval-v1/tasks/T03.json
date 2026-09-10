@@ -1,0 +1,49 @@
+{
+  "task_id": "T03",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "category": "T2-code-to-document",
+  "difficulty": "Easy",
+  "prompt": "Starting from the code symbol brpc.policy.AddServersInBatch.replicas, analyze its role and find the repository documentation that describes its design or use. Cite the relevant document section and explain the code/document evidence.",
+  "ground_truth": {
+    "required_evidence": [
+      {
+        "type": "symbol",
+        "value": "brpc.policy.AddServersInBatch.replicas"
+      },
+      {
+        "type": "document_section",
+        "value": "documentsection:2036840a5ff662a2e81cc0e599e2170f0a357e4498e11548fa8cf6b79444491a",
+        "heading_path": "此行会被忽略 / 负载均衡 / c_murmurhash_bl",
+        "file": "docs/cn/client.md"
+      }
+    ],
+    "optional_evidence": [
+      {
+        "type": "file",
+        "value": "docs/cn/client.md"
+      }
+    ],
+    "distractor": []
+  },
+  "expected_files": [
+    "src/brpc/policy/consistent_hashing_load_balancer.cpp"
+  ],
+  "expected_symbols": [
+    "brpc.policy.AddServersInBatch.replicas"
+  ],
+  "expected_documents": [
+    "docs/cn/client.md"
+  ],
+  "expected_relationships": [
+    {
+      "edge_id": "edge:88851d4e2137625542e71e1f0450083e8a4990f9b83a77b80752b360fb84f1db",
+      "type": "DOCUMENTS"
+    }
+  ],
+  "success_criteria": [
+    "identifies the required symbol",
+    "cites the required section",
+    "does not invent a document relationship"
+  ]
+}

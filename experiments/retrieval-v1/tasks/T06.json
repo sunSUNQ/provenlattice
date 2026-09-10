@@ -1,0 +1,56 @@
+{
+  "task_id": "T06",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "category": "T3-module-understanding",
+  "difficulty": "Medium",
+  "prompt": "Explain the responsibilities and key entry points of the module described by docs/cn/backup_request.md (当后端server可以挂在一个命名服务内时 / Backup Request 限流 / 实现说明). Identify its important code symbols, dependency/call relationships, and provide both code and documentation evidence.",
+  "ground_truth": {
+    "required_evidence": [
+      {
+        "type": "document_section",
+        "value": "documentsection:6a455bb24fa6bb38aed0c8bc5cb3cc111b3f973ce87cdc5685526f72d40d2282",
+        "heading_path": "当后端server可以挂在一个命名服务内时 / Backup Request 限流 / 实现说明",
+        "file": "docs/cn/backup_request.md"
+      },
+      {
+        "type": "symbol",
+        "value": "brpc.RateLimitedBackupPolicyOptions.update_interval_seconds"
+      }
+    ],
+    "optional_evidence": [
+      {
+        "type": "symbol",
+        "value": "bvar.Window"
+      }
+    ],
+    "distractor": []
+  },
+  "expected_files": [
+    "src/brpc/backup_request_policy.h",
+    "src/bvar/window.h"
+  ],
+  "expected_symbols": [
+    "brpc.RateLimitedBackupPolicyOptions.update_interval_seconds",
+    "bvar.Window"
+  ],
+  "expected_documents": [
+    "docs/cn/backup_request.md"
+  ],
+  "expected_relationships": [
+    {
+      "edge_id": "edge:f5a8104a6d653434092ad835077cfb37b3e91a2f0ef1f38255e2abf9d76e24a2",
+      "type": "DOCUMENTS"
+    },
+    {
+      "edge_id": "edge:ce7f31d4ac1e43828d37adfc1a2017a276ff6abd39639d793d43320b6b975ad8",
+      "type": "DOCUMENTS"
+    }
+  ],
+  "success_criteria": [
+    "describes the module role",
+    "identifies a required entry point",
+    "explains at least one grounded relationship",
+    "cites code and documentation evidence"
+  ]
+}

@@ -1,0 +1,100 @@
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import uuid
+from pathlib import Path
+from time import perf_counter
+
+from .agent_adapter import CommandAgentAdapter
+from .evaluator import evaluate
+from .metrics import collect_metrics
+from .models import ARM_TOOLS, WRITE_OPERATIONS, RunRequest, RunResult, TaskDefinition, ToolEvent
+from .provenance_tools import repository_head, utc_now, write_events
+
+
+def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root: str | Path,
+             adapter, timeout: float = 900, verify_commit: bool = True) -> dict:
+    if arm not in ARM_TOOLS:
+        raise ValueError(f"unknown arm: {arm}")
+    run_id = f"{task.task_id}-{arm}-r1-{uuid.uuid4().hex[:8]}"
+    run_dir = Path(output_root) / task.task_id / arm / "r1"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    start_time = utc_now()
+    started = perf_counter()
+    repo_path = str(Path(repo_path).resolve())
+    actual_commit = repository_head(repo_path)
+    errors: list[str] = []
+    if verify_commit and actual_commit and actual_commit != task.commit:
+        errors.append(f"REPO_COMMIT_MISMATCH expected={task.commit} actual={actual_commit}")
+    request = RunRequest(run_id, task.task_id, repo_path, task.commit, arm, task.prompt,
+                         sorted(ARM_TOOLS[arm]), {"PL_R1_ARM": arm}, timeout)
+    if errors:
+        adapter_result = type("AdapterResult", (), {"output": "", "events": [],
+                                                     "exit_reason": "preflight_failed",
+                                                     "error": "; ".join(errors)})()
+    else:
+        adapter_result = adapter.run(request)
+    events: list[ToolEvent] = adapter_result.events
+    violations = list(errors)
+    for event in events:
+        if event.operation in WRITE_OPERATIONS:
+            violations.append(f"WRITE_OPERATION:{event.operation}")
+        if event.operation not in ARM_TOOLS[arm]:
+            violations.append(f"DISALLOWED_OPERATION:{event.operation}")
+        if event.operation == "shell" and re.search(
+            r"\b(rm|del|remove-item|move-item|copy-item|git\s+(commit|reset|checkout|push))\b",
+            str(event.query or event.target or ""), re.I,
+        ):
+            violations.append("DESTRUCTIVE_SHELL")
+        command_text = str(event.query or event.target or "")
+        if "provenlattice" in command_text.casefold() or "python -m provenlattice" in command_text.casefold():
+            if arm == "native":
+                violations.append("PROVENLATTICE_ACCESS_IN_NATIVE")
+            elif arm == "codegraph" and event.operation in {
+                "document", "evidence", "related-code", "cross-layer", "implemented", "requirements",
+            }:
+                violations.append(f"KNOWLEDGE_ACCESS_IN_CODEGRAPH:{event.operation}")
+    ended = utc_now()
+    duration_ms = (perf_counter() - started) * 1000
+    status = ("failed" if violations or adapter_result.exit_reason not in {"completed"}
+              else "completed")
+    metrics = collect_metrics(task, events, duration_ms, adapter_result.output)
+    evaluation = evaluate(task, adapter_result.output, events, metrics)
+    result = RunResult(run_id, task.task_id, arm, status,
+                       evaluation["task_success"] if status == "completed" else None,
+                       start_time, ended, duration_ms, len(events), adapter_result.output,
+                       adapter_result.exit_reason, adapter_result.error, sorted(ARM_TOOLS[arm]), violations)
+    run_record = result.to_dict()
+    run_record.update({"repo_path": repo_path, "repo_commit": task.commit,
+                       "prompt": task.prompt, "environment": request.environment,
+                       "agent_actual_commit": actual_commit,
+                       "adapter": type(adapter).__name__})
+    (run_dir / "run.json").write_text(json.dumps(run_record, indent=2, ensure_ascii=False), encoding="utf-8")
+    write_events(run_dir / "events.ndjson", events)
+    (run_dir / "agent-output.txt").write_text(adapter_result.output, encoding="utf-8")
+    (run_dir / "metrics.json").write_text(json.dumps(metrics, indent=2, ensure_ascii=False), encoding="utf-8")
+    (run_dir / "evaluation.json").write_text(json.dumps(evaluation, indent=2, ensure_ascii=False), encoding="utf-8")
+    return {"run_dir": str(run_dir), "run": run_record, "metrics": metrics, "evaluation": evaluation}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run one read-only R1 qualification cell")
+    parser.add_argument("task", type=Path)
+    parser.add_argument("--repo", required=True)
+    parser.add_argument("--arm", choices=sorted(ARM_TOOLS), required=True)
+    parser.add_argument("--agent-command", required=True)
+    parser.add_argument("--results", type=Path, default=Path("experiments/retrieval-v1/results"))
+    parser.add_argument("--timeout", type=float, default=900)
+    parser.add_argument("--skip-commit-check", action="store_true")
+    args = parser.parse_args()
+    result = run_task(TaskDefinition.load(args.task), args.arm, args.repo, args.results,
+                      CommandAgentAdapter(args.agent_command), args.timeout,
+                      verify_commit=not args.skip_commit_check)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    return 0 if result["run"]["status"] == "completed" else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

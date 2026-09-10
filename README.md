@@ -33,7 +33,7 @@ ProvenLattice 希望探索一种新的工程上下文组织方式：
 * 多版本与多人协作场景
 * 面向 Code Agent 的结构化检索
 * Graph-guided Context Retrieval
-* Code Agent 上下文效率与 Token 成本优化
+* Code Agent 工程证据检索质量与效率
 
 ## Vision
 
@@ -53,6 +53,25 @@ Structured Engineering Context
 
 > **更少搜索、更短任务路径、更高信息密度，以及更低的 Agent 上下文成本。**
 
+Token、读取字符数和工具轮次在实验中作为检索效率的辅助观测指标，不是 ProvenLattice 的独立产品职责。
+
+## Standalone Roadmap
+
+ProvenLattice 与 TASCO 是两个独立工具。ProvenLattice 的版本、接口和实验不依赖 TASCO；未来如有组合实验，将在两个工具各自完成独立验证后另行定义。
+
+```text
+Core V0.4  Branch / Session Overlay                         ✅
+V1.0      Knowledge Layer / Cross-Layer Evidence            ✅
+V1.0-R1   Standalone Retrieval Qualification                 next
+V1.1      Commit / ChangeSet / Version Evidence
+V1.2      Runtime / Log / Validation Evidence
+V1.3      Unified Engineering Evidence Query
+V1.4      Large-scale / Multi-branch Qualification
+V2.0      Standalone Agent-facing ProvenLattice
+```
+
+R1 只比较 Native Code Agent、Code Agent + ProvenLattice CodeGraph、Code Agent + ProvenLattice CodeGraph + Knowledge Evidence。当前优先稳定 CLI / Python Query API，再根据实验证据决定是否需要 MCP、Plugin 或 SDK。
+
 ## V1.0 Knowledge Layer
 
 V1.0 在已冻结的 Core V0.4 上加入最小 Knowledge Layer，将 Markdown Spec、Requirement、Architecture 与 Document Section 复用同一套 Node / Edge / Overlay contract 接入 CodeGraph：
@@ -67,7 +86,7 @@ V0.4 的 Overlay SQLite 只保存 ADD/UPDATE/DELETE delta 与 tombstone；`Graph
 
 Knowledge Layer 只使用显式 requirement ID、文件路径、qualified symbol 和 module anchor 等确定性证据。每条原始证据均保留 `resolved / ambiguous / unresolved`、候选、策略、provenance 与 confidence；只有唯一 resolved 证据生成跨层 Edge。当前不包含语义/Embedding/LLM linker。
 
-V1.0 架构与 contract 见 [docs/design-v1.md](docs/design-v1.md)，真实仓结果见 [docs/benchmarks/provenlattice-v1.0-knowledge.md](docs/benchmarks/provenlattice-v1.0-knowledge.md)。V0.x 设计仍保留在 [docs/design-v0.md](docs/design-v0.md)。
+V1.0 架构与 contract 见 [docs/design-v1.md](docs/design-v1.md)，V1.0-R1 实验契约见 [docs/design-v1-r1.md](docs/design-v1-r1.md)，完整路线见 [docs/roadmap.md](docs/roadmap.md)，R1 Harness 见 [experiments/retrieval-v1/README.md](experiments/retrieval-v1/README.md)，当前 qualification 状态见 [docs/benchmarks/provenlattice-v1.0-r1-retrieval.md](docs/benchmarks/provenlattice-v1.0-r1-retrieval.md)，真实仓结果见 [docs/benchmarks/provenlattice-v1.0-knowledge.md](docs/benchmarks/provenlattice-v1.0-knowledge.md)。V0.x 设计仍保留在 [docs/design-v0.md](docs/design-v0.md)。
 
 ### Quick start
 
@@ -93,7 +112,7 @@ Windows PowerShell 中先执行 `$env:PYTHONPATH='src'`。
 
 ## Status
 
-🚧 **Research / V1.0 Knowledge Layer**
+🚧 **Research / V1.0-R1 Retrieval Harness**
 
 当前实现覆盖 Python/C/C++ CodeGraph，以及 Markdown Spec/Requirement/Document 到代码的可追溯确定性证据。Runtime Log、Commit History、Validation Result、Embedding、Vector DB、LLM linker、MCP、UI、TASCO 与 Agent 集成均未引入。
 

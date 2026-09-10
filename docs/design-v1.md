@@ -94,3 +94,7 @@ Hard Gate：`FullIndex(B) + FullKnowledge(B) == IncrementalIndex(A→B) + Increm
 - 结构匹配仅覆盖显式 path/module anchor；没有自然语言实体链接。
 - 代码 generation 改变后的 evidence candidate refresh 仍是全 evidence 级，而非最小候选集合。
 - `document_state` 是索引状态，不作为 Overlay 图实体；Overlay parity 覆盖 Node、Edge、RawEvidenceLink。
+
+## Next qualification
+
+V1.0-R1 的独立检索实验定义见 [design-v1-r1.md](design-v1-r1.md)。它验证 ProvenLattice 自身能否改善真实工程证据定位，不把 Token 压缩、TASCO 或某种 Agent 接口作为前置假设。
