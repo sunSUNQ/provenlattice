@@ -20,3 +20,6 @@ experiments/retrieval-v2/results/_invalid*/
 
 # R2.1 raw cells stay local; audited summaries and lifecycle reports are versioned.
 experiments/retrieval-v2/r2_1/results/T*/
+
+# R2.3 raw Agent cells stay local; manifests, aggregates, and reports are versioned.
+experiments/retrieval-v2/r2_3/results/T*/
