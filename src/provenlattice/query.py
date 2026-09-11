@@ -1,13 +1,19 @@
 from __future__ import annotations
 
+import hashlib
+import json
+import subprocess
 import time
 from pathlib import Path
 
+from .evidence import Evidence, EvidenceBundle, QueryBudget, evidence_id, rank_evidence
 from .overlay import GraphView
 from .storage import decode_row
 
 
 SYMBOL_KINDS = ("Namespace", "Class", "Struct", "Interface", "Function", "Method", "Type")
+CROSS_RELATIONS = {"DESCRIBES", "CONSTRAINS", "IMPLEMENTED_BY", "VERIFIED_BY",
+                   "BELONGS_TO", "DOCUMENTS"}
 
 
 class GraphQuery:
@@ -20,6 +26,7 @@ class GraphQuery:
             current_base_commit=current_base_commit,
         )
         self.storage = self.view.base
+        self._evidence_context: tuple[str, str] | None = None
 
     def close(self) -> None:
         self.view.close()
@@ -34,9 +41,137 @@ class GraphQuery:
     def graph_generation(self) -> int:
         return self.view.graph_generation
 
-    def _result(self, data: object, started: float) -> dict:
+    def _result(self, data: object, started: float, evidence: list[Evidence] | None = None,
+                *, query_type: str = "query", anchor: str = "") -> dict:
+        evidence = rank_evidence(evidence or [])
+        query_seed = json.dumps([query_type, anchor, self.graph_generation], separators=(",", ":"))
         return {"graph_generation": self.graph_generation,
-                "query_time_ms": (time.perf_counter() - started) * 1000, "data": data}
+                "query_time_ms": (time.perf_counter() - started) * 1000, "data": data,
+                "query_id": f"Q-{hashlib.sha256(query_seed.encode()).hexdigest()[:20]}",
+                "query_type": query_type, "anchor": anchor,
+                "evidence": [item.to_dict() for item in evidence],
+                "returned_evidence_ids": [item.evidence_id for item in evidence],
+                "returned_evidence_count": len(evidence),
+                "bundle_size": len(json.dumps([item.to_dict() for item in evidence],
+                                               ensure_ascii=False))}
+
+    def _context(self) -> tuple[str, str]:
+        if self._evidence_context is not None:
+            return self._evidence_context
+        repository = decode_row(self.storage.repository()) if self.storage.repository() else {}
+        repository_id = str(repository.get("repo_id") or repository.get("name") or "unknown")
+        metadata = repository.get("metadata") or {}
+        commit = str(metadata.get("commit") or "")
+        if not commit and repository.get("root_path"):
+            try:
+                root_path = str(repository["root_path"])
+                completed = subprocess.run(
+                    ["git", "-c", f"safe.directory={root_path}", "-C", root_path,
+                     "rev-parse", "HEAD"],
+                    capture_output=True, text=True, timeout=5,
+                )
+                if completed.returncode == 0:
+                    commit = completed.stdout.strip()
+            except (OSError, subprocess.SubprocessError):
+                pass
+        self._evidence_context = (repository_id, commit or "unknown")
+        return self._evidence_context
+
+    def _source_path(self, node: dict | None) -> str | None:
+        if not node:
+            return None
+        metadata = node.get("metadata") or {}
+        if metadata.get("path"):
+            return str(metadata["path"])
+        if node.get("file_id"):
+            row = self.storage.row("SELECT path FROM files WHERE file_id=?", (node["file_id"],))
+            if row:
+                return str(row["path"])
+        return None
+
+    def _node_evidence(self, node: dict) -> Evidence:
+        repository, commit = self._context()
+        is_document = node.get("kind") in {"Document", "DocumentSection", "Requirement",
+                                                   "Spec", "ShardDocument"}
+        kind = "DOCUMENT_SECTION" if is_document else "CODE_DEFINITION"
+        relation = "DOCUMENTS" if is_document else "DEFINES"
+        return Evidence.create(
+            kind=kind, source_id=str(node.get("file_id") or node["id"]), relation=relation,
+            target_id=node["id"], repository=repository, commit=commit,
+            generation=int(node.get("generation") or self.graph_generation),
+            provenance=("markdown_structure" if is_document else "tree_sitter_syntax"),
+            confidence=1.0, source_path=self._source_path(node),
+            start_line=node.get("start_line"), end_line=node.get("end_line"),
+            summary=f"{node.get('kind')} {node.get('qualified_name') or node.get('name')}",
+            fact_id=node["id"], metadata={"entity_kind": node.get("kind"), "direct": True},
+        )
+
+    def _edge_evidence(self, edge: dict, nodes: dict[str, dict], *, distance: int = 1) -> Evidence:
+        repository, commit = self._context()
+        source, target = nodes.get(edge["src_id"]), nodes.get(edge["dst_id"])
+        relation = edge["type"]
+        if relation == "CALLS":
+            kind = "CALL_RELATION"
+        elif relation == "REFERENCES":
+            kind = "REFERENCE"
+        elif relation in CROSS_RELATIONS:
+            kind = "CROSS_LAYER_LINK"
+        else:
+            kind = "DEPENDENCY"
+        metadata = dict(edge.get("metadata") or {})
+        metadata.update({"fact_id": edge["id"], "direct": distance <= 1, "distance": distance,
+                         "resolution_status": "resolved"})
+        return Evidence.create(
+            kind=kind, source_id=edge["src_id"], relation=relation, target_id=edge["dst_id"],
+            repository=repository, commit=commit,
+            generation=int(edge.get("generation") or self.graph_generation),
+            provenance=str(edge.get("provenance") or "static_analysis"),
+            confidence=float(edge.get("confidence") or 0.0), source_path=self._source_path(source),
+            start_line=(source or {}).get("start_line"), end_line=(source or {}).get("end_line"),
+            summary=(f"{(source or {}).get('qualified_name', edge['src_id'])} {relation} "
+                     f"{(target or {}).get('qualified_name', edge['dst_id'])}"),
+            fact_id=edge["id"], metadata=metadata,
+        )
+
+    def _raw_reference_evidence(self, row: dict) -> Evidence:
+        repository, commit = self._context()
+        target = row.get("resolved_symbol_id") or next(iter(row.get("candidate_symbols") or []),
+                                                        f"raw:{row.get('raw_name', '')}")
+        owner = self.view.by_ids("Node", [row.get("owner_symbol_id")])
+        source = decode_row(owner[0]) if owner else None
+        return Evidence.create(
+            kind="REFERENCE", source_id=row["owner_symbol_id"],
+            relation=row.get("reference_type") or "REFERENCES", target_id=target,
+            repository=repository, commit=commit,
+            generation=int(row.get("generation") or self.graph_generation),
+            provenance=str(row.get("provenance") or "tree_sitter_syntax"),
+            confidence=float(row.get("confidence") or 0.0),
+            source_path=self._source_path(source), start_line=row.get("start_line"),
+            end_line=row.get("end_line"), summary=f"reference {row.get('raw_name')}",
+            fact_id=row["id"], metadata={"fact_id": row["id"],
+                "resolution_status": row.get("status"),
+                "candidate_symbols": row.get("candidate_symbols") or [], "direct": True},
+        )
+
+    def _raw_link_evidence(self, row: dict) -> Evidence:
+        repository, commit = self._context()
+        targets = row.get("candidate_targets") or []
+        target = row.get("resolved_target_id") or next(iter(targets), f"raw:{row.get('raw_anchor', '')}")
+        source_rows = self.view.by_ids("Node", [row["source_node_id"]])
+        source = decode_row(source_rows[0]) if source_rows else None
+        return Evidence.create(
+            kind="CROSS_LAYER_LINK", source_id=row["source_node_id"],
+            relation="CANDIDATE" if row.get("resolution_status") != "resolved" else "DOCUMENTS",
+            target_id=target, repository=repository, commit=commit,
+            generation=int(row.get("generation") or self.graph_generation),
+            provenance=str(row.get("provenance") or "document_anchor"),
+            confidence=float(row.get("confidence") or 0.0), source_path=self._source_path(source),
+            start_line=(source or {}).get("start_line"), end_line=(source or {}).get("end_line"),
+            summary=f"{row.get('resolution_status')} cross-layer anchor {row.get('raw_anchor')}",
+            fact_id=row["id"], metadata={"fact_id": row["id"],
+                "resolution_status": row.get("resolution_status"), "candidate_targets": targets,
+                "resolution_strategy": row.get("resolution_strategy"), "direct": True},
+        )
 
     def find_symbol(self, name: str) -> dict:
         started = time.perf_counter()
@@ -55,7 +190,9 @@ class GraphQuery:
             (*SYMBOL_KINDS, name, name, f"%.{name}"), matches,
         )
         rows.sort(key=lambda item: (item["qualified_name"], item["id"]))
-        return self._result([decode_row(row) for row in rows], started)
+        data = [decode_row(row) for row in rows]
+        return self._result(data, started, [self._node_evidence(row) for row in data],
+                            query_type="symbol", anchor=name)
 
     def _resolve(self, symbol: str) -> dict | None:
         matches = lambda row: (
@@ -76,7 +213,9 @@ class GraphQuery:
     def get_definition(self, symbol: str) -> dict:
         started = time.perf_counter()
         row = self._resolve(symbol)
-        return self._result(decode_row(row) if row else None, started)
+        data = decode_row(row) if row else None
+        return self._result(data, started, [self._node_evidence(data)] if data else [],
+                            query_type="definition", anchor=symbol)
 
     def _neighbors(self, symbol: str, edge_type: str, incoming: bool) -> dict:
         started = time.perf_counter()
@@ -93,6 +232,10 @@ class GraphQuery:
             "Node", (edge[node_column] for edge in edges)
         )}
         result = []
+        evidence = []
+        decoded_anchor = decode_row(anchor)
+        decoded_nodes = {node_id: decode_row(node) for node_id, node in nodes.items()}
+        evidence_nodes = {anchor["id"]: decoded_anchor, **decoded_nodes}
         for edge in edges:
             node = nodes.get(edge[node_column])
             if node is None:
@@ -100,8 +243,11 @@ class GraphQuery:
             item = dict(node)
             item["relation"], item["edge_metadata"] = edge["type"], edge["metadata"]
             result.append(decode_row(item))
+            evidence.append(self._edge_evidence(decode_row(edge), evidence_nodes))
         result.sort(key=lambda item: (item["qualified_name"], item["id"]))
-        return self._result(result, started)
+        direction = "callers" if edge_type == "CALLS" and incoming else (
+            "callees" if edge_type == "CALLS" else "references")
+        return self._result(result, started, evidence, query_type=direction, anchor=symbol)
 
     def get_callers(self, symbol: str) -> dict:
         return self._neighbors(symbol, "CALLS", True)
@@ -129,7 +275,9 @@ class GraphQuery:
             lambda row: all(row.get(key) == value for key, value in active.items()),
         )
         rows.sort(key=lambda row: (row["file_id"], row.get("start_line") or 0, row["id"]))
-        return self._result([decode_row(row) for row in rows], started)
+        data = [decode_row(row) for row in rows]
+        return self._result(data, started, [self._raw_reference_evidence(row) for row in data],
+                            query_type="raw_references", anchor=raw_name or resolved_symbol_id or "")
 
     def get_evidence_links(
         self, *, source_node_id: str | None = None,
@@ -147,7 +295,10 @@ class GraphQuery:
             lambda row: all(row.get(key) == value for key, value in active.items()),
         )
         rows.sort(key=lambda row: (row["source_node_id"], row["raw_anchor"], row["id"]))
-        return self._result([decode_row(row) for row in rows], started)
+        data = [decode_row(row) for row in rows]
+        return self._result(data, started, [self._raw_link_evidence(row) for row in data],
+                            query_type="cross_layer_evidence",
+                            anchor=source_node_id or resolved_target_id or status or "")
 
     def _cross_layer_neighbors(self, anchor: str, relations: set[str], incoming: bool) -> dict:
         started = time.perf_counter()
@@ -156,15 +307,21 @@ class GraphQuery:
             return self._result([], started)
         edge_column, node_column = (("dst_id", "src_id") if incoming
                                     else ("src_id", "dst_id"))
+        ordered_relations = sorted(relations)
+        placeholders = ",".join("?" for _ in ordered_relations)
         edges = self.view.query(
-            "Edge", f"SELECT * FROM edges WHERE {edge_column}=?",
-            (node["id"],),
+            "Edge", f"SELECT * FROM edges WHERE {edge_column}=? AND type IN ({placeholders})",
+            (node["id"], *ordered_relations),
             lambda row: row.get(edge_column) == node["id"] and row.get("type") in relations,
         )
         targets = {row["id"]: row for row in self.view.by_ids(
             "Node", (edge[node_column] for edge in edges)
         )}
         result = []
+        evidence = []
+        decoded_node = decode_row(node)
+        decoded_targets = {node_id: decode_row(target) for node_id, target in targets.items()}
+        evidence_nodes = {node["id"]: decoded_node, **decoded_targets}
         for edge in edges:
             target = targets.get(edge[node_column])
             if target:
@@ -172,8 +329,10 @@ class GraphQuery:
                 item["relation"] = edge["type"]
                 item["edge_metadata"] = decode_row(edge).get("metadata", {})
                 result.append(item)
+                evidence.append(self._edge_evidence(decode_row(edge), evidence_nodes))
         result.sort(key=lambda item: (item["qualified_name"], item["id"]))
-        return self._result(result, started)
+        return self._result(result, started, evidence, query_type="cross_layer",
+                            anchor=anchor)
 
     def get_implemented_code(self, requirement: str) -> dict:
         return self._cross_layer_neighbors(requirement, {"IMPLEMENTED_BY"}, False)
@@ -194,7 +353,20 @@ class GraphQuery:
             "Shard", "SELECT * FROM shards WHERE shard_id=? OR path=?", (shard, shard),
             lambda row: row.get("shard_id") == shard or row.get("path") == shard,
         )
-        return min(rows, key=lambda row: (row["path"], row["shard_id"])) if rows else None
+        return decode_row(min(rows, key=lambda row: (row["path"], row["shard_id"]))) if rows else None
+
+    def _shard_edge_evidence(self, edge: dict, source_path: str | None = None) -> Evidence:
+        repository, commit = self._context()
+        return Evidence.create(
+            kind="SHARD_RELATION", source_id=edge["src_shard_id"],
+            relation=edge["edge_type"], target_id=edge["dst_shard_id"],
+            repository=repository, commit=commit, generation=self.graph_generation,
+            provenance="shard_boundary", confidence=1.0, source_path=source_path,
+            start_line=None, end_line=None,
+            summary=f"{edge['src_shard_id']} {edge['edge_type']} {edge['dst_shard_id']}",
+            fact_id=edge["edge_id"], metadata={"fact_id": edge["edge_id"],
+                "boundary_relevant": True, "direct": True},
+        )
 
     def _boundary(self, shard: str, dependents: bool) -> dict:
         started = time.perf_counter()
@@ -209,7 +381,10 @@ class GraphQuery:
         )
         rows = self.view.by_ids("Shard", {edge[target] for edge in edges})
         rows.sort(key=lambda item: (item["path"], item["shard_id"]))
-        return self._result([decode_row(row) for row in rows], started)
+        data = [decode_row(row) for row in rows]
+        evidence = [self._shard_edge_evidence(edge, anchor["path"]) for edge in edges]
+        return self._result(data, started, evidence,
+                            query_type="dependents" if dependents else "dependencies", anchor=shard)
 
     def get_dependencies(self, shard: str) -> dict:
         return self._boundary(shard, False)
@@ -233,7 +408,9 @@ class GraphQuery:
                 if nodes.get(reference["owner_symbol_id"], {}).get("shard_id")
                 != nodes.get(reference["resolved_symbol_id"], {}).get("shard_id")]
         rows.sort(key=lambda row: (row["file_id"], row.get("start_line") or 0, row["id"]))
-        return self._result([decode_row(row) for row in rows], started)
+        data = [decode_row(row) for row in rows]
+        return self._result(data, started, [self._raw_reference_evidence(row) for row in data],
+                            query_type="boundary_references", anchor=symbol)
 
     def get_subgraph(self, anchor: str, max_hops: int = 2, max_nodes: int = 100) -> dict:
         if max_hops < 0 or max_nodes < 1:
@@ -263,9 +440,353 @@ class GraphQuery:
                 if edge["src_id"] in seen and edge["dst_id"] in seen:
                     selected[edge["id"]] = decode_row(edge)
             frontier = next_frontier
-        nodes = self.view.by_ids("Node", seen)
-        return self._result({"nodes": [decode_row(row) for row in nodes],
-                             "edges": list(selected.values())}, started)
+        nodes = [decode_row(row) for row in self.view.by_ids("Node", seen)]
+        node_map = {node["id"]: node for node in nodes}
+        edge_values = list(selected.values())
+        evidence = [self._node_evidence(node) for node in nodes]
+        evidence += [self._edge_evidence(edge, node_map) for edge in edge_values]
+        return self._result({"nodes": nodes, "edges": edge_values}, started, evidence[:max_nodes],
+                            query_type="subgraph", anchor=anchor)
+
+    @staticmethod
+    def _budget(max_evidence: int, max_symbols: int, max_edges: int,
+                max_sections: int) -> QueryBudget:
+        return QueryBudget(max_evidence, max_symbols, max_edges, max_sections)
+
+    @staticmethod
+    def _evidence_from(result: dict) -> list[Evidence]:
+        return [Evidence(**item) for item in result.get("evidence", [])]
+
+    def _bundle_result(self, bundle: EvidenceBundle, started: float) -> dict:
+        value = bundle.to_dict()
+        seed = json.dumps([bundle.intent, bundle.anchor, bundle.generation], separators=(",", ":"))
+        return {"query_id": f"Q-{hashlib.sha256(seed.encode()).hexdigest()[:20]}",
+                "query_type": bundle.intent, "anchor": bundle.anchor,
+                "graph_generation": self.graph_generation,
+                "query_time_ms": (time.perf_counter() - started) * 1000,
+                "returned_evidence_ids": value["returned_evidence_ids"],
+                "returned_evidence_count": value["returned_evidence_count"],
+                "bundle_size": len(json.dumps(value, ensure_ascii=False)), "bundle": value}
+
+    def explain_symbol(self, symbol: str, *, max_evidence: int = 20, max_symbols: int = 8,
+                       max_edges: int = 12, max_sections: int = 6) -> dict:
+        started = time.perf_counter()
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        definition = self.get_definition(symbol)
+        anchor = definition["data"]
+        if not anchor:
+            bundle = EvidenceBundle.create(
+                anchor=symbol, intent="explain_symbol", summary=f"Symbol not found: {symbol}",
+                primary_evidence=[], supporting_evidence=[], related_entities=[],
+                uncertainties=["unresolved symbol anchor"], generation=self.graph_generation,
+                budget=budget,
+            )
+            return self._bundle_result(bundle, started)
+        callers, callees = self.get_callers(anchor["id"]), self.get_callees(anchor["id"])
+        references = self.get_references(anchor["id"])
+        documents = self._cross_layer_neighbors(anchor["id"], CROSS_RELATIONS, True)
+        relation_evidence = (self._evidence_from(callers) + self._evidence_from(callees)
+                             + self._evidence_from(references))[:budget.max_edges]
+        document_evidence = self._evidence_from(documents)[:budget.max_sections]
+        shard_evidence: list[Evidence] = []
+        if anchor.get("shard_id"):
+            repository, commit = self._context()
+            shard = self._shard(anchor["shard_id"])
+            shard_evidence.append(Evidence.create(
+                kind="SHARD_RELATION", source_id=anchor["id"], relation="MEMBER_OF",
+                target_id=anchor["shard_id"], repository=repository, commit=commit,
+                generation=self.graph_generation, provenance="directory_shard",
+                confidence=1.0, source_path=self._source_path(anchor),
+                start_line=anchor.get("start_line"), end_line=anchor.get("end_line"),
+                summary=f"{anchor['qualified_name']} belongs to {(shard or {}).get('path', anchor['shard_id'])}",
+                fact_id=f"{anchor['id']}:{anchor['shard_id']}",
+                metadata={"direct": True, "boundary_relevant": False},
+            ))
+        related = [anchor, *callers["data"], *callees["data"], *documents["data"]]
+        bundle = EvidenceBundle.create(
+            anchor=symbol, intent="explain_symbol",
+            summary=(f"{anchor['kind']} {anchor['qualified_name']}"
+                     + (f" {anchor['signature']}" if anchor.get("signature") else "")),
+            primary_evidence=self._evidence_from(definition),
+            supporting_evidence=[*relation_evidence, *shard_evidence, *document_evidence],
+            related_entities=related, uncertainties=[], generation=self.graph_generation,
+            budget=budget,
+        )
+        return self._bundle_result(bundle, started)
+
+    def _resolve_document(self, document: str) -> dict | None:
+        value = document.casefold()
+        candidates = []
+        for raw in self.view.all("Node"):
+            row = decode_row(raw)
+            if row.get("kind") not in {"Document", "DocumentSection", "Requirement",
+                                       "Spec", "ShardDocument"}:
+                continue
+            metadata = row.get("metadata") or {}
+            fields = [row.get("id", ""), row.get("qualified_name", ""), row.get("name", ""),
+                      metadata.get("path", ""), metadata.get("heading_path", "")]
+            exact = any(str(field).casefold() == value for field in fields)
+            contains = any(value in str(field).casefold() for field in fields if field)
+            if exact or contains:
+                candidates.append((0 if exact else 1, row.get("qualified_name", ""), row["id"], row))
+        return min(candidates)[-1] if candidates else None
+
+    def find_related_code(self, document: str, *, max_evidence: int = 20,
+                          max_symbols: int = 8, max_edges: int = 12,
+                          max_sections: int = 6) -> dict:
+        started = time.perf_counter()
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        source = self._resolve_document(document)
+        if not source:
+            bundle = EvidenceBundle.create(
+                anchor=document, intent="find_related_code", summary=f"Document not found: {document}",
+                primary_evidence=[], supporting_evidence=[], related_entities=[],
+                uncertainties=["unresolved document or section anchor"],
+                generation=self.graph_generation, budget=budget,
+            )
+            return self._bundle_result(bundle, started)
+        relations = sorted(CROSS_RELATIONS)
+        placeholders = ",".join("?" for _ in relations)
+        edges = self.view.query(
+            "Edge", f"SELECT * FROM edges WHERE src_id=? AND type IN ({placeholders})",
+            (source["id"], *relations),
+            lambda row: row.get("src_id") == source["id"] and row.get("type") in CROSS_RELATIONS,
+        )
+        target_rows = self.view.by_ids("Node", [edge["dst_id"] for edge in edges])
+        targets = {row["id"]: decode_row(row) for row in target_rows}
+        node_map = {source["id"]: source, **targets}
+        resolved = [self._edge_evidence(decode_row(edge), node_map) for edge in edges]
+        raw_rows = self.view.query(
+            "RawEvidenceLink", "SELECT * FROM raw_evidence_links WHERE source_node_id=?",
+            (source["id"],), lambda row: row.get("source_node_id") == source["id"],
+        )
+        raw = [self._raw_link_evidence(decode_row(row)) for row in raw_rows]
+        candidates = [item for item in raw if item.metadata.get("resolution_status") != "resolved"]
+        primary = [self._node_evidence(source)]
+        primary += resolved[:budget.max_edges]
+        related = sorted(targets.values(), key=lambda row: (row.get("qualified_name", ""), row["id"]))
+        shards = sorted({item.get("shard_id") for item in related if item.get("shard_id")})
+        uncertainties = [f"{len(candidates)} ambiguous or unresolved candidate links"] if candidates else []
+        if not resolved:
+            uncertainties.append("no resolved code evidence")
+        bundle = EvidenceBundle.create(
+            anchor=document, intent="find_related_code",
+            summary=f"Resolved code for {source.get('qualified_name')}: {len(resolved)} links; shards={shards}",
+            primary_evidence=primary, supporting_evidence=candidates,
+            related_entities=related, uncertainties=uncertainties,
+            generation=self.graph_generation, budget=budget,
+        )
+        return self._bundle_result(bundle, started)
+
+    def find_related_documents(self, symbol: str, *, max_evidence: int = 20,
+                               max_symbols: int = 8, max_edges: int = 12,
+                               max_sections: int = 6) -> dict:
+        started = time.perf_counter()
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        anchor = self._resolve(symbol)
+        if not anchor:
+            bundle = EvidenceBundle.create(
+                anchor=symbol, intent="find_related_documents", summary=f"Symbol not found: {symbol}",
+                primary_evidence=[], supporting_evidence=[], related_entities=[],
+                uncertainties=["unresolved symbol anchor"], generation=self.graph_generation,
+                budget=budget,
+            )
+            return self._bundle_result(bundle, started)
+        anchor = decode_row(anchor)
+        relations = sorted(CROSS_RELATIONS)
+        placeholders = ",".join("?" for _ in relations)
+        edges = self.view.query(
+            "Edge", f"SELECT * FROM edges WHERE dst_id=? AND type IN ({placeholders})",
+            (anchor["id"], *relations),
+            lambda row: row.get("dst_id") == anchor["id"] and row.get("type") in CROSS_RELATIONS,
+        )
+        sources = {row["id"]: decode_row(row) for row in self.view.by_ids(
+            "Node", [edge["src_id"] for edge in edges])}
+        node_map = {anchor["id"]: anchor, **sources}
+        link_evidence = [self._edge_evidence(decode_row(edge), node_map) for edge in edges]
+        documents = sorted(sources.values(),
+                           key=lambda row: (row.get("qualified_name", ""), row["id"]))[:budget.max_sections]
+        primary = [self._node_evidence(item) for item in documents]
+        uncertainties = [] if documents else ["no resolved document evidence"]
+        bundle = EvidenceBundle.create(
+            anchor=symbol, intent="find_related_documents",
+            summary=f"Related document sections for {anchor['qualified_name']}: {len(documents)}",
+            primary_evidence=primary, supporting_evidence=link_evidence[:budget.max_edges],
+            related_entities=documents, uncertainties=uncertainties,
+            generation=self.graph_generation, budget=budget,
+        )
+        return self._bundle_result(bundle, started)
+
+    def explain_module(self, module: str, *, max_evidence: int = 20,
+                       max_symbols: int = 8, max_edges: int = 12,
+                       max_sections: int = 6) -> dict:
+        started = time.perf_counter()
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        shard = self._shard(module)
+        if not shard:
+            node = self._resolve(module)
+            shard = self._shard(node["shard_id"]) if node and node.get("shard_id") else None
+        if not shard:
+            bundle = EvidenceBundle.create(
+                anchor=module, intent="explain_module", summary=f"Module not found: {module}",
+                primary_evidence=[], supporting_evidence=[], related_entities=[],
+                uncertainties=["unresolved shard or symbol anchor"], generation=self.graph_generation,
+                budget=budget,
+            )
+            return self._bundle_result(bundle, started)
+        rows = self.view.query(
+            "Node", "SELECT * FROM nodes WHERE shard_id=?", (shard["shard_id"],),
+            lambda row: row.get("shard_id") == shard["shard_id"],
+        )
+        nodes = [decode_row(row) for row in rows if row.get("kind") in SYMBOL_KINDS]
+        public = set(shard.get("public_symbols") or [])
+        nodes.sort(key=lambda row: (0 if row["id"] in public else 1,
+                                   row.get("qualified_name", ""), row["id"]))
+        primary_nodes = nodes[:budget.max_symbols]
+        dependencies = self.get_dependencies(shard["shard_id"])
+        dependents = self.get_dependents(shard["shard_id"])
+        boundary = (self._evidence_from(dependencies) + self._evidence_from(dependents))[:budget.max_edges]
+        node_ids = {node["id"] for node in nodes}
+        documents: list[dict] = []
+        document_links: list[Evidence] = []
+        if node_ids:
+            node_placeholders = ",".join("?" for _ in node_ids)
+            relations = sorted(CROSS_RELATIONS)
+            relation_placeholders = ",".join("?" for _ in relations)
+            edges = self.view.query(
+                "Edge", f"SELECT * FROM edges WHERE dst_id IN ({node_placeholders}) "
+                f"AND type IN ({relation_placeholders})",
+                (*sorted(node_ids), *relations),
+                lambda row: row.get("dst_id") in node_ids and row.get("type") in CROSS_RELATIONS,
+            )
+            source_rows = self.view.by_ids("Node", [edge["src_id"] for edge in edges])
+            sources = {row["id"]: decode_row(row) for row in source_rows}
+            node_map = {node["id"]: node for node in nodes} | sources
+            document_links = [self._edge_evidence(decode_row(edge), node_map) for edge in edges]
+            documents = sorted(sources.values(), key=lambda row: (row["qualified_name"], row["id"]))[:budget.max_sections]
+        bundle = EvidenceBundle.create(
+            anchor=module, intent="explain_module",
+            summary=(f"Shard {shard['path']}: {len(nodes)} symbols, "
+                     f"{len(dependencies['data'])} outbound and {len(dependents['data'])} inbound dependencies"),
+            primary_evidence=[self._node_evidence(node) for node in primary_nodes],
+            supporting_evidence=[*boundary, *document_links[:budget.max_sections]],
+            related_entities=[*primary_nodes, *dependencies["data"], *dependents["data"], *documents],
+            uncertainties=[], generation=self.graph_generation, budget=budget,
+        )
+        return self._bundle_result(bundle, started)
+
+    def trace_evidence(self, requested_id: str, *, max_evidence: int = 1,
+                       max_symbols: int = 4, max_edges: int = 4,
+                       max_sections: int = 2) -> dict:
+        started = time.perf_counter()
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        found: Evidence | None = None
+        related: list[dict] = []
+        repository, commit = self._context()
+        if requested_id.startswith(("E-CODE-", "E-DOC-")):
+            for raw in self.view.all("Node"):
+                node = decode_row(raw)
+                is_document = node.get("kind") in {
+                    "Document", "DocumentSection", "Requirement", "Spec", "ShardDocument",
+                }
+                kind = "DOCUMENT_SECTION" if is_document else "CODE_DEFINITION"
+                relation = "DOCUMENTS" if is_document else "DEFINES"
+                candidate = evidence_id(
+                    kind, repository, str(node.get("file_id") or node["id"]), relation,
+                    node["id"], node["id"],
+                )
+                if candidate == requested_id:
+                    item = self._node_evidence(node)
+                    found, related = item, [node]; break
+        elif requested_id.startswith(("E-CALL-", "E-DEP-", "E-XLINK-")):
+            for raw in self.view.all("Edge"):
+                edge = decode_row(raw)
+                relation = edge["type"]
+                kind = ("CALL_RELATION" if relation == "CALLS" else
+                        "REFERENCE" if relation == "REFERENCES" else
+                        "CROSS_LAYER_LINK" if relation in CROSS_RELATIONS else "DEPENDENCY")
+                candidate = evidence_id(
+                    kind, repository, edge["src_id"], relation, edge["dst_id"], edge["id"],
+                )
+                if candidate == requested_id:
+                    nodes = {row["id"]: decode_row(row) for row in self.view.by_ids(
+                        "Node", (edge["src_id"], edge["dst_id"]))}
+                    item = self._edge_evidence(edge, nodes)
+                    found = item; related = [nodes.get(edge["src_id"], {}), nodes.get(edge["dst_id"], {})]; break
+            if found is None and requested_id.startswith("E-XLINK-"):
+                for raw in self.view.all("RawEvidenceLink"):
+                    row = decode_row(raw)
+                    targets = row.get("candidate_targets") or []
+                    target = (row.get("resolved_target_id") or next(
+                        iter(targets), f"raw:{row.get('raw_anchor', '')}"))
+                    relation = ("CANDIDATE" if row.get("resolution_status") != "resolved"
+                                else "DOCUMENTS")
+                    candidate = evidence_id(
+                        "CROSS_LAYER_LINK", repository, row["source_node_id"], relation,
+                        target, row["id"],
+                    )
+                    if candidate == requested_id:
+                        item = self._raw_link_evidence(row)
+                        found, related = item, [row]; break
+        elif requested_id.startswith("E-REF-"):
+            for raw in self.view.all("RawReference"):
+                row = decode_row(raw)
+                target = (row.get("resolved_symbol_id") or next(
+                    iter(row.get("candidate_symbols") or []), f"raw:{row.get('raw_name', '')}"))
+                relation = row.get("reference_type") or "REFERENCES"
+                candidate = evidence_id(
+                    "REFERENCE", repository, row["owner_symbol_id"], relation, target, row["id"],
+                )
+                if candidate == requested_id:
+                    item = self._raw_reference_evidence(row)
+                    found, related = item, [row]; break
+        elif requested_id.startswith("E-SHARD-"):
+            shards = {row["shard_id"]: decode_row(row) for row in self.view.all("Shard")}
+            for edge in self.view.all("BoundaryEdge"):
+                candidate = evidence_id(
+                    "SHARD_RELATION", repository, edge["src_shard_id"], edge["edge_type"],
+                    edge["dst_shard_id"], edge["edge_id"],
+                )
+                if candidate == requested_id:
+                    item = self._shard_edge_evidence(
+                        edge, (shards.get(edge["src_shard_id"]) or {}).get("path"))
+                    found = item
+                    related = [shards.get(edge["src_shard_id"], {}),
+                               shards.get(edge["dst_shard_id"], {})]
+                    break
+            if found is None:
+                for raw in self.view.all("Node"):
+                    node = decode_row(raw)
+                    if not node.get("shard_id"):
+                        continue
+                    shard = shards.get(node["shard_id"])
+                    fact_id = f"{node['id']}:{node['shard_id']}"
+                    candidate = evidence_id(
+                        "SHARD_RELATION", repository, node["id"], "MEMBER_OF",
+                        node["shard_id"], fact_id,
+                    )
+                    if candidate != requested_id:
+                        continue
+                    item = Evidence.create(
+                        kind="SHARD_RELATION", source_id=node["id"], relation="MEMBER_OF",
+                        target_id=node["shard_id"], repository=repository, commit=commit,
+                        generation=self.graph_generation, provenance="directory_shard",
+                        confidence=1.0, source_path=self._source_path(node),
+                        start_line=node.get("start_line"), end_line=node.get("end_line"),
+                        summary=f"{node['qualified_name']} belongs to {(shard or {}).get('path', node['shard_id'])}",
+                        fact_id=fact_id,
+                        metadata={"direct": True, "boundary_relevant": False},
+                    )
+                    found, related = item, [node, shard or {}]
+                    break
+        bundle = EvidenceBundle.create(
+            anchor=requested_id, intent="trace_evidence",
+            summary=(f"Evidence trace for {requested_id}" if found else f"Evidence not found: {requested_id}"),
+            primary_evidence=[found] if found else [], supporting_evidence=[],
+            related_entities=related, uncertainties=[] if found else ["unknown evidence ID"],
+            generation=self.graph_generation, budget=budget,
+        )
+        return self._bundle_result(bundle, started)
 
     def status(self) -> dict:
         started = time.perf_counter()

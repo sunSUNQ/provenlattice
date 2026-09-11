@@ -6,7 +6,7 @@ import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .evaluator import evaluate
+from .evaluator import evaluate, evaluate_r2
 from .models import TaskDefinition, ToolEvent
 from .provenance_tools import read_events, sha256_text
 
@@ -23,7 +23,8 @@ def file_sha256(path: Path) -> str:
 
 
 def audit_run(run_dir: str | Path, task: TaskDefinition, arm: str, repetition: int,
-              model_id: str, claude_version: str, provenlattice_commit: str) -> dict:
+              model_id: str, claude_version: str, provenlattice_commit: str,
+              protocol: str | None = None) -> dict:
     run_dir = Path(run_dir)
     errors: list[str] = []
     missing = [name for name in ARTIFACTS if not (run_dir / name).is_file()]
@@ -49,6 +50,8 @@ def audit_run(run_dir: str | Path, task: TaskDefinition, arm: str, repetition: i
     for key, value in expected.items():
         if run.get(key) != value:
             errors.append(f"METADATA:{key}:expected={value!r}:actual={run.get(key)!r}")
+    if protocol is not None and run.get("protocol") != protocol:
+        errors.append(f"METADATA:protocol:expected={protocol!r}:actual={run.get('protocol')!r}")
     if run.get("prompt") != task.prompt:
         errors.append("PROMPT_IDENTITY")
     if run.get("status") != "completed":
@@ -59,8 +62,10 @@ def audit_run(run_dir: str | Path, task: TaskDefinition, arm: str, repetition: i
         errors.append("DIRTY_WORKTREE")
     if len(events) != run.get("tool_calls") or len(events) != metrics.get("tool_turns"):
         errors.append("EVENT_METRIC_COUNT_MISMATCH")
-    reproduced = evaluate(task, (run_dir / "agent-output.txt").read_text(encoding="utf-8"),
-                          events, metrics)
+    output = (run_dir / "agent-output.txt").read_text(encoding="utf-8")
+    reproduced = (evaluate_r2(task, output, events, metrics, arm=arm,
+                              repo_path=run.get("repo_path"))
+                  if run.get("protocol") == "r2" else evaluate(task, output, events, metrics))
     if reproduced != stored_evaluation:
         errors.append("EVALUATION_NOT_REPRODUCIBLE")
     hashes = {name: file_sha256(run_dir / name) for name in ARTIFACTS}

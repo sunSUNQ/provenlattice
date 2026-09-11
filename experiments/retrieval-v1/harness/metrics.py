@@ -20,10 +20,13 @@ def collect_metrics(task: TaskDefinition, events: Iterable[ToolEvent], duration_
     events = list(events)
     counts = Counter(event.operation for event in events)
     graph_ops = {"symbol", "definition", "callers", "callees", "references", "dependencies",
-                 "dependents", "subgraph", "shard", "impact"}
-    knowledge_ops = {"document", "evidence", "related-code", "cross-layer", "implemented", "requirements"}
+                 "dependents", "subgraph", "shard", "impact", "explain-symbol",
+                 "explain-module", "trace-evidence"}
+    knowledge_ops = {"document", "evidence", "related-code", "cross-layer", "implemented",
+                     "requirements", "find-related-code", "find-related-documents"}
     all_evidence = {evidence_id for event in events for evidence_id in event.evidence_ids}
     used_evidence = {evidence_id for event in events for evidence_id in event.used_evidence_ids}
+    viewed_evidence = {evidence_id for event in events for evidence_id in event.viewed_evidence_ids}
     returned_edges = sum(event.returned_edges or 0 for event in events)
     returned_evidence = sum(event.returned_evidence or len(event.evidence_ids) for event in events)
     files = set().union(*(_files(event) for event in events)) if events else set()
@@ -55,6 +58,13 @@ def collect_metrics(task: TaskDefinition, events: Iterable[ToolEvent], duration_
         "returned_graph_edges": returned_edges,
         "observed_evidence_ids": sorted(all_evidence),
         "observed_used_evidence_ids": sorted(used_evidence),
+        "viewed_evidence_ids": sorted(viewed_evidence),
+        "returned_but_unused_evidence_ids": sorted(all_evidence - used_evidence),
+        "returned_but_unused_evidence": len(all_evidence - used_evidence),
+        "evidence_usage_rate": (len(used_evidence & all_evidence) / len(all_evidence)
+                                if all_evidence else None),
+        "query_latencies_ms": [event.query_latency for event in events
+                               if event.query_latency is not None],
         "graph_evidence_hit_rate": (len(used_evidence) / len(all_evidence)
                                      if all_evidence else None),
         "cross_layer_edge_utilization": None,

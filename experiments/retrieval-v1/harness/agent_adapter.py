@@ -7,6 +7,8 @@ import subprocess
 from dataclasses import dataclass
 from typing import Callable
 
+from provenlattice.evidence import parse_evidence_citations
+
 from .models import RunRequest, ToolEvent
 
 
@@ -86,6 +88,17 @@ class CommandAgentAdapter:
                         continue
                     result_text = self._tool_result_text(content.get("content"))
                     event.result_size = len(result_text)
+                    structured = self._structured_result(result_text)
+                    if structured:
+                        ids = list(structured.get("returned_evidence_ids") or [])
+                        event.query_id = structured.get("query_id")
+                        event.query_type = structured.get("query_type")
+                        event.anchor = structured.get("anchor")
+                        event.evidence_ids = ids
+                        event.viewed_evidence_ids = list(ids)
+                        event.returned_evidence = int(structured.get("returned_evidence_count") or len(ids))
+                        event.bundle_size = structured.get("bundle_size")
+                        event.query_latency = structured.get("query_time_ms")
                     if event.operation == "read" and isinstance(event.target, str):
                         event.files = [event.target]
             elif value.get("type") == "result":
@@ -105,6 +118,9 @@ class CommandAgentAdapter:
                     events[-1].tokens["total"] = sum(events[-1].tokens.values())
             else:
                 output_lines.append(line)
+        used = set(parse_evidence_citations("\n".join(output_lines)))
+        for event in events:
+            event.used_evidence_ids = sorted(used.intersection(event.evidence_ids))
         reason = "completed" if completed.returncode == 0 else "agent_nonzero_exit"
         error = completed.stderr.strip() or None
         return AdapterResult("\n".join(output_lines), events, reason, error)
@@ -119,6 +135,20 @@ class CommandAgentAdapter:
         return "" if content is None else str(content)
 
     @staticmethod
+    def _structured_result(text: str) -> dict | None:
+        decoder = json.JSONDecoder()
+        for offset, character in enumerate(text):
+            if character != "{":
+                continue
+            try:
+                value, _ = decoder.raw_decode(text[offset:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(value, dict) and ("returned_evidence_ids" in value or "bundle" in value):
+                return value
+        return None
+
+    @staticmethod
     def _claude_arm_prompt(request: RunRequest) -> str:
         common = (
             "This is a read-only retrieval experiment. Never edit, create, delete, move, or commit files. "
@@ -128,17 +158,18 @@ class CommandAgentAdapter:
             return common + " Do not invoke ProvenLattice or access any ProvenLattice database."
         database = request.environment.get("PL_R1_DATABASE", "")
         graph = (
-            f" You may query the frozen ProvenLattice database at {database!r} with the read-only CLI: "
-            "provenlattice symbol NAME --database DB --json; provenlattice callers SYMBOL --database DB --json; "
-            "provenlattice callees SYMBOL --database DB --json; provenlattice shard NAME --database DB --json; "
-            "provenlattice subgraph ANCHOR --database DB --json."
+            f" Use the frozen ProvenLattice database at {database!r}. Prefer one bounded structured query: "
+            "provenlattice explain-symbol ANCHOR --database DB --json --max-evidence 12; "
+            "provenlattice explain-module ANCHOR --database DB --json --max-evidence 16. "
+            "Do not pipe or truncate its JSON. Cite only IDs actually returned, ending the answer with "
+            "'Evidence Used:' followed by one '- E-...' line per used Evidence ID."
         )
         if request.arm == "codegraph":
             return common + graph + " Do not use knowledge commands: evidence, implemented, or requirements."
         return common + graph + (
-            " You may also use knowledge evidence commands: provenlattice evidence --database DB --json; "
-            "provenlattice implemented REQUIREMENT --database DB --json; "
-            "provenlattice requirements SYMBOL --database DB --json."
+            " For document/code traversal, use: provenlattice find-related-code DOCUMENT --database DB --json "
+            "--max-evidence 16; or provenlattice find-related-documents SYMBOL --database DB --json "
+            "--max-evidence 16."
         )
 
     @staticmethod
@@ -154,7 +185,9 @@ class CommandAgentAdapter:
         command_text = str(inputs.get("command", ""))
         if "provenlattice" in command_text.casefold() or "python -m provenlattice" in command_text.casefold():
             words = command_text.casefold().replace("\\", " ").split()
-            for candidate in ("symbol", "definition", "callers", "callees", "references",
+            for candidate in ("explain-symbol", "explain-module", "find-related-code",
+                              "find-related-documents", "trace-evidence",
+                              "symbol", "definition", "callers", "callees", "references",
                               "dependencies", "dependents", "subgraph", "shard", "impact",
                               "document", "evidence", "related-code", "cross-layer",
                               "implemented", "requirements"):

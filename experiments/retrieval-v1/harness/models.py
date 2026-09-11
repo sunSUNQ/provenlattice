@@ -11,12 +11,15 @@ ARM_TOOLS = {
     "native": {"read", "search", "grep", "glob", "shell"},
     "codegraph": {"read", "search", "grep", "glob", "shell", "symbol", "definition",
                    "callers", "callees", "references", "dependencies", "dependents",
-                   "subgraph", "shard", "impact"},
+                   "subgraph", "shard", "impact", "explain-symbol", "explain-module",
+                   "trace-evidence"},
     "knowledge": {"read", "search", "grep", "glob", "shell", "symbol", "definition",
                    "callers", "callees", "references", "dependencies", "dependents",
                    "subgraph", "shard", "impact", "document", "evidence", "related-code",
                    "cross-layer", "implemented", "requirements"},
 }
+ARM_TOOLS["knowledge"].update({"explain-symbol", "explain-module", "trace-evidence",
+                               "find-related-code", "find-related-documents"})
 WRITE_OPERATIONS = {"edit", "write", "replace", "delete", "commit", "reset", "checkout",
                     "push", "destructive-shell"}
 
@@ -86,7 +89,13 @@ class ToolEvent:
     result_size: int | None = None
     duration: float | None = None
     evidence_ids: list[str] = field(default_factory=list)
+    viewed_evidence_ids: list[str] = field(default_factory=list)
     used_evidence_ids: list[str] = field(default_factory=list)
+    query_id: str | None = None
+    query_type: str | None = None
+    anchor: str | None = None
+    bundle_size: int | None = None
+    query_latency: float | None = None
     graph_generation: int | None = None
     returned_nodes: int | None = None
     returned_edges: int | None = None
@@ -107,7 +116,11 @@ class ToolEvent:
             tool=str(value.get("tool", "unknown")), operation=str(value.get("operation", "unknown")).casefold(),
             query=value.get("query"), target=value.get("target"), result_size=value.get("result_size"),
             duration=value.get("duration"), evidence_ids=list(value.get("evidence_ids") or []),
+            viewed_evidence_ids=list(value.get("viewed_evidence_ids") or []),
             used_evidence_ids=list(value.get("used_evidence_ids") or []),
+            query_id=value.get("query_id"), query_type=value.get("query_type"),
+            anchor=value.get("anchor"), bundle_size=value.get("bundle_size"),
+            query_latency=value.get("query_latency"),
             graph_generation=value.get("graph_generation"), returned_nodes=value.get("returned_nodes"),
             returned_edges=value.get("returned_edges"), returned_evidence=value.get("returned_evidence"),
             resolved_count=value.get("resolved_count"), ambiguous_count=value.get("ambiguous_count"),
@@ -122,7 +135,11 @@ class ToolEvent:
             "timestamp": self.timestamp, "tool": self.tool, "operation": self.operation,
             "query": self.query, "target": self.target,
             "duration": self.duration, "evidence_ids": self.evidence_ids,
+            "viewed_evidence_ids": self.viewed_evidence_ids,
             "used_evidence_ids": self.used_evidence_ids,
+            "query_id": self.query_id, "query_type": self.query_type,
+            "anchor": self.anchor, "bundle_size": self.bundle_size,
+            "query_latency": self.query_latency,
             "result_size": self.result_size, "graph_generation": self.graph_generation,
             "returned_nodes": self.returned_nodes, "returned_edges": self.returned_edges,
             "returned_evidence": self.returned_evidence,

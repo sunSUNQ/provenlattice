@@ -41,10 +41,20 @@ def build_parser() -> argparse.ArgumentParser:
     command("status")
     symbol = command("symbol")
     symbol.add_argument("name")
+    definition = command("definition")
+    definition.add_argument("symbol")
     callers = command("callers")
     callers.add_argument("symbol")
     callees = command("callees")
     callees.add_argument("symbol")
+    references = command("references")
+    references.add_argument("symbol")
+    dependencies = command("dependencies")
+    dependencies.add_argument("shard")
+    dependents = command("dependents")
+    dependents.add_argument("shard")
+    document = command("document")
+    document.add_argument("anchor")
     implemented = command("implemented")
     implemented.add_argument("requirement")
     requirements = command("requirements")
@@ -57,6 +67,23 @@ def build_parser() -> argparse.ArgumentParser:
     subgraph.add_argument("anchor")
     subgraph.add_argument("--max-hops", type=int, default=2)
     subgraph.add_argument("--max-nodes", type=int, default=100)
+
+    def evidence_command(name: str, aliases: list[str] | None = None) -> argparse.ArgumentParser:
+        child = subparsers.add_parser(name, aliases=aliases or [])
+        child.add_argument("anchor")
+        child.add_argument("--database")
+        child.add_argument("--json", action="store_true")
+        child.add_argument("--max-evidence", type=int, default=20)
+        child.add_argument("--max-symbols", type=int, default=8)
+        child.add_argument("--max-edges", type=int, default=12)
+        child.add_argument("--max-sections", type=int, default=6)
+        return child
+
+    evidence_command("explain-symbol", ["explain_symbol"])
+    evidence_command("explain-module", ["explain_module"])
+    evidence_command("find-related-code", ["find_related_code"])
+    evidence_command("find-related-documents", ["find_related_documents"])
+    evidence_command("trace-evidence", ["trace_evidence"])
     return parser
 
 
@@ -79,10 +106,20 @@ def run(args: argparse.Namespace) -> dict:
             return query.status()
         if args.command == "symbol":
             return query.find_symbol(args.name)
+        if args.command == "definition":
+            return query.get_definition(args.symbol)
         if args.command == "callers":
             return query.get_callers(args.symbol)
         if args.command == "callees":
             return query.get_callees(args.symbol)
+        if args.command == "references":
+            return query.get_references(args.symbol)
+        if args.command == "dependencies":
+            return query.get_dependencies(args.shard)
+        if args.command == "dependents":
+            return query.get_dependents(args.shard)
+        if args.command == "document":
+            return query.get_document_targets(args.anchor)
         if args.command == "implemented":
             return query.get_implemented_code(args.requirement)
         if args.command == "requirements":
@@ -101,6 +138,18 @@ def run(args: argparse.Namespace) -> dict:
             }
         if args.command == "subgraph":
             return query.get_subgraph(args.anchor, args.max_hops, args.max_nodes)
+        budget = {"max_evidence": args.max_evidence, "max_symbols": args.max_symbols,
+                  "max_edges": args.max_edges, "max_sections": args.max_sections}
+        if args.command in {"explain-symbol", "explain_symbol"}:
+            return query.explain_symbol(args.anchor, **budget)
+        if args.command in {"explain-module", "explain_module"}:
+            return query.explain_module(args.anchor, **budget)
+        if args.command in {"find-related-code", "find_related_code"}:
+            return query.find_related_code(args.anchor, **budget)
+        if args.command in {"find-related-documents", "find_related_documents"}:
+            return query.find_related_documents(args.anchor, **budget)
+        if args.command in {"trace-evidence", "trace_evidence"}:
+            return query.trace_evidence(args.anchor, **budget)
     raise ValueError(f"unknown command: {args.command}")
 
 

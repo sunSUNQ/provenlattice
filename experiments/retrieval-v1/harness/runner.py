@@ -8,7 +8,7 @@ from pathlib import Path
 from time import perf_counter
 
 from .agent_adapter import CommandAgentAdapter
-from .evaluator import evaluate
+from .evaluator import evaluate, evaluate_r2
 from .metrics import collect_metrics
 from .models import ARM_TOOLS, WRITE_OPERATIONS, RunRequest, RunResult, TaskDefinition, ToolEvent
 from .provenance_tools import repository_head, repository_status, sha256_text, utc_now, write_events
@@ -18,7 +18,7 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
              adapter, timeout: float = 900, verify_commit: bool = True, repetition: int = 1,
              model_id: str = "unknown", claude_version: str = "unknown",
              provenlattice_commit: str | None = None, database: str | None = None,
-             attempt: int = 1) -> dict:
+             attempt: int = 1, protocol: str = "r1") -> dict:
     if arm not in ARM_TOOLS:
         raise ValueError(f"unknown arm: {arm}")
     run_key = f"{task.task_id}.{arm}.r{repetition}"
@@ -36,6 +36,8 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
     if status_before:
         errors.append("DIRTY_WORKTREE_BEFORE_RUN")
     environment = {"PL_R1_ARM": arm}
+    if protocol == "r2":
+        environment["PL_R2_EVIDENCE_CONTRACT"] = "1"
     if database:
         environment["PL_R1_DATABASE"] = str(Path(database).resolve())
     request = RunRequest(run_id, task.task_id, repo_path, task.commit, arm, task.prompt,
@@ -75,7 +77,9 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
     status = ("failed" if violations or (adapter_result.exit_reason not in {"completed"} and not usable_timeout)
               else "completed")
     metrics = collect_metrics(task, events, duration_ms, adapter_result.output)
-    evaluation = evaluate(task, adapter_result.output, events, metrics)
+    evaluation = (evaluate_r2(task, adapter_result.output, events, metrics,
+                              arm=arm, repo_path=repo_path)
+                  if protocol == "r2" else evaluate(task, adapter_result.output, events, metrics))
     result = RunResult(run_id, task.task_id, arm, status,
                        evaluation["task_success"] if status == "completed" else None,
                        start_time, ended, duration_ms, len(events), adapter_result.output,
@@ -88,7 +92,9 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
                        "prompt_hash": sha256_text(task.prompt),
                        "model_id": model_id, "claude_version": claude_version,
                        "provenlattice_commit": provenlattice_commit,
-                       "ground_truth_version": "r1-frozen-v1", "attempt": attempt,
+                       "ground_truth_version": ("r2-evidence-v1" if protocol == "r2"
+                                                else "r1-frozen-v1"), "attempt": attempt,
+                       "protocol": protocol,
                        "git_status_before": status_before, "git_status_after": status_after,
                        "adapter": type(adapter).__name__})
     (run_dir / "run.json").write_text(json.dumps(run_record, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -112,13 +118,15 @@ def main() -> int:
     parser.add_argument("--claude-version", required=True)
     parser.add_argument("--provenlattice-commit", required=True)
     parser.add_argument("--database")
+    parser.add_argument("--protocol", choices=("r1", "r2"), default="r1")
     parser.add_argument("--skip-commit-check", action="store_true")
     args = parser.parse_args()
     result = run_task(TaskDefinition.load(args.task), args.arm, args.repo, args.results,
                       CommandAgentAdapter(args.agent_command), args.timeout,
                       verify_commit=not args.skip_commit_check, repetition=args.repetition,
                       model_id=args.model_id, claude_version=args.claude_version,
-                      provenlattice_commit=args.provenlattice_commit, database=args.database)
+                      provenlattice_commit=args.provenlattice_commit, database=args.database,
+                      protocol=args.protocol)
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result["run"]["status"] == "completed" else 1
 

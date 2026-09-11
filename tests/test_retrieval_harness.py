@@ -11,6 +11,8 @@ ReplayAdapter = importlib.import_module(
     "experiments.retrieval-v1.harness.agent_adapter").ReplayAdapter
 evaluate = importlib.import_module(
     "experiments.retrieval-v1.harness.evaluator").evaluate
+evaluate_r2 = importlib.import_module(
+    "experiments.retrieval-v1.harness.evaluator").evaluate_r2
 TaskDefinition = importlib.import_module(
     "experiments.retrieval-v1.harness.models").TaskDefinition
 run_task = importlib.import_module(
@@ -88,6 +90,43 @@ class RetrievalHarnessTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(first["required_evidence_recall"], 1.0)
         self.assertEqual(first["cross_layer_edge_utilization"], 1.0)
+
+    def test_r2_evaluator_uses_returned_viewed_used_and_ground_truth_ids(self) -> None:
+        from provenlattice.evidence import evidence_id
+        models = importlib.import_module("experiments.retrieval-v1.harness.models")
+        required = evidence_id("CODE_DEFINITION", "repo:test", "file:a", "DEFINES",
+                               "symbol:a", "symbol:a")
+        optional = evidence_id("CALL_RELATION", "repo:test", "symbol:a", "CALLS",
+                               "symbol:b", "edge:ab")
+        distractor = evidence_id("CODE_DEFINITION", "repo:test", "file:x", "DEFINES",
+                                 "symbol:x", "symbol:x")
+        self.task.ground_truth.update({
+            "required_evidence_ids": [required], "optional_evidence_ids": [optional],
+            "distractor_evidence_ids": [distractor],
+        })
+        request = models.RunRequest("run", self.task.task_id, str(self.temp.name), self.task.commit,
+                                    "codegraph", self.task.prompt, [], {}, 10)
+        event = models.ToolEvent.from_dict({
+            "tool": "provenlattice", "operation": "explain-symbol",
+            "evidence_ids": [required, optional, distractor],
+            "viewed_evidence_ids": [required, optional, distractor],
+        }, request)
+        output = f"{self._output()}\n\nEvidence Used:\n- {required}\n- {optional}"
+        first = evaluate_r2(self.task, output, [event], {}, arm="codegraph")
+        second = evaluate_r2(self.task, output, [event], {}, arm="codegraph")
+        self.assertEqual(first, second)
+        self.assertTrue(first["task_success"])
+        self.assertEqual(first["required_evidence_recall"], 1.0)
+        self.assertEqual(first["evidence_precision"], 1.0)
+        self.assertEqual(first["evidence_usage_rate"], 2 / 3)
+        self.assertEqual(first["returned_but_unused_evidence"], [distractor])
+        unsupported = evidence_id("REFERENCE", "repo:test", "symbol:z", "REFERENCES",
+                                  "symbol:q", "raw:z")
+        wrong = evaluate_r2(
+            self.task, f"{self._output()}\nEvidence Used:\n- {required}\n- {unsupported}", [event], {},
+            arm="codegraph")
+        self.assertFalse(wrong["task_success"])
+        self.assertEqual(wrong["unsupported_claim_count"], 1)
 
     def test_claude_adapter_sends_frozen_prompt_not_run_request_json(self) -> None:
         models = importlib.import_module("experiments.retrieval-v1.harness.models")

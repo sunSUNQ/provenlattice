@@ -13,3 +13,7 @@ benchmark-repos/
 experiments/retrieval-v1/results/T*/
 experiments/retrieval-v1/results/_invalid*/
 experiments/retrieval-v1/results/_attempts/
+
+# R2 raw qualification cells remain local; reviewed aggregate reports are versioned.
+experiments/retrieval-v2/results/T*/
+experiments/retrieval-v2/results/_invalid*/
