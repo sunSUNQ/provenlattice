@@ -1,0 +1,28 @@
+{
+  "protocol": "r2.2",
+  "offline_only": true,
+  "replay_cells": 51,
+  "fixture_suite": "E1-E10",
+  "fixture_status": "PASS",
+  "replay_deterministic": true,
+  "attribution_counts": {
+    "TRUE_CAPABILITY_SUCCESS": 10,
+    "TRUE_CAPABILITY_FAILURE": 29,
+    "EVALUATOR_FALSE_NEGATIVE": 8,
+    "INVALID_EVIDENCE": 4,
+    "UNKNOWN_EVIDENCE": 0
+  },
+  "t01_t03": {"true_capability_failures": 18, "evaluator_false_negatives": 7, "true_successes": 5},
+  "fragment_path_regression": "PASS",
+  "arm_independent": true,
+  "historical_evaluations_modified": false,
+  "query_bundle_gap": "CLOSED",
+  "knowledge_unsupported_are_hallucinations": false,
+  "r2_3_candidates": ["T01", "T03", "T05"],
+  "artifacts": {
+    "ground_truth_v2": "experiments/retrieval-v2/evaluator-v2/ground-truth-v2/ground-truth-v2.json",
+    "replay": "experiments/retrieval-v2/evaluator-v2/replay-results/evaluator-v2-replay.json",
+    "semantic_audit": "experiments/retrieval-v2/evaluator-v2/semantic-audit/semantic-mismatch-audit.md",
+    "fixtures": "tests/test_evaluator_v2.py"
+  }
+}

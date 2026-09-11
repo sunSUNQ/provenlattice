@@ -1,0 +1,58 @@
+{
+  "version": "groundtruth-v2",
+  "tasks": [
+    {
+      "task_id": "T01",
+      "required_concepts": [
+        {"concept_id": "documented-bounded-load-behavior", "required_evidence_groups": [{"mode": "ANY_OF", "evidence": [{"kind": "document_section", "match": ["docs/cn/client.md", "c_murmurhash_bl", "负载均衡"]}]}]},
+        {"concept_id": "bounded-load-core-implementation", "required_evidence_groups": [{"mode": "ANY_OF", "evidence": [{"evidence_id": "E-CODE-1726cdc7c9938223c1d04362", "kind": "symbol", "match": ["ConsistentHashingBoundedLoadBalancer", "SelectServer"]}]}]},
+        {"concept_id": "implementation-location", "required_evidence_groups": [{"mode": "ANY_OF", "evidence": [{"kind": "path", "match": ["src/brpc/policy/consistent_hashing_load_balancer.cpp", "src/brpc/policy/consistent_hashing_load_balancer.h"]}]}]}
+      ],
+      "required_evidence_groups": ["documented-bounded-load-behavior", "bounded-load-core-implementation", "implementation-location"],
+      "acceptable_alternatives": [{"evidence_id": "E-CODE-1726cdc7c9938223c1d04362", "for_concept": "bounded-load-core-implementation", "reason": "bounded-load class is the documented c_murmurhash_bl implementation"}],
+      "supporting_evidence": [{"evidence_id": "E-CODE-958e25377596d1f5e9455d79", "reason": "base consistent-hashing class"}],
+      "distractors": [],
+      "invalid_evidence": [{"evidence_id": "E-CODE-9cec5b84fb52b556c0c332c9", "reason": "function-local replicas variable is not the core bounded-load implementation for T01"}],
+      "required_evidence_ids": ["E-CODE-1726cdc7c9938223c1d04362"],
+      "acceptable_alternative_ids": [],
+      "supporting_evidence_ids": ["E-CODE-958e25377596d1f5e9455d79"],
+      "invalid_evidence_ids": ["E-CODE-9cec5b84fb52b556c0c332c9"],
+      "expected_paths": ["src/brpc/policy/consistent_hashing_load_balancer.cpp", "src/brpc/policy/consistent_hashing_load_balancer.h", "docs/cn/client.md"]
+    },
+    {
+      "task_id": "T03",
+      "required_concepts": [
+        {"concept_id": "replicas-virtual-node-role", "required_evidence_groups": [{"mode": "ANY_OF", "evidence": [{"evidence_id": "E-CODE-9cec5b84fb52b556c0c332c9", "kind": "symbol", "match": ["AddServersInBatch.replicas", "virtual nodes", "replicas"]}]}]},
+        {"concept_id": "replicas-documentation", "required_evidence_groups": [{"mode": "ANY_OF", "evidence": [{"kind": "document_section", "match": ["docs/cn/consistent_hashing.md", "虚拟节点个数", "virtual nodes", "replicas=<num>"]}, {"kind": "document_section", "match": ["docs/en/client.md", "c_murmurhash", "replicas"]}]}]}
+      ],
+      "required_evidence_groups": ["replicas-virtual-node-role", "replicas-documentation"],
+      "acceptable_alternatives": [{"kind": "document_section", "match": ["docs/cn/consistent_hashing.md", "虚拟节点个数"], "for_concept": "replicas-documentation", "reason": "authoritative design document"}],
+      "supporting_evidence": [{"evidence_id": "E-SHARD-6487ab8c99b36b477f261e90", "reason": "symbol shard membership"}],
+      "distractors": [],
+      "invalid_evidence": [{"kind": "document_section", "match": ["docs/cn/client.md#c_murmurhash_bl"], "reason": "does not describe the replicas virtual-node design"}],
+      "required_evidence_ids": ["E-CODE-9cec5b84fb52b556c0c332c9"],
+      "acceptable_alternative_ids": [],
+      "supporting_evidence_ids": ["E-SHARD-6487ab8c99b36b477f261e90"],
+      "invalid_evidence_ids": [],
+      "expected_paths": ["src/brpc/policy/consistent_hashing_load_balancer.cpp", "docs/cn/consistent_hashing.md", "docs/en/consistent_hashing.md", "docs/en/client.md", "docs/cn/client.md"]
+    },
+    {
+      "task_id": "T05",
+      "required_concepts": [
+        {"concept_id": "module-entry", "required_evidence_groups": [{"mode": "ANY_OF", "evidence": [{"evidence_id": "E-CODE-20376c6ce1b46be66b8a2d4a", "kind": "symbol", "match": ["RateLimitedBackupPolicyOptions"]}]}]},
+        {"concept_id": "document-section", "required_evidence_groups": [{"mode": "ANY_OF", "evidence": [{"evidence_id": "E-DOC-9d9674320ddc2684f8d2773a", "kind": "document_section", "match": ["docs/cn/backup_request.md", "Backup Request", "使用内置限流策略"]}]}]},
+        {"concept_id": "cross-layer-grounding", "required_evidence_groups": [{"mode": "ALL_OF", "evidence": [{"evidence_id": "E-XLINK-02e59d12b69fb54749eacbc0", "kind": "cross_layer_link", "match": ["RateLimitedBackupPolicyOptions"]}, {"evidence_id": "E-DOC-9d9674320ddc2684f8d2773a", "kind": "document_section", "match": ["docs/cn/backup_request.md"]}]}]}
+      ],
+      "required_evidence_groups": ["module-entry", "document-section", "cross-layer-grounding"],
+      "acceptable_alternatives": [],
+      "supporting_evidence": [{"evidence_id": "E-DOC-3d047e723af4c7446012da31", "reason": "English mirror section"}],
+      "distractors": [],
+      "invalid_evidence": [],
+      "required_evidence_ids": ["E-DOC-9d9674320ddc2684f8d2773a", "E-CODE-20376c6ce1b46be66b8a2d4a", "E-XLINK-02e59d12b69fb54749eacbc0"],
+      "acceptable_alternative_ids": [],
+      "supporting_evidence_ids": ["E-DOC-3d047e723af4c7446012da31"],
+      "invalid_evidence_ids": [],
+      "expected_paths": []
+    }
+  ]
+}
