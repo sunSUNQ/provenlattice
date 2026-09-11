@@ -52,6 +52,17 @@ def audit_run(run_dir: str | Path, task: TaskDefinition, arm: str, repetition: i
             errors.append(f"METADATA:{key}:expected={value!r}:actual={run.get(key)!r}")
     if protocol is not None and run.get("protocol") != protocol:
         errors.append(f"METADATA:protocol:expected={protocol!r}:actual={run.get('protocol')!r}")
+    if run.get("actual_model_id") not in {None, model_id}:
+        errors.append(f"ACTUAL_MODEL:{run.get('actual_model_id')!r}")
+    if run.get("actual_claude_version") not in {None, claude_version}:
+        errors.append(f"ACTUAL_CLAUDE_VERSION:{run.get('actual_claude_version')!r}")
+    if run.get("adapter") == "CommandAgentAdapter":
+        if run.get("actual_model_id") != model_id:
+            errors.append("ACTUAL_MODEL_NOT_VERIFIED")
+        if run.get("actual_claude_version") != claude_version:
+            errors.append("ACTUAL_CLAUDE_VERSION_NOT_VERIFIED")
+    if run.get("permission_denials"):
+        errors.append("PERMISSION_DENIED")
     if run.get("prompt") != task.prompt:
         errors.append("PROMPT_IDENTITY")
     if run.get("status") != "completed":

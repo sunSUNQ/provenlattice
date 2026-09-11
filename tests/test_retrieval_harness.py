@@ -131,7 +131,8 @@ class RetrievalHarnessTests(unittest.TestCase):
     def test_claude_adapter_sends_frozen_prompt_not_run_request_json(self) -> None:
         models = importlib.import_module("experiments.retrieval-v1.harness.models")
         request = models.RunRequest("run", self.task.task_id, str(self.temp.name), self.task.commit,
-                                    "native", self.task.prompt, ["read"], {}, 10)
+                                    "native", self.task.prompt, ["read"], {
+                                        "PL_MODEL_ID": "claude-sonnet-4-5-20250929"}, 10)
         completed = type("Completed", (), {"stdout": '{"type":"result","result":"ok","usage":{}}\n',
                                              "stderr": "", "returncode": 0})()
         with patch.object(adapter_module.shutil, "which", return_value="C:/npm/claude.cmd"), \
@@ -142,7 +143,31 @@ class RetrievalHarnessTests(unittest.TestCase):
         self.assertEqual(mocked.call_args.kwargs["errors"], "replace")
         self.assertEqual(mocked.call_args.args[0][0], "C:/npm/claude.cmd")
         self.assertIn("--append-system-prompt", mocked.call_args.args[0])
+        self.assertIn("--model", mocked.call_args.args[0])
+        self.assertIn("--allowedTools", mocked.call_args.args[0])
+        self.assertIn("--safe-mode", mocked.call_args.args[0])
         self.assertEqual(result.output, "ok")
+
+    def test_claude_adapter_records_actual_model_and_permission_denial(self) -> None:
+        models = importlib.import_module("experiments.retrieval-v1.harness.models")
+        request = models.RunRequest("run", self.task.task_id, str(self.temp.name), self.task.commit,
+                                    "codegraph", self.task.prompt, [], {
+                                        "PL_MODEL_ID": "claude-sonnet-4-5-20250929"}, 10)
+        stdout = "\n".join((
+            json.dumps({"type": "system", "subtype": "init",
+                        "model": "wrong-model", "claude_code_version": "2.1.268"}),
+            json.dumps({"type": "system", "subtype": "permission_denied",
+                        "tool_name": "Bash", "message": "denied"}),
+            json.dumps({"type": "result", "result": "answer", "usage": {}}),
+        ))
+        completed = type("Completed", (), {"stdout": stdout, "stderr": "", "returncode": 0})()
+        with patch.object(adapter_module.shutil, "which", return_value="C:/npm/claude.cmd"), \
+             patch.object(adapter_module.subprocess, "run", return_value=completed):
+            result = adapter_module.CommandAgentAdapter(["claude", "-p"]).run(request)
+        self.assertEqual(result.output, "answer")
+        self.assertEqual(result.actual_model, "wrong-model")
+        self.assertEqual(result.actual_version, "2.1.268")
+        self.assertEqual(len(result.permission_denials), 1)
 
     def test_repetition_and_frozen_metadata_are_recorded(self) -> None:
         result = run_task(self.task, "native", Path(self.temp.name), Path(self.temp.name),

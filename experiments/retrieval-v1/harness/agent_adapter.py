@@ -18,6 +18,9 @@ class AdapterResult:
     events: list[ToolEvent]
     exit_reason: str
     error: str | None = None
+    actual_model: str | None = None
+    actual_version: str | None = None
+    permission_denials: list[str] | None = None
 
 
 class CommandAgentAdapter:
@@ -44,6 +47,23 @@ class CommandAgentAdapter:
             arm_prompt = self._claude_arm_prompt(request)
             if "--append-system-prompt" not in command:
                 command.extend(["--append-system-prompt", arm_prompt])
+            model_id = request.environment.get("PL_MODEL_ID")
+            if model_id and model_id != "unknown" and "--model" not in command:
+                command.extend(["--model", model_id])
+            if "--permission-mode" not in command:
+                command.extend(["--permission-mode", "dontAsk"])
+            if "--allowedTools" not in command and "--allowed-tools" not in command:
+                allowed = "Read,Grep,Glob"
+                if request.arm != "native":
+                    allowed += (",Bash(provenlattice *),Bash(provenlattice.exe *),"
+                                "Bash(python -m provenlattice *)")
+                command.extend(["--allowedTools", allowed])
+            if "--disallowedTools" not in command and "--disallowed-tools" not in command:
+                command.extend(["--disallowedTools", "Edit,Write,NotebookEdit"])
+            if "--safe-mode" not in command:
+                command.append("--safe-mode")
+            if "--no-session-persistence" not in command:
+                command.append("--no-session-persistence")
         try:
             completed = subprocess.run(
                 command, cwd=request.repo_path,
@@ -57,6 +77,9 @@ class CommandAgentAdapter:
         events: list[ToolEvent] = []
         events_by_tool_id: dict[str, ToolEvent] = {}
         output_lines: list[str] = []
+        actual_model: str | None = None
+        actual_version: str | None = None
+        permission_denials: list[str] = []
         for line in completed.stdout.splitlines():
             try:
                 value = json.loads(line)
@@ -116,6 +139,13 @@ class CommandAgentAdapter:
                         if isinstance(usage.get(source), (int, float)):
                             events[-1].tokens[target] = int(usage[source])
                     events[-1].tokens["total"] = sum(events[-1].tokens.values())
+            elif value.get("type") == "system":
+                if value.get("subtype") == "init":
+                    actual_model = value.get("model")
+                    actual_version = value.get("claude_code_version")
+                elif value.get("subtype") == "permission_denied":
+                    permission_denials.append(
+                        f"{value.get('tool_name', 'unknown')}:{value.get('message', 'denied')}")
             else:
                 output_lines.append(line)
         used = set(parse_evidence_citations("\n".join(output_lines)))
@@ -123,7 +153,8 @@ class CommandAgentAdapter:
             event.used_evidence_ids = sorted(used.intersection(event.evidence_ids))
         reason = "completed" if completed.returncode == 0 else "agent_nonzero_exit"
         error = completed.stderr.strip() or None
-        return AdapterResult("\n".join(output_lines), events, reason, error)
+        return AdapterResult("\n".join(output_lines), events, reason, error,
+                             actual_model, actual_version, permission_denials)
 
     @staticmethod
     def _tool_result_text(content) -> str:

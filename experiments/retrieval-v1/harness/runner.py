@@ -35,7 +35,8 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
         errors.append(f"REPO_COMMIT_MISMATCH expected={task.commit} actual={actual_commit}")
     if status_before:
         errors.append("DIRTY_WORKTREE_BEFORE_RUN")
-    environment = {"PL_R1_ARM": arm}
+    environment = {"PL_R1_ARM": arm, "PL_MODEL_ID": model_id,
+                   "PL_CLAUDE_VERSION": claude_version}
     if protocol == "r2":
         environment["PL_R2_EVIDENCE_CONTRACT"] = "1"
     if database:
@@ -50,6 +51,15 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
         adapter_result = adapter.run(request)
     events: list[ToolEvent] = adapter_result.events
     violations = list(errors)
+    actual_model = getattr(adapter_result, "actual_model", None)
+    actual_version = getattr(adapter_result, "actual_version", None)
+    permission_denials = list(getattr(adapter_result, "permission_denials", None) or [])
+    if actual_model is not None and actual_model != model_id:
+        violations.append(f"MODEL_MISMATCH expected={model_id} actual={actual_model}")
+    if actual_version is not None and actual_version != claude_version:
+        violations.append(f"CLAUDE_VERSION_MISMATCH expected={claude_version} actual={actual_version}")
+    if permission_denials:
+        violations.append(f"PERMISSION_DENIED:{len(permission_denials)}")
     for event in events:
         if event.operation in WRITE_OPERATIONS:
             violations.append(f"WRITE_OPERATION:{event.operation}")
@@ -91,6 +101,8 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
                        "agent_actual_commit": actual_commit,
                        "prompt_hash": sha256_text(task.prompt),
                        "model_id": model_id, "claude_version": claude_version,
+                       "actual_model_id": actual_model, "actual_claude_version": actual_version,
+                       "permission_denials": permission_denials,
                        "provenlattice_commit": provenlattice_commit,
                        "ground_truth_version": ("r2-evidence-v1" if protocol == "r2"
                                                 else "r1-frozen-v1"), "attempt": attempt,

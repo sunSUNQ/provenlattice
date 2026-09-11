@@ -20,6 +20,14 @@ def _section_values(task: TaskDefinition, evidence: dict[str, Any]) -> set[str]:
     return {value for value in values if value}
 
 
+def _path_exists(root: Path, value: str) -> bool:
+    match = re.search(r"\{([^{}]+)\}", value)
+    if not match:
+        return (root / value).is_file()
+    return all(_path_exists(root, value[:match.start()] + option + value[match.end():])
+               for option in match.group(1).split(","))
+
+
 def evaluate(task: TaskDefinition, agent_output: str, events: list[ToolEvent], metrics: dict) -> dict:
     output = agent_output.casefold()
     required = task.ground_truth.get("required_evidence", [])
@@ -99,10 +107,11 @@ def evaluate_r2(task: TaskDefinition, agent_output: str, events: list[ToolEvent]
     wrong_paths = []
     if repo_path:
         root = Path(repo_path)
-        for value in re.findall(r"(?:src|test|docs?)/[^\s\"']+", agent_output):
-            normalized = re.sub(r":\d+(?:-\d+)?$", "", value.rstrip(").,;:"))
-            if "{" in normalized or not (root / normalized).is_file():
-                wrong_paths.append(value.rstrip(").,;:"))
+        for value in re.findall(r"(?:src|test|docs?)/[^\s`\"']+", agent_output):
+            cleaned = value.rstrip("`).,;:")
+            normalized = re.sub(r":\d+(?:(?:-|–)\d+)?(?:,\d+(?:(?:-|–)\d+)?)*$", "", cleaned)
+            if not _path_exists(root, normalized):
+                wrong_paths.append(cleaned)
     usage_rate = len(used & returned) / len(returned) if returned else None
     return {
         "task_success": not missing and not semantic_missing and not wrong_ids and not wrong_paths,
