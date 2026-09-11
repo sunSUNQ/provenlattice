@@ -20,7 +20,7 @@ class AdapterResult:
     error: str | None = None
     actual_model: str | None = None
     actual_version: str | None = None
-    permission_denials: list[str] | None = None
+    permission_denials: list[dict] | None = None
 
 
 class CommandAgentAdapter:
@@ -79,7 +79,7 @@ class CommandAgentAdapter:
         output_lines: list[str] = []
         actual_model: str | None = None
         actual_version: str | None = None
-        permission_denials: list[str] = []
+        permission_denials: list[dict] = []
         for line in completed.stdout.splitlines():
             try:
                 value = json.loads(line)
@@ -144,13 +144,19 @@ class CommandAgentAdapter:
                     actual_model = value.get("model")
                     actual_version = value.get("claude_code_version")
                 elif value.get("subtype") == "permission_denied":
-                    permission_denials.append(
-                        f"{value.get('tool_name', 'unknown')}:{value.get('message', 'denied')}")
+                    permission_denials.append({
+                        "tool_name": value.get("tool_name", "unknown"),
+                        "tool_use_id": str(value.get("tool_use_id", "")),
+                        "message": value.get("message", "denied"),
+                    })
             else:
                 output_lines.append(line)
         used = set(parse_evidence_citations("\n".join(output_lines)))
         for event in events:
             event.used_evidence_ids = sorted(used.intersection(event.evidence_ids))
+        for denial in permission_denials:
+            event = events_by_tool_id.get(denial["tool_use_id"])
+            denial["operation"] = event.operation if event else "unknown"
         reason = "completed" if completed.returncode == 0 else "agent_nonzero_exit"
         error = completed.stderr.strip() or None
         return AdapterResult("\n".join(output_lines), events, reason, error,

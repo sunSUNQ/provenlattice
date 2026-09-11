@@ -156,8 +156,12 @@ class RetrievalHarnessTests(unittest.TestCase):
         stdout = "\n".join((
             json.dumps({"type": "system", "subtype": "init",
                         "model": "wrong-model", "claude_code_version": "2.1.268"}),
+            json.dumps({"type": "assistant", "message": {"content": [{
+                "type": "tool_use", "id": "tool-1", "name": "Bash",
+                "input": {"command": "provenlattice explain-symbol Example --json"},
+            }]}}),
             json.dumps({"type": "system", "subtype": "permission_denied",
-                        "tool_name": "Bash", "message": "denied"}),
+                        "tool_use_id": "tool-1", "tool_name": "Bash", "message": "denied"}),
             json.dumps({"type": "result", "result": "answer", "usage": {}}),
         ))
         completed = type("Completed", (), {"stdout": stdout, "stderr": "", "returncode": 0})()
@@ -168,6 +172,7 @@ class RetrievalHarnessTests(unittest.TestCase):
         self.assertEqual(result.actual_model, "wrong-model")
         self.assertEqual(result.actual_version, "2.1.268")
         self.assertEqual(len(result.permission_denials), 1)
+        self.assertEqual(result.permission_denials[0]["operation"], "explain-symbol")
 
     def test_repetition_and_frozen_metadata_are_recorded(self) -> None:
         result = run_task(self.task, "native", Path(self.temp.name), Path(self.temp.name),

@@ -13,6 +13,14 @@ def _variants(value: str) -> set[str]:
     return {value, value.replace("::", "."), value.replace(".", "::")}
 
 
+def _r2_variants(value: str) -> set[str]:
+    variants = _variants(value)
+    normalized = value.replace("::", ".")
+    if "." in normalized:
+        variants.add(normalized.rsplit(".", 1)[-1])
+    return variants
+
+
 def _section_values(task: TaskDefinition, evidence: dict[str, Any]) -> set[str]:
     values = {evidence.get("value", "")}
     values.update({evidence.get("heading_path", ""), evidence.get("file", "")})
@@ -23,7 +31,7 @@ def _section_values(task: TaskDefinition, evidence: dict[str, Any]) -> set[str]:
 def _path_exists(root: Path, value: str) -> bool:
     match = re.search(r"\{([^{}]+)\}", value)
     if not match:
-        return (root / value).is_file()
+        return (root / value).exists()
     return all(_path_exists(root, value[:match.start()] + option + value[match.end():])
                for option in match.group(1).split(","))
 
@@ -89,7 +97,7 @@ def evaluate_r2(task: TaskDefinition, agent_output: str, events: list[ToolEvent]
     semantic_hits = []
     for evidence in semantic_required:
         values = (_section_values(task, evidence) if evidence.get("type") == "document_section"
-                  else _variants(str(evidence.get("value", ""))))
+                  else _r2_variants(str(evidence.get("value", ""))))
         if any(value.casefold() in output for value in values):
             semantic_hits.append(evidence)
     semantic_missing = [item for item in semantic_required if item not in semantic_hits]

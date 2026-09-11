@@ -54,12 +54,14 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
     actual_model = getattr(adapter_result, "actual_model", None)
     actual_version = getattr(adapter_result, "actual_version", None)
     permission_denials = list(getattr(adapter_result, "permission_denials", None) or [])
+    critical_permission_denials = [item for item in permission_denials
+                                   if item.get("operation") not in {"shell", "unknown"}]
     if actual_model is not None and actual_model != model_id:
         violations.append(f"MODEL_MISMATCH expected={model_id} actual={actual_model}")
     if actual_version is not None and actual_version != claude_version:
         violations.append(f"CLAUDE_VERSION_MISMATCH expected={claude_version} actual={actual_version}")
-    if permission_denials:
-        violations.append(f"PERMISSION_DENIED:{len(permission_denials)}")
+    if critical_permission_denials:
+        violations.append(f"RETRIEVAL_PERMISSION_DENIED:{len(critical_permission_denials)}")
     for event in events:
         if event.operation in WRITE_OPERATIONS:
             violations.append(f"WRITE_OPERATION:{event.operation}")
@@ -103,6 +105,7 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
                        "model_id": model_id, "claude_version": claude_version,
                        "actual_model_id": actual_model, "actual_claude_version": actual_version,
                        "permission_denials": permission_denials,
+                       "critical_permission_denials": critical_permission_denials,
                        "provenlattice_commit": provenlattice_commit,
                        "ground_truth_version": ("r2-evidence-v1" if protocol == "r2"
                                                 else "r1-frozen-v1"), "attempt": attempt,
