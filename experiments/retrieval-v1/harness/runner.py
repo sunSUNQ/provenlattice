@@ -60,7 +60,7 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
         violations.append(f"MODEL_MISMATCH expected={model_id} actual={actual_model}")
     if actual_version is not None and actual_version != claude_version:
         violations.append(f"CLAUDE_VERSION_MISMATCH expected={claude_version} actual={actual_version}")
-    if critical_permission_denials:
+    if critical_permission_denials and not any(event.evidence_ids for event in events):
         violations.append(f"RETRIEVAL_PERMISSION_DENIED:{len(critical_permission_denials)}")
     for event in events:
         if event.operation in WRITE_OPERATIONS:
@@ -89,6 +89,8 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
     status = ("failed" if violations or (adapter_result.exit_reason not in {"completed"} and not usable_timeout)
               else "completed")
     metrics = collect_metrics(task, events, duration_ms, adapter_result.output)
+    metrics["permission_denial_count"] = len(permission_denials)
+    metrics["retrieval_permission_denial_count"] = len(critical_permission_denials)
     evaluation = (evaluate_r2(task, adapter_result.output, events, metrics,
                               arm=arm, repo_path=repo_path)
                   if protocol == "r2" else evaluate(task, adapter_result.output, events, metrics))

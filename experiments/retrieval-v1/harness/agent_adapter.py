@@ -198,11 +198,15 @@ class CommandAgentAdapter:
             f" Use the frozen ProvenLattice database at {database!r}. Prefer one bounded structured query: "
             "provenlattice explain-symbol ANCHOR --database DB --json --max-evidence 12; "
             "provenlattice explain-module ANCHOR --database DB --json --max-evidence 16. "
-            "Do not pipe or truncate its JSON. Cite only IDs actually returned, ending the answer with "
+            "Invoke each ProvenLattice query as a standalone command: do not prefix cd, use loops, "
+            "chain commands, pipe, redirect, or truncate its JSON. Cite only IDs actually returned, ending the answer with "
             "'Evidence Used:' followed by one '- E-...' line per used Evidence ID."
         )
         if request.arm == "codegraph":
-            return common + graph + " Do not use knowledge commands: evidence, implemented, or requirements."
+            return common + graph + (
+                " Do not use any Knowledge command: document, evidence, related-code, cross-layer, "
+                "implemented, requirements, find-related-code, or find-related-documents."
+            )
         return common + graph + (
             " For document/code traversal, use: provenlattice find-related-code DOCUMENT --database DB --json "
             "--max-evidence 16; or provenlattice find-related-documents SYMBOL --database DB --json "

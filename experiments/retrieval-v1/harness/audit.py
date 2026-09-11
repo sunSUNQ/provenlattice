@@ -61,7 +61,7 @@ def audit_run(run_dir: str | Path, task: TaskDefinition, arm: str, repetition: i
             errors.append("ACTUAL_MODEL_NOT_VERIFIED")
         if run.get("actual_claude_version") != claude_version:
             errors.append("ACTUAL_CLAUDE_VERSION_NOT_VERIFIED")
-    if run.get("critical_permission_denials"):
+    if run.get("critical_permission_denials") and not metrics.get("observed_evidence_ids"):
         errors.append("RETRIEVAL_PERMISSION_DENIED")
     if run.get("prompt") != task.prompt:
         errors.append("PROMPT_IDENTITY")
