@@ -17,3 +17,6 @@ experiments/retrieval-v1/results/_attempts/
 # R2 raw qualification cells remain local; reviewed aggregate reports are versioned.
 experiments/retrieval-v2/results/T*/
 experiments/retrieval-v2/results/_invalid*/
+
+# R2.1 raw cells stay local; audited summaries and lifecycle reports are versioned.
+experiments/retrieval-v2/r2_1/results/T*/

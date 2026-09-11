@@ -34,11 +34,20 @@ def collect_metrics(task: TaskDefinition, events: Iterable[ToolEvent], duration_
     for event in events:
         tokens.update(event.tokens)
     first_relevant = None
-    for event in events:
+    first_relevant_turn = None
+    required_by_arm = task.ground_truth.get("required_evidence_ids_by_arm") or {}
+    arm = events[0].arm if events else ""
+    relevant_evidence_ids = set(required_by_arm.get(
+        arm, task.ground_truth.get("required_evidence_ids") or []))
+    for turn, event in enumerate(events, start=1):
         event_text = " ".join(str(value) for value in (event.query, event.target, *event.files)).casefold()
-        if any(value.casefold() in event_text
-               for value in (*task.expected_files, *task.expected_symbols, *task.expected_documents)):
+        relevant_id_hit = bool(relevant_evidence_ids.intersection(event.evidence_ids))
+        semantic_hit = any(value.casefold() in event_text
+                           for value in (*task.expected_files, *task.expected_symbols,
+                                         *task.expected_documents))
+        if relevant_id_hit or semantic_hit:
             first_relevant = event.raw.get("elapsed_ms")
+            first_relevant_turn = turn
             break
     result = {
         "tool_turns": len(events), "read_calls": counts["read"],
@@ -69,6 +78,7 @@ def collect_metrics(task: TaskDefinition, events: Iterable[ToolEvent], duration_
                                      if all_evidence else None),
         "cross_layer_edge_utilization": None,
         "time_to_first_relevant_evidence_ms": first_relevant,
+        "turns_to_first_relevant_evidence": first_relevant_turn,
         "native_exploration_avoided": None,
     }
     if returned_edges:

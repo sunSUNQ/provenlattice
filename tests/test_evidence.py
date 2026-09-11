@@ -104,6 +104,17 @@ class EvidenceContractTests(unittest.TestCase):
                 traced = query.trace_evidence(item_id)
                 self.assertEqual(traced["returned_evidence_ids"], [item_id])
 
+            primary = first["bundle"]["primary_evidence"]
+            supporting = first["bundle"]["supporting_evidence"]
+            document_sections = [item for item in primary
+                                 if item["kind"] == "DOCUMENT_SECTION"]
+            cross_layer_links = [item for item in supporting
+                                 if item["kind"] == "CROSS_LAYER_LINK"]
+            self.assertEqual(len(document_sections), 1)
+            self.assertEqual(len(cross_layer_links), 1)
+            self.assertEqual(document_sections[0]["target_id"],
+                             cross_layer_links[0]["source_id"])
+
             candidates = query.find_related_code("REQ-RECOVERY-001", max_evidence=10)
             candidate_id = next(
                 item["evidence_id"] for item in candidates["bundle"]["supporting_evidence"]

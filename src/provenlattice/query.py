@@ -487,7 +487,13 @@ class GraphQuery:
         documents = self._cross_layer_neighbors(anchor["id"], CROSS_RELATIONS, True)
         relation_evidence = (self._evidence_from(callers) + self._evidence_from(callees)
                              + self._evidence_from(references))[:budget.max_edges]
-        document_evidence = self._evidence_from(documents)[:budget.max_sections]
+        document_nodes = documents["data"][:budget.max_sections]
+        document_node_evidence = list({
+            item.evidence_id: item for item in (
+                self._node_evidence(document) for document in document_nodes
+            )
+        }.values())
+        document_link_evidence = self._evidence_from(documents)[:budget.max_sections]
         shard_evidence: list[Evidence] = []
         if anchor.get("shard_id"):
             repository, commit = self._context()
@@ -507,8 +513,8 @@ class GraphQuery:
             anchor=symbol, intent="explain_symbol",
             summary=(f"{anchor['kind']} {anchor['qualified_name']}"
                      + (f" {anchor['signature']}" if anchor.get("signature") else "")),
-            primary_evidence=self._evidence_from(definition),
-            supporting_evidence=[*relation_evidence, *shard_evidence, *document_evidence],
+            primary_evidence=[*self._evidence_from(definition), *document_node_evidence],
+            supporting_evidence=[*relation_evidence, *shard_evidence, *document_link_evidence],
             related_entities=related, uncertainties=[], generation=self.graph_generation,
             budget=budget,
         )
