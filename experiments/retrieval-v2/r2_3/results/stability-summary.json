@@ -1,0 +1,118 @@
+{
+  "protocol": "r2.3",
+  "phase": "stability",
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_version": "2.1.268",
+  "provenlattice_commit": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+  "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+  "cells": [
+    {
+      "run_key": "T01.codegraph.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T01.knowledge.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T01.native.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T03.codegraph.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": false
+    },
+    {
+      "run_key": "T03.knowledge.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T03.native.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T05.codegraph.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T05.knowledge.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T05.native.r2",
+      "valid": true,
+      "errors": [],
+      "task_success": false
+    },
+    {
+      "run_key": "T01.knowledge.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T01.native.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T01.codegraph.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T03.knowledge.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T03.native.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T03.codegraph.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T05.knowledge.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    },
+    {
+      "run_key": "T05.native.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": false
+    },
+    {
+      "run_key": "T05.codegraph.r3",
+      "valid": true,
+      "errors": [],
+      "task_success": true
+    }
+  ]
+}

@@ -1,0 +1,5049 @@
+{
+  "protocol": "r2.3",
+  "n_per_task_arm": 3,
+  "statistics": "median/min/max only (n=3, no p-value, no significance claim)",
+  "task_arm": {
+    "T01.native": {
+      "task": "T01",
+      "arm": "native",
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "success_by_repetition": {
+        "1": true,
+        "2": true,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "evidence_precision": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 3
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 11,
+          "min": 10,
+          "max": 14,
+          "values": [
+            14,
+            11,
+            10
+          ]
+        },
+        "read_calls": {
+          "median": 4,
+          "min": 4,
+          "max": 5,
+          "values": [
+            4,
+            4,
+            5
+          ]
+        },
+        "grep_calls": {
+          "median": 4,
+          "min": 4,
+          "max": 6,
+          "values": [
+            4,
+            6,
+            4
+          ]
+        },
+        "glob_calls": {
+          "median": 1,
+          "min": 0,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            0
+          ]
+        },
+        "shell_calls": {
+          "median": 1,
+          "min": 0,
+          "max": 5,
+          "values": [
+            5,
+            0,
+            1
+          ]
+        },
+        "graph_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "knowledge_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unique_files_read": {
+          "median": 8,
+          "min": 4,
+          "max": 10,
+          "values": [
+            10,
+            4,
+            8
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 19086,
+          "min": 14922,
+          "max": 36517,
+          "values": [
+            19086,
+            14922,
+            36517
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 28929,
+          "min": 20288,
+          "max": 38790,
+          "values": [
+            28929,
+            20288,
+            38790
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 1.0,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            null,
+            1
+          ]
+        },
+        "duration_ms": {
+          "median": 18063.4505,
+          "min": 15686.0374,
+          "max": 27209.3848,
+          "values": [
+            27209.3848,
+            18063.4505,
+            15686.0374
+          ]
+        },
+        "input_tokens": {
+          "median": 31099,
+          "min": 28167,
+          "max": 33058,
+          "values": [
+            31099,
+            28167,
+            33058
+          ]
+        },
+        "output_tokens": {
+          "median": 2946,
+          "min": 2895,
+          "max": 4685,
+          "values": [
+            4685,
+            2895,
+            2946
+          ]
+        },
+        "cache_tokens": {
+          "median": 231552,
+          "min": 125056,
+          "max": 241792,
+          "values": [
+            241792,
+            231552,
+            125056
+          ]
+        },
+        "total_tokens": {
+          "median": 262614,
+          "min": 161060,
+          "max": 277576,
+          "values": [
+            277576,
+            262614,
+            161060
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "exposed_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "used_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "ground_truth_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "useful_evidence_density": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "T01.codegraph": {
+      "task": "T01",
+      "arm": "codegraph",
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "success_by_repetition": {
+        "1": true,
+        "2": true,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "evidence_precision": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 3,
+        "exact_evidence_misses": 0
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 15,
+          "min": 8,
+          "max": 17,
+          "values": [
+            15,
+            17,
+            8
+          ]
+        },
+        "read_calls": {
+          "median": 3,
+          "min": 1,
+          "max": 3,
+          "values": [
+            3,
+            3,
+            1
+          ]
+        },
+        "grep_calls": {
+          "median": 4,
+          "min": 2,
+          "max": 4,
+          "values": [
+            4,
+            4,
+            2
+          ]
+        },
+        "glob_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "shell_calls": {
+          "median": 1,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            1,
+            1
+          ]
+        },
+        "graph_queries": {
+          "median": 8,
+          "min": 4,
+          "max": 9,
+          "values": [
+            8,
+            9,
+            4
+          ]
+        },
+        "knowledge_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unique_files_read": {
+          "median": 4,
+          "min": 3,
+          "max": 7,
+          "values": [
+            3,
+            7,
+            4
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 5789,
+          "min": 3498,
+          "max": 58165,
+          "values": [
+            58165,
+            5789,
+            3498
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 51266,
+          "min": 39632,
+          "max": 78122,
+          "values": [
+            78122,
+            51266,
+            39632
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 1.0,
+          "min": 1,
+          "max": 1,
+          "values": [
+            null,
+            1,
+            1
+          ]
+        },
+        "duration_ms": {
+          "median": 26142.321,
+          "min": 22200.1196,
+          "max": 29986.1411,
+          "values": [
+            26142.321,
+            29986.1411,
+            22200.1196
+          ]
+        },
+        "input_tokens": {
+          "median": 42971,
+          "min": 38671,
+          "max": 50831,
+          "values": [
+            50831,
+            42971,
+            38671
+          ]
+        },
+        "output_tokens": {
+          "median": 4660,
+          "min": 3579,
+          "max": 5376,
+          "values": [
+            4660,
+            5376,
+            3579
+          ]
+        },
+        "cache_tokens": {
+          "median": 247424,
+          "min": 209664,
+          "max": 338560,
+          "values": [
+            338560,
+            247424,
+            209664
+          ]
+        },
+        "total_tokens": {
+          "median": 295771,
+          "min": 251914,
+          "max": 394051,
+          "values": [
+            394051,
+            295771,
+            251914
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 20,
+          "min": 8,
+          "max": 22,
+          "values": [
+            8,
+            22,
+            20
+          ]
+        },
+        "exposed_evidence": {
+          "median": 20,
+          "min": 8,
+          "max": 22,
+          "values": [
+            8,
+            22,
+            20
+          ]
+        },
+        "used_evidence": {
+          "median": 2,
+          "min": 2,
+          "max": 6,
+          "values": [
+            6,
+            2,
+            2
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "ground_truth_used": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 18,
+          "min": 2,
+          "max": 20,
+          "values": [
+            2,
+            20,
+            18
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": 0.1,
+          "min": 0.09090909090909091,
+          "max": 0.75,
+          "values": [
+            0.75,
+            0.09090909090909091,
+            0.1
+          ]
+        },
+        "useful_evidence_density": {
+          "median": 0.5,
+          "min": 0.16666666666666666,
+          "max": 0.5,
+          "values": [
+            0.16666666666666666,
+            0.5,
+            0.5
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "T01.knowledge": {
+      "task": "T01",
+      "arm": "knowledge",
+      "runs": 3,
+      "successes": 2,
+      "success_rate": 0.6666666666666666,
+      "success_by_repetition": {
+        "1": false,
+        "2": true,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 1.0,
+          "min": 0.0,
+          "max": 1.0,
+          "values": [
+            0.0,
+            1.0,
+            1.0
+          ]
+        },
+        "evidence_precision": {
+          "median": 1.0,
+          "min": 0.9,
+          "max": 1.0,
+          "values": [
+            0.9,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 1,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 2,
+        "exact_evidence_misses": 1
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 16,
+          "min": 13,
+          "max": 19,
+          "values": [
+            16,
+            19,
+            13
+          ]
+        },
+        "read_calls": {
+          "median": 4,
+          "min": 3,
+          "max": 5,
+          "values": [
+            5,
+            4,
+            3
+          ]
+        },
+        "grep_calls": {
+          "median": 5,
+          "min": 5,
+          "max": 5,
+          "values": [
+            5,
+            5,
+            5
+          ]
+        },
+        "glob_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            1,
+            0
+          ]
+        },
+        "shell_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            1,
+            0
+          ]
+        },
+        "graph_queries": {
+          "median": 5,
+          "min": 3,
+          "max": 6,
+          "values": [
+            5,
+            6,
+            3
+          ]
+        },
+        "knowledge_queries": {
+          "median": 2,
+          "min": 1,
+          "max": 2,
+          "values": [
+            1,
+            2,
+            2
+          ]
+        },
+        "unique_files_read": {
+          "median": 5,
+          "min": 3,
+          "max": 7,
+          "values": [
+            5,
+            7,
+            3
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 13054,
+          "min": 9407,
+          "max": 15103,
+          "values": [
+            9407,
+            15103,
+            13054
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 41837,
+          "min": 27651,
+          "max": 45115,
+          "values": [
+            45115,
+            41837,
+            27651
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 4,
+          "min": 1,
+          "max": 5,
+          "values": [
+            5,
+            4,
+            1
+          ]
+        },
+        "duration_ms": {
+          "median": 32148.3327,
+          "min": 21387.7621,
+          "max": 33676.2715,
+          "values": [
+            33676.2715,
+            32148.3327,
+            21387.7621
+          ]
+        },
+        "input_tokens": {
+          "median": 37201,
+          "min": 31286,
+          "max": 38851,
+          "values": [
+            38851,
+            37201,
+            31286
+          ]
+        },
+        "output_tokens": {
+          "median": 5239,
+          "min": 3943,
+          "max": 6081,
+          "values": [
+            5239,
+            6081,
+            3943
+          ]
+        },
+        "cache_tokens": {
+          "median": 230912,
+          "min": 218624,
+          "max": 324224,
+          "values": [
+            230912,
+            324224,
+            218624
+          ]
+        },
+        "total_tokens": {
+          "median": 275002,
+          "min": 253853,
+          "max": 367506,
+          "values": [
+            275002,
+            367506,
+            253853
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 9,
+          "min": 4,
+          "max": 10,
+          "values": [
+            10,
+            9,
+            4
+          ]
+        },
+        "exposed_evidence": {
+          "median": 9,
+          "min": 4,
+          "max": 10,
+          "values": [
+            10,
+            9,
+            4
+          ]
+        },
+        "used_evidence": {
+          "median": 4,
+          "min": 4,
+          "max": 10,
+          "values": [
+            10,
+            4,
+            4
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "ground_truth_used": {
+          "median": 1,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            1,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 5,
+          "values": [
+            0,
+            5,
+            0
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": 1.0,
+          "min": 0.4444444444444444,
+          "max": 1.0,
+          "values": [
+            1.0,
+            0.4444444444444444,
+            1.0
+          ]
+        },
+        "useful_evidence_density": {
+          "median": 0.25,
+          "min": 0.0,
+          "max": 0.25,
+          "values": [
+            0.0,
+            0.25,
+            0.25
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "T03.native": {
+      "task": "T03",
+      "arm": "native",
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "success_by_repetition": {
+        "1": true,
+        "2": true,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "evidence_precision": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 3
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 12,
+          "min": 11,
+          "max": 14,
+          "values": [
+            14,
+            12,
+            11
+          ]
+        },
+        "read_calls": {
+          "median": 4,
+          "min": 2,
+          "max": 7,
+          "values": [
+            7,
+            4,
+            2
+          ]
+        },
+        "grep_calls": {
+          "median": 6,
+          "min": 6,
+          "max": 8,
+          "values": [
+            6,
+            6,
+            8
+          ]
+        },
+        "glob_calls": {
+          "median": 1,
+          "min": 1,
+          "max": 2,
+          "values": [
+            1,
+            2,
+            1
+          ]
+        },
+        "shell_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "graph_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "knowledge_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unique_files_read": {
+          "median": 6,
+          "min": 3,
+          "max": 7,
+          "values": [
+            6,
+            7,
+            3
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 15813,
+          "min": 7677,
+          "max": 16918,
+          "values": [
+            15813,
+            16918,
+            7677
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 29283,
+          "min": 24893,
+          "max": 32165,
+          "values": [
+            29283,
+            32165,
+            24893
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 12,
+          "min": 12,
+          "max": 12,
+          "values": [
+            null,
+            12,
+            null
+          ]
+        },
+        "duration_ms": {
+          "median": 20010.4188,
+          "min": 15687.2239,
+          "max": 22537.1406,
+          "values": [
+            20010.4188,
+            22537.1406,
+            15687.2239
+          ]
+        },
+        "input_tokens": {
+          "median": 30680,
+          "min": 29183,
+          "max": 31454,
+          "values": [
+            30680,
+            31454,
+            29183
+          ]
+        },
+        "output_tokens": {
+          "median": 3449,
+          "min": 2688,
+          "max": 3935,
+          "values": [
+            3449,
+            3935,
+            2688
+          ]
+        },
+        "cache_tokens": {
+          "median": 193024,
+          "min": 183296,
+          "max": 242432,
+          "values": [
+            242432,
+            193024,
+            183296
+          ]
+        },
+        "total_tokens": {
+          "median": 228413,
+          "min": 215167,
+          "max": 276561,
+          "values": [
+            276561,
+            228413,
+            215167
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "exposed_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "used_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "useful_evidence_density": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "T03.codegraph": {
+      "task": "T03",
+      "arm": "codegraph",
+      "runs": 3,
+      "successes": 2,
+      "success_rate": 0.6666666666666666,
+      "success_by_repetition": {
+        "1": true,
+        "2": false,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "evidence_precision": {
+          "median": 1.0,
+          "min": 0.6666666666666666,
+          "max": 1.0,
+          "values": [
+            1.0,
+            0.6666666666666666,
+            1.0
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 1,
+        "exact_evidence_hits": 3,
+        "exact_evidence_misses": 0
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 10,
+          "min": 9,
+          "max": 14,
+          "values": [
+            14,
+            10,
+            9
+          ]
+        },
+        "read_calls": {
+          "median": 3,
+          "min": 3,
+          "max": 4,
+          "values": [
+            3,
+            4,
+            3
+          ]
+        },
+        "grep_calls": {
+          "median": 2,
+          "min": 0,
+          "max": 2,
+          "values": [
+            0,
+            2,
+            2
+          ]
+        },
+        "glob_calls": {
+          "median": 1,
+          "min": 1,
+          "max": 2,
+          "values": [
+            2,
+            1,
+            1
+          ]
+        },
+        "shell_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            0,
+            1
+          ]
+        },
+        "graph_queries": {
+          "median": 3,
+          "min": 2,
+          "max": 9,
+          "values": [
+            9,
+            3,
+            2
+          ]
+        },
+        "knowledge_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unique_files_read": {
+          "median": 5,
+          "min": 4,
+          "max": 10,
+          "values": [
+            10,
+            5,
+            4
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 6921,
+          "min": 5108,
+          "max": 8163,
+          "values": [
+            5108,
+            8163,
+            6921
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 39917,
+          "min": 39760,
+          "max": 42881,
+          "values": [
+            42881,
+            39760,
+            39917
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "duration_ms": {
+          "median": 27978.3599,
+          "min": 24218.3945,
+          "max": 41772.3656,
+          "values": [
+            41772.3656,
+            24218.3945,
+            27978.3599
+          ]
+        },
+        "input_tokens": {
+          "median": 38003,
+          "min": 37518,
+          "max": 39750,
+          "values": [
+            39750,
+            37518,
+            38003
+          ]
+        },
+        "output_tokens": {
+          "median": 4723,
+          "min": 4544,
+          "max": 7485,
+          "values": [
+            7485,
+            4544,
+            4723
+          ]
+        },
+        "cache_tokens": {
+          "median": 231808,
+          "min": 154624,
+          "max": 346752,
+          "values": [
+            346752,
+            154624,
+            231808
+          ]
+        },
+        "total_tokens": {
+          "median": 274534,
+          "min": 196686,
+          "max": 393987,
+          "values": [
+            393987,
+            196686,
+            274534
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 18,
+          "min": 18,
+          "max": 20,
+          "values": [
+            20,
+            18,
+            18
+          ]
+        },
+        "exposed_evidence": {
+          "median": 18,
+          "min": 18,
+          "max": 20,
+          "values": [
+            20,
+            18,
+            18
+          ]
+        },
+        "used_evidence": {
+          "median": 3,
+          "min": 2,
+          "max": 4,
+          "values": [
+            4,
+            3,
+            2
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_used": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            1,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 16,
+          "min": 16,
+          "max": 16,
+          "values": [
+            16,
+            16,
+            16
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": 0.1111111111111111,
+          "min": 0.1111111111111111,
+          "max": 0.2,
+          "values": [
+            0.2,
+            0.1111111111111111,
+            0.1111111111111111
+          ]
+        },
+        "useful_evidence_density": {
+          "median": 0.6666666666666666,
+          "min": 0.5,
+          "max": 1.0,
+          "values": [
+            0.5,
+            0.6666666666666666,
+            1.0
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            1,
+            0
+          ]
+        }
+      }
+    },
+    "T03.knowledge": {
+      "task": "T03",
+      "arm": "knowledge",
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "success_by_repetition": {
+        "1": true,
+        "2": true,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "evidence_precision": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 3,
+        "exact_evidence_misses": 0
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "values": [
+            3,
+            3,
+            3
+          ]
+        },
+        "read_calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "grep_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "glob_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "shell_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "graph_queries": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "knowledge_queries": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "unique_files_read": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 2365,
+          "min": 1819,
+          "max": 2380,
+          "values": [
+            2380,
+            2365,
+            1819
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 25070,
+          "min": 24524,
+          "max": 25087,
+          "values": [
+            25087,
+            25070,
+            24524
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "duration_ms": {
+          "median": 14003.0801,
+          "min": 13909.0634,
+          "max": 14294.8671,
+          "values": [
+            14294.8671,
+            13909.0634,
+            14003.0801
+          ]
+        },
+        "input_tokens": {
+          "median": 30826,
+          "min": 30640,
+          "max": 30859,
+          "values": [
+            30859,
+            30826,
+            30640
+          ]
+        },
+        "output_tokens": {
+          "median": 2323,
+          "min": 2226,
+          "max": 2478,
+          "values": [
+            2226,
+            2478,
+            2323
+          ]
+        },
+        "cache_tokens": {
+          "median": 48256,
+          "min": 48128,
+          "max": 48256,
+          "values": [
+            48256,
+            48256,
+            48128
+          ]
+        },
+        "total_tokens": {
+          "median": 81341,
+          "min": 81091,
+          "max": 81560,
+          "values": [
+            81341,
+            81560,
+            81091
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 6,
+          "min": 6,
+          "max": 6,
+          "values": [
+            6,
+            6,
+            6
+          ]
+        },
+        "exposed_evidence": {
+          "median": 6,
+          "min": 6,
+          "max": 6,
+          "values": [
+            6,
+            6,
+            6
+          ]
+        },
+        "used_evidence": {
+          "median": 6,
+          "min": 6,
+          "max": 6,
+          "values": [
+            6,
+            6,
+            6
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_used": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "useful_evidence_density": {
+          "median": 0.3333333333333333,
+          "min": 0.3333333333333333,
+          "max": 0.3333333333333333,
+          "values": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "T05.native": {
+      "task": "T05",
+      "arm": "native",
+      "runs": 3,
+      "successes": 1,
+      "success_rate": 0.3333333333333333,
+      "success_by_repetition": {
+        "1": true,
+        "2": false,
+        "3": false
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0,
+          "values": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "evidence_precision": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 2,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 9
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 24,
+          "min": 23,
+          "max": 29,
+          "values": [
+            24,
+            23,
+            29
+          ]
+        },
+        "read_calls": {
+          "median": 6,
+          "min": 6,
+          "max": 13,
+          "values": [
+            13,
+            6,
+            6
+          ]
+        },
+        "grep_calls": {
+          "median": 9,
+          "min": 9,
+          "max": 21,
+          "values": [
+            9,
+            9,
+            21
+          ]
+        },
+        "glob_calls": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "shell_calls": {
+          "median": 1,
+          "min": 1,
+          "max": 7,
+          "values": [
+            1,
+            7,
+            1
+          ]
+        },
+        "graph_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "knowledge_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unique_files_read": {
+          "median": 9,
+          "min": 8,
+          "max": 13,
+          "values": [
+            9,
+            13,
+            8
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 29275,
+          "min": 23291,
+          "max": 39531,
+          "values": [
+            39531,
+            23291,
+            29275
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 54493,
+          "min": 48840,
+          "max": 70839,
+          "values": [
+            48840,
+            54493,
+            70839
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "duration_ms": {
+          "median": 35446.0592,
+          "min": 31161.9588,
+          "max": 36626.1293,
+          "values": [
+            31161.9588,
+            35446.0592,
+            36626.1293
+          ]
+        },
+        "input_tokens": {
+          "median": 38561,
+          "min": 35627,
+          "max": 43087,
+          "values": [
+            35627,
+            38561,
+            43087
+          ]
+        },
+        "output_tokens": {
+          "median": 6328,
+          "min": 5650,
+          "max": 6978,
+          "values": [
+            5650,
+            6328,
+            6978
+          ]
+        },
+        "cache_tokens": {
+          "median": 441600,
+          "min": 291840,
+          "max": 463104,
+          "values": [
+            291840,
+            463104,
+            441600
+          ]
+        },
+        "total_tokens": {
+          "median": 491665,
+          "min": 333117,
+          "max": 507993,
+          "values": [
+            333117,
+            507993,
+            491665
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "exposed_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "used_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "values": [
+            3,
+            3,
+            3
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "useful_evidence_density": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "T05.codegraph": {
+      "task": "T05",
+      "arm": "codegraph",
+      "runs": 3,
+      "successes": 2,
+      "success_rate": 0.6666666666666666,
+      "success_by_repetition": {
+        "1": false,
+        "2": true,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 0.3333333333333333,
+          "min": 0.3333333333333333,
+          "max": 0.3333333333333333,
+          "values": [
+            0.3333333333333333,
+            0.3333333333333333,
+            0.3333333333333333
+          ]
+        },
+        "evidence_precision": {
+          "median": 1.0,
+          "min": 0.95,
+          "max": 1.0,
+          "values": [
+            0.95,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 1,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 3,
+        "exact_evidence_misses": 6
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 29,
+          "min": 6,
+          "max": 30,
+          "values": [
+            30,
+            6,
+            29
+          ]
+        },
+        "read_calls": {
+          "median": 1,
+          "min": 1,
+          "max": 8,
+          "values": [
+            8,
+            1,
+            1
+          ]
+        },
+        "grep_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            1,
+            0,
+            0
+          ]
+        },
+        "glob_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            1,
+            0,
+            0
+          ]
+        },
+        "shell_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            0,
+            1
+          ]
+        },
+        "graph_queries": {
+          "median": 20,
+          "min": 5,
+          "max": 27,
+          "values": [
+            20,
+            5,
+            27
+          ]
+        },
+        "knowledge_queries": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unique_files_read": {
+          "median": 7,
+          "min": 1,
+          "max": 7,
+          "values": [
+            7,
+            1,
+            7
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 4630,
+          "min": 4630,
+          "max": 25237,
+          "values": [
+            25237,
+            4630,
+            4630
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 104277,
+          "min": 44769,
+          "max": 163350,
+          "values": [
+            104277,
+            44769,
+            163350
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 5,
+          "min": 4,
+          "max": 12,
+          "values": [
+            12,
+            5,
+            4
+          ]
+        },
+        "duration_ms": {
+          "median": 59829.129,
+          "min": 25640.2083,
+          "max": 62709.3078,
+          "values": [
+            62709.3078,
+            25640.2083,
+            59829.129
+          ]
+        },
+        "input_tokens": {
+          "median": 61970,
+          "min": 40295,
+          "max": 85811,
+          "values": [
+            61970,
+            40295,
+            85811
+          ]
+        },
+        "output_tokens": {
+          "median": 12417,
+          "min": 4827,
+          "max": 12815,
+          "values": [
+            12815,
+            4827,
+            12417
+          ]
+        },
+        "cache_tokens": {
+          "median": 471424,
+          "min": 156288,
+          "max": 633856,
+          "values": [
+            633856,
+            156288,
+            471424
+          ]
+        },
+        "total_tokens": {
+          "median": 569652,
+          "min": 201410,
+          "max": 708641,
+          "values": [
+            708641,
+            201410,
+            569652
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 38,
+          "min": 24,
+          "max": 72,
+          "values": [
+            38,
+            24,
+            72
+          ]
+        },
+        "exposed_evidence": {
+          "median": 38,
+          "min": 24,
+          "max": 72,
+          "values": [
+            38,
+            24,
+            72
+          ]
+        },
+        "used_evidence": {
+          "median": 16,
+          "min": 8,
+          "max": 20,
+          "values": [
+            20,
+            8,
+            16
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "values": [
+            3,
+            3,
+            3
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_used": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            1,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 19,
+          "min": 16,
+          "max": 56,
+          "values": [
+            19,
+            16,
+            56
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": 0.3333333333333333,
+          "min": 0.2222222222222222,
+          "max": 0.5,
+          "values": [
+            0.5,
+            0.3333333333333333,
+            0.2222222222222222
+          ]
+        },
+        "useful_evidence_density": {
+          "median": 0.0625,
+          "min": 0.05,
+          "max": 0.125,
+          "values": [
+            0.05,
+            0.125,
+            0.0625
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            1,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "T05.knowledge": {
+      "task": "T05",
+      "arm": "knowledge",
+      "runs": 3,
+      "successes": 3,
+      "success_rate": 1.0,
+      "success_by_repetition": {
+        "1": true,
+        "2": true,
+        "3": true
+      },
+      "correctness": {
+        "concept_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "exact_evidence_recall": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "evidence_precision": {
+          "median": 1.0,
+          "min": 1.0,
+          "max": 1.0,
+          "values": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "correctness_sums": {
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 9,
+        "exact_evidence_misses": 0
+      },
+      "efficiency": {
+        "tool_turns": {
+          "median": 20,
+          "min": 15,
+          "max": 27,
+          "values": [
+            20,
+            15,
+            27
+          ]
+        },
+        "read_calls": {
+          "median": 1,
+          "min": 1,
+          "max": 6,
+          "values": [
+            1,
+            1,
+            6
+          ]
+        },
+        "grep_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 6,
+          "values": [
+            0,
+            0,
+            6
+          ]
+        },
+        "glob_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "shell_calls": {
+          "median": 0,
+          "min": 0,
+          "max": 1,
+          "values": [
+            0,
+            1,
+            0
+          ]
+        },
+        "graph_queries": {
+          "median": 11,
+          "min": 10,
+          "max": 13,
+          "values": [
+            13,
+            10,
+            11
+          ]
+        },
+        "knowledge_queries": {
+          "median": 4,
+          "min": 3,
+          "max": 6,
+          "values": [
+            6,
+            3,
+            4
+          ]
+        },
+        "unique_files_read": {
+          "median": 6,
+          "min": 2,
+          "max": 7,
+          "values": [
+            6,
+            2,
+            7
+          ]
+        },
+        "total_file_chars_read": {
+          "median": 4630,
+          "min": 4630,
+          "max": 19565,
+          "values": [
+            4630,
+            4630,
+            19565
+          ]
+        },
+        "total_tool_output_chars": {
+          "median": 114780,
+          "min": 79342,
+          "max": 116652,
+          "values": [
+            114780,
+            79342,
+            116652
+          ]
+        },
+        "time_to_first_relevant_evidence_ms": {
+          "median": null,
+          "min": null,
+          "max": null,
+          "values": [
+            null,
+            null,
+            null
+          ]
+        },
+        "turns_to_first_relevant_evidence": {
+          "median": 2,
+          "min": 1,
+          "max": 6,
+          "values": [
+            2,
+            6,
+            1
+          ]
+        },
+        "duration_ms": {
+          "median": 38723.3397,
+          "min": 25747.224,
+          "max": 44056.694,
+          "values": [
+            38723.3397,
+            25747.224,
+            44056.694
+          ]
+        },
+        "input_tokens": {
+          "median": 67969,
+          "min": 54213,
+          "max": 68542,
+          "values": [
+            68542,
+            54213,
+            67969
+          ]
+        },
+        "output_tokens": {
+          "median": 8091,
+          "min": 4979,
+          "max": 8121,
+          "values": [
+            8091,
+            4979,
+            8121
+          ]
+        },
+        "cache_tokens": {
+          "median": 246016,
+          "min": 232448,
+          "max": 614400,
+          "values": [
+            246016,
+            232448,
+            614400
+          ]
+        },
+        "total_tokens": {
+          "median": 322649,
+          "min": 291640,
+          "max": 690490,
+          "values": [
+            322649,
+            291640,
+            690490
+          ]
+        }
+      },
+      "evidence_utility": {
+        "returned_evidence": {
+          "median": 39,
+          "min": 35,
+          "max": 48,
+          "values": [
+            48,
+            39,
+            35
+          ]
+        },
+        "exposed_evidence": {
+          "median": 39,
+          "min": 35,
+          "max": 48,
+          "values": [
+            48,
+            39,
+            35
+          ]
+        },
+        "used_evidence": {
+          "median": 20,
+          "min": 15,
+          "max": 31,
+          "values": [
+            31,
+            20,
+            15
+          ]
+        },
+        "ground_truth_evidence": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "values": [
+            3,
+            3,
+            3
+          ]
+        },
+        "acceptable_alternative_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "supporting_evidence": {
+          "median": 1,
+          "min": 1,
+          "max": 1,
+          "values": [
+            1,
+            1,
+            1
+          ]
+        },
+        "invalid_evidence": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "ground_truth_used": {
+          "median": 3,
+          "min": 3,
+          "max": 3,
+          "values": [
+            3,
+            3,
+            3
+          ]
+        },
+        "acceptable_alternative_used": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "invalid_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "unsupported_citation_count": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        },
+        "returned_but_unused_evidence": {
+          "median": 19,
+          "min": 17,
+          "max": 20,
+          "values": [
+            17,
+            19,
+            20
+          ]
+        },
+        "evidence_usage_rate": {
+          "median": 0.5128205128205128,
+          "min": 0.42857142857142855,
+          "max": 0.6458333333333334,
+          "values": [
+            0.6458333333333334,
+            0.5128205128205128,
+            0.42857142857142855
+          ]
+        },
+        "useful_evidence_density": {
+          "median": 0.2,
+          "min": 0.12903225806451613,
+          "max": 0.26666666666666666,
+          "values": [
+            0.12903225806451613,
+            0.2,
+            0.26666666666666666
+          ]
+        },
+        "used_but_not_returned": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "values": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  },
+  "per_cell": {
+    "T01.native.r1": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 1,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 14,
+        "read_calls": 4,
+        "grep_calls": 4,
+        "glob_calls": 1,
+        "shell_calls": 5,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 10,
+        "total_file_chars_read": 19086,
+        "total_tool_output_chars": 28929,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 27209.3848,
+        "input_tokens": 31099,
+        "output_tokens": 4685,
+        "cache_tokens": 241792,
+        "total_tokens": 277576
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.native.r2": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 1,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 11,
+        "read_calls": 4,
+        "grep_calls": 6,
+        "glob_calls": 1,
+        "shell_calls": 0,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 4,
+        "total_file_chars_read": 14922,
+        "total_tool_output_chars": 20288,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": null,
+        "duration_ms": 18063.4505,
+        "input_tokens": 28167,
+        "output_tokens": 2895,
+        "cache_tokens": 231552,
+        "total_tokens": 262614
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.native.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 1,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 10,
+        "read_calls": 5,
+        "grep_calls": 4,
+        "glob_calls": 0,
+        "shell_calls": 1,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 8,
+        "total_file_chars_read": 36517,
+        "total_tool_output_chars": 38790,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 15686.0374,
+        "input_tokens": 33058,
+        "output_tokens": 2946,
+        "cache_tokens": 125056,
+        "total_tokens": 161060
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.codegraph.r1": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 15,
+        "read_calls": 3,
+        "grep_calls": 4,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 8,
+        "knowledge_queries": 0,
+        "unique_files_read": 3,
+        "total_file_chars_read": 58165,
+        "total_tool_output_chars": 78122,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": null,
+        "duration_ms": 26142.321,
+        "input_tokens": 50831,
+        "output_tokens": 4660,
+        "cache_tokens": 338560,
+        "total_tokens": 394051
+      },
+      "evidence_utility": {
+        "returned_evidence": 8,
+        "exposed_evidence": 8,
+        "used_evidence": 6,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 2,
+        "evidence_usage_rate": 0.75,
+        "useful_evidence_density": 0.16666666666666666,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.codegraph.r2": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 17,
+        "read_calls": 3,
+        "grep_calls": 4,
+        "glob_calls": 0,
+        "shell_calls": 1,
+        "graph_queries": 9,
+        "knowledge_queries": 0,
+        "unique_files_read": 7,
+        "total_file_chars_read": 5789,
+        "total_tool_output_chars": 51266,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 29986.1411,
+        "input_tokens": 42971,
+        "output_tokens": 5376,
+        "cache_tokens": 247424,
+        "total_tokens": 295771
+      },
+      "evidence_utility": {
+        "returned_evidence": 22,
+        "exposed_evidence": 22,
+        "used_evidence": 2,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 20,
+        "evidence_usage_rate": 0.09090909090909091,
+        "useful_evidence_density": 0.5,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.codegraph.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 8,
+        "read_calls": 1,
+        "grep_calls": 2,
+        "glob_calls": 0,
+        "shell_calls": 1,
+        "graph_queries": 4,
+        "knowledge_queries": 0,
+        "unique_files_read": 4,
+        "total_file_chars_read": 3498,
+        "total_tool_output_chars": 39632,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 22200.1196,
+        "input_tokens": 38671,
+        "output_tokens": 3579,
+        "cache_tokens": 209664,
+        "total_tokens": 251914
+      },
+      "evidence_utility": {
+        "returned_evidence": 20,
+        "exposed_evidence": 20,
+        "used_evidence": 2,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 18,
+        "evidence_usage_rate": 0.1,
+        "useful_evidence_density": 0.5,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.knowledge.r1": {
+      "correctness": {
+        "task_success": false,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": 0.9,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 1,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 1,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 16,
+        "read_calls": 5,
+        "grep_calls": 5,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 5,
+        "knowledge_queries": 1,
+        "unique_files_read": 5,
+        "total_file_chars_read": 9407,
+        "total_tool_output_chars": 45115,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 5,
+        "duration_ms": 33676.2715,
+        "input_tokens": 38851,
+        "output_tokens": 5239,
+        "cache_tokens": 230912,
+        "total_tokens": 275002
+      },
+      "evidence_utility": {
+        "returned_evidence": 10,
+        "exposed_evidence": 10,
+        "used_evidence": 10,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 1,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": 1.0,
+        "useful_evidence_density": 0.0,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.knowledge.r2": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 19,
+        "read_calls": 4,
+        "grep_calls": 5,
+        "glob_calls": 1,
+        "shell_calls": 1,
+        "graph_queries": 6,
+        "knowledge_queries": 2,
+        "unique_files_read": 7,
+        "total_file_chars_read": 15103,
+        "total_tool_output_chars": 41837,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 4,
+        "duration_ms": 32148.3327,
+        "input_tokens": 37201,
+        "output_tokens": 6081,
+        "cache_tokens": 324224,
+        "total_tokens": 367506
+      },
+      "evidence_utility": {
+        "returned_evidence": 9,
+        "exposed_evidence": 9,
+        "used_evidence": 4,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 5,
+        "evidence_usage_rate": 0.4444444444444444,
+        "useful_evidence_density": 0.25,
+        "used_but_not_returned": 0
+      }
+    },
+    "T01.knowledge.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "documented-bounded-load-behavior",
+            "satisfied": true
+          },
+          {
+            "concept_id": "bounded-load-core-implementation",
+            "satisfied": true
+          },
+          {
+            "concept_id": "implementation-location",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 13,
+        "read_calls": 3,
+        "grep_calls": 5,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 3,
+        "knowledge_queries": 2,
+        "unique_files_read": 3,
+        "total_file_chars_read": 13054,
+        "total_tool_output_chars": 27651,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 21387.7621,
+        "input_tokens": 31286,
+        "output_tokens": 3943,
+        "cache_tokens": 218624,
+        "total_tokens": 253853
+      },
+      "evidence_utility": {
+        "returned_evidence": 4,
+        "exposed_evidence": 4,
+        "used_evidence": 4,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 1,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": 1.0,
+        "useful_evidence_density": 0.25,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.native.r1": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 1,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 14,
+        "read_calls": 7,
+        "grep_calls": 6,
+        "glob_calls": 1,
+        "shell_calls": 0,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 6,
+        "total_file_chars_read": 15813,
+        "total_tool_output_chars": 29283,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": null,
+        "duration_ms": 20010.4188,
+        "input_tokens": 30680,
+        "output_tokens": 3449,
+        "cache_tokens": 242432,
+        "total_tokens": 276561
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.native.r2": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 1,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 12,
+        "read_calls": 4,
+        "grep_calls": 6,
+        "glob_calls": 2,
+        "shell_calls": 0,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 7,
+        "total_file_chars_read": 16918,
+        "total_tool_output_chars": 32165,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 12,
+        "duration_ms": 22537.1406,
+        "input_tokens": 31454,
+        "output_tokens": 3935,
+        "cache_tokens": 193024,
+        "total_tokens": 228413
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.native.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 1,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 11,
+        "read_calls": 2,
+        "grep_calls": 8,
+        "glob_calls": 1,
+        "shell_calls": 0,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 3,
+        "total_file_chars_read": 7677,
+        "total_tool_output_chars": 24893,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": null,
+        "duration_ms": 15687.2239,
+        "input_tokens": 29183,
+        "output_tokens": 2688,
+        "cache_tokens": 183296,
+        "total_tokens": 215167
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.codegraph.r1": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 14,
+        "read_calls": 3,
+        "grep_calls": 0,
+        "glob_calls": 2,
+        "shell_calls": 0,
+        "graph_queries": 9,
+        "knowledge_queries": 0,
+        "unique_files_read": 10,
+        "total_file_chars_read": 5108,
+        "total_tool_output_chars": 42881,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 41772.3656,
+        "input_tokens": 39750,
+        "output_tokens": 7485,
+        "cache_tokens": 346752,
+        "total_tokens": 393987
+      },
+      "evidence_utility": {
+        "returned_evidence": 20,
+        "exposed_evidence": 20,
+        "used_evidence": 4,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 16,
+        "evidence_usage_rate": 0.2,
+        "useful_evidence_density": 0.5,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.codegraph.r2": {
+      "correctness": {
+        "task_success": false,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 0.6666666666666666,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 1,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 10,
+        "read_calls": 4,
+        "grep_calls": 2,
+        "glob_calls": 1,
+        "shell_calls": 0,
+        "graph_queries": 3,
+        "knowledge_queries": 0,
+        "unique_files_read": 5,
+        "total_file_chars_read": 8163,
+        "total_tool_output_chars": 39760,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 24218.3945,
+        "input_tokens": 37518,
+        "output_tokens": 4544,
+        "cache_tokens": 154624,
+        "total_tokens": 196686
+      },
+      "evidence_utility": {
+        "returned_evidence": 18,
+        "exposed_evidence": 18,
+        "used_evidence": 3,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 1,
+        "returned_but_unused_evidence": 16,
+        "evidence_usage_rate": 0.1111111111111111,
+        "useful_evidence_density": 0.6666666666666666,
+        "used_but_not_returned": 1
+      }
+    },
+    "T03.codegraph.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 9,
+        "read_calls": 3,
+        "grep_calls": 2,
+        "glob_calls": 1,
+        "shell_calls": 1,
+        "graph_queries": 2,
+        "knowledge_queries": 0,
+        "unique_files_read": 4,
+        "total_file_chars_read": 6921,
+        "total_tool_output_chars": 39917,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 27978.3599,
+        "input_tokens": 38003,
+        "output_tokens": 4723,
+        "cache_tokens": 231808,
+        "total_tokens": 274534
+      },
+      "evidence_utility": {
+        "returned_evidence": 18,
+        "exposed_evidence": 18,
+        "used_evidence": 2,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 16,
+        "evidence_usage_rate": 0.1111111111111111,
+        "useful_evidence_density": 1.0,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.knowledge.r1": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 3,
+        "read_calls": 1,
+        "grep_calls": 0,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 1,
+        "knowledge_queries": 1,
+        "unique_files_read": 1,
+        "total_file_chars_read": 2380,
+        "total_tool_output_chars": 25087,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 14294.8671,
+        "input_tokens": 30859,
+        "output_tokens": 2226,
+        "cache_tokens": 48256,
+        "total_tokens": 81341
+      },
+      "evidence_utility": {
+        "returned_evidence": 6,
+        "exposed_evidence": 6,
+        "used_evidence": 6,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": 1.0,
+        "useful_evidence_density": 0.3333333333333333,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.knowledge.r2": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 3,
+        "read_calls": 1,
+        "grep_calls": 0,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 1,
+        "knowledge_queries": 1,
+        "unique_files_read": 1,
+        "total_file_chars_read": 2365,
+        "total_tool_output_chars": 25070,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 13909.0634,
+        "input_tokens": 30826,
+        "output_tokens": 2478,
+        "cache_tokens": 48256,
+        "total_tokens": 81560
+      },
+      "evidence_utility": {
+        "returned_evidence": 6,
+        "exposed_evidence": 6,
+        "used_evidence": 6,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": 1.0,
+        "useful_evidence_density": 0.3333333333333333,
+        "used_but_not_returned": 0
+      }
+    },
+    "T03.knowledge.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "replicas-virtual-node-role",
+            "satisfied": true
+          },
+          {
+            "concept_id": "replicas-documentation",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 3,
+        "read_calls": 1,
+        "grep_calls": 0,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 1,
+        "knowledge_queries": 1,
+        "unique_files_read": 1,
+        "total_file_chars_read": 1819,
+        "total_tool_output_chars": 24524,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 14003.0801,
+        "input_tokens": 30640,
+        "output_tokens": 2323,
+        "cache_tokens": 48128,
+        "total_tokens": 81091
+      },
+      "evidence_utility": {
+        "returned_evidence": 6,
+        "exposed_evidence": 6,
+        "used_evidence": 6,
+        "ground_truth_evidence": 1,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": 1.0,
+        "useful_evidence_density": 0.3333333333333333,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.native.r1": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 3,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 24,
+        "read_calls": 13,
+        "grep_calls": 9,
+        "glob_calls": 1,
+        "shell_calls": 1,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 9,
+        "total_file_chars_read": 39531,
+        "total_tool_output_chars": 48840,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": null,
+        "duration_ms": 31161.9588,
+        "input_tokens": 35627,
+        "output_tokens": 5650,
+        "cache_tokens": 291840,
+        "total_tokens": 333117
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.native.r2": {
+      "correctness": {
+        "task_success": false,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 1,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 3,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 23,
+        "read_calls": 6,
+        "grep_calls": 9,
+        "glob_calls": 1,
+        "shell_calls": 7,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 13,
+        "total_file_chars_read": 23291,
+        "total_tool_output_chars": 54493,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": null,
+        "duration_ms": 35446.0592,
+        "input_tokens": 38561,
+        "output_tokens": 6328,
+        "cache_tokens": 463104,
+        "total_tokens": 507993
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.native.r3": {
+      "correctness": {
+        "task_success": false,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.0,
+        "evidence_precision": null,
+        "wrong_path_count": 1,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 0,
+        "exact_evidence_misses": 3,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 29,
+        "read_calls": 6,
+        "grep_calls": 21,
+        "glob_calls": 1,
+        "shell_calls": 1,
+        "graph_queries": 0,
+        "knowledge_queries": 0,
+        "unique_files_read": 8,
+        "total_file_chars_read": 29275,
+        "total_tool_output_chars": 70839,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": null,
+        "duration_ms": 36626.1293,
+        "input_tokens": 43087,
+        "output_tokens": 6978,
+        "cache_tokens": 441600,
+        "total_tokens": 491665
+      },
+      "evidence_utility": {
+        "returned_evidence": 0,
+        "exposed_evidence": 0,
+        "used_evidence": 0,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 0,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 0,
+        "evidence_usage_rate": null,
+        "useful_evidence_density": null,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.codegraph.r1": {
+      "correctness": {
+        "task_success": false,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.3333333333333333,
+        "evidence_precision": 0.95,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 1,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 2,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 30,
+        "read_calls": 8,
+        "grep_calls": 1,
+        "glob_calls": 1,
+        "shell_calls": 0,
+        "graph_queries": 20,
+        "knowledge_queries": 0,
+        "unique_files_read": 7,
+        "total_file_chars_read": 25237,
+        "total_tool_output_chars": 104277,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 12,
+        "duration_ms": 62709.3078,
+        "input_tokens": 61970,
+        "output_tokens": 12815,
+        "cache_tokens": 633856,
+        "total_tokens": 708641
+      },
+      "evidence_utility": {
+        "returned_evidence": 38,
+        "exposed_evidence": 38,
+        "used_evidence": 20,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 1,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 19,
+        "evidence_usage_rate": 0.5,
+        "useful_evidence_density": 0.05,
+        "used_but_not_returned": 1
+      }
+    },
+    "T05.codegraph.r2": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.3333333333333333,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 2,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 6,
+        "read_calls": 1,
+        "grep_calls": 0,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 5,
+        "knowledge_queries": 0,
+        "unique_files_read": 1,
+        "total_file_chars_read": 4630,
+        "total_tool_output_chars": 44769,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 5,
+        "duration_ms": 25640.2083,
+        "input_tokens": 40295,
+        "output_tokens": 4827,
+        "cache_tokens": 156288,
+        "total_tokens": 201410
+      },
+      "evidence_utility": {
+        "returned_evidence": 24,
+        "exposed_evidence": 24,
+        "used_evidence": 8,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 16,
+        "evidence_usage_rate": 0.3333333333333333,
+        "useful_evidence_density": 0.125,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.codegraph.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 0.3333333333333333,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 1,
+        "exact_evidence_misses": 2,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 29,
+        "read_calls": 1,
+        "grep_calls": 0,
+        "glob_calls": 0,
+        "shell_calls": 1,
+        "graph_queries": 27,
+        "knowledge_queries": 0,
+        "unique_files_read": 7,
+        "total_file_chars_read": 4630,
+        "total_tool_output_chars": 163350,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 4,
+        "duration_ms": 59829.129,
+        "input_tokens": 85811,
+        "output_tokens": 12417,
+        "cache_tokens": 471424,
+        "total_tokens": 569652
+      },
+      "evidence_utility": {
+        "returned_evidence": 72,
+        "exposed_evidence": 72,
+        "used_evidence": 16,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 1,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 56,
+        "evidence_usage_rate": 0.2222222222222222,
+        "useful_evidence_density": 0.0625,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.knowledge.r1": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 3,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 20,
+        "read_calls": 1,
+        "grep_calls": 0,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 13,
+        "knowledge_queries": 6,
+        "unique_files_read": 6,
+        "total_file_chars_read": 4630,
+        "total_tool_output_chars": 114780,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 2,
+        "duration_ms": 38723.3397,
+        "input_tokens": 68542,
+        "output_tokens": 8091,
+        "cache_tokens": 246016,
+        "total_tokens": 322649
+      },
+      "evidence_utility": {
+        "returned_evidence": 48,
+        "exposed_evidence": 48,
+        "used_evidence": 31,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 3,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 17,
+        "evidence_usage_rate": 0.6458333333333334,
+        "useful_evidence_density": 0.12903225806451613,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.knowledge.r2": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 3,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 15,
+        "read_calls": 1,
+        "grep_calls": 0,
+        "glob_calls": 0,
+        "shell_calls": 1,
+        "graph_queries": 10,
+        "knowledge_queries": 3,
+        "unique_files_read": 2,
+        "total_file_chars_read": 4630,
+        "total_tool_output_chars": 79342,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 6,
+        "duration_ms": 25747.224,
+        "input_tokens": 54213,
+        "output_tokens": 4979,
+        "cache_tokens": 232448,
+        "total_tokens": 291640
+      },
+      "evidence_utility": {
+        "returned_evidence": 39,
+        "exposed_evidence": 39,
+        "used_evidence": 20,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 3,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 19,
+        "evidence_usage_rate": 0.5128205128205128,
+        "useful_evidence_density": 0.2,
+        "used_but_not_returned": 0
+      }
+    },
+    "T05.knowledge.r3": {
+      "correctness": {
+        "task_success": true,
+        "concept_recall": 1.0,
+        "exact_evidence_recall": 1.0,
+        "evidence_precision": 1.0,
+        "wrong_path_count": 0,
+        "invalid_evidence_count": 0,
+        "unsupported_citation_count": 0,
+        "exact_evidence_hits": 3,
+        "exact_evidence_misses": 0,
+        "concepts": [
+          {
+            "concept_id": "module-entry",
+            "satisfied": true
+          },
+          {
+            "concept_id": "document-section",
+            "satisfied": true
+          },
+          {
+            "concept_id": "cross-layer-grounding",
+            "satisfied": true
+          }
+        ]
+      },
+      "efficiency": {
+        "tool_turns": 27,
+        "read_calls": 6,
+        "grep_calls": 6,
+        "glob_calls": 0,
+        "shell_calls": 0,
+        "graph_queries": 11,
+        "knowledge_queries": 4,
+        "unique_files_read": 7,
+        "total_file_chars_read": 19565,
+        "total_tool_output_chars": 116652,
+        "time_to_first_relevant_evidence_ms": null,
+        "turns_to_first_relevant_evidence": 1,
+        "duration_ms": 44056.694,
+        "input_tokens": 67969,
+        "output_tokens": 8121,
+        "cache_tokens": 614400,
+        "total_tokens": 690490
+      },
+      "evidence_utility": {
+        "returned_evidence": 35,
+        "exposed_evidence": 35,
+        "used_evidence": 15,
+        "ground_truth_evidence": 3,
+        "acceptable_alternative_evidence": 0,
+        "supporting_evidence": 1,
+        "invalid_evidence": 0,
+        "ground_truth_used": 3,
+        "acceptable_alternative_used": 0,
+        "invalid_citation_count": 0,
+        "unsupported_citation_count": 0,
+        "returned_but_unused_evidence": 20,
+        "evidence_usage_rate": 0.42857142857142855,
+        "useful_evidence_density": 0.26666666666666666,
+        "used_but_not_returned": 0
+      }
+    }
+  }
+}

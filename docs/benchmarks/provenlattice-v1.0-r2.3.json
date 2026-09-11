@@ -1,0 +1,64 @@
+{
+  "protocol": "r2.3",
+  "repository": "apache/brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_version": "2.1.268",
+  "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+  "evaluator_v2_version": "r2.2-groundtruth-v2",
+  "interface_qualification": "PASS",
+  "valid_cells": 27,
+  "expected_cells": 27,
+  "qualification_cells": 9,
+  "stability_cells": 18,
+  "arm_isolation": "PASS",
+  "codegraph_progression": "HOLD",
+  "knowledge_progression": "POSITIVE_CANDIDATE_TASK_SCOPED",
+  "t05_knowledge_zone": "POSITIVE_ZONE_CANDIDATE",
+  "success_matrix": {
+    "T01": {"native": "3/3", "codegraph": "3/3", "knowledge": "2/3"},
+    "T03": {"native": "3/3", "codegraph": "2/3", "knowledge": "3/3"},
+    "T05": {"native": "1/3", "codegraph": "2/3", "knowledge": "3/3"}
+  },
+  "concept_recall_all_cells": 1.0,
+  "attribution_counts": {
+    "TRUE_CAPABILITY_SUCCESS": 22,
+    "TRUE_CAPABILITY_FAILURE": 0,
+    "INVALID_EVIDENCE": 2,
+    "UNKNOWN_EVIDENCE": 1,
+    "PATH_PRECISION": 2,
+    "EVALUATOR_FALSE_NEGATIVE": 0
+  },
+  "codegraph_vs_native": {
+    "delta_concept_recall": "0.000 NO_CHANGE on T01/T03/T05",
+    "delta_turns": "MIXED on T01/T03/T05",
+    "delta_unique_files_read": "MIXED on T01/T03; DECREASE_CONSISTENT on T05",
+    "delta_graph_queries": "INCREASE_CONSISTENT on T01/T03/T05",
+    "delta_returned_but_unused": "INCREASE_CONSISTENT on T01/T03/T05"
+  },
+  "knowledge_vs_codegraph": {
+    "T01": "NO_GAIN (one success lost, turns +2 consistent, useful density -0.250 consistent)",
+    "T03": "GAIN (success 3/3 vs 2/3; turns -7, files -4, unused -16 all DECREASE_CONSISTENT)",
+    "T05": "PARTIAL_GAIN (success 3/3 vs 2/3; useful density +0.079 consistent; turns MIXED)"
+  },
+  "registered_not_fixed": [
+    "EvaluatorV2 path regex flags prose wildcards such as src/brpc/*.cpp as a wrong path (2 cells)",
+    "Knowledge bundle exposed the T01-declared invalid distractor and the agent cited it",
+    "Native arm is exact-ID-free by construction; exact-recall deltas are a protocol property",
+    "Token counters not stably available; auxiliary only, never used for a verdict"
+  ],
+  "next_variable": "query_bundle_precision",
+  "next_variable_rationale": "concept recall saturated at 1.000 in 27/27 cells; every residual failure is selection or citation discipline, not a missing evidence kind",
+  "artifacts": {
+    "manifest": "experiments/retrieval-v2/r2_3/results/manifest-r2.3.json",
+    "aggregate": "experiments/retrieval-v2/r2_3/results/aggregate-r2.3.json",
+    "pairwise": "experiments/retrieval-v2/r2_3/results/pairwise-r2.3.json",
+    "qualification_summary": "experiments/retrieval-v2/r2_3/results/qualification-summary.json",
+    "stability_summary": "experiments/retrieval-v2/r2_3/results/stability-summary.json",
+    "failure_attribution": "experiments/retrieval-v2/r2_3/failure-attribution-r2.3.md",
+    "protocol_deviations": "experiments/retrieval-v2/r2_3/protocol-deviations.md",
+    "tool": "experiments/retrieval-v2/r2_3/summarize_r2_3.py",
+    "report": "docs/benchmarks/provenlattice-v1.0-r2.3.md"
+  }
+}

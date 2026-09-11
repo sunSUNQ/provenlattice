@@ -1,0 +1,2274 @@
+{
+  "protocol": "r2.3",
+  "generated_from": "frozen raw cells (local, not versioned)",
+  "results_dir": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\retrieval-v2\\r2_3\\results",
+  "cell_count": 27,
+  "consistency": {
+    "cell_count": 27,
+    "expected_cell_count": 27,
+    "brpc_sha": [
+      "ae09e960c7291605dda52356cc0c2d45567fb53e"
+    ],
+    "model_id": [
+      "claude-sonnet-4-5-20250929"
+    ],
+    "actual_model_id": [
+      "claude-sonnet-4-5-20250929"
+    ],
+    "claude_version": [
+      "2.1.268"
+    ],
+    "actual_claude_version": [
+      "2.1.268"
+    ],
+    "harness_revision": [
+      "a80c79625f39f4809709b1ea8ab88963dd1ad98b"
+    ],
+    "protocol_revision": [
+      "r2.3"
+    ],
+    "evaluator_v2_version": [
+      "r2.2-groundtruth-v2"
+    ],
+    "ground_truth_v2_hash": [
+      "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e"
+    ],
+    "ground_truth_v2_hash_recomputed": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+    "prompt_hashes": [
+      "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b"
+    ],
+    "all_status_completed": true,
+    "all_policy_violations_empty": true,
+    "all_repo_clean": true,
+    "arm_isolation_all": true
+  },
+  "integrity_checks": {
+    "single_brpc_sha": true,
+    "single_model": true,
+    "single_claude_version": true,
+    "single_harness_revision": true,
+    "single_protocol_revision": true,
+    "single_evaluator": true,
+    "single_ground_truth": true,
+    "one_prompt_hash_per_task": true,
+    "all_completed": true,
+    "all_repo_clean": true,
+    "no_policy_violations": true,
+    "arm_isolation": true,
+    "complete_grid": true
+  },
+  "integrity_pass": true,
+  "cells": [
+    {
+      "run_key": "T01.native.r1",
+      "task": "T01",
+      "arm": "native",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 14,
+      "duration_ms": 27209.38479999313,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r1/run.json",
+          "sha256": "24c9a5b63c9f251bb8787b4e57a638d6f23f90024271d13c1fe1480a246d87c8",
+          "bytes": 5596
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r1/events.ndjson",
+          "sha256": "545b9daac86872652c42df81eccb1ce3944f3e9d71d71102bb12837f74011977",
+          "bytes": 12008
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r1/agent-output.txt",
+          "sha256": "6747c3f2ad96aab89412103717f9f4ca941b25222f6081356c8e45b5d8bc2803",
+          "bytes": 3580
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r1/metrics.json",
+          "sha256": "2bf712cdaa8f908acad42d9586867fc5f11e26176422ddbb0a3683babed188b7",
+          "bytes": 1640
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r1/evaluation.json",
+          "sha256": "e8f376d7759c9e7569afee013a0f40390789493cc84e793fdf572f9dadb592c1",
+          "bytes": 1324
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r1/evaluation-v2.json",
+          "sha256": "f3dac0dd191d502f9801359e8508f4ba97963727a0115c9e7003cdb5f9c43aee",
+          "bytes": 816
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.native.r2",
+      "task": "T01",
+      "arm": "native",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 11,
+      "duration_ms": 18063.450499990722,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r2/run.json",
+          "sha256": "b2661b8204982c2c585d64069605649a4cf8a5b06e795477603e1ea0d80384bc",
+          "bytes": 4720
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r2/events.ndjson",
+          "sha256": "ff6ca0207ce0ccf1a6fc76a6c78c2bc9e0ee960ccce9f2a369099c27d6a850ca",
+          "bytes": 9352
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r2/agent-output.txt",
+          "sha256": "156030e5e7a5cfd72dfcdf9f439a75680b5b178dd4b282bac5c1101df1a90ba2",
+          "bytes": 2702
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r2/metrics.json",
+          "sha256": "3df1aa71fbd676b7d2d28aeb1e14e4dc3181ad4daf6afc7af42feade80eb678a",
+          "bytes": 1415
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r2/evaluation.json",
+          "sha256": "b1c2ab10754290277a95095bdade7fdc0a903e7f0d4f9d47b5e23f6b8df2d864",
+          "bytes": 1190
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r2/evaluation-v2.json",
+          "sha256": "f3dac0dd191d502f9801359e8508f4ba97963727a0115c9e7003cdb5f9c43aee",
+          "bytes": 816
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.native.r3",
+      "task": "T01",
+      "arm": "native",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 10,
+      "duration_ms": 15686.037400009809,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r3/run.json",
+          "sha256": "10a7d8a5c440ca1f9eddcd2f6392ff185fe375bf4d66bedd62c2b1838322c7b5",
+          "bytes": 4943
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r3/events.ndjson",
+          "sha256": "944f0d8b6999e8c6447d81d570b8cda0b58734b878eda006863c66f263b059cc",
+          "bytes": 8578
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r3/agent-output.txt",
+          "sha256": "3b599d3451f5e089e5bd3ce53f08298c0a640e5a6106570f95a1b39943fcbb88",
+          "bytes": 2919
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r3/metrics.json",
+          "sha256": "923f4fcd24f1aa4a08620903694232da335cfe4ca6566d2910308d9126fab0f6",
+          "bytes": 1619
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r3/evaluation.json",
+          "sha256": "b1c2ab10754290277a95095bdade7fdc0a903e7f0d4f9d47b5e23f6b8df2d864",
+          "bytes": 1190
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/native/r3/evaluation-v2.json",
+          "sha256": "f3dac0dd191d502f9801359e8508f4ba97963727a0115c9e7003cdb5f9c43aee",
+          "bytes": 816
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.codegraph.r1",
+      "task": "T01",
+      "arm": "codegraph",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 15,
+      "duration_ms": 26142.32099999208,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r1/run.json",
+          "sha256": "adda8597d9ee04679496bf723dbc6d764b6c86bd94e57dddb4268baaab1db48e",
+          "bytes": 5564
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r1/events.ndjson",
+          "sha256": "10e3a844c006ee64fd5a37f60b6be21d092e8f671c318b25a639a43a9b6eef2e",
+          "bytes": 14463
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r1/agent-output.txt",
+          "sha256": "e19373504fa511cdb231989be2f43efdaf83275f2a0e5e964cac4aca8a5c11ea",
+          "bytes": 3190
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r1/metrics.json",
+          "sha256": "f492e5b9afa01c809da6f6c14a5d414d0c0a7c793f8560206ace6a8a6ee78779",
+          "bytes": 2568
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r1/evaluation.json",
+          "sha256": "22e25316b58ab7a65c7f9b7c86112f5282ef07a22536c4c01f51df1db36ba0f9",
+          "bytes": 2027
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r1/evaluation-v2.json",
+          "sha256": "8de123b294c229eac30cb6566a2a640af03a5b3428cc89999b7c0b9dd3e3b119",
+          "bytes": 2100
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-symbol",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 8,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.codegraph.r2",
+      "task": "T01",
+      "arm": "codegraph",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 17,
+      "duration_ms": 29986.141100001987,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r2/run.json",
+          "sha256": "76b00deb5d930f5d4639ff6dc4d6c85dd3f3f78c4e8813107264abd77dfbb1a8",
+          "bytes": 5265
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r2/events.ndjson",
+          "sha256": "bb52173361904751b755c1a3b8c6ba3853da9691762090cbd20f85c292403b25",
+          "bytes": 16874
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r2/agent-output.txt",
+          "sha256": "b6249fb7829608ef2b9643408dc5fee788fc71b9a4bdb785c78c2d905046f94b",
+          "bytes": 1999
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r2/metrics.json",
+          "sha256": "826616e539acd66c9915ee14d60071abc07ac800b930a638ddf4beb3d58499aa",
+          "bytes": 4369
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r2/evaluation.json",
+          "sha256": "e3d659ce8f8ff7937f8bd2d1768f29ab9d13ad4668cc2b0cc6b920a0e988dac8",
+          "bytes": 3463
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r2/evaluation-v2.json",
+          "sha256": "fe2ef83f8f89477e0ca927a83b7ede697f956e76d6c55c50f4d4b64f555a21ab",
+          "bytes": 2814
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 22,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.codegraph.r3",
+      "task": "T01",
+      "arm": "codegraph",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 8,
+      "duration_ms": 22200.119600020116,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r3/run.json",
+          "sha256": "5e0862013d0e9e7225948538344b1b8681c30cf97448cc7a01a562f360bdce38",
+          "bytes": 4566
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r3/events.ndjson",
+          "sha256": "47ba997fc01286c9c081a21b3f4613512238d9d6a2a75fce1024f7e46c752216",
+          "bytes": 8645
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r3/agent-output.txt",
+          "sha256": "e8674378ebad008ec8a4035e8456393b3ae11b9212c82d1fc242a013365c3c44",
+          "bytes": 2190
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r3/metrics.json",
+          "sha256": "f049fe2103e68b5de9679fce5e4db45501cc3b1e56083a6ec8ab3f85c2162595",
+          "bytes": 3745
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r3/evaluation.json",
+          "sha256": "3dbdb4b6cfb9700c526ad5d78f6017eeb93b20c9989f82311babffde3e7367a8",
+          "bytes": 3390
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/codegraph/r3/evaluation-v2.json",
+          "sha256": "f904d20ac62d60c71075d6174502a0fecf9f6ca31fdacc809e5270342d5e1667",
+          "bytes": 2652
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 20,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.knowledge.r1",
+      "task": "T01",
+      "arm": "knowledge",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": false,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 16,
+      "duration_ms": 33676.271500007715,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r1/run.json",
+          "sha256": "293861611ea87ffa4d02356b07e25c25b8be4f3396d40462ec6f3de9ae9802c3",
+          "bytes": 5571
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r1/events.ndjson",
+          "sha256": "3a832548e394e943372087ec6a101b0cc5d8eccc179923207aba4ef133d2df8f",
+          "bytes": 16030
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r1/agent-output.txt",
+          "sha256": "e41d801e94e276ddaab6edd19348ec611e2bbca0b6ed9c60567c7d5f84ab4d83",
+          "bytes": 3010
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r1/metrics.json",
+          "sha256": "f6eef28c0991027f49f0fd24ba322092532b7a74fa0b66287f595691ba79fe88",
+          "bytes": 2824
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r1/evaluation.json",
+          "sha256": "505c8300e30302f39e987df182d1202340242eba166deab9363e9635dd9d295f",
+          "bytes": 1981
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r1/evaluation-v2.json",
+          "sha256": "6c68a21c7c26a92df30e3f3a86b690c64cc55c0f8b486c2433f15f977165bbd5",
+          "bytes": 2680
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "find-related-code",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-code"
+        ],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-3284C4DDE04EDE3B45992A17",
+          "E-XLINK-3FED2C9E04B445D5F72BC9B9",
+          "E-XLINK-87D26EF46EF37B21C0104E0A",
+          "E-XLINK-E0E9BE2CF50F895BF973243A"
+        ],
+        "evidence_id_count": 10,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.knowledge.r2",
+      "task": "T01",
+      "arm": "knowledge",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 19,
+      "duration_ms": 32148.332699987805,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r2/run.json",
+          "sha256": "845b063f9deb84bcdc31e6a3e92ebf257b34127cd14c3774fa0e0a707a2ead8d",
+          "bytes": 5167
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r2/events.ndjson",
+          "sha256": "42527d9341775972caa868a9740b0b66d5e879da40346d417d03c13c30ca4790",
+          "bytes": 17992
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r2/agent-output.txt",
+          "sha256": "6bc59fef7ce7022c4383ccae7f8c515c2399e57f57e200b6014b7c93d7962330",
+          "bytes": 2609
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r2/metrics.json",
+          "sha256": "ccc4cb92c63ba7b5669d96b991d93a6d88f6900b70d0ebd34a85edab0d6422fd",
+          "bytes": 2926
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r2/evaluation.json",
+          "sha256": "36381879751fdfb1234457c8f0dcb7940918bb6838d7698e9cee0c53780e79d1",
+          "bytes": 1877
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r2/evaluation-v2.json",
+          "sha256": "4c4993c81c6293ef0ebfab6fa99f4d0cfd10729e791d2a2810a954fa2991b16f",
+          "bytes": 1966
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "find-related-code",
+          "glob",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-code"
+        ],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-3284C4DDE04EDE3B45992A17",
+          "E-XLINK-3FED2C9E04B445D5F72BC9B9",
+          "E-XLINK-87D26EF46EF37B21C0104E0A"
+        ],
+        "evidence_id_count": 9,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T01.knowledge.r3",
+      "task": "T01",
+      "arm": "knowledge",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 13,
+      "duration_ms": 21387.762099999236,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r3/run.json",
+          "sha256": "788a8b25661a9071014a2534ca8708f4058448625705749325f1739ae475c9a9",
+          "bytes": 5279
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r3/events.ndjson",
+          "sha256": "0e4a23bdaad7c187a053ee6d8f65d620d12d0710a5538333c03a7a0b975f9942",
+          "bytes": 12222
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r3/agent-output.txt",
+          "sha256": "f4ff4f5a0a1348c74d5a0cb9a615a3a239ec9b4ff56ef624a71cc30fd59d455a",
+          "bytes": 2719
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r3/metrics.json",
+          "sha256": "83473eca47d77dcc243fcec8b10cfab16895882b44842878f82d8442432fb103",
+          "bytes": 1914
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r3/evaluation.json",
+          "sha256": "75e0bb18dd42319b954a25ff73772b5a1b849202db56d55d44bbf9cf7f9cc09d",
+          "bytes": 1247
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T01/knowledge/r3/evaluation-v2.json",
+          "sha256": "daef7d32e85515d07f323c078c58a2194d9ddff06f2a082a5c334adc40b29fc8",
+          "bytes": 1554
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-symbol",
+          "find-related-code",
+          "find-related-documents",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-code",
+          "find-related-documents"
+        ],
+        "graph_operations": [
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 4,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.native.r1",
+      "task": "T03",
+      "arm": "native",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 14,
+      "duration_ms": 20010.418800025946,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r1/run.json",
+          "sha256": "839ee01016753e2e83d06b3b79d0712ca01b5560b4007be846875f3dfcdf69b4",
+          "bytes": 6898
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r1/events.ndjson",
+          "sha256": "ed6c8aac94e68ec876b9a2a408bf67b747826e3b1b38cbbf0cf6af70e719edc1",
+          "bytes": 11468
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r1/agent-output.txt",
+          "sha256": "e5a0139cdbd666f43e68d7c8465439504f54caa0bdf9bbae5e4583c9bf1c86fd",
+          "bytes": 4888
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r1/metrics.json",
+          "sha256": "0bf1383c86b4757f67d10e79081c95c2dea8b263f275b63e22ee653e763e0fe7",
+          "bytes": 1654
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r1/evaluation.json",
+          "sha256": "8ce0b4f64dbdbe0ba3bc7313abca20a3e76911bd8e981d9ead7fe9721fcc333e",
+          "bytes": 1081
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r1/evaluation-v2.json",
+          "sha256": "95da718c7fd9abf1541d64d096347e304034de0a6aa8e7f46abb1f487b70e35d",
+          "bytes": 712
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.native.r2",
+      "task": "T03",
+      "arm": "native",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 12,
+      "duration_ms": 22537.140599975828,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r2/run.json",
+          "sha256": "eb05d764759d760ad83324d0dc781a3f8f1545aaefdff02b4e767577350ecb36",
+          "bytes": 6343
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r2/events.ndjson",
+          "sha256": "372a187d399608cb5aaf7c517a95e0f07b6bc1023e5e862d81647db583144e77",
+          "bytes": 9386
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r2/agent-output.txt",
+          "sha256": "4c0aa490bc0c4fc05ad3b725e601b23e6211b52a4beb1229ab2341533dab242b",
+          "bytes": 4325
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r2/metrics.json",
+          "sha256": "1ca4bc251215b147cbeadac82e818a2081666e87ee1a7fd8d2b14adb0c748081",
+          "bytes": 1474
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r2/evaluation.json",
+          "sha256": "8ce0b4f64dbdbe0ba3bc7313abca20a3e76911bd8e981d9ead7fe9721fcc333e",
+          "bytes": 1081
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r2/evaluation-v2.json",
+          "sha256": "95da718c7fd9abf1541d64d096347e304034de0a6aa8e7f46abb1f487b70e35d",
+          "bytes": 712
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.native.r3",
+      "task": "T03",
+      "arm": "native",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 11,
+      "duration_ms": 15687.223899993114,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r3/run.json",
+          "sha256": "8c3902122920d4b967672c6f63fd23e977f5ab72abc6a1ce08df6b9c6273421b",
+          "bytes": 6264
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r3/events.ndjson",
+          "sha256": "8cb8537f05ea99a0a51c7aefe554ce40e85de8f1e805f069e0a74414fb7735fd",
+          "bytes": 8817
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r3/agent-output.txt",
+          "sha256": "ea786c0737b636b08f19549644f413017f71c4ff96821d0c4015b3ad68fb4de1",
+          "bytes": 4260
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r3/metrics.json",
+          "sha256": "01371483986c5847c5c6d52089b61a562558e87bf7e062378153c6d5f82d87dd",
+          "bytes": 1264
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r3/evaluation.json",
+          "sha256": "8ce0b4f64dbdbe0ba3bc7313abca20a3e76911bd8e981d9ead7fe9721fcc333e",
+          "bytes": 1081
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/native/r3/evaluation-v2.json",
+          "sha256": "95da718c7fd9abf1541d64d096347e304034de0a6aa8e7f46abb1f487b70e35d",
+          "bytes": 712
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.codegraph.r1",
+      "task": "T03",
+      "arm": "codegraph",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 14,
+      "duration_ms": 41772.3656000162,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r1/run.json",
+          "sha256": "710a74484f66d378ec39c88d5e2815b780eb246d86c4eb37efe2cbbd20685375",
+          "bytes": 5900
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r1/events.ndjson",
+          "sha256": "114b5e9022979e6d71280d4af76fe2dc8b792542d7be1eede3b9e63c163fa190",
+          "bytes": 14295
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r1/agent-output.txt",
+          "sha256": "8ebb14379a8eee55aeb67662d94b27d94f76f4913cdc65cd3b13438d30dd12a7",
+          "bytes": 3531
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r1/metrics.json",
+          "sha256": "178053f5a77aaa8af10b974ab5830406fbfafd726996b803d8f0bd8726b20df2",
+          "bytes": 4241
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r1/evaluation.json",
+          "sha256": "1f74e9acf21b9cb24a12858d2a9f80a850829395044dea84bf50d64873f1e017",
+          "bytes": 3470
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r1/evaluation-v2.json",
+          "sha256": "cd02c6f5ccd3b276d25367a574d12b38c0962899cb85169221bce1fc1bcc2d5b",
+          "bytes": 2758
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "glob",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 20,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.codegraph.r2",
+      "task": "T03",
+      "arm": "codegraph",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": false,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 10,
+      "duration_ms": 24218.394499999704,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r2/run.json",
+          "sha256": "85f40ef66493e9f4e7af3d1400d1b0dc35d7bd282aaf709c40f5a278ea3b7c14",
+          "bytes": 6010
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r2/events.ndjson",
+          "sha256": "9d32d2bf53318b6c7efb76623bfffc50c52cdf53a89b7ef386871b280a4b3e5f",
+          "bytes": 10230
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r2/agent-output.txt",
+          "sha256": "ba210436bd8819ab5acc5a3df48212bac1b0a63c86d23b4a714bcbd48cf5b9ba",
+          "bytes": 3638
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r2/metrics.json",
+          "sha256": "05d08a458a84c8c591f84e796a1d0d471cd2234f094ead1b8945170fab80ed44",
+          "bytes": 3810
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r2/evaluation.json",
+          "sha256": "8663f131da4ecfc9888e215019beb1d6c4b29e9bc95223dca00e3e20387ae8c0",
+          "bytes": 2975
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r2/evaluation-v2.json",
+          "sha256": "78bd69a843832e70065cbd358c3968a278164c39729f7f5a306b9705be98aad7",
+          "bytes": 2462
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "glob",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 18,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.codegraph.r3",
+      "task": "T03",
+      "arm": "codegraph",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 9,
+      "duration_ms": 27978.359899978386,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r3/run.json",
+          "sha256": "6b7123a16f09d3d93a3d5992509ed16746682811adaa59e91b9aacbbc989d0ac",
+          "bytes": 6603
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r3/events.ndjson",
+          "sha256": "a79ed405c22840b6180ec781d71bfb30fe0e4d305782e2ea3f5f69b27425f3e7",
+          "bytes": 9254
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r3/agent-output.txt",
+          "sha256": "d6309d7860e061efa980fd0593575fde4e2e32cbf19ac9c597a94c17d1710789",
+          "bytes": 4234
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r3/metrics.json",
+          "sha256": "66cf5e049f3dfc8eecb4354bbcbb824872548a35f7d44f216e88cc7f61dfa163",
+          "bytes": 3675
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r3/evaluation.json",
+          "sha256": "8663f131da4ecfc9888e215019beb1d6c4b29e9bc95223dca00e3e20387ae8c0",
+          "bytes": 2975
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/codegraph/r3/evaluation-v2.json",
+          "sha256": "5e4d2618e089cac8def3e0399a5ad95912e5cf9f7fd6d6b031ee6fa1e90f43c7",
+          "bytes": 2386
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "glob",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 18,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.knowledge.r1",
+      "task": "T03",
+      "arm": "knowledge",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 3,
+      "duration_ms": 14294.86709999037,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r1/run.json",
+          "sha256": "e7184775827b1bcb6a878c4b2ec5058fcb8c63175e2743ec1277a2f078dfb420",
+          "bytes": 6240
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r1/events.ndjson",
+          "sha256": "b393a4c7862473582d652b38d49dab4396662a4f616f2b9fd69168f954182b29",
+          "bytes": 4077
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r1/agent-output.txt",
+          "sha256": "2f26d1bff73cc55cdf430828363b9804851ff11c45a7550ead9fa1f36be1016c",
+          "bytes": 3693
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r1/metrics.json",
+          "sha256": "0b77fe5ad86bfc2a8ff9ccdd3f220ce44e60c058f06e09046312dd98f37a7508",
+          "bytes": 1919
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r1/evaluation.json",
+          "sha256": "5f0f6eae05e11ae5ff5a9c54a5c115e68fec9c84e6dad5dd27d8a4951991d19b",
+          "bytes": 1507
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r1/evaluation-v2.json",
+          "sha256": "6c10612c8bdd19008407f0987c807d23856370e970ca5248826ee92a3d59851b",
+          "bytes": 1826
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-symbol",
+          "find-related-documents",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-documents"
+        ],
+        "graph_operations": [
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-3284C4DDE04EDE3B45992A17",
+          "E-XLINK-E0E9BE2CF50F895BF973243A"
+        ],
+        "evidence_id_count": 6,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.knowledge.r2",
+      "task": "T03",
+      "arm": "knowledge",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 3,
+      "duration_ms": 13909.063400002196,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r2/run.json",
+          "sha256": "af5eba6d73951ea64a37c24be74a43fe59bd684b288fa41df4cc1eead44338ed",
+          "bytes": 6548
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r2/events.ndjson",
+          "sha256": "2807790ea3f3815f2f5dce4a33e00c420f97b3f8639aee86d2955cb67a6e490a",
+          "bytes": 4067
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r2/agent-output.txt",
+          "sha256": "00008d3265adf1cee3a6a075571651c483538610fa66d9d9c404d60f2d436287",
+          "bytes": 4006
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r2/metrics.json",
+          "sha256": "af7df4a977ce0ea4dd55fe8de7b5fb4985242e94f78f042aaccdd98c02ee62a8",
+          "bytes": 1917
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r2/evaluation.json",
+          "sha256": "5f0f6eae05e11ae5ff5a9c54a5c115e68fec9c84e6dad5dd27d8a4951991d19b",
+          "bytes": 1507
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r2/evaluation-v2.json",
+          "sha256": "6c10612c8bdd19008407f0987c807d23856370e970ca5248826ee92a3d59851b",
+          "bytes": 1826
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-symbol",
+          "find-related-documents",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-documents"
+        ],
+        "graph_operations": [
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-3284C4DDE04EDE3B45992A17",
+          "E-XLINK-E0E9BE2CF50F895BF973243A"
+        ],
+        "evidence_id_count": 6,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T03.knowledge.r3",
+      "task": "T03",
+      "arm": "knowledge",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 3,
+      "duration_ms": 14003.080099995714,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r3/run.json",
+          "sha256": "a5976c483b608de5a431dc6a26bea50b92c5b815f5e363a8614a7b2e30c8fbeb",
+          "bytes": 6210
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r3/events.ndjson",
+          "sha256": "d98defab82d4e4f1477d1d894f0e5ed65e47fd52a364db3425a04e9c136ceb28",
+          "bytes": 4067
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r3/agent-output.txt",
+          "sha256": "25ac15b4ef05291fd855371706a48b7f176cde74f1215b1e82934ace2d930c4f",
+          "bytes": 3667
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r3/metrics.json",
+          "sha256": "b8ff91fdcfe4a2767062a377e78603501bc7ab50a855ae80905b0521a7849364",
+          "bytes": 1917
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r3/evaluation.json",
+          "sha256": "2d62351a2fcc91a762eab35214007541538adfff97186f467494805f246bcc36",
+          "bytes": 1597
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T03/knowledge/r3/evaluation-v2.json",
+          "sha256": "6c10612c8bdd19008407f0987c807d23856370e970ca5248826ee92a3d59851b",
+          "bytes": 1826
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-symbol",
+          "find-related-documents",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-documents"
+        ],
+        "graph_operations": [
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-3284C4DDE04EDE3B45992A17",
+          "E-XLINK-E0E9BE2CF50F895BF973243A"
+        ],
+        "evidence_id_count": 6,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.native.r1",
+      "task": "T05",
+      "arm": "native",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 24,
+      "duration_ms": 31161.958799988497,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r1/run.json",
+          "sha256": "b4c5368bb030e39d71ac2653a8695bc67978b670ed8d2e2a8d248ce170d1e0c4",
+          "bytes": 9065
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r1/events.ndjson",
+          "sha256": "5b6615e7c71f2942e8328eb655371e2cd5ce3203beee5b3b6638e9e62445f9a5",
+          "bytes": 20458
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r1/agent-output.txt",
+          "sha256": "dd7a8cae6f91e86398e2250f339128d798de8730b956c70c47d5184e54ecc8c0",
+          "bytes": 6972
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r1/metrics.json",
+          "sha256": "797cd6140357895efd046b4cbcf4273afa903f256942e5a1150719144f296a69",
+          "bytes": 1926
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r1/evaluation.json",
+          "sha256": "fdb6644617a7f42a46394d36c482c8660dd5de4c8cdf5af27602ec6e23a26304",
+          "bytes": 1137
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r1/evaluation-v2.json",
+          "sha256": "1e820334fa1f37260fc2527159e65740bf91f989ddd098e2e70951e55b53d2e6",
+          "bytes": 858
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.native.r2",
+      "task": "T05",
+      "arm": "native",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": false,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 23,
+      "duration_ms": 35446.05919998139,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r2/run.json",
+          "sha256": "d30a03468a68034c7c2a57995afeee0a753b8f9587ac0fc3d42e9a68d311014d",
+          "bytes": 8527
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r2/events.ndjson",
+          "sha256": "25c20c43d44751ac13f742e16082eba3ab10e39daea4257affdf315706a16925",
+          "bytes": 20334
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r2/agent-output.txt",
+          "sha256": "9697a97944af2136beef9f2edd0d07fc807c369fdd731c2bc7fcdd4ef7492bdd",
+          "bytes": 6435
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r2/metrics.json",
+          "sha256": "3cba233b1ccc05c09805cd88001fea353fb93ee661c4663cdd5f99c71efaa6f3",
+          "bytes": 1768
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r2/evaluation.json",
+          "sha256": "fdb6644617a7f42a46394d36c482c8660dd5de4c8cdf5af27602ec6e23a26304",
+          "bytes": 1137
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r2/evaluation-v2.json",
+          "sha256": "8f3b65077439b49af709f4c333fd84c2b8ad5411525879628a410353d7a3d19c",
+          "bytes": 885
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.native.r3",
+      "task": "T05",
+      "arm": "native",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": false,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 29,
+      "duration_ms": 36626.12930001342,
+      "environment": {
+        "PL_R1_ARM": "native",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r3/run.json",
+          "sha256": "276e208994364d914b365b1f8948979f56eb7131a54b3aacf9ed78ca9faf8c6b",
+          "bytes": 8200
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r3/events.ndjson",
+          "sha256": "d9562614f2be332cbb465bde2257996bf6ecac16321e6918d7eb54415a782f86",
+          "bytes": 24159
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r3/agent-output.txt",
+          "sha256": "d0ce394d91099db1410e5916acf4f869b89b5ca7a7e77ad89825a3a5bbf52943",
+          "bytes": 6120
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r3/metrics.json",
+          "sha256": "ffcaedfecb80d01e3167c374e03632214275800617609593802555171f4de165",
+          "bytes": 1736
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r3/evaluation.json",
+          "sha256": "fdb6644617a7f42a46394d36c482c8660dd5de4c8cdf5af27602ec6e23a26304",
+          "bytes": 1137
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/native/r3/evaluation-v2.json",
+          "sha256": "8f3b65077439b49af709f4c333fd84c2b8ad5411525879628a410353d7a3d19c",
+          "bytes": 885
+        }
+      ],
+      "arm_isolation": {
+        "arm": "native",
+        "operations": [
+          "glob",
+          "grep",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 0,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.codegraph.r1",
+      "task": "T05",
+      "arm": "codegraph",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": false,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 30,
+      "duration_ms": 62709.30779998889,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r1/run.json",
+          "sha256": "4aab54694d5d4494d700c5a30310a7811344d0f5be82f30c1bd3246e9d8dad44",
+          "bytes": 9504
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r1/events.ndjson",
+          "sha256": "ba985c71cb920969e22ab987531c1b75c5cc97239227afdd91061e9040568e37",
+          "bytes": 30679
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r1/agent-output.txt",
+          "sha256": "d3f9e4898c21a28931ee59d821cc06c4d103150bc14a8fa61fcc7526fd6d4214",
+          "bytes": 7037
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r1/metrics.json",
+          "sha256": "6fd99f6a87b31fb869099ecffdfc44b302020db8ff0c7106526a0807019dffbd",
+          "bytes": 6815
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r1/evaluation.json",
+          "sha256": "d3e5e9d875d7fb1131130ed27e3686abfca862b005eb53dba93fd7ff1b287fb4",
+          "bytes": 5475
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r1/evaluation-v2.json",
+          "sha256": "7c23bf70a5e976fa4e9ad694fae79d24a5f8f40598f6a7a82054f64e21bc158a",
+          "bytes": 6054
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "glob",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 38,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.codegraph.r2",
+      "task": "T05",
+      "arm": "codegraph",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 6,
+      "duration_ms": 25640.208299999358,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r2/run.json",
+          "sha256": "3b6e82f451287f062f9c50727f5e4e2b758ee78d8aacf249bb118b638ba8f03d",
+          "bytes": 6406
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r2/events.ndjson",
+          "sha256": "36ba397ff71fa21203ac6eb22a1cf7320e6bac45decdab5513642f1e06367793",
+          "bytes": 7670
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r2/agent-output.txt",
+          "sha256": "b5acc9f4d5a53c7ddeb144ce2ae40c1f712927600a23239596a753d34e42cf63",
+          "bytes": 3956
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r2/metrics.json",
+          "sha256": "12a85864678bc05fe7b8dd294a278ee5bb402d3b42a0059b7b3cbe498be4d50e",
+          "bytes": 4194
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r2/evaluation.json",
+          "sha256": "94faebf19ffaae63c5296c0792ab8f340ebc8525853015c7a725421a68c64771",
+          "bytes": 3706
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r2/evaluation-v2.json",
+          "sha256": "3af58a8f9fd2613e98c5d0798fc8306092fe174f5e44d05659495e22bb12196b",
+          "bytes": 3666
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 24,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.codegraph.r3",
+      "task": "T05",
+      "arm": "codegraph",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 29,
+      "duration_ms": 59829.12900001975,
+      "environment": {
+        "PL_R1_ARM": "codegraph",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r3/run.json",
+          "sha256": "888e2365129e96b21af2f5829f86c39def34e995b207cbf2229af93152854025",
+          "bytes": 10045
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r3/events.ndjson",
+          "sha256": "5d5c88bf000efd0117412cf1cd61be50352dca4d7956256520ac3fe18905a04b",
+          "bytes": 32634
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r3/agent-output.txt",
+          "sha256": "9291ae81fd7ee98641b167762ef3c98cdb12f0e43c9d5a1020ac105194eee72e",
+          "bytes": 6702
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r3/metrics.json",
+          "sha256": "c849138c13dbf25b6ce5b44c7732008e76c10ced1b1739dd25a058294914551a",
+          "bytes": 10724
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r3/evaluation.json",
+          "sha256": "e94fb43183d057df26471a728427c9a2ea46b05ff8cd821a2c55be381c470a18",
+          "bytes": 9539
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/codegraph/r3/evaluation-v2.json",
+          "sha256": "7c4e234bdcb39a4dea599261dd814a45425af54740a51049a789d0f1d7959de6",
+          "bytes": 8384
+        }
+      ],
+      "arm_isolation": {
+        "arm": "codegraph",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [],
+        "evidence_id_count": 72,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.knowledge.r1",
+      "task": "T05",
+      "arm": "knowledge",
+      "repetition": 1,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 20,
+      "duration_ms": 38723.33969999454,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r1/run.json",
+          "sha256": "c5d688755041f5b885f832ff42d0d429de8d8326f4442e7e69eee7fa239f4525",
+          "bytes": 8539
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r1/events.ndjson",
+          "sha256": "4b4177149c07f406aeaf1c5d7939b95d40989caa9cba0440a237d9b3f2b18e3a",
+          "bytes": 24182
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r1/agent-output.txt",
+          "sha256": "5ff86b438cc355d176b94e0beeac225027dd8288e837175072d04ab086fd3884",
+          "bytes": 5903
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r1/metrics.json",
+          "sha256": "919e2032ab7d0c5f62cc94658ec1d85d905f0b2f7adc85b168dbd61442e8b20b",
+          "bytes": 7629
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r1/evaluation.json",
+          "sha256": "8dffd438a773edcb6774281822eb6dcdc698ff6a672415992001b0eec097ae60",
+          "bytes": 6923
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r1/evaluation-v2.json",
+          "sha256": "0ab48694e5063c3605201c0b584af955aba340b5e8692e514a549c65641a47a4",
+          "bytes": 7992
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "find-related-code",
+          "find-related-documents",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-code",
+          "find-related-documents"
+        ],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-02E59D12B69FB54749EACBC0",
+          "E-XLINK-0DB7D027BD2E12FD888A715D",
+          "E-XLINK-8EB285EE69921B1FD05DB81C",
+          "E-XLINK-A6B9027753684A8DB7CDA264",
+          "E-XLINK-BAF8D262DAEFDF22E26D5A7C",
+          "E-XLINK-BDB9AE4D1AA9C5A37A952DE7",
+          "E-XLINK-D0C193C0B2C38994B2EE0476",
+          "E-XLINK-E3FE9B3D924D68F482BD290F",
+          "E-XLINK-ED42E939231C3FF7F148A906",
+          "E-XLINK-EF83439A3756714F056849EB"
+        ],
+        "evidence_id_count": 48,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.knowledge.r2",
+      "task": "T05",
+      "arm": "knowledge",
+      "repetition": 2,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 15,
+      "duration_ms": 25747.223999991547,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r2/run.json",
+          "sha256": "c055fa114cf0cd5dc1d3a0a6febb4b08f5273210a4bceaf03e44bc2537ff6319",
+          "bytes": 9039
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r2/events.ndjson",
+          "sha256": "e2fc169f5505e3bba14323ac52baa8ea87860036012331c6a3ffedec01d4dd1f",
+          "bytes": 17550
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r2/agent-output.txt",
+          "sha256": "21e6c97b4c4e6a9ce8a48fe48efa89051ddb2cc9ba1d6a5215b1d810b0967fb1",
+          "bytes": 6395
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r2/metrics.json",
+          "sha256": "d4a8aea7cfd3acb28c485a9fd7a8e57acb90fb82c63edeb9d3127a75975e5778",
+          "bytes": 6237
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r2/evaluation.json",
+          "sha256": "045bcf94214a42c32cd0360e1ad17797fa188fb4f94882fb9507f12992c0c6ce",
+          "bytes": 5597
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r2/evaluation-v2.json",
+          "sha256": "8824f1d3e6640b7a9d7e475bc6bbf43be729bd752cac8d552d659bca02238604",
+          "bytes": 6096
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "find-related-code",
+          "find-related-documents",
+          "read",
+          "shell"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-code",
+          "find-related-documents"
+        ],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-02E59D12B69FB54749EACBC0",
+          "E-XLINK-D0C193C0B2C38994B2EE0476"
+        ],
+        "evidence_id_count": 39,
+        "isolated": true
+      }
+    },
+    {
+      "run_key": "T05.knowledge.r3",
+      "task": "T05",
+      "arm": "knowledge",
+      "repetition": 3,
+      "status": "completed",
+      "task_success": true,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "actual_model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "actual_claude_version": "2.1.268",
+      "harness_revision": "a80c79625f39f4809709b1ea8ab88963dd1ad98b",
+      "protocol_revision": "r2.3",
+      "ground_truth_v2_hash": "2bec9208b0d1bb1c3e8509e4420a1e1b6d7ddffe0cb7c2ba57ac1af1559f373e",
+      "evaluator_v2_version": "r2.2-groundtruth-v2",
+      "git_status_before": "",
+      "git_status_after": "",
+      "policy_violations": [],
+      "tool_turns": 27,
+      "duration_ms": 44056.69399999897,
+      "environment": {
+        "PL_R1_ARM": "knowledge",
+        "PL_MODEL_ID": "claude-sonnet-4-5-20250929",
+        "PL_CLAUDE_VERSION": "2.1.268",
+        "PL_R2_EVIDENCE_CONTRACT": "1",
+        "PL_R1_DATABASE": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+      },
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r3/run.json",
+          "sha256": "6cab6b2f20dcb60044e114784f32f8a05e390ac7d6096647ca3c1b6f997c504b",
+          "bytes": 7905
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r3/events.ndjson",
+          "sha256": "d06d5ae089dce959673e7d47f5b9b09a9774ae942859440cca74d1ce7568e5ca",
+          "bytes": 28980
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r3/agent-output.txt",
+          "sha256": "1754f248c1c5a2660825fd1f84bc43560b87299ebdb5580e228dcea014d7ccb1",
+          "bytes": 5272
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r3/metrics.json",
+          "sha256": "ecc55a44e1d12f091d7a1cecb1f19d22b1d406c3d2a6898ccc97fd1698d65c05",
+          "bytes": 6304
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r3/evaluation.json",
+          "sha256": "e17244a9738a0a0ee13a59072a1a9fbcad1f5945085686a106aad5311ed54598",
+          "bytes": 5111
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_3/results/T05/knowledge/r3/evaluation-v2.json",
+          "sha256": "9aab73a1d5a900b804125c11e9efd45b456c12eea2c5affdb415926808911440",
+          "bytes": 5246
+        }
+      ],
+      "arm_isolation": {
+        "arm": "knowledge",
+        "operations": [
+          "explain-module",
+          "explain-symbol",
+          "find-related-code",
+          "find-related-documents",
+          "grep",
+          "read"
+        ],
+        "disallowed_operations": [],
+        "knowledge_operations": [
+          "find-related-code",
+          "find-related-documents"
+        ],
+        "graph_operations": [
+          "explain-module",
+          "explain-symbol"
+        ],
+        "cross_layer_evidence_used": [
+          "E-XLINK-02E59D12B69FB54749EACBC0",
+          "E-XLINK-D0C193C0B2C38994B2EE0476"
+        ],
+        "evidence_id_count": 35,
+        "isolated": true
+      }
+    }
+  ]
+}
