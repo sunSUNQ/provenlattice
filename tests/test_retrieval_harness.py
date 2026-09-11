@@ -21,6 +21,8 @@ adapter_module = importlib.import_module(
     "experiments.retrieval-v1.harness.agent_adapter")
 audit_run = importlib.import_module(
     "experiments.retrieval-v1.harness.audit").audit_run
+path_exists = importlib.import_module(
+    "experiments.retrieval-v1.harness.evaluator")._path_exists
 
 
 class RetrievalHarnessTests(unittest.TestCase):
@@ -127,6 +129,17 @@ class RetrievalHarnessTests(unittest.TestCase):
             arm="codegraph")
         self.assertFalse(wrong["task_success"])
         self.assertEqual(wrong["unsupported_claim_count"], 1)
+
+    def test_r2_path_validation_accepts_real_globs_and_brace_expansion(self) -> None:
+        root = Path(self.temp.name)
+        source = root / "src/brpc"
+        source.mkdir(parents=True)
+        (source / "policy.h").write_text("", encoding="utf-8")
+        (source / "policy.cpp").write_text("", encoding="utf-8")
+        self.assertTrue(path_exists(root, "src/brpc/*.cpp"))
+        self.assertTrue(path_exists(root, "src/brpc/policy.*"))
+        self.assertTrue(path_exists(root, "src/brpc/policy.{h,cpp}"))
+        self.assertFalse(path_exists(root, "src/brpc/missing.*"))
 
     def test_claude_adapter_sends_frozen_prompt_not_run_request_json(self) -> None:
         models = importlib.import_module("experiments.retrieval-v1.harness.models")
