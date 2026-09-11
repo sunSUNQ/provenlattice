@@ -1,0 +1,66 @@
+{
+  "experiment": "provenlattice-v1.0-r2-structured-retrieval",
+  "task": "T05",
+  "repository": "apache/brpc",
+  "repository_commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "model": "claude-sonnet-4-5-20250929",
+  "claude_code_version": "2.1.268",
+  "agent_run_commit": "8fd23ea",
+  "evaluation_commit": "c1e4ac2",
+  "interface_qualification": "PASS",
+  "progression_gate": "HOLD",
+  "results": {
+    "native": {
+      "task_success": true,
+      "required_evidence_recall": 1.0,
+      "evidence_precision": 1.0,
+      "tool_turns": 25,
+      "graph_queries": 0,
+      "knowledge_queries": 0,
+      "unique_files_read": 9,
+      "duration_ms": 31522.2132,
+      "wrong_path_count": 0
+    },
+    "codegraph": {
+      "task_success": true,
+      "required_evidence_recall": 1.0,
+      "evidence_precision": 0.05,
+      "tool_turns": 17,
+      "graph_queries": 15,
+      "knowledge_queries": 0,
+      "unique_files_read": 2,
+      "duration_ms": 39846.2218,
+      "returned_evidence": 45,
+      "evidence_usage_rate": 0.4878048780487805,
+      "returned_but_unused_evidence": 21,
+      "wrong_path_count": 0,
+      "unsupported_claim_count": 0
+    },
+    "knowledge": {
+      "task_success": false,
+      "required_evidence_recall": 0.6666666666666666,
+      "evidence_precision": 0.125,
+      "tool_turns": 22,
+      "graph_queries": 14,
+      "knowledge_queries": 2,
+      "unique_files_read": 6,
+      "duration_ms": 45397.7262,
+      "returned_evidence": 35,
+      "evidence_usage_rate": 0.4,
+      "returned_but_unused_evidence": 21,
+      "wrong_path_count": 0,
+      "unsupported_claim_count": 2,
+      "missing_required_evidence_ids": ["E-DOC-9d9674320ddc2684f8d2773a"]
+    }
+  },
+  "r1_t05_medians": {
+    "native": {"required_evidence_recall": 1.0, "tool_turns": 29, "unique_files_read": 11, "duration_seconds": 37.0},
+    "codegraph": {"required_evidence_recall": 0.5, "tool_turns": 20, "unique_files_read": 7, "duration_seconds": 31.2},
+    "knowledge": {"required_evidence_recall": 0.5, "tool_turns": 30, "unique_files_read": 8, "duration_seconds": 38.5}
+  },
+  "interpretation": {
+    "codegraph": "R2 preserved full required recall while reducing turns and files versus both R2 Native and the R1 CodeGraph median, but used many graph queries and returned substantial unused evidence.",
+    "knowledge": "The resolved required cross-layer link and code definition were used, but the Agent cited the document-root Evidence instead of the required section Evidence and cited two IDs not observed as returned.",
+    "next_step": "Do not run the wider 3-task qualification yet. Diagnose document-to-section retrieval/citation behavior without changing resolver rules, knowledge coverage, or ground truth."
+  }
+}

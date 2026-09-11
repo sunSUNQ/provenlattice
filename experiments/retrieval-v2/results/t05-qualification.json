@@ -1,0 +1,33 @@
+{
+  "protocol": "r2",
+  "task": "T05",
+  "cells": [
+    {
+      "arm": "native",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "arm": "codegraph",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "arm": "knowledge",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    }
+  ],
+  "qualification": "PASS",
+  "qualification_scope": "interface_and_artifact_integrity",
+  "progression_gate": "HOLD",
+  "progression_reason": "Knowledge-R2 required Evidence recall was 0.667 and two cited IDs were unsupported; freeze and diagnose before the 3-task qualification.",
+  "agent_run_commit": "8fd23ea",
+  "evaluation_commit": "c1e4ac2"
+}
