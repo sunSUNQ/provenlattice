@@ -1,0 +1,722 @@
+{
+  "protocol": "r2.1",
+  "cell_count": 21,
+  "track_a_valid_cells": 18,
+  "track_b_valid_cells": 3,
+  "cells": [
+    {
+      "task": "T01",
+      "arm": "native",
+      "repetition": 1,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "fb183cd197a831112a9c64aec634404c6865270c",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "run_key": "T01.native.r1",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r1/run.json",
+          "sha256": "7d743af59ea5722425216bff0cd8f0a85b1eef56187af5446fe5e2ea2f62d668"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r1/events.ndjson",
+          "sha256": "b4b2dd74a29aff1e0f549e57ec7bd716934d4b15f89691f4efa72ef58acb4631"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r1/agent-output.txt",
+          "sha256": "e01eb37983a74524083cda0deaedd2453e551b53c7f8a638ceee0488c3991d78"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r1/metrics.json",
+          "sha256": "dbe949620c9a3bcbc042eb7bb64d4a135026f72613695386053ed17d76a34a1e"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r1/evaluation.json",
+          "sha256": "b1c2ab10754290277a95095bdade7fdc0a903e7f0d4f9d47b5e23f6b8df2d864"
+        }
+      ]
+    },
+    {
+      "task": "T01",
+      "arm": "native",
+      "repetition": 2,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "run_key": "T01.native.r2",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r2/run.json",
+          "sha256": "63944baebbf3f7f640fb520a2d40ff7df9eaa50e11bb24f1483dd08da7d05c03"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r2/events.ndjson",
+          "sha256": "de104feb40b568b439eaab98a6a3cdd10740d7cba00262461dd042ba2e5bd6d5"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r2/agent-output.txt",
+          "sha256": "e54051cbe75729ba721f7b855daa041a8a09ba5b8e6d135ef68e14ea21244880"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r2/metrics.json",
+          "sha256": "82d71bee6aff696c36788ccb52b057020bcbb545e4e907f5d8b9f1b7ef669ec4"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r2/evaluation.json",
+          "sha256": "b1c2ab10754290277a95095bdade7fdc0a903e7f0d4f9d47b5e23f6b8df2d864"
+        }
+      ]
+    },
+    {
+      "task": "T01",
+      "arm": "native",
+      "repetition": 3,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "run_key": "T01.native.r3",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r3/run.json",
+          "sha256": "fe6073b78f92cbd796bfb7e7fa289038d94903f7b8d0f1265c21a7cb05ac8f08"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r3/events.ndjson",
+          "sha256": "316abfd9ddcc592edbf940694188f413e46fe2870f3d66a3bf1eb492027ab5c8"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r3/agent-output.txt",
+          "sha256": "e90071a3438109a6e445b838698dc75f24002075a2c9d2b854fae70b846e2d08"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r3/metrics.json",
+          "sha256": "445458ee7b3a76fcd2e629f6fc8493cc6126e1b2adf28ce33496d37504c5cde7"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/native/r3/evaluation.json",
+          "sha256": "b1c2ab10754290277a95095bdade7fdc0a903e7f0d4f9d47b5e23f6b8df2d864"
+        }
+      ]
+    },
+    {
+      "task": "T01",
+      "arm": "codegraph",
+      "repetition": 1,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "fb183cd197a831112a9c64aec634404c6865270c",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "run_key": "T01.codegraph.r1",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r1/run.json",
+          "sha256": "90c1088556597800f6b02205dfe0a45fc085ae6e8bde791b7f978574546a3140"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r1/events.ndjson",
+          "sha256": "fa86311b6f0fc45192f93bfac5486f1f66cce5d90a25195c6f73a950ef660f95"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r1/agent-output.txt",
+          "sha256": "8a977d171a713597e77651f8459cdef0468ff8980317c3d1203bec6b1cd32457"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r1/metrics.json",
+          "sha256": "487cf1d9155f2b443a89739b177ba3cb7c466891cc65d825c37fbafa1f52d373"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r1/evaluation.json",
+          "sha256": "affa917ce519480c7d7ce4966d290a64b8c1b7b0c15868a6df02c130aa2a3316"
+        }
+      ]
+    },
+    {
+      "task": "T01",
+      "arm": "codegraph",
+      "repetition": 2,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "run_key": "T01.codegraph.r2",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r2/run.json",
+          "sha256": "b91d42ba264b190b7b2a794220d87730ed48f93d2db5a6f000c55fe4d18b30c4"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r2/events.ndjson",
+          "sha256": "15df7d546e78c96437dab67e699f29241ba035e90639de270e89b3a311bd9c51"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r2/agent-output.txt",
+          "sha256": "8e2a3768fd101a521fe1fb66901283e75377a237b5d5b8327b62fc9c12d84356"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r2/metrics.json",
+          "sha256": "8885336c66f2da06f4485a1e9325e3013ddde7994408f53c29655c766b147c31"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r2/evaluation.json",
+          "sha256": "7eca8894fa5fcdbc1cc27a64a67f652cb62390ba80aa0234c936588c784983da"
+        }
+      ]
+    },
+    {
+      "task": "T01",
+      "arm": "codegraph",
+      "repetition": 3,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "24a94a1a3eaf8e5eeace8b2e2efbe0cbcf352ed89dea9296006e62919c10afad",
+      "run_key": "T01.codegraph.r3",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r3/run.json",
+          "sha256": "5c836b88ab1ac3628310462ab2c7a07529505f30657ed8df29fde7d5456cf027"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r3/events.ndjson",
+          "sha256": "e3adde33672ff2420f98a453a12ae0000ba212f8d644fb0c8c448f3866934e54"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r3/agent-output.txt",
+          "sha256": "c55a07b13404e6e1adc0760597b58c505c73e4fd328e452afc42031660990d61"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r3/metrics.json",
+          "sha256": "a26074b1ceee1dbef8b76df3827fcfadadb27f67b471dd4bd469b134a3cb91eb"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T01/codegraph/r3/evaluation.json",
+          "sha256": "8e14f88c3572a8d365cfca085421b5c8895a0e820941d383e9eef002b1e89b43"
+        }
+      ]
+    },
+    {
+      "task": "T03",
+      "arm": "native",
+      "repetition": 1,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "fb183cd197a831112a9c64aec634404c6865270c",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "run_key": "T03.native.r1",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r1/run.json",
+          "sha256": "b1f72b2f80847a66e41b35577ad44856ad7ce841753c8444ff15442a88f836f0"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r1/events.ndjson",
+          "sha256": "ed01d031d20edf336622124f9641d039cc7cc84f8c019a2317ae96cca947cca3"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r1/agent-output.txt",
+          "sha256": "dc00d62129f0e704b065f47bc4dc4fc13246f1094fca2a9675b590457a937899"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r1/metrics.json",
+          "sha256": "2464712545bd3f4536f9d1bbbece99f9eb97e788d7590d04c2629da81aa5b851"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r1/evaluation.json",
+          "sha256": "8ce0b4f64dbdbe0ba3bc7313abca20a3e76911bd8e981d9ead7fe9721fcc333e"
+        }
+      ]
+    },
+    {
+      "task": "T03",
+      "arm": "native",
+      "repetition": 2,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "run_key": "T03.native.r2",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r2/run.json",
+          "sha256": "38282ec941a2d5c1e37caaee9477f2008c2e410c8087ff192c4eaab710c795da"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r2/events.ndjson",
+          "sha256": "db12de17ae0f32ee8773c5cad2ab22d5015b9a0ea820e8ba7241c689773dc463"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r2/agent-output.txt",
+          "sha256": "b79a1d827026ecc668e12ee2af877e7b6fd33984168d179f683fd220a0f06d27"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r2/metrics.json",
+          "sha256": "f9dbfae079960546efb190c3b44b962918de0858fce4f415e7548268e29527d7"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r2/evaluation.json",
+          "sha256": "8ce0b4f64dbdbe0ba3bc7313abca20a3e76911bd8e981d9ead7fe9721fcc333e"
+        }
+      ]
+    },
+    {
+      "task": "T03",
+      "arm": "native",
+      "repetition": 3,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "run_key": "T03.native.r3",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r3/run.json",
+          "sha256": "daea5bcc23cfe4c38a4cb54bce41316a54bcf70d79ba36155ad3b01d5735c2a4"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r3/events.ndjson",
+          "sha256": "9360d05a9768540776053c49a64a1ff8b49db4a7a265234dd72b3c5a775659d2"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r3/agent-output.txt",
+          "sha256": "2c09f306f84fd80776a4087a786ba81bce83713d21161ad70af12a95831ef7d6"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r3/metrics.json",
+          "sha256": "66b415f82ec2bc2fac601f7874fb71f450d42a1a75194b8dbb5e5bacd76e0a3e"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/native/r3/evaluation.json",
+          "sha256": "f15db0573bed7cad39ddec54bb672249f412ae18b9e8513c9599df80df0b2396"
+        }
+      ]
+    },
+    {
+      "task": "T03",
+      "arm": "codegraph",
+      "repetition": 1,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "fb183cd197a831112a9c64aec634404c6865270c",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "run_key": "T03.codegraph.r1",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r1/run.json",
+          "sha256": "3db0ab89201db9e264ff2de0c12a0865eae7f925677929580d64286b1cb9449f"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r1/events.ndjson",
+          "sha256": "459407e055e5408eb7ca2bb59f4a29878563678780f12a4f12b557e807aab265"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r1/agent-output.txt",
+          "sha256": "46ba2d1b0b5b081927b9ee823750136cbf970510391e3398fae2f1f6005e26fd"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r1/metrics.json",
+          "sha256": "d875cf1849c2831350a2ca0017f4ae9ff2eb04cebeeb22cf3b8933a6d11f5403"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r1/evaluation.json",
+          "sha256": "7f08c5e259aa42dd61ee5ba3cf59d2104a8018e65bf44a3868fac4fd812938c6"
+        }
+      ]
+    },
+    {
+      "task": "T03",
+      "arm": "codegraph",
+      "repetition": 2,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "run_key": "T03.codegraph.r2",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r2/run.json",
+          "sha256": "96f719d9f80e8b9019c1fadca5cacc595152ae6c10aff3935201f89bc1e64c1d"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r2/events.ndjson",
+          "sha256": "61e1d92bb522537dd0a187fb5626691a230f476cabbcdfb8db46c5331a01abc9"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r2/agent-output.txt",
+          "sha256": "a218bbd0b95c132b1102d2835a7b044aa6c7e7e5c6ad717e5f4ee7cb9dd8cc96"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r2/metrics.json",
+          "sha256": "5d4e0a7bbfda4f8a48b7b50136782caea26e6128249d955f85d04fb08645d304"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r2/evaluation.json",
+          "sha256": "89f249dfce4e7cbe4a0bc01f1f1cf884ed786b28f33a45799f7f73d343975485"
+        }
+      ]
+    },
+    {
+      "task": "T03",
+      "arm": "codegraph",
+      "repetition": 3,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "26b225fc345735d8b974c197ce5b3c480d9bd9a06c3137a9a6cc7def49904f2b",
+      "run_key": "T03.codegraph.r3",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r3/run.json",
+          "sha256": "5f81d63609807a7f15a52ae3d6fe8841ccb225bb0e733283defb98bc8e92fb7c"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r3/events.ndjson",
+          "sha256": "2d22035f0219654ff1206951f5b89b26cfc3e912f4e1e565abb5b8878bf2bc3b"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r3/agent-output.txt",
+          "sha256": "297a21cc0f71710264819e42bd44cf6ddf5117b47bda65865c262a8c1c122373"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r3/metrics.json",
+          "sha256": "e61cde2accc19c57e81b50ffbef47a8fb5256b404da19e4fa8017d205a07053d"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T03/codegraph/r3/evaluation.json",
+          "sha256": "89f249dfce4e7cbe4a0bc01f1f1cf884ed786b28f33a45799f7f73d343975485"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "native",
+      "repetition": 1,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.native.r1",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r1/run.json",
+          "sha256": "9ebe71d8589f0d04e48b30e93201b4ee14262e9d4faab5eb34302ca42ad7e003"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r1/events.ndjson",
+          "sha256": "2ea81ea3c987fab5758f9630545911787f5b5b53e45ccf53b1876ab994572bb3"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r1/agent-output.txt",
+          "sha256": "6e8bff2aa48c36e4dc5c959df8b530441c81cbc3c585d5027599d68f454094c9"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r1/metrics.json",
+          "sha256": "9066a23f54aaabae60ce1d768e50a2b50436d0b278c294c7918c6ac7e8e0e1f1"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r1/evaluation.json",
+          "sha256": "fdb6644617a7f42a46394d36c482c8660dd5de4c8cdf5af27602ec6e23a26304"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "native",
+      "repetition": 2,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.native.r2",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r2/run.json",
+          "sha256": "8e101a906a8ec2ad7e4118248d1ebb84fd4c9072534b383e02b7f4f475bff0ce"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r2/events.ndjson",
+          "sha256": "302c78ce0fa81794a36e2067167423665fdd0200ecd491016c65fa8480f4f54b"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r2/agent-output.txt",
+          "sha256": "e82d6814acc2ebd904f144bba9d06f53c66a6588cf0eb81ddc289564971d2c20"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r2/metrics.json",
+          "sha256": "9724c846f211ff410fb4e7064f1f7603398ce488b373de864d3d6280e38c2b0e"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r2/evaluation.json",
+          "sha256": "c0bebcf2e1ca158859d1336abd312b89929bf2168eb9012937ceb60ada425867"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "native",
+      "repetition": 3,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.native.r3",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r3/run.json",
+          "sha256": "ba855df9cd177b6d843f560294de434c49437312125571b8c0a727275bce0668"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r3/events.ndjson",
+          "sha256": "85bed0600d39c1ece36c08f7a4d8931fb9c7c6a1e01ff466a40c44c31622e38e"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r3/agent-output.txt",
+          "sha256": "406b88a9d366d2e4f8795c21c76160781fe59508ba9c20a130ab096a66dc33e6"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r3/metrics.json",
+          "sha256": "c51da7fad2d9ce0f8e598bce4f637d504ae337c953873166be359e8bc5c84f56"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/native/r3/evaluation.json",
+          "sha256": "fdb6644617a7f42a46394d36c482c8660dd5de4c8cdf5af27602ec6e23a26304"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "codegraph",
+      "repetition": 1,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.codegraph.r1",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r1/run.json",
+          "sha256": "415a2791dbe0bdcdc382246fa20ce9afa6c4688acba96e06ab87e54bb64dfa82"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r1/events.ndjson",
+          "sha256": "6a06799b098437ec459e30988c5cff611f099993494ca727f0453b5ff994da43"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r1/agent-output.txt",
+          "sha256": "3efd64bc55d14fe87ef43ec8f83872435a885413ba233d0e1ce67a804598f39c"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r1/metrics.json",
+          "sha256": "e556e25106ed9b5dd1f0862ec76d2336e451d92ba73682fbc049e0364851ec6b"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r1/evaluation.json",
+          "sha256": "7b40adcfe4a01e175878943c809e575d5fdfc0af4fb8bb4f35d595bed4117f41"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "codegraph",
+      "repetition": 2,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.codegraph.r2",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r2/run.json",
+          "sha256": "ed4b6b0af95935eeb8c861c2646d44eec79e07f2fbcc393ed1e62a431b7de9ce"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r2/events.ndjson",
+          "sha256": "51c46ecc2650ad4c42db830009c49cfcec763a6ededfb0a702bfd75922767381"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r2/agent-output.txt",
+          "sha256": "3d313825295207603dd251806659997a6198318d7b3d26a4ab4073d714a538b3"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r2/metrics.json",
+          "sha256": "7c0d9db5c0deb9c900621d6b1d32d258f661cfed5e48f9029dab5450fd808229"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r2/evaluation.json",
+          "sha256": "4206663f8139743dbedf0d44cc3d782ad7bf315a08724cfb496bbdd35775f3da"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "codegraph",
+      "repetition": 3,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.codegraph.r3",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r3/run.json",
+          "sha256": "472e99013512caa4f3a89b9428f63257364f574900b04fcbb791acf22600ec66"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r3/events.ndjson",
+          "sha256": "ff299356f040098657dd30ceca68d076f9a7d8b42944e530b419da6e076c3c1a"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r3/agent-output.txt",
+          "sha256": "081aa792170004890239f6a2f781c62c0f070b7f7d8b695d0c005554e3d1891e"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r3/metrics.json",
+          "sha256": "3a6f745a070d5aff36a20d42e8c213daa6ea84f5aa92e108e8b553925003d101"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/codegraph/r3/evaluation.json",
+          "sha256": "ded62d0f2d9fb36615a14a1f3ed93e09ed90b2fbd3c00ceb24c9aa0b7718de89"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "knowledge",
+      "repetition": 1,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.knowledge.r1",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r1/run.json",
+          "sha256": "8fa862ad68765c5bfab11b0d2599e5d89ae9b09ccced12d08199020827d118ee"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r1/events.ndjson",
+          "sha256": "f871f2a2132d5b7d1aa3415e4b81c708e8eae461cec18a02442ddb029031b04d"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r1/agent-output.txt",
+          "sha256": "0be196199e911826cf9dbc60241c3811cfa5424be4aed1243e07567fcbff2c8b"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r1/metrics.json",
+          "sha256": "b9f2020adb7465cca78bff253d50ed280123794144bd78e35fa0c8796fb94a0d"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r1/evaluation.json",
+          "sha256": "ac3c0f889d6fdd2f7592141a2346e80323657f78fa4e6d9b7326830b6168fdf8"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "knowledge",
+      "repetition": 2,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.knowledge.r2",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r2/run.json",
+          "sha256": "f3f05b75ae3984ab783756a4592cd17f727658b62f8a0dc32a75444e8017c7ce"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r2/events.ndjson",
+          "sha256": "a5ea55747c26066dad5000c511ba13e9493e8eb9ec1bb986f706f51b8f97d0b8"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r2/agent-output.txt",
+          "sha256": "3cdfe5ed7eab14203244158c547f4bd97457119e472f958144afe621c6612d58"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r2/metrics.json",
+          "sha256": "5057f86f08efe9e6252442a3e5de2e0d420c6112b300cd9b247c5aa728ba2c96"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r2/evaluation.json",
+          "sha256": "fcba2b3775607cbcab153e4407fc10a0abd0b1135eaf18d322a4fc894dc5f327"
+        }
+      ]
+    },
+    {
+      "task": "T05",
+      "arm": "knowledge",
+      "repetition": 3,
+      "repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "expected_repo_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "model_id": "claude-sonnet-4-5-20250929",
+      "claude_version": "2.1.268",
+      "harness_revision": "8ace3b3",
+      "prompt_hash": "167cd88bdd361b1b97bdf08b95170b78702b6f18ebb537794cbdbe6d4d57c8bd",
+      "run_key": "T05.knowledge.r3",
+      "artifacts": [
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r3/run.json",
+          "sha256": "dda91e56f2b722408bb51f797cbfb2c70ed6653ce97f6835a3d7f9eb45174172"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r3/events.ndjson",
+          "sha256": "7ed7ab47ade170e4c005909bdd9a7cb2c6a16f875e9289508ba5610a28d954f6"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r3/agent-output.txt",
+          "sha256": "48b93302f2d0e52441afb4e5e56c6995e178d3321ee42f3e603e1232c374c96b"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r3/metrics.json",
+          "sha256": "1a2ed94471bca361e45e4bd4fec1498f8418d9054508b4c60ed7f08309127803"
+        },
+        {
+          "path": "experiments/retrieval-v2/r2_1/results/T05/knowledge/r3/evaluation.json",
+          "sha256": "e96ab35dba0f034ab5666f6f1927bf5c16a298649cc9ac7ac609d12d162f68a0"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "protocol": "r2.1",
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_version": "2.1.268",
+  "provenlattice_commit": "8ace3b3",
+  "cells": [
+    {
+      "run_key": "T01.native.r1",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true,
+      "skipped": true,
+      "provenlattice_commit": "fb183cd197a831112a9c64aec634404c6865270c"
+    },
+    {
+      "run_key": "T01.codegraph.r1",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false,
+      "skipped": true,
+      "provenlattice_commit": "fb183cd197a831112a9c64aec634404c6865270c"
+    },
+    {
+      "run_key": "T03.native.r1",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true,
+      "skipped": true,
+      "provenlattice_commit": "fb183cd197a831112a9c64aec634404c6865270c"
+    },
+    {
+      "run_key": "T03.codegraph.r1",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false,
+      "skipped": true,
+      "provenlattice_commit": "fb183cd197a831112a9c64aec634404c6865270c"
+    },
+    {
+      "run_key": "T05.native.r1",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "run_key": "T05.codegraph.r1",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "run_key": "T01.codegraph.r2",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T01.native.r2",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "run_key": "T03.codegraph.r2",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T03.native.r2",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "run_key": "T05.codegraph.r2",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T05.native.r2",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T01.native.r3",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "run_key": "T01.codegraph.r3",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T03.native.r3",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T03.codegraph.r3",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T05.native.r3",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "run_key": "T05.codegraph.r3",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    }
+  ]
+}

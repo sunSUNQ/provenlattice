@@ -1,0 +1,29 @@
+{
+  "protocol": "r2.1",
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_version": "2.1.268",
+  "provenlattice_commit": "8ace3b3",
+  "cells": [
+    {
+      "run_key": "T05.knowledge.r1",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": true
+    },
+    {
+      "run_key": "T05.knowledge.r2",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    },
+    {
+      "run_key": "T05.knowledge.r3",
+      "valid": true,
+      "errors": [],
+      "status": "completed",
+      "task_success": false
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "protocol": "r2.1",
+  "repository": "apache/brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_version": "2.1.268",
+  "interface_qualification": "PASS",
+  "codegraph_progression": "HOLD",
+  "knowledge_progression": "HOLD",
+  "track_a_valid_cells": 18,
+  "track_b_valid_cells": 3,
+  "evaluator_fix_non_semantic": "PASS",
+  "query_bundle_gap": "CLOSED",
+  "attribution": {
+    "codegraph": ["cross-task benefit not stable", "T01/T03 GROUND_TRUTH_SEMANTIC_MISMATCH", "T05 positive signal not stable zone"],
+    "knowledge": ["fragment-path evaluator contract gap", "unsupported citation"],
+    "coverage_gap": false
+  },
+  "artifacts": {
+    "manifest": "experiments/retrieval-v2/r2_1/results/manifest-r2.1.json",
+    "aggregate": "experiments/retrieval-v2/r2_1/results/aggregate-r2.1.json",
+    "pairwise": "experiments/retrieval-v2/r2_1/results/pairwise-r2.1.json",
+    "evaluator_replay": "experiments/retrieval-v2/r2_1/results/evaluator-replay.json"
+  }
+}
