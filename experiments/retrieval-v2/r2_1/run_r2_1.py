@@ -38,7 +38,22 @@ def _load_tasks() -> list:
 def _run_cell(task, arm: str, repetition: int, database: str | None, args, adapter) -> dict:
     run_dir = args.results / task.task_id / arm / f"r{repetition}"
     if run_dir.exists():
-        raise FileExistsError(f"refusing to replace frozen cell: {run_dir}")
+        if not any(run_dir.iterdir()):
+            run_dir.rmdir()
+        elif args.resume:
+            run = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+            audit = audit_module.audit_run(
+                run_dir, task, arm, repetition, args.model_id, args.claude_version,
+                run["provenlattice_commit"], protocol="r2",
+            )
+            if not audit["valid"]:
+                raise ValueError(f"existing cell is not valid: {run_dir}: {audit['errors']}")
+            return {"run_key": f"{task.task_id}.{arm}.r{repetition}", "valid": True,
+                    "errors": [], "status": run["status"],
+                    "task_success": audit["evaluation"]["task_success"], "skipped": True,
+                    "provenlattice_commit": run["provenlattice_commit"]}
+        else:
+            raise FileExistsError(f"refusing to replace frozen cell: {run_dir}")
     result = runner_module.run_task(
         task, arm, args.repo, args.results, adapter, args.timeout,
         repetition=repetition, model_id=args.model_id,
@@ -69,6 +84,8 @@ def main() -> int:
     parser.add_argument("--claude-version", required=True)
     parser.add_argument("--provenlattice-commit", required=True)
     parser.add_argument("--timeout", type=float, default=900)
+    parser.add_argument("--resume", action="store_true",
+                        help="audit and preserve existing valid cells; never replace them")
     parser.add_argument("--results", type=Path,
                         default=Path("experiments/retrieval-v2/r2_1/results"))
     args = parser.parse_args()

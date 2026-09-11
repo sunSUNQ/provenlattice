@@ -38,3 +38,7 @@ Knowledge R2.1 consists only of `T05 × Knowledge × 3`. Its gate is:
 - no wrong Evidence regression.
 
 Raw cells under `results/T*/` remain local; reviewed aggregate results are versioned.
+
+If an infrastructure failure interrupts the matrix, `--resume` audits and preserves every complete
+cell and resumes only missing cells. An empty directory left before artifact creation may be removed;
+a non-empty invalid cell is never overwritten.

@@ -140,6 +140,7 @@ class RetrievalHarnessTests(unittest.TestCase):
         self.assertTrue(path_exists(root, "src/brpc/policy.*"))
         self.assertTrue(path_exists(root, "src/brpc/policy.{h,cpp}"))
         self.assertFalse(path_exists(root, "src/brpc/missing.*"))
+        self.assertFalse(path_exists(root, "src/**invalid.cpp"))
 
     def test_claude_adapter_sends_frozen_prompt_not_run_request_json(self) -> None:
         models = importlib.import_module("experiments.retrieval-v1.harness.models")

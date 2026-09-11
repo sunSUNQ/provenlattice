@@ -32,7 +32,10 @@ def _path_exists(root: Path, value: str) -> bool:
     match = re.search(r"\{([^{}]+)\}", value)
     if not match:
         if "*" in value or "?" in value:
-            return any(root.glob(value))
+            try:
+                return any(root.glob(value))
+            except ValueError:
+                return False
         return (root / value).exists()
     return all(_path_exists(root, value[:match.start()] + option + value[match.end():])
                for option in match.group(1).split(","))
