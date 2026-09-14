@@ -10,6 +10,7 @@ from pathlib import Path
 
 
 RELATION_TYPES = ("CALLS", "IMPORTS", "REFERENCES")
+PILOT_STATUS = "PILOT_GOLD_SET_READY_FOR_ANNOTATION"
 
 
 def _open_read_only(database: Path) -> sqlite3.Connection:
@@ -101,6 +102,8 @@ def _to_case(repository: str, row: sqlite3.Row, stratum: str) -> dict:
         },
         "annotation": {
             "status": "PENDING",
+            "relation_verdict": "PENDING",
+            "build_context_status": "PENDING",
             "gold_relation_exists": None,
             "gold_target_symbol_id": None,
             "gold_target_path": None,
@@ -140,13 +143,15 @@ def build_pilot(
                         "database": str(database),
                         "stratum": stratum,
                         "requested": requested,
-                        "available": len(rows),
-                        "selected": len(selected),
+                        "population_N": len(rows),
+                        "sample_n": len(selected),
                         "quota_met": len(selected) == requested,
                     })
     return {
         "benchmark_id": "provenlattice-fidelity-v1-pilot",
         "schema_version": 1,
+        "status": PILOT_STATUS,
+        "claims": "NO_FIDELITY_VERDICT_YET",
         "seed": seed,
         "sampling_scope": {
             "language": "C/C++",
@@ -155,6 +160,14 @@ def build_pilot(
             "sampling_strata": "resolved and nonresolved (ambiguous/unresolved) RawReference cases",
             "positive_target_per_stratum": positives_per_stratum,
             "hard_negative_target_per_stratum": negatives_per_stratum,
+        },
+        "frozen_metrics": {
+            "population": ["resolution_coverage", "abstention_rate"],
+            "human_audit": [
+                "resolved_precision", "false_resolution_rate", "selective_risk",
+                "ambiguous_appropriateness", "unresolved_appropriateness",
+            ],
+            "not_claimed": ["relation_recall", "missing_reference_recall"],
         },
         "availability": availability,
         "cases": cases,
