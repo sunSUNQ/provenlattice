@@ -1,0 +1,79 @@
+{
+  "artifact": "blind-agreement-audit-03",
+  "batch_id": "03",
+  "audit_date": "2026-09-15",
+  "scope": {
+    "paired_cases": 60,
+    "primary_relations": ["CALLS", "IMPORTS"],
+    "audit_only_relations": ["REFERENCES"],
+    "excluded_artifacts_observed": false
+  },
+  "preflight": {
+    "manifest_count": 60,
+    "annotator_a_count": 60,
+    "annotator_b_count": 60,
+    "aligned_pairs": 60,
+    "duplicate_or_extra_ids": 0,
+    "schema_violations": {"A": 0, "B": 0},
+    "blindness_violations": {"A": 0, "B": 0},
+    "repositories": {
+      "aria2": {"commit_match": true, "dirty_paths": 0},
+      "brpc": {"commit_match": true, "dirty_paths": 0},
+      "rocksdb": {"commit_match": true, "dirty_paths": 0}
+    },
+    "package_payload_hashes": {
+      "frozen_inputs_and_protocols_match": true,
+      "completed_output_files_differ_from_blank_template_hash": true,
+      "unexpected_hash_mismatches": 0
+    },
+    "result": "PASS"
+  },
+  "agreement": {
+    "formal_verdict_raw_exact": {"agree": 48, "n": 60, "rate": 0.8, "wilson_95": [0.6822, 0.8817], "cohen_kappa": 0.516129},
+    "relation_presence": {"agree": 56, "n": 60, "rate": 0.933333, "wilson_95": [0.8407, 0.9738], "cohen_kappa": 0.0, "kappa_note": "degenerate annotator-B marginal"},
+    "normalized_build_context": {"agree": 60, "n": 60, "rate": 1.0, "wilson_95": [0.9398, 1.0], "cohen_kappa": null, "kappa_note": "single category for both annotators"},
+    "identical_navigation_telemetry_bundle": {"agree": 52, "n": 60, "rate": 0.866667, "wilson_95": [0.7583, 0.9309]},
+    "by_relation": {
+      "CALLS": {"n": 21, "formal_agree": 20, "rate": 0.952381, "wilson_95": [0.7733, 0.9915], "cohen_kappa": 0.774194, "presence_agree": 21},
+      "IMPORTS": {"n": 21, "formal_agree": 20, "rate": 0.952381, "wilson_95": [0.7733, 0.9915], "cohen_kappa": 0.888889, "presence_agree": 21},
+      "REFERENCES": {"n": 18, "formal_agree": 8, "rate": 0.444444, "wilson_95": [0.2456, 0.6628], "cohen_kappa": 0.042553, "presence_agree": 14, "audit_only": true}
+    },
+    "by_normalized_scope": {
+      "C/C++": {"n": 40, "formal_agree": 38, "rate": 0.95, "wilson_95": [0.8350, 0.9862], "cohen_kappa": 0.857143},
+      "Python": {"n": 20, "formal_agree": 10, "rate": 0.5, "wilson_95": [0.2993, 0.7007], "cohen_kappa": 0.074074}
+    },
+    "navigation_components": {"navigation_files": 52, "navigation_path": 52, "navigation_hop_count": 53, "verification_depth": 53, "target_recovered_after_navigation": 53, "n": 60},
+    "decl_def_equivalence": {"both_one_valid_target_n": 38, "raw_target_tuple_agree": 22, "raw_rate": 0.578947, "raw_wilson_95": [0.4219, 0.7215], "equivalent_target_agree": 32, "equivalent_rate": 0.842105, "equivalent_wilson_95": [0.6958, 0.9256], "same_symbol_normalizations_added": 10}
+  },
+  "drift_gate": {
+    "decision": "HOLD",
+    "trigger": "NEW_SYSTEMATIC_SEMANTIC_AMBIGUITY",
+    "basis": "10 of 12 formal disagreements are Python REFERENCES, spanning repositories and both relation-presence and target-existence interpretations",
+    "blindness_violation": false,
+    "scope_mismatch": false,
+    "schema_incompatibility": false
+  },
+  "formal_verdict_disagreements": [
+    "FQV1-rocksdb-eb22480ad0a9d65f",
+    "FQV1-brpc-639b4fbd4eb1a885",
+    "FQV1-brpc-3c112669c1d2a328",
+    "FQV1-rocksdb-ec017de0157014f4",
+    "FQV1-rocksdb-41db0050ca5b26f5",
+    "FQV1-aria2-3b7ff33941c6d59a",
+    "FQV1-aria2-ecdd1dedf78333a5",
+    "FQV1-aria2-c9bbcfab82d72458",
+    "FQV1-brpc-6ce1878baf26a770",
+    "FQV1-brpc-df438b2594cbeea6",
+    "FQV1-brpc-683dfb396789c525",
+    "FQV1-rocksdb-e4c4b582d8cc5646"
+  ],
+  "non_equivalent_unique_target_disagreements": [
+    "FQV1-rocksdb-657008a8ca392740",
+    "FQV1-aria2-c6525c9d8d155f3f",
+    "FQV1-rocksdb-85a27eca37b8f8c1",
+    "FQV1-rocksdb-bd1fd621f81874b8",
+    "FQV1-brpc-4f4f2346428539fb",
+    "FQV1-rocksdb-b968fe7da547e59e"
+  ],
+  "adjudication_queue_count": 18
+}

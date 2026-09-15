@@ -1,0 +1,567 @@
+{
+  "artifact": "annotator-a-calibration-01-normalized",
+  "purpose": "mechanical normalization of Annotator A's natural-language calibration labels into the frozen world-fact verdict vocabulary; the original record annotator-a-calibration-01.md is not modified",
+  "created": "2026-09-14",
+  "mapper": "adjudication phase (executed by opencode agent under experiment owner direction)",
+  "source_record": {
+    "path": "experiments/fidelity_v1/results/annotator-a-calibration-01.md",
+    "sha256": "b5f6d2662356a658fbcc8eb349facff993a27c4eb4118ca0d8f589a5620cde5d"
+  },
+  "target_vocabulary": [
+    "ONE_VALID_TARGET",
+    "NO_VALID_TARGET",
+    "MULTIPLE_VALID_TARGETS",
+    "RELATION_NOT_PRESENT",
+    "BUILD_CONTEXT_DEPENDENT",
+    "INSUFFICIENT_EVIDENCE"
+  ],
+  "mapping_rules": [
+    [
+      "MR-1",
+      "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+    ],
+    [
+      "MR-2",
+      "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+    ],
+    [
+      "MR-3",
+      "Annotator A affirms the relation but explicitly states the in-repository definition cannot be determined from the blinded package -> INSUFFICIENT_EVIDENCE (target-level; relation existence is affirmed)"
+    ]
+  ],
+  "policy": {
+    "UNMAPPABLE_WITHOUT_REANNOTATION_used": false,
+    "note": "All 25 labels mapped uniquely from the per-case table. The table is authoritative; Annotator A's prose observation 2 (12 repo-local targets, 6 imports + 6 calls) is inconsistent with A's own table (11: 7 imports + 4 calls) and was not used for mapping."
+  },
+  "record_level_observations": [
+    "Annotator A intentionally assigned no formal relation_verdict (source record line 9): the two permitted vocabularies depend on the hidden system status. This normalization therefore emits blind world-fact verdicts only; the join to stratum-specific enums happens later.",
+    "Prose-vs-table count inconsistency in Annotator A's observation 2 documented above."
+  ],
+  "cases": [
+    {
+      "case_id": "FQV1-aria2-0b3012e7241735bd",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`src/Peer.h`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接双引号 include"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-rocksdb-1273fbd969565cef",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "GoogleTest `ASSERT_EQ` 宏；仓内无候选目标",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "`macro`、外部依赖"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "macro"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-713b641e93cc620c",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`req1.params` 对象的 `append` 调用；本包不足以确定仓内定义",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "无候选；需要类型传播"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "INSUFFICIENT_EVIDENCE",
+      "mapping_rule": {
+        "id": "MR-3",
+        "statement": "Annotator A affirms the relation but explicitly states the in-repository definition cannot be determined from the blinded package -> INSUFFICIENT_EVIDENCE (target-level; relation existence is affirmed)"
+      },
+      "mapping_confidence": "MEDIUM",
+      "mapping_ambiguity": "TARGET_SCOPE_ONLY - the label affirms relation existence; the insufficiency statement is scoped to determining the in-repository definition from the blinded package (Annotator A's evidence boundary), and '需要类型传播' implies a determinable target under broader evidence, which distinguishes it from NO_VALID_TARGET. The label-to-enum reading is unique, so the case is not UNMAPPABLE_WITHOUT_REANNOTATION; the evidence-scope policy difference vs Annotator B (who used read-only cross-file type propagation in the frozen tree, permitted by the protocol) is carried to the calibration gate as a documented divergence.",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-brpc-68baef18ae4bd3ee",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`brpc.CouchbaseOperations.CouchbaseResponse.MergeFrom`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "同名 `MergeFrom` 候选，接收者类型消歧"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-rocksdb-ee83baa17e82ced3",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 局部 `logger` 对象；`logger.log_tasks`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "候选均非该 Python 对象；跨语言同名干扰"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name",
+        "cross_module_homonym"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-e057f6d338d4b31b",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`aria2.IOFile.eof`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接成员调用"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-4fd41bb9bb827c2a",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 标准库模块 `re`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "外部模块"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-brpc-edbe4d00ad31625b",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`src/brpc/policy/baidu_rpc_protocol.h`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接双引号 include"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-rocksdb-dedc59a11f94c3e6",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`db/wide/wide_columns_helper.h`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接双引号 include"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-156558abc75568d8",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`std::string::begin`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "标准库目标；仓内同名候选均不匹配"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-3ea5b21309de76eb",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 局部 `infile` 文件对象",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "局部变量引用"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-44c700a2083beb2e",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`src/SocketCore.h`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接双引号 include"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-brpc-a4c0999defbf0e7b",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "系统网络函数 `htons`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "外部系统库"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-91b984d6e6d0a7ee",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 内建 `print`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "跨语言同名候选不匹配"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name",
+        "cross_module_homonym"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-rocksdb-b42469d800d8d7e1",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "系统头文件 `<climits>`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "外部系统头"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-5d9c6122ac7c4cd4",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 局部列表 `func_proto`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "局部变量引用"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-brpc-734b24f434825a0f",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 局部列表 `bthreads`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "候选均为 C++ 测试变量；跨语言同名干扰"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name",
+        "cross_module_homonym"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-rocksdb-042e70a2abbb97a5",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 局部 `chunk`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "候选为无关 C++ 测试变量"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-brpc-b210f3349b031961",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`brpc.RedisReply.c_str`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "同名候选，接收者 `response.reply(0)` 消歧"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-9eca3ec96d005bfe",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`src/FileEntry.h`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接双引号 include"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-brpc-2a3acc02ebb20bb4",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`src/butil/threading/thread_local.h`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接双引号 include"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-rocksdb-6adbad5ec0ab376e",
+      "relation_type": "CALLS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`ROCKSDB_NAMESPACE.IOStatus.SetRetryable`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接成员调用"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-rocksdb-ff7dddd235f6cd6a",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python 构造函数参数 `entities`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "候选为无关 C++ 成员；跨语言同名干扰"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name",
+        "cross_module_homonym"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-brpc-3fe7d970be9bff2a",
+      "relation_type": "REFERENCES",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "Python `global_state.started` 属性",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "候选为无关 C++ 函数；跨语言同名干扰"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "NO_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-2",
+        "statement": "Annotator A affirms the relation but the stated referent is external to the repository (system library / C++ standard library / Python builtin or stdlib module) or is a non-symbol binding (preprocessing macro without repository target, Python local variable / parameter / attribute), with no valid repository candidate -> NO_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [
+        "same_name",
+        "cross_module_homonym"
+      ],
+      "build_context_as_stated": "未使用额外构建上下文"
+    },
+    {
+      "case_id": "FQV1-aria2-4ad524eeab0b941a",
+      "relation_type": "IMPORTS",
+      "original_label": {
+        "source_semantic_relation": "存在",
+        "target_evidence": "`src/Segment.h`",
+        "build_context": "未使用额外构建上下文",
+        "difficulty_notes": "直接双引号 include"
+      },
+      "relation_exists_as_stated": true,
+      "mapped_formal_verdict": "ONE_VALID_TARGET",
+      "mapping_rule": {
+        "id": "MR-1",
+        "statement": "Annotator A names a concrete repository-local target (repository path or repository qualified symbol) with no stated indeterminacy -> ONE_VALID_TARGET"
+      },
+      "mapping_confidence": "HIGH",
+      "mapping_ambiguity": "NONE",
+      "difficulty_tags_as_stated": [],
+      "build_context_as_stated": "未使用额外构建上下文"
+    }
+  ]
+}

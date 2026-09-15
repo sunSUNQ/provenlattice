@@ -1,0 +1,36 @@
+{
+  "artifact": "batch-04-annotation-seal-verification",
+  "batch_id": "04",
+  "a": {
+    "status": "COMPLETE",
+    "records": 60,
+    "manifest_alignment": true,
+    "duplicate_ids": 0,
+    "missing_ids": 0,
+    "schema_violations": 0,
+    "telemetry_complete": 60,
+    "package_audit": "PASS",
+    "repository_mutation": false,
+    "agent": "Annotator A",
+    "model": "gpt-5.6-terra",
+    "reasoning_effort": "medium",
+    "model_continuity": "PRESERVED",
+    "attempt_id": null,
+    "output_sha256": "7c6ee6a8a0760a4085ddf2e30e488e9baa0f936b26c64397062030b80e7e47d3"
+  },
+  "b": {
+    "status": "COMPLETE",
+    "records": 60,
+    "manifest_alignment": true,
+    "duplicate_ids": 0,
+    "missing_ids": 0,
+    "schema_violations": 0,
+    "telemetry_complete": 60,
+    "package_audit": "PASS",
+    "repository_mutation": false,
+    "output_sha256": "daeb0a4427d2fb90cd40e1270bd2f2ca72e9a93649101b6d35eb2815dae1601f"
+  },
+  "a_b_ready_for_audit_04": true,
+  "agreement_audit_performed": false,
+  "sealed_annotation_records_modified": false
+}

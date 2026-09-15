@@ -1,0 +1,79 @@
+{
+  "artifact": "blind-agreement-audit-04",
+  "batch_id": "04",
+  "status": "COMPLETE",
+  "auditor": {"agent": "root Agreement Auditor", "model": "GPT-5"},
+  "inputs": {
+    "A_record": "blind_packages/batch-04/annotator-a/output/annotator-a-batch-04-annotations.json",
+    "B_record": "blind_packages/batch-04/annotator-b/output/annotation-record-template.json",
+    "system_prediction_read": false,
+    "resolver_data_read": false,
+    "fidelity_score_read": false,
+    "future_batch_read": false,
+    "existing_adjudication_read": false
+  },
+  "preflight": {
+    "A_sample_count": 60,
+    "B_sample_count": 60,
+    "case_id_alignment": "60/60",
+    "A_sealed": true,
+    "B_sealed": true,
+    "blindness_violations": {"A": 0, "B": 0},
+    "schema_violations": {"A": 0, "B": 0},
+    "repository_mutations": {"A": 0, "B": 0},
+    "result": "PASS"
+  },
+  "count_reconciliation": {
+    "cpp_calls_n": 23,
+    "cpp_imports_n": 18,
+    "cpp_total_n": 41,
+    "cpp_closed": true,
+    "python_references_n": 19,
+    "all_cases_n": 60
+  },
+  "overall": {
+    "formal_verdict": {"agree": 49, "n": 60, "rate": 0.816667, "cohen_kappa": 0.534556},
+    "relation_presence": {"agree": 60, "n": 60, "rate": 1.0, "cohen_kappa": null, "kappa_note": "single-category marginals"},
+    "build_context_normalized": {"agree": 58, "n": 60, "rate": 0.966667, "cohen_kappa": 0.0, "kappa_note": "marginally degenerate"}
+  },
+  "scope": {
+    "C/C++": {"n": 41, "formal_agree": 32, "formal_rate": 0.780488, "presence_agree": 41, "build_agree": 39, "cohen_kappa": 0.456554},
+    "Python_audit_only": {"n": 19, "formal_agree": 17, "formal_rate": 0.894737, "presence_agree": 19, "build_agree": 19, "cohen_kappa": 0.732394}
+  },
+  "relations": {
+    "CALLS": {"n": 23, "formal_agree": 16, "presence_agree": 23, "build_agree": 21, "cohen_kappa": 0.0, "kappa_note": "not informative due marginal degeneracy"},
+    "IMPORTS": {"n": 18, "formal_agree": 16, "presence_agree": 18, "build_agree": 18, "cohen_kappa": 0.785714},
+    "REFERENCES_audit_only": {"n": 19, "formal_agree": 17, "presence_agree": 19, "build_agree": 19, "cohen_kappa": 0.732394}
+  },
+  "navigation": {
+    "definition": "CROSS_FILE iff either annotator navigation_files_count > 0; depth is max(A,B)",
+    "LOCAL_ONLY_L0": {"n": 49, "formal_agree": 38, "target_cardinality_agree": 40, "presence_agree": 49},
+    "CROSS_FILE_L1": {"n": 11, "formal_agree": 11, "target_cardinality_agree": 11, "presence_agree": 11},
+    "L2": {"n": 0}, "L3": {"n": 0}, "L4": {"n": 0},
+    "formal_disagreements_local": 11,
+    "formal_disagreements_cross_file": 0,
+    "A_navigation_files_total": 0,
+    "B_navigation_files_total": 11,
+    "A_navigation_hops_total": 0,
+    "B_navigation_hops_total": 11,
+    "A_recovered_flags": 0,
+    "B_recovered_flags": 11
+  },
+  "decl_def": {
+    "status": "NOT_COMPUTABLE",
+    "reason": "No explicit twin-group membership or equivalence field in either sealed record"
+  },
+  "disagreement_attribution": {
+    "cpp_formal_disagreement_count": 9,
+    "calls": {"n": 7, "primary": "TARGET_CARDINALITY_DISAGREEMENT", "candidate_missing_or_other": 5},
+    "imports": {"n": 2, "primary": "BUILD_CONTEXT_DIFFERENCE"},
+    "adjudication_queue_count": 9,
+    "correctness_decided": false
+  },
+  "drift_gate": {
+    "cpp_primary": "PASS",
+    "python_references": "HOLD_SEPARATE_PROTOCOL_STUDY",
+    "batch_05_cpp_mainline": "UNBLOCKED",
+    "triggered_conditions": []
+  }
+}

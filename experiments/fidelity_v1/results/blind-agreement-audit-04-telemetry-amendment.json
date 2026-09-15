@@ -1,0 +1,23 @@
+{
+  "artifact": "blind-agreement-audit-04-telemetry-amendment",
+  "batch_id": "04",
+  "result": "MAPPING_GAP_RECORDED",
+  "frozen_schema_defines_depth_semantics": false,
+  "observed": {
+    "A_depth_counts": {"L0": 60},
+    "B_depth_counts": {"L0": 49, "L1": 11},
+    "A_navigation_files_total": 0,
+    "B_navigation_files_total": 11,
+    "local_only_cases": 49,
+    "cross_file_cases": 11
+  },
+  "interpretation": {
+    "cross_file_l1_semantic_equivalence": "UNDEFINED",
+    "navigation_only_classification": "COMPUTABLE",
+    "schema_incompatibility": false,
+    "drift_gate": "PASS",
+    "batch_05_cpp_mainline": "UNBLOCKED"
+  },
+  "sealed_records_modified": false,
+  "protocol_semantics_modified": false
+}

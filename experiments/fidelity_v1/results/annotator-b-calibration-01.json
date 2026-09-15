@@ -1,0 +1,1022 @@
+{
+  "benchmark_id": "provenlattice-fidelity-v1-pilot",
+  "schema_version": 1,
+  "view": "BLINDED_ANNOTATION",
+  "annotator": "B",
+  "record": "annotator-b-calibration-01",
+  "protocol_commit": "12f405c677582a2982d035433bf6837126772716",
+  "annotation_view_sha256": "5373fdae7c99a8c1518574758819b84eb68d00dd859aee0994526c4625cea602",
+  "batch_derivation": "No batch manifest was available to Annotator B. Batch 01 is the first 25 case_ids of the deterministic Annotator-A blinded view order, reproduced by re-running the frozen build_pilot.py selection on the frozen v0.2 graph databases and applying random.Random('provenlattice-fidelity-v1-blind:A').shuffle. The reconstruction was verified: the 269-case id set matches annotator-b.json exactly and the B-seeded shuffle reproduces annotator-b.json's case order byte-for-byte. No Annotator A file, verdict, system status, strategy, confidence or selected target was read.",
+  "cases": [
+    {
+      "case_id": "FQV1-aria2-0b3012e7241735bd",
+      "repository": "aria2",
+      "raw_reference_id": "reference:c17eb3deb4bf191fb68a125b232afad6a5672fa23f0906fad5aa16db85050fcd",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/PeerListenCommand.cc",
+        "start_line": 41,
+        "end_line": 42,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.PeerListenCommand",
+        "raw_name": "Peer.h",
+        "target_module": "Peer.h"
+      },
+      "candidate_symbol_ids": [
+        "file:e18d5fe750a8adf5e99b8143656e1edf6c00fa2fb404f60f5f7d9107d7b9cd25"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "file:e18d5fe750a8adf5e99b8143656e1edf6c00fa2fb404f60f5f7d9107d7b9cd25",
+        "gold_target_path": "src/Peer.h",
+        "gold_target_start_line": 1,
+        "difficulty_tags": [],
+        "evidence_notes": "src/PeerListenCommand.cc:41 is `#include \"Peer.h\"` (record span 41-42 covers the directive region). Quoted include from src/ resolves to src/Peer.h; Peer.h is the only file of that basename in the frozen working tree, so no include-path state can change the target. Candidate file:src/Peer.h matches.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-1273fbd969565cef",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:28600f5850197305abf6a133f2f5247ad056c648845f64c496b1fc9c3a8f7c48",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "db/memtable_list_test.cc",
+        "start_line": 749,
+        "end_line": 749,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.TEST_F",
+        "raw_name": "ASSERT_EQ",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "RELATION_NOT_PRESENT",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": false,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "macro"
+        ],
+        "evidence_notes": "db/memtable_list_test.cc:749 is `ASSERT_EQ(3, list.NumNotFlushed());`. The raw name ASSERT_EQ is a GoogleTest preprocessing macro (gtest/gtest.h), not a function symbol; no in-repo callable target exists for this name and the candidate list is empty. The real call inside the statement (list.NumNotFlushed()) is a separate reference, not this one.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-713b641e93cc620c",
+      "repository": "aria2",
+      "raw_reference_id": "reference:ac3ef660f7b72460ee1088e1f14c02949013846ecbbdafe07adb746aca668545",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/RpcMethodTest.cc",
+        "start_line": 294,
+        "end_line": 294,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.RpcMethodTest",
+        "raw_name": "req1.params->append",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "symbol:8588c2758df8da224a8ee94525093db492e0cca936b5b532eefba3377f086581",
+        "gold_target_path": "src/ValueBase.cc",
+        "gold_target_start_line": 123,
+        "difficulty_tags": [
+          "overload"
+        ],
+        "evidence_notes": "test/RpcMethodTest.cc:294 is `req1.params->append(std::move(urisParam1));`. RpcRequest::params is std::unique_ptr<List> (src/RpcRequest.h:50) and urisParam1 = List::g() (line 292), so the callee is List::append(std::unique_ptr<ValueBase>), defined at src/ValueBase.cc:123 (declaration src/ValueBase.h:186); the String::ValueType overload at src/ValueBase.h:189 is not viable for a unique_ptr argument. The case carried no candidates; the target id was recovered by read-only graph lookup (nodes/files) without consulting system status. Gold id is the definition; the h:186 declaration denotes the same function.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-68baef18ae4bd3ee",
+      "repository": "brpc",
+      "raw_reference_id": "reference:a7e40748c2491a54436cb127fc82a9502851daeb7ff145dce6c181abdec0b075",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/brpc/couchbase.h",
+        "start_line": 390,
+        "end_line": 390,
+        "owner_kind": "Method",
+        "owner_qualified_name": "brpc.CouchbaseOperations.CouchbaseResponse.CouchbaseResponse",
+        "raw_name": "MergeFrom",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:84b06e722d1225bcf45dd201a318d63b977946eaaeb6b97efa870af164125588",
+        "symbol:f8bebafa3bd81bc475b89d5f17bd8c8fadd63ccb89dd5410b30c9695bf5cce23"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "symbol:84b06e722d1225bcf45dd201a318d63b977946eaaeb6b97efa870af164125588",
+        "gold_target_path": "src/brpc/couchbase.h",
+        "gold_target_start_line": 461,
+        "difficulty_tags": [
+          "same_name"
+        ],
+        "evidence_notes": "src/brpc/couchbase.h:390 `MergeFrom(from);` inside the CouchbaseResponse copy constructor where `from` is `const CouchbaseResponse&`; member lookup resolves to CouchbaseResponse::MergeFrom(const CouchbaseResponse&) declared at couchbase.h:461. Candidate CouchbaseRequest::MergeFrom (couchbase.h:359) belongs to a different class and is not reachable from this scope.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-ee83baa17e82ced3",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:bdc26a8249e9fb5e5ba1a8a50fdac64b3912a83728a04b58655c56b4902aaadd",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "build_tools/gtest_parallel.py",
+        "start_line": 920,
+        "end_line": 920,
+        "owner_kind": "Function",
+        "owner_qualified_name": "build_tools.gtest_parallel.main",
+        "raw_name": "logger",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:02b38ea48821ba1efb79b3f36af04463468b963662679428911970dc730337c4",
+        "symbol:09445e79e8ed8196b9edbad7240939b4c2127371f9b3344d67b7007f28d1ca7d",
+        "symbol:12e09d834cb02ecf2d66dab2fcbf8f455815e1ed03653f69a7fce863364e655e",
+        "symbol:208c5d6231ae5dfbd9bac5e9fa83994f05090e57d82a064fc8f5419e9552d555",
+        "symbol:3aae01166b1c0ea27ee8d1d28050a019a56fc26823525efd6d029d172c392c1b",
+        "symbol:48ce99e1157ff04d956462a436c52178b0c3fb09325ecfa98e60e8658ffc5328",
+        "symbol:5360dfd208bd7f189974cca59f5a73eae1350c9a6cb9635e3b2efe06d5d07ec7",
+        "symbol:590721ecac1c578f688a1a3878ec4d888cb5818d289647e02d9437b3cace9049",
+        "symbol:6a17a41510f9395a44c2331fdd5d90182caee84eb7a5ab4f57630b1b9e38481b",
+        "symbol:7b3073bd6d96f6804b32532f01450ae5be37aadf11fe6193dff808c0538cf11a",
+        "symbol:7c990ea4ab1679cf576731cc7a6893ea4cb6ee634e2dfc019e3eaaa7a9827aa7",
+        "symbol:7f261e7292c728dbea990b12374c0c3f42c165adcc8629129c4896429ec83b05",
+        "symbol:7f53784f932b5769bf8436a6d9e09840999a0edde13010c5270299ee7b22e503",
+        "symbol:91190272928668ac3a99ecf2f6b2a36417895f5e4f968ee26b06b2d568be9f7f",
+        "symbol:a082e48311d5287acf7a4ffd5b52bc083e452623927a062f7ef264977dbaa4a4",
+        "symbol:aadb389b1783103f48ba2fc905c306f86742c15ec2cb7bac810c2f35ea80e988",
+        "symbol:b6a8d89db49472def7efc3ec371f288bc43fd9eb1dbf811d598975819bd04fd4",
+        "symbol:c2b31c0b385f7a359ac0126ba6fa17760fa41d50670c8e963b278cb2b5ee5cd6",
+        "symbol:d024d24012a82d612d1bbe9448409c97fde79749b81fa9bb75c4d0d2cbd5fe69",
+        "symbol:d10aaceee4709fafc4e7a7ccb5c1d9fe3c73bb1137a601f0bfda9e38f9e36465",
+        "symbol:e272bc1a1623e58e0c43f5a803adc6d52433f083c9a1e3f54bec83a1d5267fe3",
+        "symbol:e35fd26030ab23ed7b9576593c0a2630b5538e4ba14ab0e14432d1dcafb0deff",
+        "symbol:e70a17676df59ca952645f31b31d1e6fcad4aeb9d7067206bcf889f6ce147b6d",
+        "symbol:f4c27ef08eef17001d6f9147f449079e0bbe6588c97b4902abbd4116f63bc15a",
+        "symbol:f75a16f16b8bc8ec833f265380729d719f752ae084b01f37099f1acb9a0c6e7b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "same_name",
+          "cross_module_homonym"
+        ],
+        "evidence_notes": "build_tools/gtest_parallel.py:920 `logger.log_tasks(len(tasks))` references the function-local variable `logger = FilterFormat(options.output_dir)` bound at line 914 inside main(). All 25 candidates are unrelated `logger` functions/members/types in other files (C++ and Python); none denotes main's local binding, and local variables are not graph nodes.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-e057f6d338d4b31b",
+      "repository": "aria2",
+      "raw_reference_id": "reference:1b2532b2dcee5321e11fd618465e9dbc72589eb900ba0394204556eebfe2926f",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/IOFile.cc",
+        "start_line": 83,
+        "end_line": 83,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.IOFile",
+        "raw_name": "eof",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:0f3dfdfa7d433fc90992ed0c5125659bfdfd1f8077a33e2828b0026b2fada7e0"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "symbol:0f3dfdfa7d433fc90992ed0c5125659bfdfd1f8077a33e2828b0026b2fada7e0",
+        "gold_target_path": "src/IOFile.cc",
+        "gold_target_start_line": 104,
+        "difficulty_tags": [],
+        "evidence_notes": "src/IOFile.cc:83 `if (eof())` inside IOFile::getLine(); implicit-this member call resolves to IOFile::eof() defined at src/IOFile.cc:104 (`bool IOFile::eof() { ... }`). Candidate matches. The blind record's owner_kind is File (owner attribution quirk of the parser); the enclosing method is getLine.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-4fd41bb9bb827c2a",
+      "repository": "aria2",
+      "raw_reference_id": "reference:0ac3e1e12e41d9bdadf5885f3a3a7a9c97d3f80048e26584087b0c4941d469f2",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 256,
+        "end_line": 256,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.process_typedef",
+        "raw_name": "re",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [],
+        "evidence_notes": "doc/manual-src/en/mkapiref.py:256 `re.sub(...)` references the module object `re` imported at line 36 (`import re, sys, argparse`). The referent is the Python standard-library module, not a repository symbol; candidate list is empty.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-edbe4d00ad31625b",
+      "repository": "brpc",
+      "raw_reference_id": "reference:83dffad635d5356707952c54b83301c5b009288a6c18bf4b9f77d120cc263a40",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/brpc/stream.cpp",
+        "start_line": 31,
+        "end_line": 32,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.brpc.stream",
+        "raw_name": "brpc/policy/baidu_rpc_protocol.h",
+        "target_module": "brpc/policy/baidu_rpc_protocol.h"
+      },
+      "candidate_symbol_ids": [
+        "file:1f322372e2b7a014155e0102871a4f50e1151576ed8d6128b7c6d1710d9f23ed"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "file:1f322372e2b7a014155e0102871a4f50e1151576ed8d6128b7c6d1710d9f23ed",
+        "gold_target_path": "src/brpc/policy/baidu_rpc_protocol.h",
+        "gold_target_start_line": 1,
+        "difficulty_tags": [],
+        "evidence_notes": "src/brpc/stream.cpp:31 `#include \"brpc/policy/baidu_rpc_protocol.h\"` (span 31-32). Resolves via the src/ include root; baidu_rpc_protocol.h is unique in the frozen tree; candidate file matches.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-dedc59a11f94c3e6",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:cba5e9efd6b71a24feced07bc11630aae5fd179af9a5c608811534eab94e3eb5",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "db/wide/wide_columns_helper.cc",
+        "start_line": 6,
+        "end_line": 7,
+        "owner_kind": "File",
+        "owner_qualified_name": "db.wide.wide_columns_helper",
+        "raw_name": "db/wide/wide_columns_helper.h",
+        "target_module": "db/wide/wide_columns_helper.h"
+      },
+      "candidate_symbol_ids": [
+        "file:0aa058039a354cbbfad03edc0a0701633ea2d11ef5b18afbba50a88c63ec1ab9"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "file:0aa058039a354cbbfad03edc0a0701633ea2d11ef5b18afbba50a88c63ec1ab9",
+        "gold_target_path": "db/wide/wide_columns_helper.h",
+        "gold_target_start_line": 1,
+        "difficulty_tags": [],
+        "evidence_notes": "db/wide/wide_columns_helper.cc:6 `#include \"db/wide/wide_columns_helper.h\"`. Repo-root-relative include path; header unique in the frozen tree; candidate file matches.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-156558abc75568d8",
+      "repository": "aria2",
+      "raw_reference_id": "reference:54056784c94ac36c53e5abb300cbaba64734d19ad9fdb850a27dfdd499222b14",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/Base64Test.cc",
+        "start_line": 54,
+        "end_line": 54,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.Base64Test",
+        "raw_name": "s.begin",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:0512f5c60fce796f6834840d1bad15443431ee9ac0abeecd12667b5d5659d29a",
+        "symbol:303d9b00f347263a083069b4ec464046148f53eb056943e1a58f6da3217631dd",
+        "symbol:57f33ee2f927a069e52a3504aa7ea6a88f563a14e274cc372e4017b004d38ba7",
+        "symbol:7c5e95d67da7547e8b3f09ec238bc05a50c71f4c3cc41578deb5bc82cfe1dba0",
+        "symbol:8e7c2ad07c6fb92498d5b2671bf2fab9f25416d5030ba4a9457b1795b5198976",
+        "symbol:98d984c9c5cda97cc14fd1d8bcd27c6a55f967a2419f5af3d46aa1cb9e772a66",
+        "symbol:9e967676ee5de85352b08e53d8ee7146531f4d8f5ff2c7c58582e6adedf6a204",
+        "symbol:a1ec11376587fb05a5fa0bf9ec43e9f44826441e97dcb50b0030f7b2c56e4888",
+        "symbol:ade536cd8cd8be0164af3237be6446140e48f80b2365e04d85e967289a999c43",
+        "symbol:b8f71abf2deb52247156213cc415cae124f741bc97f1417ba7ce010a28ece40d",
+        "symbol:c3e4e95f03b7f30cacb5c93a2551675737fdd0832366b72be3c9317c97a2d647",
+        "symbol:d38b2b9d6e34674381e901c8630dbf4c1cb7dfe371834e726008b5be4b43636a",
+        "symbol:d3c8661e7bc6509f2b451fa79b6af21266bcebf71923a7f93c705af9561a69e0",
+        "symbol:e7e24fdb9da0bc051e6e91f979739467e451e99d886e32ff884bf15bf264b0ea",
+        "symbol:fbd5a28e9e98190718eadd981e9ad64561b97e15958bc75b9771febf2ebf6057"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "same_name",
+          "cross_module_homonym"
+        ],
+        "evidence_notes": "test/Base64Test.cc:54 `CPPUNIT_ASSERT_EQUAL(std::string(\"//8=\"), base64::encode(s.begin(), s.end()))` with `std::string s` declared at line 27; `s.begin()` is std::string::begin(), an STL member outside the repository. All 15 candidates are aria2-class `begin` methods (Dict/List/IndexedList/etc.); none is std::string::begin.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-3ea5b21309de76eb",
+      "repository": "aria2",
+      "raw_reference_id": "reference:b1aca4e0a6e0a3a7a489e4c5333ce8ba206988576fca3d047c30152f54d89870",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 128,
+        "end_line": 128,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.make_api_ref",
+        "raw_name": "infile",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [],
+        "evidence_notes": "doc/manual-src/en/mkapiref.py:128 `line = infile.readline()` references the loop variable `infile` from `for infile in infiles:` (line 122). Function-local binding; not a repository-level symbol; candidate list is empty.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-44c700a2083beb2e",
+      "repository": "aria2",
+      "raw_reference_id": "reference:830c03dbeabc8b0f4bfebee3e88ba82e9a51be0ff3300c508a4f1175faef1b44",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/util.cc",
+        "start_line": 86,
+        "end_line": 87,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.util",
+        "raw_name": "SocketCore.h",
+        "target_module": "SocketCore.h"
+      },
+      "candidate_symbol_ids": [
+        "file:ce7a78815086fc23b65927c9e94f8501c69a0e3855fc30ca33b3059788cc14bd"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "file:ce7a78815086fc23b65927c9e94f8501c69a0e3855fc30ca33b3059788cc14bd",
+        "gold_target_path": "src/SocketCore.h",
+        "gold_target_start_line": 1,
+        "difficulty_tags": [],
+        "evidence_notes": "src/util.cc:86 `#include \"SocketCore.h\"` (span 86-87). Quoted include from src/ resolves to src/SocketCore.h; unique basename in the frozen tree; candidate file matches.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-a4c0999defbf0e7b",
+      "repository": "brpc",
+      "raw_reference_id": "reference:05c1f765c5f0c29bedc15b3fb18b2d326e26d1a7dcc4c4b7c8954d412430a769",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/brpc_rdma_unittest.cpp",
+        "start_line": 1844,
+        "end_line": 1844,
+        "owner_kind": "Function",
+        "owner_qualified_name": "TEST_F",
+        "raw_name": "htons",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [],
+        "evidence_notes": "test/brpc_rdma_unittest.cpp:1844 `addr.sin_port = htons(PORT);` calls POSIX htons (arpa/inet.h), a platform API outside the repository; candidate list is empty, and no in-repo target exists on any platform configuration.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-91b984d6e6d0a7ee",
+      "repository": "aria2",
+      "raw_reference_id": "reference:f10f386a779e7228da0fec627c685b44b294efe983746e2b43dc92ceefa5bda2",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 48,
+        "end_line": 48,
+        "owner_kind": "Method",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.FunctionDoc.write",
+        "raw_name": "print",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:8709967600b2edf309b7177453e130e68676c12cecb81f3d70c31b8997eab77e"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "same_name",
+          "cross_module_homonym"
+        ],
+        "evidence_notes": "doc/manual-src/en/mkapiref.py:48 `print('    {}'.format(line))` inside FunctionDoc.write calls the Python builtin print (no shadowing definition in the file). The sole candidate aria2.bittorrent.print (src/bittorrent_helper.h:342, C++ function) is a cross-language homonym, not the callee.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-b42469d800d8d7e1",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:b65fd36d4527f9b23b11fc6a7db0c3a4f4344f8c7e55681259cb6a7de78204f8",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "db/forward_iterator_bench.cc",
+        "start_line": 21,
+        "end_line": 22,
+        "owner_kind": "File",
+        "owner_qualified_name": "db.forward_iterator_bench",
+        "raw_name": "climits",
+        "target_module": "climits"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "conditional_compilation"
+        ],
+        "evidence_notes": "db/forward_iterator_bench.cc:21 `#include <climits>` (span 21-22). Angle-bracket include of a C++ standard header, external to the repository; candidates empty. The directive sits in the final `#else` branch after `#if !defined(GFLAGS)` (line 6) and `#elif defined(OS_MACOSX) || defined(OS_WIN)` (line 12), so it is compiled only when GFLAGS is defined on non-macOS/non-Windows; under every macro state the header is never a repository file, so the no-target verdict is stable.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-5d9c6122ac7c4cd4",
+      "repository": "aria2",
+      "raw_reference_id": "reference:031ebf9e446b1715e501e01e729811a3ca2234d26877cdfccb97d6d5c9858e99",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 237,
+        "end_line": 237,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.process_function",
+        "raw_name": "func_proto",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [],
+        "evidence_notes": "doc/manual-src/en/mkapiref.py:237 `func_proto.append(line)` references the function-local list `func_proto` bound at line 229 inside process_function. Local binding; not a repository symbol; candidates empty.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-734b24f434825a0f",
+      "repository": "brpc",
+      "raw_reference_id": "reference:0f7cd1b9cfbcb329dddddfa32615d57a685d8bfb3c0c3b46bac6b47d3059f59c",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/gdb_bthread_stack.py",
+        "start_line": 192,
+        "end_line": 192,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.gdb_bthread_stack.BthreadRegsCmd.invoke",
+        "raw_name": "bthreads",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:3c6dae6111fa7ab3bb6a76991bfdcdfaf1b7545c44ab2c74d28a707e138dab2f",
+        "symbol:ab3049b34dc7879c703776cf602029c518e0ca34da92fec5c49327609149cd7b",
+        "symbol:b7342f22bd1b38d8e7f9057ba2e3eddaa68f1189ddb688864bb44a0d4fe5212b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "same_name",
+          "cross_module_homonym"
+        ],
+        "evidence_notes": "tools/gdb_bthread_stack.py:192 `len(bthreads)` references the module-level Python global `bthreads = []` (line 54; declared `global` in invoke at line 183). The three candidates are unrelated C++ TEST helper functions named `bthreads` in test/bthread_semaphore_unittest.cpp:171, test/bthread_rwlock_unittest.cpp:255 and test/bthread_mutex_unittest.cpp:259.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-042e70a2abbb97a5",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:b5cf53534c0fb2dcf7a4eae80f5f353aa8f3ec6d1e226a3b6a1e87ded12daaff",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "build_tools/getdeps_fallback_mirror.py",
+        "start_line": 103,
+        "end_line": 103,
+        "owner_kind": "Function",
+        "owner_qualified_name": "build_tools.getdeps_fallback_mirror.download_url",
+        "raw_name": "chunk",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:15346eb36789fe2be0f5ce1cdb6644caacbb6c8c431e0a5a32b40ad046e5d50b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "same_name",
+          "cross_module_homonym"
+        ],
+        "evidence_notes": "build_tools/getdeps_fallback_mirror.py:103 `if not chunk:` references the local variable `chunk` bound at line 102 inside download_url. The sole candidate TEST_F.chunk is the C++ local `Slice chunk;` (table/sst_file_reader_test.cc:729) - a cross-module homonym, unrelated to this Python local.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-b210f3349b031961",
+      "repository": "brpc",
+      "raw_reference_id": "reference:feab2ad33181cf4dbe76b0e99914116f13c20fc32cebc91b9ab7642d8bf21a01",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/brpc_redis_unittest.cpp",
+        "start_line": 1217,
+        "end_line": 1217,
+        "owner_kind": "Function",
+        "owner_qualified_name": "anonymous.TEST_F",
+        "raw_name": "response.reply(0).c_str",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:0115d7480510c55fbc92b9021138b4409ca8feef9c61c24c5f1e1cbc2c0240b9",
+        "symbol:1b859fd1343943dcbc05725f528f1155dc1f9770f9164d0ae9720efa72fb6aad",
+        "symbol:3d377a7ed1fb9d37e5d3efd2fcf7e4e61f86235d4f2106afc12e9b5fa4fdb942"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "symbol:3d377a7ed1fb9d37e5d3efd2fcf7e4e61f86235d4f2106afc12e9b5fa4fdb942",
+        "gold_target_path": "src/brpc/redis_reply.h",
+        "gold_target_start_line": 261,
+        "difficulty_tags": [
+          "same_name"
+        ],
+        "evidence_notes": "test/brpc_redis_unittest.cpp:1217 `response.reply(0).c_str()` with `brpc::RedisResponse response;` declared at line 1174 and `const RedisReply& reply(int index) const` (src/brpc/redis.h:151); the callee is RedisReply::c_str() const, inline-defined at src/brpc/redis_reply.h:261-272. The other c_str candidates (butil::IPStr::c_str, butil::EndPointStr::c_str) belong to types not involved in this expression.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-9eca3ec96d005bfe",
+      "repository": "aria2",
+      "raw_reference_id": "reference:001fab60fe7c1ec07e3e5da78a3f2bfc810dbd3f0f1c815b4540893f3e313c76",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/Context.cc",
+        "start_line": 62,
+        "end_line": 63,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.Context",
+        "raw_name": "FileEntry.h",
+        "target_module": "FileEntry.h"
+      },
+      "candidate_symbol_ids": [
+        "file:261e1e6a3dfc20697d09b8acc7e3e2f06846969821e8c96b24e2ae674ce7c95f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "file:261e1e6a3dfc20697d09b8acc7e3e2f06846969821e8c96b24e2ae674ce7c95f",
+        "gold_target_path": "src/FileEntry.h",
+        "gold_target_start_line": 1,
+        "difficulty_tags": [],
+        "evidence_notes": "src/Context.cc:62 `#include \"FileEntry.h\"` (span 62-63). Quoted include from src/ resolves to src/FileEntry.h; unique basename in the frozen tree; candidate file matches.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-2a3acc02ebb20bb4",
+      "repository": "brpc",
+      "raw_reference_id": "reference:68cf812492b5599e8a6420446ef43bb3b7ef094d1e8f4a8d8097456103c7202a",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/thread_local_unittest.cc",
+        "start_line": 7,
+        "end_line": 8,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.thread_local_unittest",
+        "raw_name": "butil/threading/thread_local.h",
+        "target_module": "butil/threading/thread_local.h"
+      },
+      "candidate_symbol_ids": [
+        "file:161224b8eb8bc6135b74e7174ca0478b9071ca25165a3dd35ad7cbdb55b8fa7a"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "file:161224b8eb8bc6135b74e7174ca0478b9071ca25165a3dd35ad7cbdb55b8fa7a",
+        "gold_target_path": "src/butil/threading/thread_local.h",
+        "gold_target_start_line": 1,
+        "difficulty_tags": [],
+        "evidence_notes": "test/thread_local_unittest.cc:7 `#include \"butil/threading/thread_local.h\"` (span 7-8). Resolves via the src/ include root; the written relative path uniquely selects src/butil/threading/thread_local.h (the sibling src/butil/thread_local.h does not match the written path); candidate file matches.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-6adbad5ec0ab376e",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:0d6b0912a5dac4b46a886528c0b153dbded6f9abbc84a85f3764774f07b42933",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "db/error_handler_fs_test.cc",
+        "start_line": 2844,
+        "end_line": 2844,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.TEST_F",
+        "raw_name": "st.SetRetryable",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:71b23f032aab4cb46553cda6f042a8ad82e42f523efa35f6a72cd62221f85598"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "symbol:71b23f032aab4cb46553cda6f042a8ad82e42f523efa35f6a72cd62221f85598",
+        "gold_target_path": "include/rocksdb/io_status.h",
+        "gold_target_start_line": 52,
+        "difficulty_tags": [],
+        "evidence_notes": "db/error_handler_fs_test.cc:2844 `st.SetRetryable(true);` with `IOStatus st = IOStatus::IOError();` at line 2843; the callee is IOStatus::SetRetryable(bool), inline-defined at include/rocksdb/io_status.h:52 (`void SetRetryable(bool retryable) { retryable_ = retryable; }`). Only SetRetryable declaration in the repository headers; candidate matches.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-ff7dddd235f6cd6a",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:fdbb734e418a2ae600181c87eccf562f204689c064b077bc6081f550f88e6552",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/advisor/advisor/db_stats_fetcher.py",
+        "start_line": 197,
+        "end_line": 197,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.advisor.advisor.db_stats_fetcher.OdsStatsFetcher.__init__",
+        "raw_name": "entities",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:2028b0db1005b37d10ea54f16e4a691e69693af6426c8d5b6e1ca2ae598914d0"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "same_name",
+          "cross_module_homonym"
+        ],
+        "evidence_notes": "tools/advisor/advisor/db_stats_fetcher.py:197 `self.entities = entities` references the __init__ parameter `entities` (line 194). The sole candidate is the C++ member LazyWideColumnsBatch::Rep::entities (db/wide/lazy_wide_columns.cc:262) - a cross-module homonym.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-3fe7d970be9bff2a",
+      "repository": "brpc",
+      "raw_reference_id": "reference:e501b5b22f5aa0d4ff5eb071471f2ca1d6a8c07d95fb19f657244d70683c31b4",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 224,
+        "end_line": 224,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.bthread_num",
+        "raw_name": "started",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:13503040f7d4e3e3da7ecb5e097ead4408626a2c3f8e58883f5395c22af2631c"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "NO_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": null,
+        "gold_target_path": null,
+        "gold_target_start_line": null,
+        "difficulty_tags": [
+          "same_name",
+          "cross_module_homonym"
+        ],
+        "evidence_notes": "tools/lldb_bthread_stack.py:224 `if not global_state.started:` references the instance attribute `started` of GlobalState (self.started bound at lines 57/62; global_state = GlobalState() at line 84). The sole candidate is a C++ function `started` (src/bthread/fd.cpp:310-312) - a cross-language, cross-module homonym.",
+        "annotator_id": "B"
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-4ad524eeab0b941a",
+      "repository": "aria2",
+      "raw_reference_id": "reference:96597c98c423a84fab8921ae5c07784d4389abf77f25aedbbeaa63d9238af414",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/BtDependencyTest.cc",
+        "start_line": 13,
+        "end_line": 14,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.BtDependencyTest",
+        "raw_name": "Segment.h",
+        "target_module": "Segment.h"
+      },
+      "candidate_symbol_ids": [
+        "file:fa222219ba79d372e2e52b2a0c25bcbfdfab99972a0540e49b36833fd86ba646"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      },
+      "annotation": {
+        "status": "ANNOTATED",
+        "relation_verdict": "ONE_VALID_TARGET",
+        "build_context_status": "SOURCE_SUFFICIENT",
+        "gold_relation_exists": true,
+        "gold_target_symbol_id": "file:fa222219ba79d372e2e52b2a0c25bcbfdfab99972a0540e49b36833fd86ba646",
+        "gold_target_path": "src/Segment.h",
+        "gold_target_start_line": 1,
+        "difficulty_tags": [],
+        "evidence_notes": "test/BtDependencyTest.cc:13 `#include \"Segment.h\"` (span 13-14). Not present in test/, so it resolves via the project include path to src/Segment.h, the only Segment.h in the frozen tree; candidate file matches.",
+        "annotator_id": "B"
+      }
+    }
+  ]
+}

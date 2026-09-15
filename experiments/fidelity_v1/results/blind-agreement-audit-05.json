@@ -1,0 +1,292 @@
+{
+  "artifact": "blind-agreement-audit-05",
+  "batch_id": "05",
+  "created": "2026-09-15",
+  "auditor_role": "Independent Agreement Auditor (not Annotator A, not Annotator B)",
+  "scope": "Blind consistency audit of sealed A05/B05 annotation records only; no adjudication, no system prediction access, no Graph Fidelity computation",
+  "inputs_used": [
+    "blind_packages/batch-05/annotator-a/output/annotator-a-batch-05-annotations.json",
+    "blind_packages/batch-05/annotator-b/output/annotator-b-batch-05-annotation-records.json",
+    "blind_packages/batch-05/annotator-a/output/annotator-a-batch-05-execution-note.md",
+    "blind_packages/batch-05/annotator-b/output/annotator-b-batch-05-seal.json",
+    "blind_packages/batch-05/annotator-b/output/annotator-b-batch-05-execution-metadata.json",
+    "blind_packages/batch-05/annotator-b/output/annotator-b-batch-05-execution-blocked.md",
+    "blind_packages/batch-05/annotator-a/input/annotator-a-blind-view.json",
+    "blind_packages/batch-05/annotator-b/input/annotator-b-blind-view.json",
+    "blind_packages/batch-05/annotator-a/input/batch-05-manifest.json",
+    "blind_packages/batch-05/annotator-b/input/batch-05-manifest.json",
+    "blind_packages/batch-05/annotator-a/manifest.json",
+    "blind_packages/batch-05/annotator-b/manifest.json",
+    "blind_packages/batch-05/annotator-a/SHA256SUMS",
+    "blind_packages/batch-05/annotator-b/SHA256SUMS",
+    "blind_packages/batch-05/annotator-a/package-audit.json",
+    "blind_packages/batch-05/annotator-b/package-audit.json",
+    "blind_packages/batch-05/cross-package-reconciliation.json",
+    "blind_packages/batch-05/annotator-{a,b}/protocol/* (frozen, hash-identical across packages)",
+    "results/batch-05-a05-blindness-provenance-audit.json (validity status only)"
+  ],
+  "forbidden_access_performed": {
+    "system_prediction": false,
+    "system_status": false,
+    "resolver_selected_target": false,
+    "resolver_strategy": false,
+    "resolver_confidence": false,
+    "graph_fidelity_result": false,
+    "future_experiment_outputs": false
+  },
+  "preflight": {
+    "a_sample_count": 64,
+    "b_sample_count": 64,
+    "case_id_alignment": "64/64",
+    "case_order_alignment": "64/64",
+    "order_matches_frozen_manifest": true,
+    "order_matches_blind_views": true,
+    "cpp_membership": "39/39",
+    "python_membership": "25/25",
+    "relation_type_agreement_annotator_vs_blind_view": "64/64, 0 mismatches",
+    "a_sealed": true,
+    "b_sealed": true,
+    "a_seal_evidence": "execution-note records annotations artifact sha256=08915528c97394f9ee52453190ed7241a125a739e8c3995c222754b951dee622; recomputed match; provenance audit status=VALID, sealed_records_modified=0",
+    "b_seal_evidence": "seal JSON annotation_sha256=560d08cc940bdfa6eb4416fd0298a98a441845d184bdcce5e93f5e212f2c220c and metadata_sha256=f452c29c9987e4d50376b980bf22fce7903799caf9f2e1d0e456e2877380fb3e; both recomputed match",
+    "package_payload_hash_verification": "annotator-a 9/9 OK, annotator-b 9/9 OK vs SHA256SUMS",
+    "a_usable": true,
+    "b_usable": true,
+    "schema_violations": 0,
+    "telemetry_internal_consistency_violations": 0,
+    "repository_mutations": 0,
+    "frozen_repository_commits": {
+      "aria2": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "brpc": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "rocksdb": "37234200b57d8d0a6a5c41f2d9811bbd2e293544"
+    },
+    "stop_condition_triggered": false
+  },
+  "methodology_metadata": {
+    "annotator_a": { "agent": "opencode CLI agent", "model": "glm-5.3-flash", "status": "VALID + SEALED" },
+    "annotator_b": { "agent": "Codex", "model": "GPT-5", "status": "COMPLETE + SEALED", "blindness_violations": 0, "opposite_annotator_access": 0, "system_prediction_access": 0 },
+    "cross_model_diversity": true,
+    "independent_sessions": true,
+    "independent_packages": true,
+    "a05_role_separation_deviation_retained": "packaging/annotation role-separation deviation disclosed; provenance audit = RETAIN / batch-05 case-specific exposure = 0 / A05 VALID; this audit does not re-adjudicate that question",
+    "b05_blocked_first_attempt": "B05 attempt in the A05 session self-blocked (independence violation, 0/64 performed); B05 later completed in a fresh session per provenance-audit prerequisite; blocked-attempt note contains no annotation content",
+    "observed_metadata_nuances": [
+      "annotator-a execution note records package manifest sha256=5b53611fab105674c161f864627896ce67b7d13a38aa1552812abcd77f0df045 and annotator-b blocked note records c7b17d0ad6f88f38432cdb929b24feee9c122b39992c547692fb86cc3a65a146; neither equals the current frozen package manifests (67ad27db..., 8e616508...). All currently frozen artifacts (SHA256SUMS, payloads, audits, seal, annotation hash records) mutually verify; blind-view and annotation hashes cited in the notes match the frozen state. Consistent with a manifest revision after the notes were written; recorded here, non-blocking, not re-adjudicated.",
+      "language_scope label vocabulary differs (A: CPP_IN_SCOPE/PYTHON_OUT_OF_SCOPE; B: CPP_PRIMARY/PYTHON_AUDIT_ONLY); membership mapping is unambiguous and verified 39/25 on both sides.",
+      "build_context_status label vocabulary differs (A: SOURCE_SUFFICIENT on all 64; B: NOT_APPLICABLE on all 64); frozen template constrains no value set; treated as labeling-convention divergence, not a schema violation."
+    ],
+    "metric_definitions": {
+      "exact_formal_verdict_agreement": "A.formal_verdict == B.formal_verdict over the 6 frozen verdict labels",
+      "raw_agreement": "binary valid-target signal: PRESENT = {ONE_VALID_TARGET, MULTIPLE_VALID_TARGETS} vs ABSENT = {NO_VALID_TARGET, RELATION_NOT_PRESENT}; BUILD_CONTEXT_DEPENDENT/INSUFFICIENT_EVIDENCE would be a third class but 0 occurrences",
+      "relation_presence_agreement": "agreement on the raw gold_relation_exists field as recorded by each annotator (field semantics diverge; see notes)",
+      "normalized_build_context_agreement": "auditor-defined normalization: {SOURCE_SUFFICIENT} and {NOT_APPLICABLE} both express 'verdict not conditioned on build context' -> same class; frozen protocol defines no canonical enum for this field",
+      "cohen_kappa": "Cohen's kappa over the stated category set; reported as not informative when a category margin is degenerate"
+    }
+  },
+  "overall_agreement": {
+    "n": 64,
+    "exact_formal_verdict_agreement": "56/64 = 0.8750",
+    "raw_agreement": "56/64 = 0.8750",
+    "relation_presence_agreement_gold_field": "59/64 = 0.9219 (field semantics diverge between annotators; kappa = not informative, A margin degenerate: A recorded true on 64/64)",
+    "normalized_build_context_agreement": "64/64 = 1.0000 (raw label agreement 0/64 due to vocabulary divergence; see methodology)",
+    "formal_verdict_cohens_kappa": { "po": 0.8750, "pe": 0.4763, "kappa": 0.7613, "informative": true },
+    "presence_binary_kappa": { "po": 0.8750, "pe": 0.5044, "kappa": 0.7478, "informative": true },
+    "verdict_cross_tab": [
+      { "pair": "ONE_VALID_TARGET | ONE_VALID_TARGET", "n": 33 },
+      { "pair": "NO_VALID_TARGET | NO_VALID_TARGET", "n": 23 },
+      { "pair": "ONE_VALID_TARGET | RELATION_NOT_PRESENT", "n": 5 },
+      { "pair": "ONE_VALID_TARGET | NO_VALID_TARGET", "n": 3 }
+    ],
+    "marginal_note": "neither annotator used MULTIPLE_VALID_TARGETS, BUILD_CONTEXT_DEPENDENT, or INSUFFICIENT_EVIDENCE"
+  },
+  "tracks": {
+    "cpp_primary": {
+      "n": 39,
+      "formal_agreement": "37/39 = 0.9487",
+      "kappa_formal": { "po": 0.9487, "pe": 0.6174, "kappa": 0.8660, "informative": true },
+      "relation_presence_gold_field": "39/39 = 1.0000 (kappa = not informative, degenerate margins)",
+      "normalized_build_context_agreement": 1.0,
+      "target_cardinality_exact_agreement": "37/39 = 0.9487 (kappa 0.8660)"
+    },
+    "cpp_calls": {
+      "n": 17,
+      "formal_agreement": "16/17 = 0.9412",
+      "kappa_formal": { "po": 0.9412, "pe": 0.7474, "kappa": 0.7671, "informative": true },
+      "relation_presence_gold_field": "17/17 = 1.0000 (kappa = not informative, degenerate)",
+      "normalized_build_context_agreement": 1.0,
+      "target_cardinality_exact_agreement": "16/17 = 0.9412 (kappa 0.7671)"
+    },
+    "cpp_imports": {
+      "n": 22,
+      "formal_agreement": "21/22 = 0.9545",
+      "kappa_formal": { "po": 0.9545, "pe": 0.5496, "kappa": 0.8991, "informative": true },
+      "relation_presence_gold_field": "22/22 = 1.0000 (kappa = not informative, degenerate)",
+      "normalized_build_context_agreement": 1.0,
+      "target_cardinality_exact_agreement": "21/22 = 0.9545 (kappa 0.8991)"
+    },
+    "python_audit_only": {
+      "n": 25,
+      "formal_agreement": "19/25 = 0.7600",
+      "kappa_formal": { "po": 0.7600, "pe": 0.4240, "kappa": 0.5833, "informative": true },
+      "relation_presence_gold_field": "20/25 = 0.8000 (kappa = not informative, A margin degenerate)",
+      "target_cardinality_exact_agreement": "19/25 = 0.7600 (kappa 0.4828)",
+      "gate_impact": "NONE - audit-only; does not gate C/C++ primary Fidelity V1"
+    },
+    "python_references": {
+      "n": 23,
+      "formal_agreement": "17/23 = 0.7391",
+      "kappa_formal": { "po": 0.7391, "pe": 0.3989, "kappa": 0.5660, "informative": true },
+      "target_cardinality_exact_agreement": "17/23 = 0.7391 (kappa 0.4651)",
+      "status": "HOLD / separate protocol study; agreement change reported for the record; HOLD not lifted"
+    },
+    "python_calls_audit_only": {
+      "n": 2,
+      "formal_agreement": "2/2 = 1.0000",
+      "kappa_formal": "not informative (degenerate margins, n=2)"
+    },
+    "denominator_reconciliation": {
+      "cpp_calls_n": 17,
+      "cpp_imports_n": 22,
+      "cpp_sum": 39,
+      "cpp_closes": true,
+      "python_audit_only_n": 25,
+      "python_closes": true,
+      "reconciliation_issues": []
+    }
+  },
+  "target_cardinality": {
+    "valid_target_count_observed_values": { "A": { "0": 23, "1": 41 }, "B": { "0": 31, "1": 33 } },
+    "overall_exact_agreement": "56/64 = 0.8750 (kappa 0.7478)",
+    "cpp_exact_agreement": "37/39 = 0.9487 (kappa 0.8660)",
+    "cpp_calls_exact_agreement": "16/17 = 0.9412 (kappa 0.7671)",
+    "cpp_imports_exact_agreement": "21/22 = 0.9545 (kappa 0.8991)",
+    "note": "only counts 0/1 occur for both annotators; no MULTIPLE_VALID_TARGETS verdicts, so the cardinality layer coincides with the presence layer",
+    "selected_target_identity_among_both_unique": {
+      "n_both_chose_unique_target": 33,
+      "path_agreement": "31/33 = 0.9394",
+      "identity_differences": [
+        { "sample_id": "FQV1-rocksdb-7c9c116938584ddb", "a_path": "db/db_test_util.cc", "b_path": "db/db_test_util.h" },
+        { "sample_id": "FQV1-rocksdb-3b90b89381b8d13d", "a_path": "include/rocksdb/utilities/stackable_db.h", "b_path": "include/rocksdb/db.h" }
+      ],
+      "note": "verdict-agreed cases with differing selected target paths; possible decl/def twin selection, but equivalence membership is not frozen in the records (Q4 not computable); informational only, non-gating, supplied to adjudication as context"
+    }
+  },
+  "navigation_analysis": {
+    "derivation_rule_disclosed": "CROSS_FILE := (navigation_files_count > 0) OR (navigation_hop_count > 0) OR (navigation_path length > 1); LOCAL_ONLY := otherwise; derived only from frozen telemetry fields",
+    "a_strata": { "LOCAL_ONLY": 36, "CROSS_FILE": 28 },
+    "b_strata": { "LOCAL_ONLY": 39, "CROSS_FILE": 25 },
+    "dimension_agreement": "61/64 = 0.9531",
+    "dimension_cross_tab": { "A_local_B_local": 36, "A_cross_B_cross": 25, "A_local_B_cross": 0, "A_cross_B_local": 3 },
+    "dimension_divergent_cases": [
+      "FQV1-brpc-bc38ae52a3ef3090 (A cross-file, B local; also a C/C++ formal disagreement)",
+      "FQV1-brpc-547d0bee05c50525 (A cross-file, B local; also a C/C++ formal disagreement)",
+      "FQV1-rocksdb-6dc21b13eb5505ab (A cross-file, B local; verdict agreed)"
+    ],
+    "stratum_metrics": {
+      "A_LOCAL_ONLY": { "n": 36, "formal_agreement": 0.8333, "target_cardinality_agreement": 0.8333, "relation_presence_agreement": 0.8333 },
+      "A_CROSS_FILE": { "n": 28, "formal_agreement": 0.9286, "target_cardinality_agreement": 0.9286, "relation_presence_agreement": 0.9286 },
+      "B_LOCAL_ONLY": { "n": 39, "formal_agreement": 0.7949, "target_cardinality_agreement": 0.7949, "relation_presence_agreement": 0.7949 },
+      "B_CROSS_FILE": { "n": 25, "formal_agreement": 1.0, "target_cardinality_agreement": 1.0, "relation_presence_agreement": 1.0 }
+    },
+    "target_recovered_after_navigation": {
+      "a_true": 27,
+      "b_true": 25,
+      "ab_agreement": "62/64 = 0.9688",
+      "both_true": 25,
+      "a_true_b_false": 2,
+      "a_false_b_true": 0,
+      "divergent_cases_note": "the 2 A-true/B-false cases are exactly the 2 C/C++ formal disagreement cases"
+    }
+  },
+  "verification_depth_observed_labels": {
+    "semantics_note": "observed verification_depth labels only; the frozen protocol defines no semantic mapping for L0-L4; no mapping is asserted here",
+    "a_distribution": { "L0": 51, "L1": 13 },
+    "b_distribution": { "L1": 39, "L2": 25 },
+    "joint_pairs_with_formal_agreement": [
+      { "pair": "L0/L1", "n": 37, "formal_agreement": 0.8108 },
+      { "pair": "L0/L2", "n": 14, "formal_agreement": 1.0 },
+      { "pair": "L1/L1", "n": 2, "formal_agreement": 0.5 },
+      { "pair": "L1/L2", "n": 11, "formal_agreement": 1.0 }
+    ]
+  },
+  "q4_decl_def": {
+    "status": "NOT COMPUTABLE",
+    "reason": "sealed A/B records and blind views contain no target_equivalence_group / acceptable_targets / canonical_target frozen metadata; equivalence membership cannot be constructed post hoc under the audit protocol"
+  },
+  "cpp_disagreement_classification": [
+    {
+      "sample_id": "FQV1-brpc-bc38ae52a3ef3090",
+      "relation": "CALLS",
+      "a": "ONE_VALID_TARGET (count=1; src/butil/strings/string_piece.h; cites inline definition at string_piece.h:214; vendored butil treated as in-tree)",
+      "b": "NO_VALID_TARGET (count=0; 'referent is external to the frozen repositories')",
+      "primary_classification": "TARGET_CARDINALITY_DISAGREEMENT",
+      "sub_cause": "in-tree vs external referent scope judgment; not reliably resolvable from sealed records alone",
+      "sub_cause_status": "UNRESOLVED_FOR_ADJUDICATION"
+    },
+    {
+      "sample_id": "FQV1-brpc-547d0bee05c50525",
+      "relation": "IMPORTS",
+      "a": "ONE_VALID_TARGET (count=1; #include \"bthread/bthread.h\" resolves to src/bthread/bthread.h in the frozen tree)",
+      "b": "NO_VALID_TARGET (count=0; 'referent is external to the frozen repositories')",
+      "primary_classification": "TARGET_CARDINALITY_DISAGREEMENT",
+      "sub_cause": "include-target resolution scope judgment (in-tree vs external); not reliably resolvable from sealed records alone",
+      "sub_cause_status": "UNRESOLVED_FOR_ADJUDICATION"
+    }
+  ],
+  "python_disagreements_audit_only_informational": [
+    { "sample_id": "FQV1-brpc-da675d4824d3de3f", "pattern": "A ONE_VALID_TARGET (same-file binding target) vs B RELATION_NOT_PRESENT ('binding occurrence, not a semantic reference')" },
+    { "sample_id": "FQV1-brpc-703009498cf49040", "pattern": "A ONE_VALID_TARGET (same-line local binding) vs B RELATION_NOT_PRESENT (binding occurrence)" },
+    { "sample_id": "FQV1-aria2-7d6c74d82bb26ca5", "pattern": "A ONE_VALID_TARGET (same-line local binding) vs B NO_VALID_TARGET (referent external to frozen repositories)" },
+    { "sample_id": "FQV1-aria2-795be216655fd881", "pattern": "A ONE_VALID_TARGET (module-global binding) vs B RELATION_NOT_PRESENT (binding occurrence)" },
+    { "sample_id": "FQV1-brpc-df4c5ba847c40b7e", "pattern": "A ONE_VALID_TARGET (same-line local binding) vs B RELATION_NOT_PRESENT (binding occurrence)" },
+    { "sample_id": "FQV1-rocksdb-5c429cff208e2444", "pattern": "A ONE_VALID_TARGET (same-line local binding) vs B RELATION_NOT_PRESENT (binding occurrence)" }
+  ],
+  "adjudication_queue": {
+    "count": 2,
+    "entries": ["FQV1-brpc-bc38ae52a3ef3090", "FQV1-brpc-547d0bee05c50525"],
+    "required_process": "source-only adjudication in a later phase; this audit decides no correctness, no gold verdict, no final target",
+    "supplementary_context_non_gating": [
+      "FQV1-rocksdb-7c9c116938584ddb (verdict-agreed, selected target path differs)",
+      "FQV1-rocksdb-3b90b89381b8d13d (verdict-agreed, selected target path differs)"
+    ]
+  },
+  "drift_gate_05": {
+    "conditions_evaluated": {
+      "NEW_SYSTEMATIC_SEMANTIC_AMBIGUITY": "not triggered - the 2 C/C++ disagreements are case-level referent-scope judgments; no evidence in sealed records of a newly introduced systematic ambiguity in the frozen protocol",
+      "BLINDNESS_VIOLATION": "not triggered - A05 batch-05 case-specific exposure = 0 (provenance audit); B05 violations = 0; the blocked B05 attempt demonstrates independence enforcement, 0/64 performed",
+      "SCOPE_MISMATCH": "not triggered - identical 64/39/25 composition, 64/64 membership and order, identical frozen protocol hashes across both packages",
+      "SCHEMA_INCOMPATIBILITY": "not triggered - schema_version 2 identical, telemetry schema identical, all 128 records schema-complete, 0 violations; observed label-vocabulary divergences (language_scope, build_context_status) are conventions on unconstrained fields, not schema incompatibilities"
+    },
+    "explicitly_not_holding_factors": [
+      "agreement/kappa levels",
+      "cross-model difference (GLM vs GPT-5)",
+      "ordinary target disagreements",
+      "candidate-missing questions",
+      "navigation difficulty"
+    ],
+    "result": "PASS"
+  },
+  "python_references_standing": {
+    "status": "HOLD / separate protocol study",
+    "cpp_gate_impact": "NONE",
+    "reported_change": "formal agreement 0.7391, kappa 0.5660 in Batch 05; HOLD is not lifted by this result"
+  },
+  "final": {
+    "batch_05_blind_agreement_audit_status": "COMPLETE",
+    "case_alignment": "64/64",
+    "cpp_primary": { "n": 39, "formal_agreement": 0.9487, "kappa": 0.8660 },
+    "cpp_calls": { "n": 17, "formal_agreement": 0.9412, "kappa": 0.7671 },
+    "cpp_imports": { "n": 22, "formal_agreement": 0.9545, "kappa": 0.8991 },
+    "python_references": { "n": 23, "formal_agreement": 0.7391, "kappa": 0.5660, "status": "audit-only / separate HOLD" },
+    "cpp_disagreement_count": 2,
+    "adjudication_queue_count": 2,
+    "cpp_drift_gate": "PASS",
+    "p0_annotation_mainline": "READY FOR FINAL ADJUDICATION CLOSURE"
+  },
+  "prohibited_next_steps_enforced": [
+    "source-only adjudication",
+    "Gold Set freeze",
+    "system prediction join",
+    "Graph Fidelity scoring",
+    "resolver/candidate-generation repair"
+  ]
+}

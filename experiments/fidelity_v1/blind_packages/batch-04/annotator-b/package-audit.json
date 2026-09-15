@@ -1,0 +1,27 @@
+{
+  "artifact": "annotator-b-batch-04-package-audit",
+  "audit_scope": "independent physical package annotator-b",
+  "allowed_files_count": 7,
+  "unexpected_files_count": 0,
+  "payload_hashes_verified": true,
+  "case_count": 60,
+  "case_alignment": "60/60",
+  "duplicate_case_ids": 0,
+  "forbidden_field_hits": 0,
+  "cross_package_reference_hits": 0,
+  "telemetry_schema_fields": [
+    "navigation_files",
+    "navigation_files_count",
+    "navigation_path",
+    "navigation_hop_count",
+    "verification_depth",
+    "target_recovered_after_navigation",
+    "recovered_target",
+    "recovery_reason"
+  ],
+  "telemetry_record_count": 60,
+  "telemetry_schema_complete": true,
+  "source_repository_mutation": "NOT_PERFORMED",
+  "manual_review": "PASS",
+  "overall": "PASS"
+}

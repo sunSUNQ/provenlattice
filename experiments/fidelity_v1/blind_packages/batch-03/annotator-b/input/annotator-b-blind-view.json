@@ -1,0 +1,1687 @@
+{
+  "artifact": "annotator-b-batch-03-blind-view",
+  "schema_version": 1,
+  "view": "BLINDED_ANNOTATION",
+  "annotator": "B",
+  "batch_id": "03",
+  "sample_count": 60,
+  "source_candidate_set_sha256": "558f78bfd69d5578b09bc9488739808b7e849d196659d1b82d91403453ba2484",
+  "cases": [
+    {
+      "case_id": "FQV1-brpc-8c9d0887e1f9d4fe",
+      "repository": "brpc",
+      "raw_reference_id": "reference:21b097a11c95649a1e0f453a21f426319c732e50276907c77cfe1c1e0e728c9f",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/brpc/couchbase.cpp",
+        "start_line": 468,
+        "end_line": 468,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.brpc.couchbase",
+        "raw_name": "DEBUG_PRINT",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-178d1ff3a0cd7ce9",
+      "repository": "brpc",
+      "raw_reference_id": "reference:e33cc23e916e5e3ca0ef51e08a010dcf1c394de5a7d014eb2eede9f21e4c7fe3",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 186,
+        "end_line": 186,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.bthread_begin",
+        "raw_name": "format",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d5fa05eec334493162a7da4aa4c6db84ea9cd626ba927e7ac325ff9846540d1b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-0fb35dcffa633600",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:f4e3ec64df535de057278a24e76bc1457b1283bcc4a4f129b78a12ae8e3cd52c",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "utilities/secondary_index/faiss_ivf_index.cc",
+        "start_line": 219,
+        "end_line": 219,
+        "owner_kind": "File",
+        "owner_qualified_name": "utilities.secondary_index.faiss_ivf_index",
+        "raw_name": "assert",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-99a8d24728ae1196",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:d694943dc5d03fb75ea0707e076970d4cdfaecf8e97997b0afe83e32336ba72a",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "options/customizable_test.cc",
+        "start_line": 50,
+        "end_line": 51,
+        "owner_kind": "File",
+        "owner_qualified_name": "options.customizable_test",
+        "raw_name": "utilities/merge_operators/string_append/stringappend2.h",
+        "target_module": "utilities/merge_operators/string_append/stringappend2.h"
+      },
+      "candidate_symbol_ids": [
+        "file:d53081f7db0fdd33c859fc23e7177b2e76d252343b3305d28018200eda60295f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-f66d19a80d90cc4d",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:be00653d30cd5ab2931ba699b869e49afd52612a390c2088b044c8259ed769c3",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "db/c_test.c",
+        "start_line": 7046,
+        "end_line": 7046,
+        "owner_kind": "Function",
+        "owner_qualified_name": "main",
+        "raw_name": "CheckCondition",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:76c30d487b798bd2d6fcd56f871c724150e176ed79c02e3d4acf3712e50c1890"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-c4f0776cc2d3f2f9",
+      "repository": "aria2",
+      "raw_reference_id": "reference:6c49a23dff87b018d0e3eb3f3860cbd04121524eba0e2b97a5a93c1a188817c1",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/DefaultBtInteractive.cc",
+        "start_line": 64,
+        "end_line": 65,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.DefaultBtInteractive",
+        "raw_name": "Peer.h",
+        "target_module": "Peer.h"
+      },
+      "candidate_symbol_ids": [
+        "file:e18d5fe750a8adf5e99b8143656e1edf6c00fa2fb404f60f5f7d9107d7b9cd25"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-eb22480ad0a9d65f",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:4d1a319cb490ad590943b20bb7afce524b0510baddcf9e567da277c139750bda",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/db_crashtest_test.py",
+        "start_line": 43,
+        "end_line": 43,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.db_crashtest_test.load_fault_injection_log_parser_module",
+        "raw_name": "util",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-639b4fbd4eb1a885",
+      "repository": "brpc",
+      "raw_reference_id": "reference:6b8b0285ee165f20b5deb343d04c217db34c8ec137fcafe8bfc132d4049d953c",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/gdb_bthread_stack.py",
+        "start_line": 104,
+        "end_line": 104,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.gdb_bthread_stack.BthreadListCmd.invoke",
+        "raw_name": "format",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d5fa05eec334493162a7da4aa4c6db84ea9cd626ba927e7ac325ff9846540d1b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-594104f8202cd07c",
+      "repository": "aria2",
+      "raw_reference_id": "reference:8aaa87c07e320b02b11e8384372d79ecf524e8c277e2bf1c476d2a5394f8c332",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/ValueBaseTest.cc",
+        "start_line": 53,
+        "end_line": 53,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.ValueBaseTest",
+        "raw_name": "CPPUNIT_ASSERT_EQUAL",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-34b5b3e1cb2c3201",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:54fcd5a172cd342bc1d9853df51ddc245a44cb728bf6843f2352f41150a9f063",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/run_clang_tidy.py",
+        "start_line": 297,
+        "end_line": 297,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.run_clang_tidy.emit_github_annotations",
+        "raw_name": "lineno",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-657008a8ca392740",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:d1630b8e355278a367d53659902f8677effa2a18167b6938621e7026c3825550",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "db/compaction/compaction_service_test.cc",
+        "start_line": 2083,
+        "end_line": 2083,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.TEST_F",
+        "raw_name": "ASSERT_OK",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-3c112669c1d2a328",
+      "repository": "brpc",
+      "raw_reference_id": "reference:b075099dd41e5f35bf8021bfce2afe29a952ae66a53f76aae6e6bd79fe76fff9",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 152,
+        "end_line": 152,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.get_all_bthreads",
+        "raw_name": "i",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:7e8955f989ecc974888d7c8eb5a96119bb556fa8ad93c26a36c4136622c45f53"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-c1e9161df3d24212",
+      "repository": "brpc",
+      "raw_reference_id": "reference:39210a25f10cb3706d3dac7f11f97ae08a9789f8704807b071aa092797044577",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "example/ubring_performance/client.cpp",
+        "start_line": 207,
+        "end_line": 207,
+        "owner_kind": "Method",
+        "owner_qualified_name": "PerformanceTest.RunTest",
+        "raw_name": "butil.gettimeofday_us",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:7a1de257509910ffff4f24071d6dfe8adfed16fbd745cb1b75b4055920f7775c"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-7b8fb60c33671eaf",
+      "repository": "brpc",
+      "raw_reference_id": "reference:7f12dcc40c193efd70b54e6d627b284f7b2449f5516c48fb19d8e425fba1bab9",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/brpc/amf.cpp",
+        "start_line": 127,
+        "end_line": 127,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.brpc.amf",
+        "raw_name": "rhs.IsArray",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:f769cd56c11435aa04604bc12a2ae1d52150eac3665cd4bd2bc487d8735af6c1"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-1013c4ea4951ce6e",
+      "repository": "aria2",
+      "raw_reference_id": "reference:c84ebd8e19ac69dc91802733a19fa424f175ed9d560d100d97e24518c1214882",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/GZipDecoderTest.cc",
+        "start_line": 4,
+        "end_line": 5,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.GZipDecoderTest",
+        "raw_name": "fstream",
+        "target_module": "fstream"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-b56746858b1a20aa",
+      "repository": "aria2",
+      "raw_reference_id": "reference:11a03ce745b781455e52c075590af890d02fa62a098bce131d96c1df2375e204",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/RpcMethodTest.cc",
+        "start_line": 3,
+        "end_line": 4,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.RpcMethodTest",
+        "raw_name": "cppunit/extensions/HelperMacros.h",
+        "target_module": "cppunit/extensions/HelperMacros.h"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-c6525c9d8d155f3f",
+      "repository": "aria2",
+      "raw_reference_id": "reference:271c18616ad06084a3da41defe3afdd8c788188f9b5b1e9687b28dbe7c376147",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/UtilTest1.cc",
+        "start_line": 162,
+        "end_line": 162,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.UtilTest1",
+        "raw_name": "util.lstripIter",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:01c44fa04d777eb1183ddfb069836eda44dc5b8a6a4e0dcdf145bc219791cd27",
+        "symbol:d51e4ce94870d6bf7329513d3ba9bbe5dd19422934df303ec4fb03c7932a2a0d",
+        "symbol:f8e90274ae8edefb00c86ee0391bfcd1e5cf1f355ed2db01500d5a6269aa14d0"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-85a27eca37b8f8c1",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:bb5b27cdf8bed21c1f40d17eaa33665fae50b144c0f5bbe8603adceec6dad7da",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "table/table_test.cc",
+        "start_line": 230,
+        "end_line": 230,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.anonymous.Increment",
+        "raw_name": "BytewiseComparator",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:4ca0838034b4067c5e3b9de4a2735c4f54df33604c3abedb18552181626693b4",
+        "symbol:dc37ba182d2702a17ef03ec6fcd2329b94b46fa09715439199d445c3e5a8ebf0"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-dc02940ee463a68a",
+      "repository": "aria2",
+      "raw_reference_id": "reference:adafca74c3247c15c7c8be379df478200caba677406f558be0212d510c91f637",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/bencode2.cc",
+        "start_line": 125,
+        "end_line": 125,
+        "owner_kind": "Function",
+        "owner_qualified_name": "aria2.bencode2.encode",
+        "raw_name": "visitor.getResult",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:a7e02dc80988b03f430c0ba7c5d54cad47241e84daf7742cf341226362f77bc5"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-8c0df0a18a9ac226",
+      "repository": "brpc",
+      "raw_reference_id": "reference:6270e17d3e51f1fb16bad89339d0c3bec4f9e265b3012418bc02a08b1b6e1a20",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/brpc_controller_unittest.cpp",
+        "start_line": 26,
+        "end_line": 27,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.brpc_controller_unittest",
+        "raw_name": "butil/macros.h",
+        "target_module": "butil/macros.h"
+      },
+      "candidate_symbol_ids": [
+        "file:cd330e1e7e294ec2d79eed1f1c3297fb97b277357fcc1acaafa1ca9f8de2cc34"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-1297e3afcef27b0a",
+      "repository": "brpc",
+      "raw_reference_id": "reference:ee19da91553846a52162933c5fa0204e94bb495b3c709e2ee9fefe8489a60c55",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/brpc_uri_unittest.cpp",
+        "start_line": 18,
+        "end_line": 19,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.brpc_uri_unittest",
+        "raw_name": "gtest/gtest.h",
+        "target_module": "gtest/gtest.h"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-e03045f4f066d733",
+      "repository": "aria2",
+      "raw_reference_id": "reference:585c1c2be9edab84590c201ad594550d04351d27ef3c390082ad6971dd6a45ce",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/BtPieceMessage.cc",
+        "start_line": 44,
+        "end_line": 45,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.BtPieceMessage",
+        "raw_name": "DlAbortEx.h",
+        "target_module": "DlAbortEx.h"
+      },
+      "candidate_symbol_ids": [
+        "file:3c478b54a61225b0db9098b5ac29a5e7161f062fad3079e8dd5fe62eed11c3ec"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-f22dd80161b9bb6a",
+      "repository": "brpc",
+      "raw_reference_id": "reference:1497c697d3a7209de13b7a91c22ebb4800983e5099e8d4c0d3018ca13e876683",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/brpc/socket.h",
+        "start_line": 43,
+        "end_line": 44,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.brpc.socket",
+        "raw_name": "brpc/versioned_ref_with_id.h",
+        "target_module": "brpc/versioned_ref_with_id.h"
+      },
+      "candidate_symbol_ids": [
+        "file:555593a7cebf51866bf46c230507e98f21d62305b814fb132242cd197fd486ea"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-f603c82c16239f57",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:16e91c3df2d621b4a78c98bcdfa6f7469d8c0e8bbe76ca6bae270c462c17c808",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "db_stress_tool/db_stress_common.h",
+        "start_line": 55,
+        "end_line": 56,
+        "owner_kind": "File",
+        "owner_qualified_name": "db_stress_tool.db_stress_common",
+        "raw_name": "rocksdb/slice_transform.h",
+        "target_module": "rocksdb/slice_transform.h"
+      },
+      "candidate_symbol_ids": [
+        "file:aace0259d5adbac4feae0e9c40e07df66019921fb992c1476660fa27865c2f42"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-a2ae789d3de9d28e",
+      "repository": "aria2",
+      "raw_reference_id": "reference:54e8327f35983a91e07b8d5ec5ae73c04243f4076590ef87bad78efce32bf390",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/FtpConnection.cc",
+        "start_line": 387,
+        "end_line": 387,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.FtpConnection",
+        "raw_name": "bulkReceiveResponse",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:2730a42ed766ce5e237ce654f5ab4d55c26daebaceb9015523893e311a392b66"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-eb64f327dadecb5a",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:dd0ea55497b68fd4e49d841f41a21a98939b7617e5c5d819ecfb5a587cd57601",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/ldb_test.py",
+        "start_line": 909,
+        "end_line": 909,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.ldb_test.LDBTestCase.testSSTDump",
+        "raw_name": "assertRunOK",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:93aca7479aa8dd1c66e0c77e482ae45f1d433b1ed01e2bf806fd795da54f538a"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-e24d0c9f9a05b8dc",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:a8c99bd1067f8182481e2f9b89c2610a02aeeba2bf11479fd476eab3fd1e3162",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "memory/memory_allocator_test.cc",
+        "start_line": 14,
+        "end_line": 15,
+        "owner_kind": "File",
+        "owner_qualified_name": "memory.memory_allocator_test",
+        "raw_name": "rocksdb/options.h",
+        "target_module": "rocksdb/options.h"
+      },
+      "candidate_symbol_ids": [
+        "file:bef58f79efa0815953a55ab29f766ef5b79e34905992151678033bb93e145184"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-a7fcfdbc818d1ac0",
+      "repository": "brpc",
+      "raw_reference_id": "reference:d026d6d5aa64425235a017b86afa0c396c48bc32c8cb5e1218d07f5d4bdb7a31",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/platform_thread_unittest.cc",
+        "start_line": 45,
+        "end_line": 45,
+        "owner_kind": "Function",
+        "owner_qualified_name": "butil.TEST",
+        "raw_name": "thread[n].did_run",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:eeba15c7919a91cb1dc3bcef5038b2e2abd3ded7cb4384a13529378214427b66"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-8fbd7f6e2ec1619a",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:fd72bd46ed8fb95a0278e51d5de8ace731b293dd4f5299b9eb63cc2303655007",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "db/internal_stats.h",
+        "start_line": 20,
+        "end_line": 21,
+        "owner_kind": "File",
+        "owner_qualified_name": "db.internal_stats",
+        "raw_name": "rocksdb/system_clock.h",
+        "target_module": "rocksdb/system_clock.h"
+      },
+      "candidate_symbol_ids": [
+        "file:8ffc37f47b190be6902c2cb661022013c1ed1ce44ea6da5d3f50e91428327b5f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-3a4f1af91520be3a",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:e651acc3e47aaefc6dde494ba3f42f9d2cd29a4617ab4176edd1a3dc5abb902a",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "monitoring/perf_step_timer.h",
+        "start_line": 9,
+        "end_line": 10,
+        "owner_kind": "File",
+        "owner_qualified_name": "monitoring.perf_step_timer",
+        "raw_name": "rocksdb/system_clock.h",
+        "target_module": "rocksdb/system_clock.h"
+      },
+      "candidate_symbol_ids": [
+        "file:8ffc37f47b190be6902c2cb661022013c1ed1ce44ea6da5d3f50e91428327b5f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-5cfbe4c0f156df21",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:627e5cb01fd4f5c3a148656b4d4c9ed5e485fa274455ff9c74bd53be1e6f8bea",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "buckifier/util.py",
+        "start_line": 38,
+        "end_line": 38,
+        "owner_kind": "Method",
+        "owner_qualified_name": "buckifier.util.ColorString.ok",
+        "raw_name": "ColorString",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d05f2591a60b7ff107acc5789a8a04918f180ae1d091ce8dc6e7faed3660e88f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-ccc97e5b37132ace",
+      "repository": "brpc",
+      "raw_reference_id": "reference:9c079663543a6c71a7d3cacdaebb3edd538c04bad6ed22e9e329e328f8efd6fb",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 291,
+        "end_line": 291,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.bthread_regs",
+        "raw_name": "SBAddress",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-9806a502687549e4",
+      "repository": "brpc",
+      "raw_reference_id": "reference:363d1ca0fefc9e7e2d31ae8b77d5d5c49813cc2f6e1fcb453d783ca37dff9706",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/butil/debug/stack_trace.h",
+        "start_line": 9,
+        "end_line": 10,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.butil.debug.stack_trace",
+        "raw_name": "string",
+        "target_module": "string"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-ec017de0157014f4",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:807904febc73666eed6296d8e92777783068df39caf3145479a24e27a63b9bdd",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "utilities/transactions/timestamped_snapshot_test.cc",
+        "start_line": 465,
+        "end_line": 465,
+        "owner_kind": "Function",
+        "owner_qualified_name": "main",
+        "raw_name": "RUN_ALL_TESTS",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-1887637cc8bf23ac",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:6faa737fbf55a511b215be9b2b82e0e618b546dc4c0cbc075347e25e925a3011",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "tools/cpu_corruption_injector/injector.py",
+        "start_line": 190,
+        "end_line": 190,
+        "owner_kind": "File",
+        "owner_qualified_name": "tools.cpu_corruption_injector.injector",
+        "raw_name": "main",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:f290e1b00653f1da944ddaaca1b3f86cef891c03b6154883dcb451cd8b50e93d"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-41db0050ca5b26f5",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:b2ac8cfdf8ecfe5ce0d438b60d7c3f5338b0d8a61674e8ad7a47643482ee8226",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/db_crashtest_test.py",
+        "start_line": 19,
+        "end_line": 19,
+        "owner_kind": "File",
+        "owner_qualified_name": "tools.db_crashtest_test",
+        "raw_name": "os",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:3a7166c8f81e4570a53cc4c8e402ec1682056ca7c1e5cc5ab809a0bb7f8b5be9"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-3b7ff33941c6d59a",
+      "repository": "aria2",
+      "raw_reference_id": "reference:a216e721b4806a200451c3558cc2810f3d098653aa5f4813c36804e869726128",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 17,
+        "end_line": 17,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.bash_completion.make_bash_completion.get_all_options",
+        "raw_name": "compile",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:2764896f34936fdaa42b2a1a78b63f236507e5897bf97e00347b1456987a1505"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-a41952e3fd9a42a4",
+      "repository": "brpc",
+      "raw_reference_id": "reference:4dc5772039ef5052d4494d43db1a930510d9801c348993daa326501011437fc1",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/butil/file_util_posix.cc",
+        "start_line": 791,
+        "end_line": 792,
+        "owner_kind": "Function",
+        "owner_qualified_name": "butil.GetFileInfo.VerifyPathControlledByUser",
+        "raw_name": "VerifySpecificPathControlledByUser",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:e98f0549c09d3a5872427b9ef6f7ca5ff433e1b4444218b5167dc81d1646e8c5"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-9321f98399a2d154",
+      "repository": "aria2",
+      "raw_reference_id": "reference:5fa894f0276f51c2370fdb83f12bad3890bd9f13e573c5d630358827a2f7e003",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 41,
+        "end_line": 41,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.bash_completion.make_bash_completion.get_all_options",
+        "raw_name": "opts",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:827f6468eadb4d3dea44f00993819f61a937811e0b153df68c58af71200a7d65"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-929091560ddad98e",
+      "repository": "aria2",
+      "raw_reference_id": "reference:83e6cdc5a6fe27f56d200d83ac055bd91b2041775b3c2389456f193250defb4c",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/UDPTrackerClient.cc",
+        "start_line": 548,
+        "end_line": 548,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.UDPTrackerClient",
+        "raw_name": "failRequest",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:77a5f337bac3cf3a0dcdb87e2af4e799c21dc0a512b104140f069f70036fc59b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-709dda7bec5bc454",
+      "repository": "aria2",
+      "raw_reference_id": "reference:adf322333897f9f41d0fceadb5b2eeb78739d4516651ce244483fe0e217b9852",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/OptionHandlerImpl.cc",
+        "start_line": 63,
+        "end_line": 64,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.OptionHandlerImpl",
+        "raw_name": "array_fun.h",
+        "target_module": "array_fun.h"
+      },
+      "candidate_symbol_ids": [
+        "file:3c7d4956d7f9a24049f4490bbbfe62d27ba32de816b442a30403910850d7b736"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-ecdd1dedf78333a5",
+      "repository": "aria2",
+      "raw_reference_id": "reference:e9ffbf30a8a3c07ee01953212aadc34dd7325c446c15ba9c87d0d6fc9f911e91",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/DefaultBtRequestFactory.h",
+        "start_line": 40,
+        "end_line": 41,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.DefaultBtRequestFactory",
+        "raw_name": "deque",
+        "target_module": "deque"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-bd1fd621f81874b8",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:eaee5a940ebaff16d7207a9a71ee02e4e28f34848762b0b173758fbaf853428a",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "tools/gtest_parallel_repro.py",
+        "start_line": 37,
+        "end_line": 37,
+        "owner_kind": "File",
+        "owner_qualified_name": "tools.gtest_parallel_repro",
+        "raw_name": "Iterable",
+        "target_module": "typing"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-5540c7bc187cb8b7",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:4ef83c115a86e01dd55e400d32a77ad752e81d2049f939bc9bf7859a68e39ff7",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "utilities/persistent_cache/persistent_cache_bench.cc",
+        "start_line": 21,
+        "end_line": 22,
+        "owner_kind": "File",
+        "owner_qualified_name": "utilities.persistent_cache.persistent_cache_bench",
+        "raw_name": "table/block_based/block_builder.h",
+        "target_module": "table/block_based/block_builder.h"
+      },
+      "candidate_symbol_ids": [
+        "file:d82a01662ff16e90169a3df5b925a2a13275a91f830f2edc50a550411267a5b8"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-4f4f2346428539fb",
+      "repository": "brpc",
+      "raw_reference_id": "reference:6d956f5666bde4eb402769d1bd2353020f2362beabcff4a2830a2bf3ccc78f1f",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/bthread_semaphore_unittest.cpp",
+        "start_line": 129,
+        "end_line": 129,
+        "owner_kind": "Function",
+        "owner_qualified_name": "anonymous.TEST",
+        "raw_name": "bthread_sem_destroy",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:1b077cb0d3160907e61c8a956eebd4936176465a8768cab6183435d91c053cf7",
+        "symbol:1c319d3f237966da8eb46cca7cb33dcb409876f7bf536018783cf8db6305a2a8"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-b968fe7da547e59e",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:37e697773158d343a58fc7d30d6362c1c083015e59be9f95abd4903e89db1e60",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "build_tools/gtest_parallel.py",
+        "start_line": 376,
+        "end_line": 376,
+        "owner_kind": "Method",
+        "owner_qualified_name": "build_tools.gtest_parallel.FilterFormat.print_tests",
+        "raw_name": "cmd_str",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-ffc27007c514fb0e",
+      "repository": "aria2",
+      "raw_reference_id": "reference:2562439cbeb7124e24dc6d1b0b5012e649e562308c36e4c60a878e96c158d081",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/AuthConfigFactory.cc",
+        "start_line": 40,
+        "end_line": 41,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.AuthConfigFactory",
+        "raw_name": "AuthConfig.h",
+        "target_module": "AuthConfig.h"
+      },
+      "candidate_symbol_ids": [
+        "file:be03434e66515b97f4f361902c59548a2160afc5a013a0489e7c67f44cac883b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-c9bbcfab82d72458",
+      "repository": "aria2",
+      "raw_reference_id": "reference:3026c8cb2979bcac5d9771f7c12588760b3149e05417d2e8b539eb187d94756c",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 173,
+        "end_line": 173,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.process_enum",
+        "raw_name": "items",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:763b63bb583be4a9b38ea266b77a986b163d5f2272eedaa9005ac7c758ec0301",
+        "symbol:e08a58e320dfa8f0ac5392842bf6088899ff66c3cb8774c58ad81334a20adbd9",
+        "symbol:f4aa98648a3994d2305515fd01adeb0e568657455b9b1a9dd80e7975dd193f08"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-6ce1878baf26a770",
+      "repository": "brpc",
+      "raw_reference_id": "reference:45c4299941001d57d5b21da783ccb979f88aa0c49f137d250c5ab5f2f067c5f1",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/gdb_bthread_stack.py",
+        "start_line": 166,
+        "end_line": 166,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.gdb_bthread_stack.BthreadAllCmd.invoke",
+        "raw_name": "format",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d5fa05eec334493162a7da4aa4c6db84ea9cd626ba927e7ac325ff9846540d1b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-52f6cf4151819d66",
+      "repository": "brpc",
+      "raw_reference_id": "reference:562dc30a801bd01d547891327a16f0c63591a64b77994f100a6d8aa7f30d8e63",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "example/ubring_performance/server.cpp",
+        "start_line": 19,
+        "end_line": 20,
+        "owner_kind": "File",
+        "owner_qualified_name": "example.ubring_performance.server",
+        "raw_name": "gflags/gflags.h",
+        "target_module": "gflags/gflags.h"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-9248edc9695c69cd",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:f25bf7dfa0b4e2644c7ccf422c52a0ea64382a45896e0a27a208923af6a8fd96",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "db/compaction/compaction_iterator_test.cc",
+        "start_line": 1483,
+        "end_line": 1483,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.TEST_P",
+        "raw_name": "PutFixed64",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:0a0c800e7522d8c322a74c18ac1474fe016b9ae0cf30ed56108add3f7a264cbb"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-b070658664f8eb34",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:92e3a5a07352a89fa68b0222f6ca445082826394e0d75bb21ab9889a1c92c5a7",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "utilities/transactions/write_prepared_transaction_test.cc",
+        "start_line": 4464,
+        "end_line": 4464,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.anonymous.CoVerifyGetEntity",
+        "raw_name": "result[0].status",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:eaf7375a80f6b724c087232c1e707009b2665fd7d3c006ec1c70f3521de8d5b6"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-1636f2253aaa4ada",
+      "repository": "brpc",
+      "raw_reference_id": "reference:9d9c5fb660d1aa28489f387ca84ead1305b85457663f023cccb4d66e9a38ecad",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/mcpack2pb/generator.cpp",
+        "start_line": 1399,
+        "end_line": 1399,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.mcpack2pb.generator",
+        "raw_name": "generate_serializing",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:4904474f8b06be8394cd467977e81d4a1b0e382863fab5b14c78c0e50ceabbbb"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-c9448e6fca66878e",
+      "repository": "brpc",
+      "raw_reference_id": "reference:d6751f47dc7a6a19677ece705865ef74643130c25d7a11641d9051ca8bbdcc5e",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/bthread/mutex.cpp",
+        "start_line": 22,
+        "end_line": 23,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.bthread.mutex",
+        "raw_name": "sys/cdefs.h",
+        "target_module": "sys/cdefs.h"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-df438b2594cbeea6",
+      "repository": "brpc",
+      "raw_reference_id": "reference:7b71090d6c6b6a05416aadd5f2572e7722d91251062eb41403a50e42a35abf40",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/gdb_bthread_stack.py",
+        "start_line": 114,
+        "end_line": 114,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.gdb_bthread_stack.BthreadNumCmd.invoke",
+        "raw_name": "res",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:00130fe928e08da2fc1a116b760252757e6bf4a2da1674ab0cfaf76f318b1c9e",
+        "symbol:027111cffda9eef76e225f12e6ec6901d822d1520543aeb7b1b29c2e16fab1ae",
+        "symbol:044266b7b0bcfca156d35f5185b206a03927d39ef4ab8d61899d377c429f3dbc",
+        "symbol:05c86810183392718036ae241bea041423b41d2d07f36840543a1878db0190c7",
+        "symbol:0715c8dcef0889b2e8ef024670aac8a214a70cf2993c28729f3eb278c257427b",
+        "symbol:088c9d2d45febbeb9f749f1956167f0c64670f403c228d5cece687e1934a88ca",
+        "symbol:088f2eb8c76718d58b1df7274fad27a6667ef9d9f4fe3436ef42cde95539e99b",
+        "symbol:0bdb3517514e32b05f6bc39d192d4759302fd3da9601de06c73bf2a41f261edb",
+        "symbol:0c0b44926187826230eabd81ef5d6c4bed96df847f5168a8c5ef330da65b747e",
+        "symbol:0c61f88600e7e8149cf3c52a928274bef81d408364901cd6845cfde6f8fd3f4f",
+        "symbol:0cf41622c47eb77c390d604eb5ce449235209b48b8cb3240ad49364ac9fffe35",
+        "symbol:0deed09155f30d019dcc38447783531a1e0ccd7b8b566b545963311dbe1f7c0e",
+        "symbol:0e3798ff67bde5a7de1b871efeaef145807a7e3e7cec6376e574618fcc46ee01",
+        "symbol:114f537f24e0e7053aa0311b24617822d7131b7959417fb3426615cec445cb90",
+        "symbol:139f3b648de4f8341634f6844b3adefa6abd5e6040258d1b91f33a5ac8bce3ef",
+        "symbol:154adb9146a09e2f0f90a7414f927ecdcf5128880c416a94973fffa950cc88bc",
+        "symbol:1781d9783ceb568fbae127e3a66f0f4fa81b0eddc3774c5a93ce85a6bd435baf",
+        "symbol:191fa974acfd38bd3e4ef9d77be78af6fda301f0b7f5615a9dad37b0ccfa0d64",
+        "symbol:1a1263da5b03cc374bec071eb07436f6f7c6758b4def837e62e2e449027507aa",
+        "symbol:1b406fbfd04363dea3fdfe7c0a34988cd58faa83a16ffe43b726663e9ab8e588",
+        "symbol:1e1445c063985bf28b70602eb64553f8e39d0b671f82439886798b368fb414ba",
+        "symbol:21cf6ff166a69217a2fb3ee80f5d1258991b135c813b86d3bb92904fe4618349",
+        "symbol:223da09ba70d39ea50210ab91604e4778128b0a694c9f994ad793d5209c129cf",
+        "symbol:22ee58e5b3be5d70b8762c15ada737ca1ec8bde2d0dcdcb9cb41f70f2beb6145",
+        "symbol:232a9031827d37575ac6f4f4c22f105d9d2071693623b1d7e4a6e37aede9e4ce",
+        "symbol:251d590bb9ef0672fa8d4ece8e954b6580358a50e05e5d94aa8e3329064b7833",
+        "symbol:256afa93c003fb885876b19a1a3bb83e3f66b464469b1950d763123c2f4ddbff",
+        "symbol:2924e52f7e0549e8c7f38decef14ee03dcf808ccec98c1613b3100d40bf75ed0",
+        "symbol:2b83afe4b9a897997b447b6fc9da194335c41f1eda1af317cba6026889bffac5",
+        "symbol:2d95e5016cd32fc9502ffbb5021650b40b8229a0d34448849e3c77b3897376ae",
+        "symbol:2db9a1a20724529eafab48e7d53de0ef2a38ffc3bc4e9e93174fcb645f07d455",
+        "symbol:2dd1227b490f137e6e017fb94584ad1e698e626991a2e57cb628c3f400dbd677",
+        "symbol:2dd591a24c24a8455833d42fbcb09c20cfc257b1e7c79e287894dca7ef5557ec",
+        "symbol:2e4ef06f480951c3c9f0fdc907bb6101dcbba17d7f6c6f5f6fe9d5892c007426",
+        "symbol:300111448eee50e4ae0810cb0ae2452a255d7557b0ec5c75a0cc2baabe218850",
+        "symbol:324af79fbb424d0607edefbf46281ea637334aadb34585708cabd290965e02d9",
+        "symbol:33e705fc4023a5d82420927cb95b7087d726972dc40b09223548b3b98e378ef3",
+        "symbol:3473557f0181aee1ec4122d7b7b42524a87a790348a774b98516349f1462cafc",
+        "symbol:35e915e31390668d477f721bf5b2b85ceaff526a1841955bae1d8fbf2ea285ff",
+        "symbol:36a36514271b2b5f4f97ea97c5c202405c4224d2524628ae87438c1619ad3702",
+        "symbol:383eb8e91a0ffc3cd1195d0512d1c5b336a024654d36ec96ac6ce2270fae2098",
+        "symbol:3c1b88dcf3e6a1062f465b4ef1d3f02690a7b6982424066db61b2e0fc78e4ba4",
+        "symbol:4026d8d974f5504f184a17c57cf691aa4435e1eba0553d39e4246ec27e5c37d8",
+        "symbol:403f83d2409c23f0846779d93d839805b2510dda2cbf94986c1a313565440883",
+        "symbol:42bb867a8e4158814cae027a491c03173a9d69e1a383e282f317d172de8b725c",
+        "symbol:45db7427a1f1bb2c2f69f0571b58f8d3a0233ecedc86df1bcb4e0e3beefc39f1",
+        "symbol:495dbef3b115d4c91c007957ab812bf8383eea3f9ff0ef53cc4c6f25432672c0",
+        "symbol:4b1dfeb9a6324403a3a5ff510376065e3dd534a4a86f5d752d74efdef1fa336b",
+        "symbol:4cc849a0572f8de9a9d80274c0ae68c953ee28b5425c345c6f1f3a7dafce06f1",
+        "symbol:4f775f394a453eebec600da5037f0dca980683a431fc812c987b92fcc77b594a",
+        "symbol:5174d665efbd3e00795647b081d79ade28c5af7a4fff9b62f379260241a0b1cf",
+        "symbol:52dd1143e0cbd38bfedb11cad100b35b7e69b0e80e83a4146504f3d336241cd2",
+        "symbol:53b8af21000092c8e2ec87ae3f22fd2aecd586d424ccb4c6fdc9b538b5c23114",
+        "symbol:570c0d36f5fb6c0157b83f8911ad691e0610051e01378a64f582df8e3c6b9fda",
+        "symbol:586b7a52dc06eb08e8f1f928e47e2bef8a378bba8a196b1e1597d3d6e5875141",
+        "symbol:5943005307a98ce51da0b8f5da32ce84579e61e58a7a8768431544396eebff00",
+        "symbol:59ae89c5fbfe4510ce79fbcf32103d87b64c0864f49190a96e412b277fb9e7df",
+        "symbol:5c66f3d2c043a3ae19ad2a53fb621d5f0dac876beda8cc335eaf6ae1b34fa94a",
+        "symbol:5ff95b93f65c494fb9702ddf798ee3f832586ec6aff7cf00aa550feb5eb1a271",
+        "symbol:6106cb59e3ce3ec030a3d54a274a350fc0903b8d73ff2907d585218809d2e473",
+        "symbol:625a037ae355aff40a23cd233648197777b1b043fdebcb829463520f143cddbb",
+        "symbol:64ca75dcb44f3fb74805efa9ecd3bbe6be54422dd2a04217a63c5d1bfe6eff68",
+        "symbol:6609b0f176dd9dc4c2179f2d4ac53a778b1047309cf2677f835e2bf0d0d93111",
+        "symbol:6b768b7a39a6daee0947a9031d23426b69bec1d79976e3d6f5523820011395ec",
+        "symbol:6c786e921234fd54cbe8a290ec2310f447053ab7124be1622a1d048f5e0198c2",
+        "symbol:6e93c5040c05165050e40ce5ce3d98b8abb11f2956488813c6a140545287651d",
+        "symbol:6f19eb04c3fb0c093c72f23456a5d9d0aeb6c1599b6508f290356c0b20eac19b",
+        "symbol:6f7b2e459947ca2e8b5f11ce4e2cd45bac984acc53c3133737b062ee2dc2f975",
+        "symbol:6fb8653b6328ef44e706ec4365916389c5e9745bcbb080378920f9cbaf50200e",
+        "symbol:70b91524099a64adfe41d8e9e9f7a3aa1f8553ed7ee4cb7347fbe1dcffaec6f9",
+        "symbol:71ffc21e6e258cbda68f6325efc19450bc8303b7f59bba8150c511bd6a4c9927",
+        "symbol:7237021d77452e8327a6430e0a57ba733a374a25b9d22e586a6f6f4528da57db",
+        "symbol:734f11d31599560242023bb140cbf6510eeeb94b838c912bc84ee547bd16664e",
+        "symbol:7d180dfaaa417f882a3e77b057b3e6b81f5fa796a9cb09b04a78195cf7ea6cc4",
+        "symbol:7ead96f5cd287f4eab278e9d1ef068b624f1c734e04baf0c2c7d534df91665cc",
+        "symbol:7ed1a54ed4be0475f5aaf36f940418948d64798501e174112b1f423d83976c2b",
+        "symbol:7f02bc4d423d5277d938f5ad87adf0f36ced3ecf9c565f3d45d48f2436538bb3",
+        "symbol:7f15e64c48388fcc433e55690c5b3994624b630bad3d783ffabc13489179e66d",
+        "symbol:860449f363498b935c9005a5b1da0eef86319e6723f5454b17c72ca51528dc64",
+        "symbol:8807d1fd5c0fe91eeb9c3d2f998279f4bfdd4fe390f6406ea9b35b006bdbec19",
+        "symbol:8a4d02f63a68d5a449d6b4dc7df20ca07c242928075c6b63fc6fa25a9b9aae0e",
+        "symbol:8c6ae089488d99accfb874d74631df0225259f305955cc9c70621d896587ff59",
+        "symbol:8d1ba06d38bd2ba148adc88b323640351089e01f91a0b40c73567d0a47bf61e3",
+        "symbol:949bf40c4adad6bb257c87fe22c628c194be7ee979003590bcc101e45b2d272d",
+        "symbol:94d6fb9f050889642dfe04e7e808fb94b93c14a199165404fb9d7209e196beb1",
+        "symbol:99346e980b781672fbd10af515cbda211633c1ef7fdbe6e2275b869489649bae",
+        "symbol:9a456e52e803f873b218256f0f57b3d30e3a671e3a68863fcfc7cc4b0304b4b5",
+        "symbol:9ad979ec87bc54489e060d7dfce4507f0d644979feaff74673dc726e0d6def7b",
+        "symbol:9cd8b6e9c5f875a24c04862f28dafaef8a17ac7d634f0b43d3bb352c4ba6949d",
+        "symbol:9d511e2d81334f22b4f710efd9b4dcd202aee503002325519bb92f1253918dd4",
+        "symbol:9f75cc9cae15cb7bac00fe23ea91ec665d8a933759ed65332e06edae828818b8",
+        "symbol:a0a38de3a8abdaf785b854342c3feab9ae7d7cba41f9c85bd920e2d1470e64bf",
+        "symbol:a23d43b5777f530682c94d123974bc1dd66d92698e24f6cd01d35af1b430e258",
+        "symbol:a807d013491215ee8a0a73e4ee7841fa64b5907cbbc17697b00a2011df4e4129",
+        "symbol:a9c767d73c418cec4667b1e7b8839f70cadcc491b11b85bb17eacd8cc9221874",
+        "symbol:b07e555bf7b959f56b297b16193c5ee380414c8c2e1078900085c5d4814bc135",
+        "symbol:b0957a3c37c36c98af02b3ccc552fe680a24559faff3f1d471ce084912573e90",
+        "symbol:b099501310cfb8019bcd14b560918086986d6252f131c68cc3b02b40112e411a",
+        "symbol:b0af4c8e11eed8e4b72aabb7cf105694439cb3d1dbb71348cdccd5bee6ca9c60",
+        "symbol:b1a57b01da6bf97dc460c3e35626e5b1c60370d656edf41100c35c6041a9af4b",
+        "symbol:b2632a659ccccaa2eec69ae60f198a36cdaaaed7b31810b2fdfd50fc8bb2f85c",
+        "symbol:b3dd82e16ec4f1a8b6cb295b76ff1177774cc7783274d1934b80d1b1b66cf5df",
+        "symbol:b47e84b32ff15f953170953f332006e22c069782ed6bb114d0e5c5b0eb53113a",
+        "symbol:bcdb701bc92e497cc4cf391ea70d197cfe8a0f091c393c966a062ea99e6bc48f",
+        "symbol:bd7de117b6c02b630ebe3cf1dac13e8f67d6bd256492bee1dfa9cbf9f9c97df6",
+        "symbol:be6089bb46cc0b65722c9c709d679c811a0769e82c764a313403263c0f746dcb",
+        "symbol:bfcca2f07b52ce0e098e77ca0d097834271cfb7248944b24bb647a0bb732df5f",
+        "symbol:c04b531a9048dcada4fd5c79b188e71a1d8caa1b0ebd50d46e33261294e0dcc0",
+        "symbol:c0d34eb3dfd971a29ecf68e225321a86332554136da24b1b8bbd5b4d24ff4fbc",
+        "symbol:c198712c5ddd97cc0fbc6ee3424f70d1bd0374659c632077743950398e286ee4",
+        "symbol:c19dfdef6abd512581c2042ca4fb8fd8e22925f12935f295be88311de17cbd53",
+        "symbol:c59e2ec27dfb0e6afe49316ba57e0b8d25de45896cdec0aba9eebd56b3af4fb3",
+        "symbol:c8716123a8dc9d7c78cc4152d97189f095e8bf0876bca43b86264c3f624c43d9",
+        "symbol:c9a19c4a8cd7dd063fa292b4d9a3aa6307d068ca6eb04237637a4f8999e62244",
+        "symbol:cc7ac48bb31735ff495c6e4f60f36c5cf508faf5537fd8d6bb517cd307d50159",
+        "symbol:cd19c2b4bfc101b6311029f63cd45806ac5b35d2cbd00e1999346eb022d33c04",
+        "symbol:cf76fe80e717a4480fe41090c6996f56aaf83d29d46b4fc0500fe297bb1695b4",
+        "symbol:cff2759b38ea90980290a91395dff5166146964f71d74c72a1fa1d3bd1572a3c",
+        "symbol:d23c9a24ecab4c88cffe955314a8244e2df8816c40d5e329abe776165975af68",
+        "symbol:d41883f9620e2d7caad2d409b96666889675ca27b05e2e89cbb6e695c1e73add",
+        "symbol:d5c58c4be38690b85964d3149e1e8a12560067bf5b09a5656e803f8fbad7789d",
+        "symbol:d6e225e7c925b079f11d7f2aa2318e9c9c797de5f4d07cde56001913cbfb6db6",
+        "symbol:db6b5141c62385d832a8799d99ae6547621c0734ff37226811fe30613ee8036f",
+        "symbol:dc0bf82420aecac750e138c72682023997e37c44dace1dcfd37eec4cdce57b92",
+        "symbol:dcb08802d87a4b6cf2b40f00550c9be3adc235de631d162377b41eabaae4309c",
+        "symbol:dd19969a17ae22587862a841554e7f831f35fbd43e369af24ebee53314c52dc2",
+        "symbol:e19176263eb0184d98ca0077240bf5d91b925043986bf0fdc774f7116284e9ce",
+        "symbol:e3b5eda7041c278581f89841e605686ff0730c2bd1794fe9496268bf91f2fb5c",
+        "symbol:e3f2a25f347a625b26ed79091e2dd72901cbec58f9c32feab8da118ca7b42a38",
+        "symbol:e42383fb87e4c92d99f8a4f09bea0aba521361150635f31dc41b6f1fa618b6bd",
+        "symbol:eb81e1b39f1a127bb063ceadabbd30c7675c69c5cd824a17e1d9fcd3554871ce",
+        "symbol:ee195830e25abcbee93bca9ef5e5ebe0008ced11a1ccf1e47cd43956240d29e9",
+        "symbol:ef33fcb3cc1f50a0fffba38e0bdec24fbc9c28c1f258d7fd0264b5716ef31c79",
+        "symbol:f053cc745c4dd91ab078a58789e29a5ba77dd017ecc191aa6e330f9bae775c3c",
+        "symbol:f06034e1e4364fea33742c5889fc8c9ce280c12304256b80848c3c361c25da91",
+        "symbol:f420f42af630a79f93d8f2378183766e06d64e81079566a890c842fc09868cbf",
+        "symbol:f4641a90a7862b3510fada6af42ecbf8cfb09aeae018c2d49ca826798ec3234f",
+        "symbol:f75b2cb094d7b0c9ff4ff523cbe5b98088512b8ab59e486dc4f367089b278a82",
+        "symbol:f77eec892457b50531cb0b4a4f3d469f2f389c961af7fc55573e033f84718ecb",
+        "symbol:f79bf2e75f69dd0537ee33e599308ca8029db2fc73c7496cfe237ef158fe6062",
+        "symbol:f7da840973eb23d9e1409e222662ed095ef520d59d2f5cb249f10d0d2c425e7d",
+        "symbol:f83c938213e4de6f740efc0b8bcc8af39ac8253cb9d569efe9d898a5f2b46f70",
+        "symbol:f8beef60d5d6fd86cf525a43cc889713bfe763259736760bf8af783626f3d37d",
+        "symbol:f95c7850661d396c838d09146cb7ea7ea102c9d225752c9f8198b7119ebf666c",
+        "symbol:fd7be99b1153c3007c9d4b96dfe076ba8200a7b859fe2f147cdc831f74cecc40"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-683dfb396789c525",
+      "repository": "brpc",
+      "raw_reference_id": "reference:000e84341d83c56bd24ef3cb8e8a9c278587ddf29dc065adafb572cd4dd5d4e0",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/rpc_press/client.py",
+        "start_line": 27,
+        "end_line": 27,
+        "owner_kind": "File",
+        "owner_qualified_name": "tools.rpc_press.client",
+        "raw_name": "e",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:e2982c8a10c4349b5896d938fdcf7f254a0bff05a0c827a00f9944e8abe1cad7"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-3c279b30b937de3a",
+      "repository": "aria2",
+      "raw_reference_id": "reference:13ef0fcd35e640841244706f22dedff9e75ee375eab434252e036992cd4aecd8",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 278,
+        "end_line": 278,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.transform_content",
+        "raw_name": "arg_repl",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:e4d11ea8c54bfdcb8c48b7f6d64f298d10636211886d06156b575b408d21b25f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-d500b530449d4bf0",
+      "repository": "brpc",
+      "raw_reference_id": "reference:a17bbf12041493583ef0d575713e56ada8a0b459f5bca2ad41088a42316af1fa",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/brpc_server_unittest.cpp",
+        "start_line": 1339,
+        "end_line": 1339,
+        "owner_kind": "Function",
+        "owner_qualified_name": "anonymous.TEST_F",
+        "raw_name": "server1.service_count",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:809cbf81a473610c4bbbd0bb47a00b68000065fb708be7b4e47e7a054b38dd0c"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-e4c4b582d8cc5646",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:2df3dc1e11857e3a39e1db39c42726c6e0926cea0e8baf97255ef923dd30544c",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/run_clang_tidy.py",
+        "start_line": 305,
+        "end_line": 305,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.run_clang_tidy._format_diagnostic_counts",
+        "raw_name": "re",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d6cc70afde4f4d32d6ba1f80db7450ef6e3a67c13f35d79f0cf4fa8a14a2c72b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-fe445fb412e2fbe0",
+      "repository": "brpc",
+      "raw_reference_id": "reference:882962ed3b53f4574262dcec23658afb229488b6610d046608f6c4f3c5566591",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/butil/file_util.h",
+        "start_line": 30,
+        "end_line": 31,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.butil.file_util",
+        "raw_name": "butil/memory/scoped_ptr.h",
+        "target_module": "butil/memory/scoped_ptr.h"
+      },
+      "candidate_symbol_ids": [
+        "file:f2cdb7ad14b1c00abccdead2700b68795aeccb233618157edd12ace5affe4364"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    }
+  ]
+}

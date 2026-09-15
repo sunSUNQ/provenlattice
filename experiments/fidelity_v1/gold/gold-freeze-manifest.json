@@ -1,0 +1,278 @@
+{
+    "artifact":  "gold-freeze-manifest-v1",
+    "gold_artifact":  "cpp-structural-relation-gold-v1",
+    "status":  "SEALED_FROZEN",
+    "created":  "2026-09-15T08:30:11Z",
+    "outputs":  [
+                    {
+                        "path":  "cpp-structural-relation-gold-v1.json",
+                        "sha256":  "794751acaf5e0a1376619b41e236976b0c904415940cf97242910d759c5a6d93"
+                    },
+                    {
+                        "path":  "cpp-structural-relation-gold-v1.md",
+                        "sha256":  "393f8f503ef0091aeb785b28b18070509b62907238e1c04f67440d9f30505afc"
+                    }
+                ],
+    "reconciliation":  {
+                           "total":  174,
+                           "unique_sample_ids":  174,
+                           "calls":  86,
+                           "imports":  88,
+                           "arithmetic":  "86 + 88 = 174",
+                           "unresolved_adjudications":  0,
+                           "python_records":  0,
+                           "references_records":  0,
+                           "cohort_reconciliation":  {
+                                                         "calibration_01":  {
+                                                                                "total":  16,
+                                                                                "calls":  8,
+                                                                                "imports":  8,
+                                                                                "agreed":  14,
+                                                                                "adjudicated":  2
+                                                                            },
+                                                         "batch_02":  {
+                                                                          "total":  38,
+                                                                          "calls":  18,
+                                                                          "imports":  20,
+                                                                          "agreed":  34,
+                                                                          "adjudicated":  4
+                                                                      },
+                                                         "batch_03":  {
+                                                                          "total":  40,
+                                                                          "calls":  20,
+                                                                          "imports":  20,
+                                                                          "agreed":  38,
+                                                                          "adjudicated":  2
+                                                                      },
+                                                         "batch_04":  {
+                                                                          "total":  41,
+                                                                          "calls":  23,
+                                                                          "imports":  18,
+                                                                          "agreed":  32,
+                                                                          "adjudicated":  9
+                                                                      },
+                                                         "batch_05":  {
+                                                                          "total":  39,
+                                                                          "calls":  17,
+                                                                          "imports":  22,
+                                                                          "agreed":  37,
+                                                                          "adjudicated":  2
+                                                                      }
+                                                     },
+                           "sampling_frame":  "sampling-frame-correction-v1 (cpp_fidelity=174; CALLS 86 / IMPORTS 88 per SFC-1)"
+                       },
+    "synthesis_rules":  {
+                            "gold_source":  "adjudicated when a sealed adjudication artifact covers the case; otherwise agreed_annotation (sealed A verdict == sealed B verdict after frozen calibration mapping where applicable)",
+                            "agreed_target_layer":  "verdict-agreed ONE_VALID_TARGET cases freeze the set of annotator-recorded targets. Identity: equal symbol_id =\u003e same target; equal path =\u003e same path-level target (same-file declaration/definition anchors); two distinct symbol ids both present in the frozen candidate set =\u003e distinct targets. Resolvable = path-anchored or symbol_id present in the frozen candidate set. Singleton resolvable set -\u003e UNIQUE; multiple distinct resolvable targets -\u003e DIVERGENT with acceptable_targets and final_gold_target=null; unresolvable selections (self-derived opaque ids without path anchor, as disclosed by annotator protocol_issue fields) are excluded from acceptable_targets and preserved in uncrosscomparable_selections. No new adjudication is performed at freeze.",
+                            "absent_or_indeterminate":  "NO_VALID_TARGET/RELATION_NOT_PRESENT -\u003e ABSENT; BUILD_CONTEXT_DEPENDENT/INSUFFICIENT_EVIDENCE -\u003e INDETERMINATE; final_gold_target=null",
+                            "confidence":  "min severity of the two sealed annotator confidences for agreed records; sealed adjudication confidence for adjudicated records (null where the sealed artifact records none)",
+                            "evidence_locations":  "normalized union of sealed annotator evidence for agreed records; sealed adjudication evidence for adjudicated records",
+                            "calibration_resolved":  "the two calibration disagreements are resolved by frozen protocol addenda (CALLS_V1 macro semantics; Evidence Scope V1 owner ratification) and classified gold_source=adjudicated",
+                            "no_system_prediction":  "this gold set was synthesized without reading results/pilot-candidates.json or any system prediction, resolver, or fidelity artifact"
+                        },
+    "frozen_protocol_version":  {
+                                    "protocols":  [
+                                                      "CALLS_V1",
+                                                      "EVIDENCE_SCOPE_V1",
+                                                      "DECL_DEF_EQUIVALENCE_V1"
+                                                  ],
+                                    "addenda":  [
+                                                    "protocol-addendum-calls-v1-macro-semantics.md (FROZEN)",
+                                                    "protocol-addendum-evidence-scope-v1.md (FROZEN)",
+                                                    "protocol-addendum-decl-def-equivalence-v1.md (FROZEN)"
+                                                ],
+                                    "protocol_commit":  "12f405c677582a2982d035433bf6837126772716"
+                                },
+    "frozen_repository_commits":  {
+                                      "aria2":  "9e7273583f83e881e3ec067b523ba88724088d2f",
+                                      "brpc":  "ae09e960c7291605dda52356cc0c2d45567fb53e",
+                                      "rocksdb":  "37234200b57d8d0a6a5c41f2d9811bbd2e293544"
+                                  },
+    "sealed_input_provenance":  [
+                                    {
+                                        "path":  "results/batch-02-cpp-calls-adjudication.json",
+                                        "role":  "sealed Batch 02 adjudication (4 cases)",
+                                        "sha256":  "91ea45221e97ca8392de52fd10be11c1b2e47767ba0ba014c23151b5aeab9103",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "results/batch-02-cpp-calls-adjudication.sha256"
+                                    },
+                                    {
+                                        "path":  "final-cpp-adjudication.json",
+                                        "role":  "sealed final C/C++ adjudication (13 cases)",
+                                        "sha256":  "96ff9b98392c5b52274afdda7442c36670beb6589198686b3282dc021a95fc0e",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "final-cpp-adjudication.sha256"
+                                    },
+                                    {
+                                        "path":  "results/annotator-a-calibration-01-normalized.json",
+                                        "role":  "sealed Annotator A calibration record (normalized)",
+                                        "sha256":  "6cb400447fe7ba6fbd27b19e35ea1e5c9ef3e8b9c46b5e2406756599a780ff8b",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "calibration-gate-01.inputs_sha256"
+                                    },
+                                    {
+                                        "path":  "results/annotator-b-calibration-01.json",
+                                        "role":  "sealed Annotator B calibration record + frozen calibration case metadata",
+                                        "sha256":  "bb85142770dc494f3d560bb702a77c69e3cae7e24c04ea31c67c53e2525b3ed5",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "calibration-gate-01.inputs_sha256"
+                                    },
+                                    {
+                                        "path":  "results/calibration-gate-01.json",
+                                        "role":  "sealed calibration gate (python out-of-scope list; D1/D2/D3)",
+                                        "sha256":  "a270744a9fbe16f6f19ab23a04c5b8adfbda9420fbadffac46aa37337d1da5b6",
+                                        "verification":  "observed-at-freeze",
+                                        "anchor":  "audit record"
+                                    },
+                                    {
+                                        "path":  "results/protocol-addendum-calls-v1-macro-semantics.md",
+                                        "role":  "FROZEN addendum (macro semantics; resolves calibration case FQV1-rocksdb-1273fbd969565cef)",
+                                        "sha256":  "63a20e8b00c6eaf727adf641ed839d525eb56011e1e721e29ab9774c81d1ba59",
+                                        "verification":  "frozen-protocol",
+                                        "anchor":  "protocol commit 12f405c677582a2982d035433bf6837126772716"
+                                    },
+                                    {
+                                        "path":  "results/protocol-addendum-evidence-scope-v1.md",
+                                        "role":  "FROZEN owner-ratified addendum (supersedes OPEN-1; resolves calibration case FQV1-aria2-713b641e93cc620c)",
+                                        "sha256":  "7bc25670a3eb163a7f86c67207f09a63fc517419c854849bdafeefd69c434d01",
+                                        "verification":  "frozen-protocol",
+                                        "anchor":  "protocol commit 12f405c677582a2982d035433bf6837126772716"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-03/annotator-a/input/annotator-a-blind-view.json",
+                                        "role":  "frozen blind view batch_03 (case metadata + annotation candidate scope)",
+                                        "sha256":  "098c11ad1e7a6200fb589f1d77c4ebec4a27f3b6aaabe53efb580521c884a860",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "blind package SHA256SUMS"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-03/annotator-a/input/batch-03-manifest.json",
+                                        "role":  "frozen batch manifest batch_03 (case order)",
+                                        "sha256":  "1de6a7ed05e3a08eb709f577e880cada1f7b46cf1e89cd9e19c76d44e291f72d",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "blind package SHA256SUMS"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-04/annotator-a/input/annotator-a-blind-view.json",
+                                        "role":  "frozen blind view batch_04 (case metadata + annotation candidate scope)",
+                                        "sha256":  "0ec2ef07569256e6efb01dcc79fd31503c60fa0e41b30d48e93f390639732069",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "blind package SHA256SUMS"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-04/annotator-a/input/batch-04-manifest.json",
+                                        "role":  "frozen batch manifest batch_04 (case order)",
+                                        "sha256":  "d5ad8c26034e32fa7eb1c1c564d20efa4531e1fefea59e1bc190d307d255afc0",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "blind package SHA256SUMS"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-05/annotator-a/input/annotator-a-blind-view.json",
+                                        "role":  "frozen blind view batch_05 (case metadata + annotation candidate scope)",
+                                        "sha256":  "be779326bf1ce709c72b54de3a58c1534b7f6a09fb6ce3913342889e761b9d91",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "blind package SHA256SUMS"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-05/annotator-a/input/batch-05-manifest.json",
+                                        "role":  "frozen batch manifest batch_05 (case order)",
+                                        "sha256":  "648095bc377eb4841f32e5bed164aa85f52901ddfc566b40d50572f340eae6c3",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "blind package SHA256SUMS"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-03/annotator-a/output/annotation-record-template.json",
+                                        "role":  "sealed Annotator A batch-03 records",
+                                        "sha256":  "7c1e8b21616b58d6521a37659354e321d7badc620075f7d98a79ffd365e78dd0",
+                                        "verification":  "observed-at-freeze",
+                                        "anchor":  "blind-agreement-audit-03 preflight PASS (completed output differs from frozen blank-template SHA256SUMS entry by design)"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-03/annotator-b/output/annotation-record-template.json",
+                                        "role":  "sealed Annotator B batch-03 records",
+                                        "sha256":  "ecac4c27782bcff10b5241f38bd6ffba87da117254ae0ac50cf633e976fed2a8",
+                                        "verification":  "observed-at-freeze",
+                                        "anchor":  "blind-agreement-audit-03 preflight PASS (completed output differs from frozen blank-template SHA256SUMS entry by design)"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-04/annotator-a/output/annotator-a-batch-04-annotations.json",
+                                        "role":  "sealed Annotator A batch-04 records",
+                                        "sha256":  "94ae500bc830a09f49eb6a9d3642ed770dd3e5741ea20e5444af49842630688d",
+                                        "verification":  "observed-at-freeze",
+                                        "anchor":  "audit-04 preflight PASS (completed output not in SHA256SUMS; seal-verification cites blank-template hash)"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-04/annotator-b/output/annotation-record-template.json",
+                                        "role":  "sealed Annotator B batch-04 records",
+                                        "sha256":  "daeb0a4427d2fb90cd40e1270bd2f2ca72e9a93649101b6d35eb2815dae1601f",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "results/batch-04-annotation-seal-verification.json (b.output_sha256)"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-05/annotator-a/output/annotator-a-batch-05-annotations.json",
+                                        "role":  "sealed Annotator A batch-05 records",
+                                        "sha256":  "08915528c97394f9ee52453190ed7241a125a739e8c3995c222754b951dee622",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "blind-agreement-audit-05 preflight (a_seal_evidence)"
+                                    },
+                                    {
+                                        "path":  "blind_packages/batch-05/annotator-b/output/annotator-b-batch-05-annotation-records.json",
+                                        "role":  "sealed Annotator B batch-05 records",
+                                        "sha256":  "560d08cc940bdfa6eb4416fd0298a98a441845d184bdcce5e93f5e212f2c220c",
+                                        "verification":  "sha256-anchored",
+                                        "anchor":  "annotator-b-batch-05-seal.json (annotation_sha256)"
+                                    },
+                                    {
+                                        "path":  "results/annotator-a-batch-02.json",
+                                        "role":  "sealed Annotator A batch-02 records",
+                                        "sha256":  "1c46d51e11cc59733eac37d52a8b374ac26a74a60352fe4f13cf169e09aab5ea",
+                                        "verification":  "observed-at-freeze",
+                                        "anchor":  "blind-agreement-audit-02 amendment (preflight PASS)"
+                                    },
+                                    {
+                                        "path":  "results/annotator-b-batch-02.json",
+                                        "role":  "sealed Annotator B batch-02 records + frozen batch-02 case metadata",
+                                        "sha256":  "7b8aa212b7a287ad807690e37bba585ea9ff2ac825d731145b58566c619a7e86",
+                                        "verification":  "observed-at-freeze",
+                                        "anchor":  "blind-agreement-audit-02 amendment (preflight PASS)"
+                                    },
+                                    {
+                                        "path":  "results/sampling-frame-correction-v1.json",
+                                        "role":  "frozen sampling frame (universe cpp_fidelity=174; CALLS 86 / IMPORTS 88)",
+                                        "sha256":  "f4b338224b7928a0daa2e6bda429ce5ef0b196d8e082519adee7d379ba552771",
+                                        "verification":  "frozen-frame",
+                                        "anchor":  "milestone-freeze-p0-fidelity-v1"
+                                    }
+                                ],
+    "counts":  {
+                   "by_gold_source":  {
+                                          "agreed_annotation":  155,
+                                          "adjudicated":  19
+                                      },
+                   "by_final_gold_verdict":  {
+                                                 "BUILD_CONTEXT_DEPENDENT":  1,
+                                                 "ONE_VALID_TARGET":  129,
+                                                 "NO_VALID_TARGET":  44
+                                             },
+                   "by_target_status":  {
+                                            "INDETERMINATE":  1,
+                                            "DIVERGENT":  6,
+                                            "ABSENT":  44,
+                                            "UNIQUE":  123
+                                        },
+                   "target_divergent_cases":  [
+                                                  "FQV1-aria2-5ce7af038ff64537",
+                                                  "FQV1-brpc-d12b7bdc3ecd5bbc",
+                                                  "FQV1-aria2-c6525c9d8d155f3f",
+                                                  "FQV1-brpc-4f4f2346428539fb",
+                                                  "FQV1-rocksdb-7c9c116938584ddb",
+                                                  "FQV1-rocksdb-3b90b89381b8d13d"
+                                              ]
+               },
+    "join_phase_prerequisites":  {
+                                     "gold_modification_forbidden":  true,
+                                     "join_rule":  "LEFT JOIN system prediction ON sample_id; gold records are read-only",
+                                     "system_prediction_access":  "NOW PERMITTED only for the join phase after this seal (gold_sha256 recorded above must be re-verified at join time)"
+                                 },
+    "builder_role":  "Gold Freeze agent (GLM-5.3-Flash); deterministic synthesis only, no adjudication, no system prediction read"
+}

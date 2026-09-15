@@ -1,0 +1,2387 @@
+{
+    "artifact":  "annotator-a-batch-05-annotation-record-template",
+    "schema_version":  2,
+    "annotator_id":  "A",
+    "batch_id":  "05",
+    "sample_count":  64,
+    "telemetry_schema":  {
+                             "navigation_files":  "array\u003cstring\u003e; repository-relative files read beyond the sample source file; [] if none",
+                             "navigation_files_count":  "integer \u003e= 0; must equal navigation_files.length",
+                             "navigation_path":  "array\u003cstring\u003e; ordered repository-relative evidence-navigation path; [] if none",
+                             "navigation_hop_count":  "integer \u003e= 0; number of transitions in navigation_path",
+                             "verification_depth":  "L0|L1|L2|L3|L4",
+                             "target_recovered_after_navigation":  "boolean",
+                             "recovered_target":  "null | {symbol_id:string|null,path:string,start_line:integer|null}",
+                             "recovery_reason":  "string|null"
+                         },
+    "records":  [
+                    {
+                        "sample_id":  "FQV1-rocksdb-ce032f4a089f8d7e",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8480e9818a0a68c1",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-d92c0476f269fe9c",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-0a7579f1c2d606fa",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-689cb3a132dec72c",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8c52969b9353ef75",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-7888d0fa3af3bf94",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-34de66dd51d7d889",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-bc38ae52a3ef3090",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-da675d4824d3de3f",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-4a6a52d6a1575c10",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-a4c16880e7989d82",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-3fa9480748303413",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-cbcf7711e5f13594",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-18d5a833c6c2fef4",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-fda81548ed271045",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-c324e61513645740",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-b064e3bc3c930d8e",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-703009498cf49040",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-547d0bee05c50525",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-faa39831989581d3",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8b4ca63de7918ec9",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-23ead0d91af1e773",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-3211f798b9f9a1a3",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-4c1885be0ee14283",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-f81580dcfae4a553",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-dba789c9c0b1c6d0",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-ec85e572e4b8e254",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-7307440455e64fdf",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-f9a8ac565c6a2d01",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-c816f6dc931c4e38",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-f53921b30ab21650",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-7d6c74d82bb26ca5",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-a2349ea6dc723a04",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-b30835c39e28b8d3",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-68aa8d67274a5fe1",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-dd9fef894c065810",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-8416d9f8783ec637",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-1ff7af6ea43d4bde",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-c10fd7262a136c88",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-947bfdc67e29eeb1",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-8b67bd106bb82719",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-6f36576e408fd785",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-795be216655fd881",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-8fd446e7fc00aac4",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-045d124c81011903",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-df4c5ba847c40b7e",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-cb3ff6b5499b6ed4",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-456728b1dc72633a",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-83c1772f11338e16",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-5b510fe2efbc743c",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-5c429cff208e2444",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-f84d7aefd3b8c166",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8c54096615d952c2",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-27893da4faf99d4f",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-2b95dc83ef87f9d6",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-11a158e3692ba797",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-ac20e1f5d2448741",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-fe537d210a5fb0b6",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-7c9c116938584ddb",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-6dc21b13eb5505ab",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-3b90b89381b8d13d",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-fd3ed2a1a6bf98dc",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-f572753e55b2dad6",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  null,
+                        "gold_relation_exists":  null,
+                        "formal_verdict":  null,
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  null,
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  null,
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  null,
+                        "protocol_issue":  null,
+                        "reasoning":  null
+                    }
+                ]
+}

@@ -1,0 +1,121 @@
+{
+    "sample_id":  "FQV1-rocksdb-ec017de0157014f4",
+    "batch_id":  "03",
+    "repository":  "rocksdb",
+    "frozen_repository_commit":  "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+    "relation_type":  "CALLS",
+    "language_track":  "C/C++",
+    "source_location":  {
+                            "raw_reference_id":  "reference:807904febc73666eed6296d8e92777783068df39caf3145479a24e27a63b9bdd",
+                            "path":  "utilities/transactions/timestamped_snapshot_test.cc",
+                            "start_line":  465,
+                            "end_line":  465,
+                            "owner_kind":  "Function",
+                            "owner_qualified_name":  "main",
+                            "raw_name":  "RUN_ALL_TESTS",
+                            "target_module":  null
+                        },
+    "annotation_candidate_set":  {
+                                     "provenance":  "sealed blind annotation view (frozen annotation-scope candidate information)",
+                                     "candidate_symbol_ids":  [
+
+                                                              ]
+                                 },
+    "build_context_information":  {
+                                      "build_context_available":  null,
+                                      "compile_commands_available":  null,
+                                      "build_target":  null,
+                                      "platform":  null,
+                                      "preprocessor_context":  null,
+                                      "generated_source_policy":  null
+                                  },
+    "annotator_a":  {
+                        "annotator_id":  "A",
+                        "sealed_source_file":  "blind_packages/batch-03/annotator-a/output/annotation-record-template.json",
+                        "language_scope_as_recorded":  "C++",
+                        "gold_relation_exists_as_annotated":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "third-party/gtest-1.8.1/fused-src/gtest/gtest.h",
+                                                          "start_line":  1
+                                                      },
+                        "evidence_locations":  [
+                                                   {
+                                                       "path":  "utilities/transactions/timestamped_snapshot_test.cc",
+                                                       "start_line":  465,
+                                                       "end_line":  465
+                                                   }
+                                               ],
+                        "navigation_telemetry":  {
+                                                     "navigation_files":  [
+                                                                              "third-party/gtest-1.8.1/fused-src/gtest/gtest.h"
+                                                                          ],
+                                                     "navigation_files_count":  1,
+                                                     "navigation_path":  [
+                                                                             "utilities/transactions/timestamped_snapshot_test.cc",
+                                                                             "third-party/gtest-1.8.1/fused-src/gtest/gtest.h"
+                                                                         ],
+                                                     "navigation_hop_count":  1,
+                                                     "verification_depth":  "L2",
+                                                     "target_recovered_after_navigation":  true,
+                                                     "recovered_target":  {
+                                                                              "symbol_id":  null,
+                                                                              "path":  "third-party/gtest-1.8.1/fused-src/gtest/gtest.h",
+                                                                              "start_line":  1
+                                                                          },
+                                                     "recovery_reason":  "Cross-file source navigation established the target."
+                                                 },
+                        "build_context_status":  "NOT_REQUIRED",
+                        "confidence":  "HIGH",
+                        "difficulty_tags":  [
+                                                "cross_file"
+                                            ],
+                        "protocol_issue":  null,
+                        "reasoning":  "Frozen source evidence establishes one semantic target."
+                    },
+    "annotator_b":  {
+                        "annotator_id":  "B",
+                        "sealed_source_file":  "blind_packages/batch-03/annotator-b/output/annotation-record-template.json",
+                        "language_scope_as_recorded":  "C/C++",
+                        "gold_relation_exists_as_annotated":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "evidence_locations":  [
+                                                   "utilities/transactions/timestamped_snapshot_test.cc:465-465"
+                                               ],
+                        "navigation_telemetry":  {
+                                                     "navigation_files":  [
+
+                                                                          ],
+                                                     "navigation_files_count":  0,
+                                                     "navigation_path":  [
+
+                                                                         ],
+                                                     "navigation_hop_count":  0,
+                                                     "verification_depth":  "L1",
+                                                     "target_recovered_after_navigation":  false,
+                                                     "recovered_target":  null,
+                                                     "recovery_reason":  null
+                                                 },
+                        "build_context_status":  "NOT_REQUIRED",
+                        "confidence":  "HIGH",
+                        "difficulty_tags":  [
+                                                "external_dependency"
+                                            ],
+                        "protocol_issue":  null,
+                        "reasoning":  "The source relation is present, but no target exists within the frozen repository scope."
+                    },
+    "frozen_protocol_version":  [
+                                    "CALLS_V1",
+                                    "EVIDENCE_SCOPE_V1",
+                                    "DECL_DEF_EQUIVALENCE_V1"
+                                ],
+    "package_note":  "source-only adjudication record; contains no system prediction, resolver result, correctness label, or fidelity score"
+}

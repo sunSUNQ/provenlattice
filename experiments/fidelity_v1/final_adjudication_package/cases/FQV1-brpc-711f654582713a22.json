@@ -1,0 +1,112 @@
+{
+    "sample_id":  "FQV1-brpc-711f654582713a22",
+    "batch_id":  "04",
+    "repository":  "brpc",
+    "frozen_repository_commit":  "ae09e960c7291605dda52356cc0c2d45567fb53e",
+    "relation_type":  "IMPORTS",
+    "language_track":  "C/C++",
+    "source_location":  {
+                            "raw_reference_id":  "reference:b88d98944a46a329ddcfe22816d0f8abe23e769e8f24f6bc5a6b45a1a4dd37c4",
+                            "path":  "example/dynamic_partition_echo_c++/server.cpp",
+                            "start_line":  28,
+                            "end_line":  29,
+                            "owner_kind":  "File",
+                            "owner_qualified_name":  "example.dynamic_partition_echo_c++.server",
+                            "raw_name":  "echo.pb.h",
+                            "target_module":  "echo.pb.h"
+                        },
+    "annotation_candidate_set":  {
+                                     "provenance":  "sealed blind annotation view (frozen annotation-scope candidate information)",
+                                     "candidate_symbol_ids":  [
+
+                                                              ]
+                                 },
+    "build_context_information":  {
+                                      "build_context_available":  null,
+                                      "compile_commands_available":  null,
+                                      "build_target":  null,
+                                      "platform":  null,
+                                      "preprocessor_context":  null,
+                                      "generated_source_policy":  null
+                                  },
+    "annotator_a":  {
+                        "annotator_id":  "A",
+                        "sealed_source_file":  "blind_packages/batch-04/annotator-a/output/annotator-a-batch-04-annotations.json",
+                        "language_scope_as_recorded":  "C++",
+                        "gold_relation_exists_as_annotated":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "evidence_locations":  [
+                                                   "example/dynamic_partition_echo_c++/server.cpp:28"
+                                               ],
+                        "navigation_telemetry":  {
+                                                     "navigation_files":  [
+
+                                                                          ],
+                                                     "navigation_files_count":  0,
+                                                     "navigation_path":  [
+
+                                                                         ],
+                                                     "navigation_hop_count":  0,
+                                                     "verification_depth":  "L0",
+                                                     "target_recovered_after_navigation":  false,
+                                                     "recovered_target":  null,
+                                                     "recovery_reason":  null
+                                                 },
+                        "build_context_status":  "BUILD_CONTEXT_DEPENDENT",
+                        "confidence":  "high",
+                        "difficulty_tags":  [
+                                                "generated-header"
+                                            ],
+                        "protocol_issue":  null,
+                        "reasoning":  "The local generated header is included but no candidate target is supplied."
+                    },
+    "annotator_b":  {
+                        "annotator_id":  "B",
+                        "sealed_source_file":  "blind_packages/batch-04/annotator-b/output/annotation-record-template.json",
+                        "language_scope_as_recorded":  "C/C++",
+                        "gold_relation_exists_as_annotated":  true,
+                        "formal_verdict":  "BUILD_CONTEXT_DEPENDENT",
+                        "valid_target_count":  null,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "evidence_locations":  [
+                                                   "example/dynamic_partition_echo_c++/server.cpp:28"
+                                               ],
+                        "navigation_telemetry":  {
+                                                     "navigation_files":  [
+
+                                                                          ],
+                                                     "navigation_files_count":  0,
+                                                     "navigation_path":  [
+
+                                                                         ],
+                                                     "navigation_hop_count":  0,
+                                                     "verification_depth":  "L0",
+                                                     "target_recovered_after_navigation":  false,
+                                                     "recovered_target":  null,
+                                                     "recovery_reason":  null
+                                                 },
+                        "build_context_status":  "REQUIRED_UNAVAILABLE",
+                        "confidence":  "MEDIUM",
+                        "difficulty_tags":  [
+                                                "generated-or-build-context"
+                                            ],
+                        "protocol_issue":  null,
+                        "reasoning":  "The include is present, but its generated target is unavailable in the frozen repository snapshot."
+                    },
+    "frozen_protocol_version":  [
+                                    "CALLS_V1",
+                                    "EVIDENCE_SCOPE_V1",
+                                    "DECL_DEF_EQUIVALENCE_V1"
+                                ],
+    "package_note":  "source-only adjudication record; contains no system prediction, resolver result, correctness label, or fidelity score"
+}

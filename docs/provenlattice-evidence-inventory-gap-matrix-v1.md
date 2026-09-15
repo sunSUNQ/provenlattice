@@ -55,7 +55,7 @@ P0 / P1 / P2 backlog
 
 | RQ / Track | 已有证据 | 当前等级 | 现阶段可陈述的结论 | 明确缺口 | 下一实验 | 优先级 |
 |---|---|---|---|---|---|---|
-| **RQ1 图保真度 / A** | V0.1 Resolver contract；V0.2 三个真实 C/C++ 仓 Hard Parse Coverage=100%，Syntax-clean Rate=66.78%/73.89%/83.22%，并保留 recovery error；V0.3/V0.4/V1.0 parity | `PARTIAL` | 目标文件均可产出解析结果；语法恢复状态与硬解析失败独立报告；保守解析和 parity 已在定义范围内成立 | 无正/负例 Gold Set；缺 CALL/IMPORT/REFERENCE/跨层关系 P/R/F1、False Resolution Rate、选择性风险及 Build Context | Graph Fidelity Gold Set Protocol + Build Context metadata | **P0** |
+| **RQ1 图保真度 / A** | V0.1 Resolver contract；V0.2 三个真实 C/C++ 仓 Hard Parse Coverage=100%，Syntax-clean Rate=66.78%/73.89%/83.22%，并保留 recovery error；V0.3/V0.4/V1.0 parity | `PARTIAL` | 目标文件均可产出解析结果；语法恢复状态与硬解析失败独立报告；保守解析和 parity 已在定义范围内成立 | Known Representation Gap：C/C++ REFERENCES 当前未被 extractor 表达（`GRAPH_REPRESENTATION_GAP` / `CXX_REFERENCE_RELATION_NOT_MODELED`），Fidelity V1 仅可评 CALLS/IMPORTS；仍无关系级 P/R/F1、False Resolution Rate、选择性风险及 Build Context Gold 评分 | Graph Fidelity Gold Set（执行中：Protocol/CALLS_V1/Evidence Scope/Decl-Def Equivalence 冻结，Calibration QUALIFIED，Batch 02 B 完成 → A02 → Agreement Audit → Drift Gate）+ Build Context metadata | **P0** |
 | **RQ2 可扩展性 / B** | aria2、brpc、RocksDB（11.9 万/22.7 万/62.3 万 LOC）的构图、DB、内存、查询；V0.4 Overlay 成本 | `PARTIAL` | 62.3 万 LOC C/C++ 已实测跑通；可观察 RawReference、存储和 Symbol Query 压力 | 无 S3/S4/S5（1M/5M/10M+ band）；无并发 QPS、TTF、稳定 P95/P99 更新、图规模归一化 | Current Implementation Scale Baseline（先不优化） | **P0** |
 | **RQ3 检索质量 / C** | Symbol/Caller/Callee/Subgraph 查询基线；R2/R2.1 接口观察；R2.4 Offline bundle | `PARTIAL` | 冻结任务上可离线验证 required evidence retention 与 bundle 策略 | 无 Graph Oracle Coverage / Conditional Recall；无 File/Function/Line Recall@k、MRR、NDCG、文本检索（BM25）对照；任务族不足 | Retrieval Benchmark Suite | **P0** |
 | **RQ4 证据效率 / D** | V1.0 跨层证据；R2.3 bundle 干扰与 returned-unused；R2.4 Loose 在 T01/T03/T05 保留全部必需证据 | `QUALIFIED`（仅 R2.4 三任务、单查询） | 在该冻结候选集与协议下，Loose 是唯一三任务均保留 required evidence 的策略 | 无多查询 Session Exposure、预算曲线、饱和点、重复暴露或 Marginal Evidence Utility | Session Evidence Metrics + Aggregation benchmark | **P1** |
@@ -70,7 +70,7 @@ P0 / P1 / P2 backlog
 
 | RQ | 当前 Claim Scope |
 |---|---|
-| RQ1 | C/C++；aria2、brpc、RocksDB；V0.1–V1.0 的 Resolver / parity 协议；无 compiler-aware build context 资格结论 |
+| RQ1 | C/C++；aria2、brpc、RocksDB；V0.1–V1.0 的 Resolver / parity 协议；无 compiler-aware build context 资格结论；REFERENCES 关系当前未被 extractor 表达（Fidelity V1 仅评 CALLS/IMPORTS，Python REFERENCES 仅审计不计分） |
 | RQ2 | Windows 11、冻结 benchmark commit、单机；11.9 万–62.3 万 C/C++ LOC；V0.2/V0.4 协议；不含并发与 S3+ Scale band |
 | RQ3 | 当前 Query API 与 T01/T03/T05 任务证据；R2–R2.4 协议；非文件/函数/行级通用 retrieval claim |
 | RQ4 | R2.4 冻结候选池、T01/T03/T05、单查询、Loose 策略；不含会话级聚合 |

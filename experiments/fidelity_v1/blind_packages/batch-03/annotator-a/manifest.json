@@ -1,0 +1,127 @@
+{
+  "package_version": "batch-03-clean-blind-package-v1",
+  "annotator_id": "A",
+  "batch_id": "03",
+  "sample_count": 60,
+  "protocol_commit": "12f405c677582a2982d035433bf6837126772716",
+  "candidate_set_commit": "NOT_AVAILABLE",
+  "candidate_set_sha256": "558f78bfd69d5578b09bc9488739808b7e849d196659d1b82d91403453ba2484",
+  "execution_plan_version": "full-annotation-execution-plan-v1",
+  "execution_plan_sha256": "056dafd4be52fa74ce30cfa739b9ba2c9c97ec2beed96494ecbcdeb4892fb1cd",
+  "telemetry_schema_version": 2,
+  "allowed_files": [
+    {
+      "path": "input/annotator-a-blind-view.json",
+      "sha256": "098c11ad1e7a6200fb589f1d77c4ebec4a27f3b6aaabe53efb580521c884a860"
+    },
+    {
+      "path": "input/batch-03-manifest.json",
+      "sha256": "1de6a7ed05e3a08eb709f577e880cada1f7b46cf1e89cd9e19c76d44e291f72d"
+    },
+    {
+      "path": "output/annotation-record-template.json",
+      "sha256": "f2f96ce8959e690d197d6395d1836ae9835b217766a0b0c7f4c14d230106907f"
+    },
+    {
+      "path": "protocol/annotation-instructions-v1.md",
+      "sha256": "c1222b7afe35091f7624f323b6107056b72235f41c67029e601214b1b8ffc209"
+    },
+    {
+      "path": "protocol/calls-v1.md",
+      "sha256": "06397b42c5ff2e1cb66408cd4b87c4252bbf821d0e79fb150915598c83924e9a"
+    },
+    {
+      "path": "protocol/decl-def-equivalence-v1.md",
+      "sha256": "03d20234f15ad6ab35c11a45d52764e660322ac50ea0c3ad00c6b6465b393c18"
+    },
+    {
+      "path": "protocol/evidence-scope-v1.md",
+      "sha256": "f4ae518cf94b0f0f8c4e1bc6677762acd48b5142fe88bf02a8c52755d77ad7e4"
+    }
+  ],
+  "batch_case_ids": [
+    "FQV1-brpc-8c9d0887e1f9d4fe",
+    "FQV1-brpc-178d1ff3a0cd7ce9",
+    "FQV1-rocksdb-0fb35dcffa633600",
+    "FQV1-rocksdb-99a8d24728ae1196",
+    "FQV1-rocksdb-f66d19a80d90cc4d",
+    "FQV1-aria2-c4f0776cc2d3f2f9",
+    "FQV1-rocksdb-eb22480ad0a9d65f",
+    "FQV1-brpc-639b4fbd4eb1a885",
+    "FQV1-aria2-594104f8202cd07c",
+    "FQV1-rocksdb-34b5b3e1cb2c3201",
+    "FQV1-rocksdb-657008a8ca392740",
+    "FQV1-brpc-3c112669c1d2a328",
+    "FQV1-brpc-c1e9161df3d24212",
+    "FQV1-brpc-7b8fb60c33671eaf",
+    "FQV1-aria2-1013c4ea4951ce6e",
+    "FQV1-aria2-b56746858b1a20aa",
+    "FQV1-aria2-c6525c9d8d155f3f",
+    "FQV1-rocksdb-85a27eca37b8f8c1",
+    "FQV1-aria2-dc02940ee463a68a",
+    "FQV1-brpc-8c0df0a18a9ac226",
+    "FQV1-brpc-1297e3afcef27b0a",
+    "FQV1-aria2-e03045f4f066d733",
+    "FQV1-brpc-f22dd80161b9bb6a",
+    "FQV1-rocksdb-f603c82c16239f57",
+    "FQV1-aria2-a2ae789d3de9d28e",
+    "FQV1-rocksdb-eb64f327dadecb5a",
+    "FQV1-rocksdb-e24d0c9f9a05b8dc",
+    "FQV1-brpc-a7fcfdbc818d1ac0",
+    "FQV1-rocksdb-8fbd7f6e2ec1619a",
+    "FQV1-rocksdb-3a4f1af91520be3a",
+    "FQV1-rocksdb-5cfbe4c0f156df21",
+    "FQV1-brpc-ccc97e5b37132ace",
+    "FQV1-brpc-9806a502687549e4",
+    "FQV1-rocksdb-ec017de0157014f4",
+    "FQV1-rocksdb-1887637cc8bf23ac",
+    "FQV1-rocksdb-41db0050ca5b26f5",
+    "FQV1-aria2-3b7ff33941c6d59a",
+    "FQV1-brpc-a41952e3fd9a42a4",
+    "FQV1-aria2-9321f98399a2d154",
+    "FQV1-aria2-929091560ddad98e",
+    "FQV1-aria2-709dda7bec5bc454",
+    "FQV1-aria2-ecdd1dedf78333a5",
+    "FQV1-rocksdb-bd1fd621f81874b8",
+    "FQV1-rocksdb-5540c7bc187cb8b7",
+    "FQV1-brpc-4f4f2346428539fb",
+    "FQV1-rocksdb-b968fe7da547e59e",
+    "FQV1-aria2-ffc27007c514fb0e",
+    "FQV1-aria2-c9bbcfab82d72458",
+    "FQV1-brpc-6ce1878baf26a770",
+    "FQV1-brpc-52f6cf4151819d66",
+    "FQV1-rocksdb-9248edc9695c69cd",
+    "FQV1-rocksdb-b070658664f8eb34",
+    "FQV1-brpc-1636f2253aaa4ada",
+    "FQV1-brpc-c9448e6fca66878e",
+    "FQV1-brpc-df438b2594cbeea6",
+    "FQV1-brpc-683dfb396789c525",
+    "FQV1-aria2-3c279b30b937de3a",
+    "FQV1-brpc-d500b530449d4bf0",
+    "FQV1-rocksdb-e4c4b582d8cc5646",
+    "FQV1-brpc-fe445fb412e2fbe0"
+  ],
+  "batch_manifest_sha256": "1de6a7ed05e3a08eb709f577e880cada1f7b46cf1e89cd9e19c76d44e291f72d",
+  "blind_view_sha256": "098c11ad1e7a6200fb589f1d77c4ebec4a27f3b6aaabe53efb580521c884a860",
+  "annotation_template_sha256": "f2f96ce8959e690d197d6395d1836ae9835b217766a0b0c7f4c14d230106907f",
+  "allowed_repository_roots": [
+    "benchmark-repos/aria2",
+    "benchmark-repos/brpc",
+    "benchmark-repos/rocksdb"
+  ],
+  "frozen_repository_commits": {
+    "aria2": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "brpc": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+    "rocksdb": "37234200b57d8d0a6a5c41f2d9811bbd2e293544"
+  },
+  "forbidden_artifact_patterns": [
+    "*batch-02*",
+    "*annotator-b*",
+    "*annotator-a*",
+    "*agreement*",
+    "*adjudication*",
+    "*fidelity*"
+  ],
+  "builder_identity": "Independent Batch 03 Packaging Agent",
+  "trust_root_note": "manifest.json and package-audit.json are control documents. SHA256SUMS freezes every payload and both control documents; SHA256SUMS cannot hash itself."
+}

@@ -1,0 +1,69 @@
+{
+    "artifact":  "final-cpp-adjudication-package-audit",
+    "audit_scope":  "independent contamination and integrity scan of the final adjudication clean package",
+    "queue_integrity":  {
+                            "queue_count":  13,
+                            "unique_sample_ids":  13,
+                            "batch_counts":  {
+                                                 "03":  2,
+                                                 "04":  9,
+                                                 "05":  2
+                                             },
+                            "all_c_cpp":  true,
+                            "python_audit_only_cases":  0,
+                            "batch_02_already_adjudicated_cases":  0,
+                            "duplicates":  0,
+                            "resampled_deleted_or_added_cases":  0,
+                            "case_record_matches_sealed_records":  13,
+                            "case_record_checks_total":  13,
+                            "audit_cross_checks":  {
+                                                       "batch_03_subset_of_audit_03_formal_list":  true,
+                                                       "batch_04_count_equals_audit_04_queue_count":  true,
+                                                       "batch_05_set_equals_audit_05_queue_entries":  true
+                                                   }
+                        },
+    "contamination_audit":  {
+                                "method":  "full-text scan of every packaged file for forbidden JSON keys and field-name mentions",
+                                "predicted_target_structural_hits":  0,
+                                "system_status_structural_hits":  0,
+                                "resolver_strategy_structural_hits":  0,
+                                "resolver_confidence_structural_hits":  0,
+                                "total_structural_hits":  0,
+                                "case_records_any_forbidden_mention":  0,
+                                "fidelity_correctness_hits":  0,
+                                "field_name_rule_text_mentions":  {
+                                                                      "note":  "field names may appear as rule text (forbidden-pattern lists); they never appear with a concrete value",
+                                                                      "files":  {
+                                                                                    "manifest.json":  [
+                                                                                                          "predicted_target",
+                                                                                                          "system_status",
+                                                                                                          "resolver_strategy",
+                                                                                                          "resolver_confidence"
+                                                                                                      ],
+                                                                                    "adjudication-instructions.md":  [
+                                                                                                                         "predicted_target",
+                                                                                                                         "system_status",
+                                                                                                                         "resolver_strategy",
+                                                                                                                         "resolver_confidence"
+                                                                                                                     ]
+                                                                                }
+                                                                  }
+                            },
+    "source_discipline":  {
+                              "builder_opened_pilot_candidates_json":  false,
+                              "builder_opened_resolver_or_fidelity_files":  false,
+                              "builder_opened_system_prediction_files":  false,
+                              "packaged_data_sources":  [
+                                                            "sealed annotator A/B records (blind packages, batches 03/04/05)",
+                                                            "sealed blind annotation views (frozen annotation-scope candidate information)",
+                                                            "sealed agreement audits 03/04/05 and sealed amendments (queue reconciliation only)",
+                                                            "sealed batch-02 adjudication artifact (exclusion list only)"
+                                                        ],
+                              "frozen_repository_commits_recorded":  true,
+                              "system_side_graph_results_copied":  false
+                          },
+    "sealed_annotation_records_modified":  0,
+    "adjudication_performed_during_packaging":  false,
+    "gold_or_correctness_labels_in_package":  0,
+    "overall":  "PASS"
+}

@@ -1,0 +1,121 @@
+{
+    "artifact":  "final-cpp-adjudication-queue-v1",
+    "total":  13,
+    "unique_sample_ids":  13,
+    "batch_counts":  {
+                         "03":  2,
+                         "04":  9,
+                         "05":  2
+                     },
+    "entries":  [
+                    {
+                        "sample_id":  "FQV1-rocksdb-ec017de0157014f4",
+                        "batch_id":  "03",
+                        "repository":  "rocksdb",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-rocksdb-ec017de0157014f4.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-ecdd1dedf78333a5",
+                        "batch_id":  "03",
+                        "repository":  "aria2",
+                        "relation_type":  "IMPORTS",
+                        "file":  "cases/FQV1-aria2-ecdd1dedf78333a5.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-a7dd1a2db3530e09",
+                        "batch_id":  "04",
+                        "repository":  "brpc",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-brpc-a7dd1a2db3530e09.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-126d8bf2305dce60",
+                        "batch_id":  "04",
+                        "repository":  "brpc",
+                        "relation_type":  "IMPORTS",
+                        "file":  "cases/FQV1-brpc-126d8bf2305dce60.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-4f7155139b696d14",
+                        "batch_id":  "04",
+                        "repository":  "aria2",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-aria2-4f7155139b696d14.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-4656d1df0792fedd",
+                        "batch_id":  "04",
+                        "repository":  "aria2",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-aria2-4656d1df0792fedd.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-711f654582713a22",
+                        "batch_id":  "04",
+                        "repository":  "brpc",
+                        "relation_type":  "IMPORTS",
+                        "file":  "cases/FQV1-brpc-711f654582713a22.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-d1cb994ef988e58a",
+                        "batch_id":  "04",
+                        "repository":  "aria2",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-aria2-d1cb994ef988e58a.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-ecb7a6891b617490",
+                        "batch_id":  "04",
+                        "repository":  "rocksdb",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-rocksdb-ecb7a6891b617490.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-aa505d4616aede0b",
+                        "batch_id":  "04",
+                        "repository":  "rocksdb",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-rocksdb-aa505d4616aede0b.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-5c9b99ecc0454a4a",
+                        "batch_id":  "04",
+                        "repository":  "aria2",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-aria2-5c9b99ecc0454a4a.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-bc38ae52a3ef3090",
+                        "batch_id":  "05",
+                        "repository":  "brpc",
+                        "relation_type":  "CALLS",
+                        "file":  "cases/FQV1-brpc-bc38ae52a3ef3090.json"
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-547d0bee05c50525",
+                        "batch_id":  "05",
+                        "repository":  "brpc",
+                        "relation_type":  "IMPORTS",
+                        "file":  "cases/FQV1-brpc-547d0bee05c50525.json"
+                    }
+                ],
+    "membership_source":  "sealed annotator A/B records (C/C++ formal verdict disagreements), reconciled against sealed agreement audits 03/04/05 and their sealed amendments",
+    "excluded":  {
+                     "python_audit_only_cases":  0,
+                     "batch_02_already_adjudicated_cases":  0,
+                     "batch_02_exclusion_list":  [
+                                                     "FQV1-rocksdb-8e526ba5ac0d956a",
+                                                     "FQV1-aria2-52bdba205b5ce686",
+                                                     "FQV1-aria2-0f84707a755b6d84",
+                                                     "FQV1-aria2-c900f72d67f383ae"
+                                                 ],
+                     "duplicates":  0
+                 },
+    "reconciliation":  {
+                           "batch_03":  "2 C/C++ formal disagreements implied by audit-03 preserved C/C++ metrics (38/40 agreement); IDs verified subset of audit-03 formal_verdict_disagreements",
+                           "batch_04":  "9 = audit-04 disagreement_attribution.adjudication_queue_count (9 C/C++ formal disagreements)",
+                           "batch_05":  "2 = audit-05 adjudication_queue.entries (exact set match)"
+                       },
+    "system_prediction_used_for_membership":  false
+}

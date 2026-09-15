@@ -1,0 +1,38 @@
+{
+  "artifact": "blind-agreement-audit-03-amendment",
+  "batch_id": "03",
+  "supersedes": "blind-agreement-audit-03 drift_gate only",
+  "sealed_annotation_records_modified": false,
+  "measurement_changes": false,
+  "corrected_gate_scope": {
+    "cpp_primary_fidelity_v1": {
+      "decision": "PASS",
+      "new_systematic_semantic_ambiguity": false,
+      "blindness_violation": false,
+      "scope_mismatch": false,
+      "schema_incompatibility": false
+    },
+    "python_references_audit_only": {
+      "decision": "HOLD_SEPARATE_PROTOCOL_STUDY",
+      "trigger": "NEW_SYSTEMATIC_SEMANTIC_AMBIGUITY",
+      "gates_cpp_primary_fidelity_v1": false
+    },
+    "batch_04_cpp_mainline": "UNBLOCKED"
+  },
+  "preserved_cpp_metrics": {
+    "n": 40,
+    "formal_verdict_agreement": {"agree": 38, "rate": 0.95},
+    "cohen_kappa": 0.857143,
+    "calls": {"n": 21, "formal_agree": 20},
+    "imports": {"n": 21, "formal_agree": 20}
+  },
+  "adjudication_queue_count": 18,
+  "blindness": {
+    "system_prediction_read": false,
+    "resolver_status_strategy_confidence_read": false,
+    "system_selected_target_read": false,
+    "graph_fidelity_metrics_read": false,
+    "later_batch_outcome_read": false,
+    "violations": 0
+  }
+}

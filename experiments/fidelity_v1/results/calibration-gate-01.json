@@ -1,0 +1,165 @@
+{
+  "artifact": "calibration-gate-01",
+  "created": "2026-09-14",
+  "phase": "post-join calibration adjudication",
+  "protocol_commit": "12f405c677582a2982d035433bf6837126772716",
+  "inputs": {
+    "annotator_a_normalized": "experiments/fidelity_v1/results/annotator-a-calibration-01-normalized.json",
+    "annotator_b_sealed": "experiments/fidelity_v1/results/annotator-b-calibration-01.json",
+    "calls_v1_addendum": "experiments/fidelity_v1/results/protocol-addendum-calls-v1-macro-semantics.md"
+  },
+  "inputs_sha256": {
+    "annotator-a-calibration-01-normalized.json": "6cb400447fe7ba6fbd27b19e35ea1e5c9ef3e8b9c46b5e2406756599a780ff8b",
+    "annotator-b-calibration-01.json": "bb85142770dc494f3d560bb702a77c69e3cae7e24c04ea31c67c53e2525b3ed5"
+  },
+  "case_alignment_verified": true,
+  "scope_adjudication": {
+    "rule": "Fidelity V1 Pilot declares C/C++ scope; Python-source cases stay in the audit package but are excluded from the formal C/C++ fidelity scoring universe. No case deleted, no replacement sampled.",
+    "python_out_of_scope_cases": [
+      "FQV1-rocksdb-ee83baa17e82ced3",
+      "FQV1-aria2-4fd41bb9bb827c2a",
+      "FQV1-aria2-3ea5b21309de76eb",
+      "FQV1-aria2-91b984d6e6d0a7ee",
+      "FQV1-aria2-5d9c6122ac7c4cd4",
+      "FQV1-brpc-734b24f434825a0f",
+      "FQV1-rocksdb-042e70a2abbb97a5",
+      "FQV1-rocksdb-ff7dddd235f6cd6a",
+      "FQV1-brpc-3fe7d970be9bff2a"
+    ],
+    "cpp_in_scope_n": 16,
+    "protocol_audit_n": 25,
+    "note": "All 9 out-of-scope cases are Python sources captured by the V0.2 graph databases (candidate-generator scope leakage; preserved as fact in the audit package)."
+  },
+  "metrics": {
+    "protocol_level_all_25": {
+      "universe": "protocol-level (all 25 calibration cases, incl. scope deviation)",
+      "n": 25,
+      "exact_formal_verdict_agreement_raw": "23/25",
+      "cohen_kappa_raw": 0.8516,
+      "cohen_kappa_raw_p0_p1_terms": {
+        "p0": 0.92,
+        "pe": 0.4608
+      },
+      "exact_formal_verdict_agreement_rule_normalized": "24/25",
+      "cohen_kappa_rule_normalized": 0.9228,
+      "relation_presence_agreement_raw": "24/25",
+      "relation_presence_agreement_rule_normalized": "25/25",
+      "build_context_agreement": "25/25",
+      "per_relation": {
+        "CALLS": {
+          "n": 9,
+          "relation_presence_raw": "8/9",
+          "relation_presence_rule_normalized": "9/9",
+          "verdict_agreement_raw": "7/9",
+          "verdict_agreement_rule_normalized": "8/9"
+        },
+        "IMPORTS": {
+          "n": 8,
+          "relation_presence_raw": "8/8",
+          "relation_presence_rule_normalized": "8/8",
+          "verdict_agreement_raw": "8/8",
+          "verdict_agreement_rule_normalized": "8/8"
+        },
+        "REFERENCES": {
+          "n": 8,
+          "relation_presence_raw": "8/8",
+          "relation_presence_rule_normalized": "8/8",
+          "verdict_agreement_raw": "8/8",
+          "verdict_agreement_rule_normalized": "8/8"
+        }
+      },
+      "raw_verdict_disagreements": [
+        {
+          "case_id": "FQV1-rocksdb-1273fbd969565cef",
+          "relation": "CALLS",
+          "a": "NO_VALID_TARGET",
+          "b": "RELATION_NOT_PRESENT",
+          "resolved_by": "CALLS_V1 macro rule"
+        },
+        {
+          "case_id": "FQV1-aria2-713b641e93cc620c",
+          "relation": "CALLS",
+          "a": "INSUFFICIENT_EVIDENCE",
+          "b": "ONE_VALID_TARGET",
+          "resolved_by": "OPEN - evidence-scope divergence (A package-bound INSUFFICIENT_EVIDENCE vs B frozen-tree type propagation ONE_VALID_TARGET); adjudication recommendation recorded, not frozen"
+        }
+      ]
+    },
+    "cpp_in_scope_16": {
+      "universe": "C/C++ in-scope scoring universe (16 cases)",
+      "n": 16,
+      "exact_formal_verdict_agreement_raw": "14/16",
+      "cohen_kappa_raw": 0.7143,
+      "cohen_kappa_raw_p0_p1_terms": {
+        "p0": 0.875,
+        "pe": 0.5625
+      },
+      "exact_formal_verdict_agreement_rule_normalized": "15/16",
+      "cohen_kappa_rule_normalized": 0.8519,
+      "relation_presence_agreement_raw": "15/16",
+      "relation_presence_agreement_rule_normalized": "16/16",
+      "build_context_agreement": "16/16",
+      "per_relation": {
+        "CALLS": {
+          "n": 8,
+          "relation_presence_raw": "7/8",
+          "relation_presence_rule_normalized": "8/8",
+          "verdict_agreement_raw": "6/8",
+          "verdict_agreement_rule_normalized": "7/8"
+        },
+        "IMPORTS": {
+          "n": 8,
+          "relation_presence_raw": "8/8",
+          "relation_presence_rule_normalized": "8/8",
+          "verdict_agreement_raw": "8/8",
+          "verdict_agreement_rule_normalized": "8/8"
+        }
+      },
+      "raw_verdict_disagreements": [
+        {
+          "case_id": "FQV1-rocksdb-1273fbd969565cef",
+          "relation": "CALLS",
+          "a": "NO_VALID_TARGET",
+          "b": "RELATION_NOT_PRESENT",
+          "resolved_by": "CALLS_V1 macro rule"
+        },
+        {
+          "case_id": "FQV1-aria2-713b641e93cc620c",
+          "relation": "CALLS",
+          "a": "INSUFFICIENT_EVIDENCE",
+          "b": "ONE_VALID_TARGET",
+          "resolved_by": "OPEN - evidence-scope divergence (A package-bound INSUFFICIENT_EVIDENCE vs B frozen-tree type propagation ONE_VALID_TARGET); adjudication recommendation recorded, not frozen"
+        }
+      ]
+    }
+  },
+  "adjudication_decisions": [
+    {
+      "id": "D1",
+      "decision": "CALLS_V1 macro semantics frozen (option A)",
+      "artifact": "experiments/fidelity_v1/results/protocol-addendum-calls-v1-macro-semantics.md",
+      "effect": "ASSERT_EQ divergence resolved by uniform rule; no per-sample exception; raw sealed records unchanged; rule applied symmetrically at gate level"
+    },
+    {
+      "id": "D2",
+      "decision": "Annotator A labels normalized",
+      "artifact": "experiments/fidelity_v1/results/annotator-a-calibration-01-normalized.json",
+      "effect": "25/25 unique mappings; 0 UNMAPPABLE_WITHOUT_REANNOTATION; original record untouched"
+    },
+    {
+      "id": "D3",
+      "decision": "Python scope isolated",
+      "effect": "9 cases OUT_OF_SCOPE, retained in protocol audit, excluded from C/C++ fidelity score"
+    }
+  ],
+  "open_items": [
+    {
+      "id": "OPEN-1",
+      "item": "evidence-scope rule for target determination",
+      "detail": "Case FQV1-aria2-713b641e93cc620c: A (package-bound) -> INSUFFICIENT_EVIDENCE; B (frozen-tree cross-file type propagation) -> ONE_VALID_TARGET. Recommendation (NOT frozen here): for the full run, annotator evidence scope = blinded package + read-only navigation of the frozen source tree (as the pilot README and task protocol already permit); a target determinable by cross-file type propagation within the frozen tree counts as determined. Requires owner ratification before the 244-case run."
+    }
+  ],
+  "gate_status": "CALIBRATION_QUALIFIED_WITH_DOCUMENTED_DEVIATIONS",
+  "gate_rationale": "Blindness PASS (both records), case alignment PASS (25/25 ids), source verification PASS; relation-presence 24/25 raw -> 25/25 under frozen CALLS_V1; IMPORTS and REFERENCES 100% on presence and verdict; kappa protocol-level 0.8516 raw / 0.9228 rule-normalized, C/C++ in-scope 0.7143 raw / 0.8462 rule-normalized; build-context agreement 25/25; all three HOLDs (macro semantics, A normalization, Python scope) adjudicated and documented; one documented open item (evidence-scope rule) recommended before the full run.",
+  "full_244_annotation": "UNBLOCKED (not started; 269 pilot cases - 25 calibration = 244)"
+}

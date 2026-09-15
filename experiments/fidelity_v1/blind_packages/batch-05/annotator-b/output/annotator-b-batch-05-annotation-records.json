@@ -1,0 +1,2261 @@
+{
+  "artifact": "annotator-b-batch-05-annotation-record-template",
+  "schema_version": 2,
+  "annotator_id": "B",
+  "batch_id": "05",
+  "sample_count": 64,
+  "telemetry_schema": {
+    "navigation_files": "array<string>; repository-relative files read beyond the sample source file; [] if none",
+    "navigation_files_count": "integer >= 0; must equal navigation_files.length",
+    "navigation_path": "array<string>; ordered repository-relative evidence-navigation path; [] if none",
+    "navigation_hop_count": "integer >= 0; number of transitions in navigation_path",
+    "verification_depth": "L0|L1|L2|L3|L4",
+    "target_recovered_after_navigation": "boolean",
+    "recovered_target": "null | {symbol_id:string|null,path:string,start_line:integer|null}",
+    "recovery_reason": "string|null"
+  },
+  "records": [
+    {
+      "sample_id": "FQV1-rocksdb-ce032f4a089f8d7e",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:7a66614780648e52fc26072ead9a92b968355b32fb56dfe95eea27e0fe0b3c5a",
+        "path": "db/blob/blob_log_format.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "db/blob/blob_log_format.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/db_impl/db_impl_files.cc",
+        "db/blob/blob_log_format.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:7a66614780648e52fc26072ead9a92b968355b32fb56dfe95eea27e0fe0b3c5a",
+        "path": "db/blob/blob_log_format.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "db/db_impl/db_impl_files.cc:15",
+        "db/blob/blob_log_format.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-8480e9818a0a68c1",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:037ca92d32bc9bc352447ed3349fbc7a3fef4c11feb74ce272602e51631f8d50",
+        "path": "db/range_del_aggregator.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "db/range_del_aggregator.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/column_family.cc",
+        "db/range_del_aggregator.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:037ca92d32bc9bc352447ed3349fbc7a3fef4c11feb74ce272602e51631f8d50",
+        "path": "db/range_del_aggregator.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "db/column_family.cc:30",
+        "db/range_del_aggregator.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-d92c0476f269fe9c",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "src/DHTMessageTrackerEntry.cc",
+        "start_line": 58
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/DHTMessageTrackerEntry.cc"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/DHTMessageTracker.cc",
+        "src/DHTMessageTrackerEntry.cc"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": null,
+        "path": "src/DHTMessageTrackerEntry.cc",
+        "start_line": 58
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/DHTMessageTracker.cc:148",
+        "src/DHTMessageTrackerEntry.cc:58"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-0a7579f1c2d606fa",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:161"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-689cb3a132dec72c",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/gdb_bthread_stack.py:170"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-8c52969b9353ef75",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/db_crashtest.py:680"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-7888d0fa3af3bf94",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:f8ed3fe04a3e3a8497f9d9acb27a780de7bdfd4cad3b441f0bec6e6d8ba20368",
+        "path": "src/message.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/message.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/DefaultPeerStorage.cc",
+        "src/message.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:f8ed3fe04a3e3a8497f9d9acb27a780de7bdfd4cad3b441f0bec6e6d8ba20368",
+        "path": "src/message.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/DefaultPeerStorage.cc:41",
+        "src/message.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-34de66dd51d7d889",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:165"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-bc38ae52a3ef3090",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/brpc/policy/mysql/mysql_authenticator.cpp:188"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-da675d4824d3de3f",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": false,
+      "formal_verdict": "RELATION_NOT_PRESENT",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/lldb_bthread_stack.py:202"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The marked token is a binding occurrence, not a semantic reference to a target."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-4a6a52d6a1575c10",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:c1e60026fd36130a5334dbd48ff5c40fb00dc86086e90d83854ce835b1610a15",
+        "path": "db/blob/blob_index.h",
+        "start_line": 59
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "db/blob/blob_index.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/version_set.cc",
+        "db/blob/blob_index.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:c1e60026fd36130a5334dbd48ff5c40fb00dc86086e90d83854ce835b1610a15",
+        "path": "db/blob/blob_index.h",
+        "start_line": 59
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "db/version_set.cc:2788",
+        "db/blob/blob_index.h:59"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-a4c16880e7989d82",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:827f6468eadb4d3dea44f00993819f61a937811e0b153df68c58af71200a7d65",
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 67
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:108",
+        "doc/bash_completion/make_bash_completion.py:67"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-3fa9480748303413",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "src/BitfieldMan.cc",
+        "start_line": 303
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/BitfieldMan.cc"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "test/BitfieldManTest.cc",
+        "src/BitfieldMan.cc"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": null,
+        "path": "src/BitfieldMan.cc",
+        "start_line": 303
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "test/BitfieldManTest.cc:354",
+        "src/BitfieldMan.cc:303"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-cbcf7711e5f13594",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:670cfbd279b81cc2bf3ba4894bc8c455bfd330dc652b4a18b2f5d7720d927aeb",
+        "path": "src/download_helper.cc",
+        "start_line": 474
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/download_helper.cc"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/RpcMethodImpl.cc",
+        "src/download_helper.cc"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:670cfbd279b81cc2bf3ba4894bc8c455bfd330dc652b4a18b2f5d7720d927aeb",
+        "path": "src/download_helper.cc",
+        "start_line": 474
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/RpcMethodImpl.cc:248",
+        "src/download_helper.cc:474"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-18d5a833c6c2fef4",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "build_tools/getdeps_fallback_mirror.py:199"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-fda81548ed271045",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:ed39accbb1021e8c5bae610a37e15831c4a2a75ebcd9ce95cb6d845108df8042",
+        "path": "test/bthread_setconcurrency_unittest.cpp",
+        "start_line": 147
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/bthread_setconcurrency_unittest.cpp:173",
+        "test/bthread_setconcurrency_unittest.cpp:147"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-c324e61513645740",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:cd0e833ae065fa84b79141ffa88c0468b35671796ef6482d2caf77833329f6a5",
+        "path": "src/PieceHashCheckIntegrityEntry.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/PieceHashCheckIntegrityEntry.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/StreamCheckIntegrityEntry.h",
+        "src/PieceHashCheckIntegrityEntry.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:cd0e833ae065fa84b79141ffa88c0468b35671796ef6482d2caf77833329f6a5",
+        "path": "src/PieceHashCheckIntegrityEntry.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/StreamCheckIntegrityEntry.h:38",
+        "src/PieceHashCheckIntegrityEntry.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-b064e3bc3c930d8e",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/db_crashtest.py:2392"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-703009498cf49040",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": false,
+      "formal_verdict": "RELATION_NOT_PRESENT",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/lldb_bthread_stack.py:151"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The marked token is a binding occurrence, not a semantic reference to a target."
+    },
+    {
+      "sample_id": "FQV1-brpc-547d0bee05c50525",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/bthread/id.cpp:28"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-faa39831989581d3",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "tools/block_cache_analyzer/block_cache_trace_analyzer_plot.py",
+        "start_line": 665
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/block_cache_analyzer/block_cache_trace_analyzer_plot.py:666",
+        "tools/block_cache_analyzer/block_cache_trace_analyzer_plot.py:665"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-8b4ca63de7918ec9",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "util/random.cc",
+        "start_line": 45
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "util/random.cc"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/db_compaction_test.cc",
+        "util/random.cc"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": null,
+        "path": "util/random.cc",
+        "start_line": 45
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "db/db_compaction_test.cc:5959",
+        "util/random.cc:45"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-23ead0d91af1e773",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/lldb_bthread_stack.py:242"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-3211f798b9f9a1a3",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:a9ae9cf974592588cccc5e11777ec14808ee4adeef899970e453a4f985a8fd05",
+        "path": "src/Request.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/Request.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/AuthConfigFactory.cc",
+        "src/Request.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:a9ae9cf974592588cccc5e11777ec14808ee4adeef899970e453a4f985a8fd05",
+        "path": "src/Request.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/AuthConfigFactory.cc:45",
+        "src/Request.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-4c1885be0ee14283",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:bb04eea181f155dc93e865048c71bcffc2a9f1b7026ae2ea734b3cfde676c0c9",
+        "path": "db/multi_cf_iterator_impl.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "db/multi_cf_iterator_impl.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/attribute_group_iterator_impl.h",
+        "db/multi_cf_iterator_impl.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:bb04eea181f155dc93e865048c71bcffc2a9f1b7026ae2ea734b3cfde676c0c9",
+        "path": "db/multi_cf_iterator_impl.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "db/attribute_group_iterator_impl.h:8",
+        "db/multi_cf_iterator_impl.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-f81580dcfae4a553",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/cancelable_callback_unittest.cc:10"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-dba789c9c0b1c6d0",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/c_api_gen/auto_simple_bindings.py:573"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-ec85e572e4b8e254",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:ccba921c3845b8b2da75719a9bf833039d9299eea936fade9f13ff5b713cdf25",
+        "path": "db/blob/blob_file_garbage.h",
+        "start_line": 32
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "db/blob/blob_file_garbage.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/version_builder.cc",
+        "db/blob/blob_file_garbage.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:ccba921c3845b8b2da75719a9bf833039d9299eea936fade9f13ff5b713cdf25",
+        "path": "db/blob/blob_file_garbage.h",
+        "start_line": 32
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "db/version_builder.cc:1108",
+        "db/blob/blob_file_garbage.h:32"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-7307440455e64fdf",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:4a4b83ed2d1b77565f5cf3844ea058af63fa16bbbdedd1e076d01edb0c6d1792",
+        "path": "utilities/transactions/lock/range/range_tree/lib/portability/memory.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "utilities/transactions/lock/range/range_tree/lib/portability/memory.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "utilities/transactions/lock/range/range_tree/lib/util/dbt.cc",
+        "utilities/transactions/lock/range/range_tree/lib/portability/memory.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:4a4b83ed2d1b77565f5cf3844ea058af63fa16bbbdedd1e076d01edb0c6d1792",
+        "path": "utilities/transactions/lock/range/range_tree/lib/portability/memory.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "utilities/transactions/lock/range/range_tree/lib/util/dbt.cc:60",
+        "utilities/transactions/lock/range/range_tree/lib/portability/memory.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-f9a8ac565c6a2d01",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "db/range_del_aggregator_bench.cc:19"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-c816f6dc931c4e38",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:d3434623bc797fab6f32c3755edfaa14d6e2376275a66c4aff6df3cc98e476f9",
+        "path": "test/shared_memory_unittest.cc",
+        "start_line": 625
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/shared_memory_unittest.cc:681",
+        "test/shared_memory_unittest.cc:625"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-f53921b30ab21650",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/brpc_mysql_pool_concurrency_unittest.cpp:73"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-7d6c74d82bb26ca5",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:21"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-a2349ea6dc723a04",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/crypto_endian.h:8"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-b30835c39e28b8d3",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:069e1c98df06994269efd5339dac5e615e4b0852580cf7d5b0dd4bd2623c5085",
+        "path": "doc/sphinx_themes/sphinx_rtd_theme/__init__.py",
+        "start_line": 27
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/sphinx_themes/sphinx_rtd_theme/__init__.py:69",
+        "doc/sphinx_themes/sphinx_rtd_theme/__init__.py:27"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-68aa8d67274a5fe1",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "example/auto_concurrency_limiter/server.cpp:31"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-dd9fef894c065810",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/manual-src/en/mkapiref.py:289"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-8416d9f8783ec637",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:9823433bf1a22c88f432e2fdf6cda37dcb883beae142c55bf974eccbb0e5b820",
+        "path": "test/brpc_mysql_txn_integration_unittest.cpp",
+        "start_line": 228
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/brpc_mysql_txn_integration_unittest.cpp:477",
+        "test/brpc_mysql_txn_integration_unittest.cpp:228"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-1ff7af6ea43d4bde",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/bvar/default_variables.cpp:25"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-c10fd7262a136c88",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/DefaultBtMessageFactory.cc:205"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-947bfdc67e29eeb1",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:54ad252171d6329cbc4aae30f734c711e9b6f90412b8fd397becdf9eab70f92c",
+        "path": "src/brpc/describable.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/brpc/describable.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/brpc/details/method_status.h",
+        "src/brpc/describable.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:54ad252171d6329cbc4aae30f734c711e9b6f90412b8fd397becdf9eab70f92c",
+        "path": "src/brpc/describable.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/brpc/details/method_status.h:24",
+        "src/brpc/describable.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-8b67bd106bb82719",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:9e3dd4dec3a3ac0c01324b73084219269989df72c94a161b3abb9db7d7113d01",
+        "path": "src/util.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/util.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "test/FileTest.cc",
+        "src/util.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:9e3dd4dec3a3ac0c01324b73084219269989df72c94a161b3abb9db7d7113d01",
+        "path": "src/util.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "test/FileTest.cc:10",
+        "src/util.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-6f36576e408fd785",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:eb8f40cf4f798bf7f127f95420f7d46a51799d02bc45d7d3141a668eb32dd8eb",
+        "path": "utilities/trie_index/bitvector.h",
+        "start_line": 384
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "utilities/trie_index/bitvector.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "utilities/trie_index/trie_index_test.cc",
+        "utilities/trie_index/bitvector.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:eb8f40cf4f798bf7f127f95420f7d46a51799d02bc45d7d3141a668eb32dd8eb",
+        "path": "utilities/trie_index/bitvector.h",
+        "start_line": 384
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "utilities/trie_index/trie_index_test.cc:87",
+        "utilities/trie_index/bitvector.h:384"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-795be216655fd881",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": false,
+      "formal_verdict": "RELATION_NOT_PRESENT",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:165"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The marked token is a binding occurrence, not a semantic reference to a target."
+    },
+    {
+      "sample_id": "FQV1-aria2-8fd446e7fc00aac4",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:3c68d2c6e829a038d6cb2e3b7ed1c2695acc5ebc129a83c3be1b8bf02af6f618",
+        "path": "src/util.h",
+        "start_line": 177
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/util.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/RpcMethodImpl.cc",
+        "src/util.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:3c68d2c6e829a038d6cb2e3b7ed1c2695acc5ebc129a83c3be1b8bf02af6f618",
+        "path": "src/util.h",
+        "start_line": 177
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/RpcMethodImpl.cc:745",
+        "src/util.h:177"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-045d124c81011903",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:e7b412d24066ae3a7cc0c24ef3b8a9b33416a080be7874ce6556a864afad80bd",
+        "path": "src/butil/atomicops_internals_atomicword_compat.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/butil/atomicops_internals_atomicword_compat.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/butil/atomicops.h",
+        "src/butil/atomicops_internals_atomicword_compat.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:e7b412d24066ae3a7cc0c24ef3b8a9b33416a080be7874ce6556a864afad80bd",
+        "path": "src/butil/atomicops_internals_atomicword_compat.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/butil/atomicops.h:169",
+        "src/butil/atomicops_internals_atomicword_compat.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-df4c5ba847c40b7e",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": false,
+      "formal_verdict": "RELATION_NOT_PRESENT",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/gdb_bthread_stack.py:83"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The marked token is a binding occurrence, not a semantic reference to a target."
+    },
+    {
+      "sample_id": "FQV1-brpc-cb3ff6b5499b6ed4",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:9ec68318c30ab74092d2bad24e9a4db1a7237bc1a358cd1b3faf8ec521c86226",
+        "path": "src/bthread/id.cpp",
+        "start_line": 325
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/bthread/id.cpp:391",
+        "src/bthread/id.cpp:325"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-456728b1dc72633a",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:5a6535045d8a2714fd75eb1fefbc609d89ee4525ea5ab2ed0ba1231599312282",
+        "path": "include/rocksdb/convenience.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "include/rocksdb/convenience.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "table/sst_file_reader_test.cc",
+        "include/rocksdb/convenience.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:5a6535045d8a2714fd75eb1fefbc609d89ee4525ea5ab2ed0ba1231599312282",
+        "path": "include/rocksdb/convenience.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "table/sst_file_reader_test.cc:17",
+        "include/rocksdb/convenience.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-aria2-83c1772f11338e16",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:e18d5fe750a8adf5e99b8143656e1edf6c00fa2fb404f60f5f7d9107d7b9cd25",
+        "path": "src/Peer.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/Peer.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "test/UTMetadataRequestExtensionMessageTest.cc",
+        "src/Peer.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:e18d5fe750a8adf5e99b8143656e1edf6c00fa2fb404f60f5f7d9107d7b9cd25",
+        "path": "src/Peer.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "test/UTMetadataRequestExtensionMessageTest.cc:7",
+        "src/Peer.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-5b510fe2efbc743c",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:da6df22cf034a03ae74de3e989133bdefbb6598cc9fff62584b871511752f858",
+        "path": "src/bvar/collector.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/bvar/collector.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/brpc/rpc_dump.h",
+        "src/bvar/collector.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:da6df22cf034a03ae74de3e989133bdefbb6598cc9fff62584b871511752f858",
+        "path": "src/bvar/collector.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/brpc/rpc_dump.h:25",
+        "src/bvar/collector.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-5c429cff208e2444",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": false,
+      "formal_verdict": "RELATION_NOT_PRESENT",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/advisor/advisor/bench_runner.py:28"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The marked token is a binding occurrence, not a semantic reference to a target."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-f84d7aefd3b8c166",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/db_crashtest.py:354"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-8c54096615d952c2",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:6f964d415084f98fb966a939ce0371091797810c26d999a7474ced0e0daecff4",
+        "path": "tools/advisor/advisor/db_log_parser.py",
+        "start_line": 56
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "tools/advisor/advisor/db_log_parser.py"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "tools/advisor/test/test_db_log_parser.py",
+        "tools/advisor/advisor/db_log_parser.py"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:6f964d415084f98fb966a939ce0371091797810c26d999a7474ced0e0daecff4",
+        "path": "tools/advisor/advisor/db_log_parser.py",
+        "start_line": 56
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "tools/advisor/test/test_db_log_parser.py:45",
+        "tools/advisor/advisor/db_log_parser.py:56"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-27893da4faf99d4f",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/gdb_bthread_stack.py:142"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-2b95dc83ef87f9d6",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "table/block_based/full_filter_block.h:12"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-aria2-11a158e3692ba797",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:16"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-ac20e1f5d2448741",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/gdb_bthread_stack.py:86"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-brpc-fe537d210a5fb0b6",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:3d8c4429059ee245c4c5d235a9823c3ea1a0c7e1d8711ce2299f1b862b0a5e8c",
+        "path": "src/brpc/details/controller_private_accessor.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "src/brpc/details/controller_private_accessor.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/brpc/channel.cpp",
+        "src/brpc/details/controller_private_accessor.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:3d8c4429059ee245c4c5d235a9823c3ea1a0c7e1d8711ce2299f1b862b0a5e8c",
+        "path": "src/brpc/details/controller_private_accessor.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "src/brpc/channel.cpp:41",
+        "src/brpc/details/controller_private_accessor.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-7c9c116938584ddb",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:ad0fb7b7e1045b311a6849ffb69192f27185ec2dcec9b79b86c6d9ecf6389f0a",
+        "path": "db/db_test_util.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "db/db_test_util.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/db_wal_test.cc",
+        "db/db_test_util.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:ad0fb7b7e1045b311a6849ffb69192f27185ec2dcec9b79b86c6d9ecf6389f0a",
+        "path": "db/db_test_util.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "db/db_wal_test.cc:1159",
+        "db/db_test_util.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-6dc21b13eb5505ab",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "db/db_iterator_test.cc:2331"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-3b90b89381b8d13d",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "CPP_PRIMARY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "include/rocksdb/db.h",
+        "start_line": 2527
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [
+        "include/rocksdb/db.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "utilities/transactions/transaction_test.cc",
+        "include/rocksdb/db.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": null,
+        "path": "include/rocksdb/db.h",
+        "start_line": 2527
+      },
+      "recovery_reason": "Permitted declaration, definition, type, or include navigation uniquely resolved the target.",
+      "evidence_locations": [
+        "utilities/transactions/transaction_test.cc:7232",
+        "include/rocksdb/db.h:2527"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-fd3ed2a1a6bf98dc",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:7dd7b99489eeb8fb7f80c74dacb271ae070cd23e821e8fb6eb282dc9cfcb18a6",
+        "path": "build_tools/error_filter.py",
+        "start_line": 26
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "build_tools/error_filter.py:153",
+        "build_tools/error_filter.py:26"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source occurrence and the uniquely resolved semantic target were verified in the frozen repository."
+    },
+    {
+      "sample_id": "FQV1-brpc-f572753e55b2dad6",
+      "batch_id": "05",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "PYTHON_AUDIT_ONLY",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_APPLICABLE",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/lldb_bthread_stack.py:145"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source-level relation is present, but its referent is external to the frozen repositories."
+    }
+  ]
+}

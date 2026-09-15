@@ -1,0 +1,1536 @@
+{
+  "artifact": "annotator-a-batch-02-blind-view",
+  "schema_version": 1,
+  "view": "BLINDED_ANNOTATION",
+  "annotator": "A",
+  "batch_id": "02",
+  "sample_count": 60,
+  "source_candidate_set_sha256": "558f78bfd69d5578b09bc9488739808b7e849d196659d1b82d91403453ba2484",
+  "cases": [
+    {
+      "case_id": "FQV1-brpc-3dd084e43286f5fe",
+      "repository": "brpc",
+      "raw_reference_id": "reference:68f8ded815e1f1b87472bc71c604653acc44d9a123baeccc7bf83a3ebc7a6701",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/brpc/policy/couchbase_protocol.cpp",
+        "start_line": 60,
+        "end_line": 60,
+        "owner_kind": "Function",
+        "owner_qualified_name": "brpc.policy.InitSupportedCommandMap",
+        "raw_name": "butil.bit_array_set",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:2120f70de2d20dea843db10deb8f1b34594b85d901d245770e82c8369e5449ed"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-1aefa5f3f46f94f6",
+      "repository": "aria2",
+      "raw_reference_id": "reference:e1ed4d8466e606bd5cd61cd2c2ea865cada009334ca97e240797a854e34e2bbe",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/SessionSerializerTest.cc",
+        "start_line": 10,
+        "end_line": 11,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.SessionSerializerTest",
+        "raw_name": "array_fun.h",
+        "target_module": "array_fun.h"
+      },
+      "candidate_symbol_ids": [
+        "file:3c7d4956d7f9a24049f4490bbbfe62d27ba32de816b442a30403910850d7b736"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-3145cfe72c552bd9",
+      "repository": "aria2",
+      "raw_reference_id": "reference:d17b12e2696c69a70a8e99dae61e9f8d19827c206e76ce14acf4b842b0cdb6a8",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 78,
+        "end_line": 78,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.bash_completion.make_bash_completion.output_case",
+        "raw_name": "bool_opts",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-289d004dec9594de",
+      "repository": "brpc",
+      "raw_reference_id": "reference:7d5433e430f4ea6b08116bfc933ff123d8d26bf1d455736bf5cc7a7e8408ab59",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/bvar/detail/combiner.h",
+        "start_line": 32,
+        "end_line": 33,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.bvar.detail.combiner",
+        "raw_name": "bvar/detail/is_atomical.h",
+        "target_module": "bvar/detail/is_atomical.h"
+      },
+      "candidate_symbol_ids": [
+        "file:e683770d7b1e7ab1c02b1375fb15653eb3ce38a5baef8db0ee2304a931b135cc"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-cd53a135c0fdb46a",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:814179f7e2d09eb99b63fe28fde26bddaa57a3dda45a07f8248cf3f1f0331eaf",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "utilities/backup/backup_engine.cc",
+        "start_line": 13,
+        "end_line": 14,
+        "owner_kind": "File",
+        "owner_qualified_name": "utilities.backup.backup_engine",
+        "raw_name": "cstdlib",
+        "target_module": "cstdlib"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-7d1c68b08b689686",
+      "repository": "brpc",
+      "raw_reference_id": "reference:5f10dbde4362a9497d1bcb73c4302377fafaad92714b361268152e55a36b034c",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/brpc/backup_request_policy.cpp",
+        "start_line": 22,
+        "end_line": 23,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.brpc.backup_request_policy",
+        "raw_name": "bvar/window.h",
+        "target_module": "bvar/window.h"
+      },
+      "candidate_symbol_ids": [
+        "file:9bfdc0e6637519f3eb66fbf037e8d7d4cc2dd13878cb86b34005691e1f838e1f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-42189fc8a97eb196",
+      "repository": "aria2",
+      "raw_reference_id": "reference:449d52ec1d8f39fdc535399c50ece68154d41aa094c3c352e46176c1fbc43101",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/DHTPingTask.cc",
+        "start_line": 82,
+        "end_line": 82,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.DHTPingTask",
+        "raw_name": "addMessage",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:1d11e23277061fca299b5f8ade3f56e8f89d636f227aa80616e1040d30257d6f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-8e526ba5ac0d956a",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:890dcdb5edb3325039197c7b8557d9a39954e24a61373538e20b8d34ef8b971c",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "utilities/blob_db/blob_db_impl.cc",
+        "start_line": 1631,
+        "end_line": 1631,
+        "owner_kind": "File",
+        "owner_qualified_name": "utilities.blob_db.blob_db_impl",
+        "raw_name": "open_ttl_files_.erase",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:6a35a63b78c638c0bbe768f2482f6b0857eb89406f8e09c0df6b0d26298af053"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-5ce7af038ff64537",
+      "repository": "aria2",
+      "raw_reference_id": "reference:09da77221a531f38238db7d7adeea6ce1cdd81bda52d6413d04325d3683fd253",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/cookie_helper.cc",
+        "start_line": 53,
+        "end_line": 53,
+        "owner_kind": "Function",
+        "owner_qualified_name": "aria2.cookie.anonymous.isDelimiter",
+        "raw_name": "in",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:e19297531ee5fab31d81e5e0ac59396d114a74bdb947027273f512c0f8ab22fd"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-ede7a9c26d8e7eb7",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:29a1495922349841826a82a558e7ac4e6a203a579f7f847658df35d9c3c2c282",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "db_stress_tool/db_stress_listener.h",
+        "start_line": 10,
+        "end_line": 11,
+        "owner_kind": "File",
+        "owner_qualified_name": "db_stress_tool.db_stress_listener",
+        "raw_name": "mutex",
+        "target_module": "mutex"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-a5e3f2693abf0ca0",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:a5dba20f2a420a6c9b5cf80bd3bacae7ec0bd8ab2035820cff67a17208e88abc",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "options/customizable.cc",
+        "start_line": 13,
+        "end_line": 14,
+        "owner_kind": "File",
+        "owner_qualified_name": "options.customizable",
+        "raw_name": "rocksdb/status.h",
+        "target_module": "rocksdb/status.h"
+      },
+      "candidate_symbol_ids": [
+        "file:887db6db839168314ccee6fccc7350c92367c52f804f39d2da2cbf2ef6e6658f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-4d8e045122db45b8",
+      "repository": "aria2",
+      "raw_reference_id": "reference:528cadc02046cd0798ca24a1e3784ded5db32098766c2042c9ea223e1b5c5987",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/BtRegistry.cc",
+        "start_line": 39,
+        "end_line": 40,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.BtRegistry",
+        "raw_name": "PieceStorage.h",
+        "target_module": "PieceStorage.h"
+      },
+      "candidate_symbol_ids": [
+        "file:64ab4a80f7bf1ca48903f30fadea77c5590e85a156e5100af48f6ff4776014e3"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-db52da4576e9fbc6",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:95cf9f0c76974b2dfcf4dfb477be4eca386393b5eab0a413ad5b5877f567206b",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "options/options_test.cc",
+        "start_line": 3861,
+        "end_line": 3861,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.TEST_F",
+        "raw_name": "testCase",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d5170e1674f30f1b663c712eb32a2ddb4403935361f2b4f3f8a6cda58d27f7da"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-6171ade471166b66",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:bf99ff8f23d735c6532673037eab99a874c26331f7d9a3394cd81514380126a6",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "tools/advisor/advisor/db_log_parser.py",
+        "start_line": 11,
+        "end_line": 11,
+        "owner_kind": "File",
+        "owner_qualified_name": "tools.advisor.advisor.db_log_parser",
+        "raw_name": "Enum",
+        "target_module": "enum"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-c9fe122406a9bd9d",
+      "repository": "brpc",
+      "raw_reference_id": "reference:f7db383d44818fb40f44c884334aa317e190ab5f95a850786f50a79dab45974b",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/gdb_bthread_stack.py",
+        "start_line": 171,
+        "end_line": 171,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.gdb_bthread_stack.BthreadAllCmd.invoke",
+        "raw_name": "format",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d5fa05eec334493162a7da4aa4c6db84ea9cd626ba927e7ac325ff9846540d1b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-3e14d26f5ea90348",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:f52601b9013f8542ebdd9525fb1995fd5b9c8cb3167c4be7a8f036c9f89d93da",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/fault_injection_log_parser.py",
+        "start_line": 158,
+        "end_line": 158,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.fault_injection_log_parser.decode_fault_injection_log",
+        "raw_name": "raw_path",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:5ba74801add67a52df59f4431b10fabe6a57ad647448d4ea15d4dee1d7e52408"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-34ef1c35da5cabaf",
+      "repository": "aria2",
+      "raw_reference_id": "reference:c99cb90aaa42aa52d84a075b2ab056cc68798df4a7795a547eb07651a84f5230",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/crypto_hash.cc",
+        "start_line": 464,
+        "end_line": 464,
+        "owner_kind": "Method",
+        "owner_qualified_name": "SHA1.transform",
+        "raw_name": "rol",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:501a588b71d1a34ec7fcb64a0fac62331f35555c729df0b84bb0743c53c16f1d"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-082b468c2a347ecc",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:41c903c78ef2096e259c91607a483e1689bf36c2fb3a1ea4c3456f9a814df0f0",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "db/db_compaction_test.cc",
+        "start_line": 35,
+        "end_line": 36,
+        "owner_kind": "File",
+        "owner_qualified_name": "db.db_compaction_test",
+        "raw_name": "util/random.h",
+        "target_module": "util/random.h"
+      },
+      "candidate_symbol_ids": [
+        "file:7ddec5b715631f57881516d7e3deca7420147302752a531e9e1299be7375112a"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-98fed327423513a1",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:59f6eb9c3fba0429728c13acd6945cd30ae9ab5e4d85b2ed394953d89ef06d6f",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "file/writable_file_writer.cc",
+        "start_line": 13,
+        "end_line": 14,
+        "owner_kind": "File",
+        "owner_qualified_name": "file.writable_file_writer",
+        "raw_name": "cstdio",
+        "target_module": "cstdio"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-4fc2ecf5e4f15730",
+      "repository": "brpc",
+      "raw_reference_id": "reference:36a68d5d15c1393c914fe5646786a13706fdd16266ca30d702038d123d44f6f5",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/brpc_redis_unittest.cpp",
+        "start_line": 211,
+        "end_line": 211,
+        "owner_kind": "Function",
+        "owner_qualified_name": "anonymous.TEST_F",
+        "raw_name": "ASSERT_FALSE",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-a125d96bbb5279c8",
+      "repository": "brpc",
+      "raw_reference_id": "reference:16ca43c60670149c67734cc6a4ce77625bc6e6be6d01a065ce3969e7908d7c07",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/bvar/recorder.h",
+        "start_line": 193,
+        "end_line": 193,
+        "owner_kind": "Method",
+        "owner_qualified_name": "bvar.IntRecorder.set_debug_name",
+        "raw_name": "diagnostic_name",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:0f4c9a02797cfe969b154e95d7d155be79ff9b7a0225ca68d117a033e7d5c20a"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-d53fd59a6ee6cce8",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:dd45462de96be29d6245542cff732645e37855e1082795eea7a2a6e011792606",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "table/block_based/block_based_table_factory.h",
+        "start_line": 58,
+        "end_line": 58,
+        "owner_kind": "Method",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.BlockBasedTableFactory.kClassName",
+        "raw_name": "kBlockBasedTableName",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:50bf01b6c74deec9f9c5a3dd50692be061189a5b26d74dbaa7cd82df9b58e253"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-e50f9dad96b20880",
+      "repository": "brpc",
+      "raw_reference_id": "reference:aa575e65450794948b3a2b90cc19d3d88698cb5a54a5112f004671c59251de0b",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 91,
+        "end_line": 91,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.get_child",
+        "raw_name": "childs_value_list",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-f57b2e43a585b7c5",
+      "repository": "aria2",
+      "raw_reference_id": "reference:dbedf3135039d6318911986d711e1f1cae22b28a3d43ad4db916fe1dc3fe296e",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 82,
+        "end_line": 82,
+        "owner_kind": "Method",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.StructDoc.write",
+        "raw_name": "re",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-0a0b22aaf75a2795",
+      "repository": "brpc",
+      "raw_reference_id": "reference:4157fdfc8bfe1d593e7a7a89962770c6438be2aa9101cc70ef3de20a57e8044a",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/bvar/passive_status.h",
+        "start_line": 23,
+        "end_line": 24,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.bvar.passive_status",
+        "raw_name": "bvar/variable.h",
+        "target_module": "bvar/variable.h"
+      },
+      "candidate_symbol_ids": [
+        "file:a64c2c576e9a6f5420ed47c4aba6dc9dd5a620fa9edf0543e343f44dd2d36deb"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-7e6028952b2e2c4d",
+      "repository": "aria2",
+      "raw_reference_id": "reference:57e73769e0ba717d97b44fd0fa43e99526d16ade6b38a843701b94c5c9896197",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 90,
+        "end_line": 90,
+        "owner_kind": "Method",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref.StructDoc.write",
+        "raw_name": "endswith",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-d12b7bdc3ecd5bbc",
+      "repository": "brpc",
+      "raw_reference_id": "reference:dafc5f878bb7b01a5590ea38188df96649c51b5e362a59c8bf7b6539e656bf28",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/bthread_unittest.cpp",
+        "start_line": 184,
+        "end_line": 184,
+        "owner_kind": "Function",
+        "owner_qualified_name": "anonymous.misc",
+        "raw_name": "bthread_start_urgent",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:82120524ca00e8c9d25fe43f384959c0fc33f42a3abfd9f6a914232b8541d488",
+        "symbol:f33946fda2e5c4f4f7d3314a6d9677fa94b8e8cab2c983f15d7ba8674f5d0fd4"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-50cde67d26537c7c",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:88d3f8206f85843713814481c36b66e6517545ab960e70f1ec27d6cd2e0e96e9",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "utilities/transactions/write_committed_transaction_ts_test.cc",
+        "start_line": 944,
+        "end_line": 946,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.TEST_P",
+        "raw_name": "txn3->GetForUpdate(ReadOptions(), handles_[1], \"key\", &value, /*exclusive=*/true, /*do_validate=*/false) .IsInvalidArgument",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:e3914a04fe233add7ea49eeb9cb512edddbbb00fbac1bca1aa72dedcf9d12c8c"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-7d3ed2f39a8ee359",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:ab817d6d7cac5e71e0b54c5f97841099dbf60aef465aac520b77d3137bb21645",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/db_crashtest_test.py",
+        "start_line": 187,
+        "end_line": 187,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.db_crashtest_test.DBCrashTestTest.test_cache_and_write_buffer_size_multiplier_respects_write_buffer_minimum",
+        "raw_name": "default_params",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-925bccaa1f6af572",
+      "repository": "brpc",
+      "raw_reference_id": "reference:7595ac8d4d793b30bc26440f4bb4ec23368fc3b6bdd4fe2fbd3d1514a68fc497",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/brpc/policy/thrift_protocol.cpp",
+        "start_line": 645,
+        "end_line": 646,
+        "owner_kind": "Function",
+        "owner_qualified_name": "brpc.policy.ProcessThriftResponse",
+        "raw_name": "ReadThriftStruct",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:df8342fb962201cc97efb91bc2901003646af5f990e2209bb43e46a908b84a0e"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-6fd1cc6573ec1b32",
+      "repository": "aria2",
+      "raw_reference_id": "reference:bef72999af06de0591d18d167a1efd2244ff76248d5e8fcff676dfaa39e4f4fb",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 36,
+        "end_line": 36,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.bash_completion.make_bash_completion.get_all_options",
+        "raw_name": "opts",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:827f6468eadb4d3dea44f00993819f61a937811e0b153df68c58af71200a7d65"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-afcb7bece5fbf84d",
+      "repository": "brpc",
+      "raw_reference_id": "reference:99f410da66b028ca3b58cb051e273a4e3059d3117ef18422783ddb52e27644ea",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 265,
+        "end_line": 265,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.bthread_all",
+        "raw_name": "bthread_num",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:e954e36d5a22bdc85cd39e4213b078175a33e70ef6d51b3ed343f6daeb9869cf"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-b24d43d6f6748681",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:cc0fc0aaa313aa3519c940fc30eafbb9b4ef95df98fa03bab1da655ab560c7cf",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "logging/auto_roll_logger.cc",
+        "start_line": 13,
+        "end_line": 14,
+        "owner_kind": "File",
+        "owner_qualified_name": "logging.auto_roll_logger",
+        "raw_name": "rocksdb/file_system.h",
+        "target_module": "rocksdb/file_system.h"
+      },
+      "candidate_symbol_ids": [
+        "file:4a13cc5105443e7dac136092aa4fc851a01b11eacb37597da27a8ce949aa842f"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-3417e1e85c14dc2b",
+      "repository": "aria2",
+      "raw_reference_id": "reference:fcac27bbf45d2823fbddf3e90ec98a5fef1f59f7af1fa705324df1990dd64ec1",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 126,
+        "end_line": 126,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.bash_completion.make_bash_completion.output_case",
+        "raw_name": "opts",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:827f6468eadb4d3dea44f00993819f61a937811e0b153df68c58af71200a7d65"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-b13db4df2ae67499",
+      "repository": "brpc",
+      "raw_reference_id": "reference:3933764991a4691a5efa7a882218e2045cbdbdc516d1714c65ef3ef4ec8d9aac",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 140,
+        "end_line": 140,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.get_all_bthreads",
+        "raw_name": "long_type",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-ecbfe395c8ae229d",
+      "repository": "aria2",
+      "raw_reference_id": "reference:45f1f63650cf585489010d94f5411624786a27dfaf18845c2d37b6240b8e9d57",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/DHTEntryPointNameResolveCommand.h",
+        "start_line": 38,
+        "end_line": 39,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.DHTEntryPointNameResolveCommand",
+        "raw_name": "Command.h",
+        "target_module": "Command.h"
+      },
+      "candidate_symbol_ids": [
+        "file:8ea1c2d1e68c65dcacbe20bbe8692bfbbe98ca3e66bca708677a07098cd95854"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-52bdba205b5ce686",
+      "repository": "aria2",
+      "raw_reference_id": "reference:766fd7695a4ee8edb0a5b2394e12a7606dc40d5e57c72778a3e43a7134f98219",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/HttpResponseTest.cc",
+        "start_line": 252,
+        "end_line": 252,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.HttpResponseTest",
+        "raw_name": "httpResponse.getHttpHeader()->setStatusCode",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-0f84707a755b6d84",
+      "repository": "aria2",
+      "raw_reference_id": "reference:3ce9fbcad7f2e85ef83d6d7a6947dba7e4bb685e742c34494919a26053413afe",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/CookieStorage.cc",
+        "start_line": 159,
+        "end_line": 159,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.CookieStorage",
+        "raw_name": "data.size",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:09276028ee2eb90c14b4bb3cb04035b818d1419fca335ca7284be69ec847572c"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-db9854fe698976a2",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:b0a118df71c404a4c5391fd1287a82e3b141334b969e529d9f5c216da2ab71d3",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "db/blob/db_blob_direct_write_test.cc",
+        "start_line": 687,
+        "end_line": 687,
+        "owner_kind": "Function",
+        "owner_qualified_name": "ROCKSDB_NAMESPACE.TEST_F",
+        "raw_name": "CountBlobFiles",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:a270cc1c657d60e23819c531d77190a6ad93841769c35562a0e0548d00d1f2ac"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-d96f900465b7aaa4",
+      "repository": "brpc",
+      "raw_reference_id": "reference:55cb1544a19926abf59f4a02da24a7a01e7a8b6c6440a7d916fd54b5609667bc",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/gdb_bthread_stack.py",
+        "start_line": 144,
+        "end_line": 144,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.gdb_bthread_stack.BthreadFrameCmd.invoke",
+        "raw_name": "format",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:d5fa05eec334493162a7da4aa4c6db84ea9cd626ba927e7ac325ff9846540d1b"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-1ad645405e3e9695",
+      "repository": "brpc",
+      "raw_reference_id": "reference:c53935dcede5dd31b8dbe4aa8f9dd463b6e92ed833970cd02f639ea853c4eb59",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/butil/debug/stack_trace.cc",
+        "start_line": 7,
+        "end_line": 8,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.butil.debug.stack_trace",
+        "raw_name": "butil/basictypes.h",
+        "target_module": "butil/basictypes.h"
+      },
+      "candidate_symbol_ids": [
+        "file:e648967fee36d71ea4533f1e619c6a14f8be1824df3a12cc00e58cd91f3c8852"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-f1abdaa5d081ee7e",
+      "repository": "aria2",
+      "raw_reference_id": "reference:4ae53c3e5f4dc50e72742d0cfd7cbf0f1524a78b34ee8336a185c1c53d3bae50",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/sphinx_themes/sphinx_rtd_theme/__init__.py",
+        "start_line": 75,
+        "end_line": 75,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.sphinx_themes.sphinx_rtd_theme.setup",
+        "raw_name": "extend_html_context",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:141d0477ddcc5263cca41d93af610f9467400ac1fdcee867634b27ae4ea71f22"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-342f7be2ac886595",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:213e4bd400c634bb2b84780ecfa887a092d9ff9af260b2116e89e17602dcdc84",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/c_api_gen/gen_roundtrip_tests.py",
+        "start_line": 167,
+        "end_line": 167,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.c_api_gen.gen_roundtrip_tests.emit",
+        "raw_name": "test_fns",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-f3dbb757e4ce0c89",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:ed60673ab812fcfa786095003f83e88febf015145897dcc44e120fa84c1e2d11",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/advisor/advisor/db_config_optimizer.py",
+        "start_line": 130,
+        "end_line": 130,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.advisor.advisor.db_config_optimizer.ConfigOptimizer.improve_db_config",
+        "raw_name": "current_config",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:7e3d7cbfd4f34258e5363800c7c65b6e3e48acd0bdcc2d6598eb79ad0826278d"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-2bf1c7b1a8381218",
+      "repository": "brpc",
+      "raw_reference_id": "reference:46ec778d76d3b893314e92971abf40c6d02ee149bdbe43a1d9ad03add9fac21f",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 156,
+        "end_line": 156,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.get_all_bthreads",
+        "raw_name": "task_meta",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:8c7073821c6d7704f1d85a6c69b79af77782e934e575336f593c6d884e9f6578"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-2b8ca346737ed076",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:75f5bef4f2d3f6b2343cc3a1b0ad83b0542579a0dc7268cf2971586399cb3316",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "table/block_based/flush_block_policy.cc",
+        "start_line": 15,
+        "end_line": 16,
+        "owner_kind": "File",
+        "owner_qualified_name": "table.block_based.flush_block_policy",
+        "raw_name": "table/block_based/block_builder.h",
+        "target_module": "table/block_based/block_builder.h"
+      },
+      "candidate_symbol_ids": [
+        "file:d82a01662ff16e90169a3df5b925a2a13275a91f830f2edc50a550411267a5b8"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-a57b6fcb67fac1a7",
+      "repository": "brpc",
+      "raw_reference_id": "reference:aa46ba89075e3fc4db7ddb2fd818d4f30b759d1708bd2f27ba2071cb668bb4e2",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/brpc/trackme.cpp",
+        "start_line": 30,
+        "end_line": 31,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.brpc.trackme",
+        "raw_name": "brpc/policy/hasher.h",
+        "target_module": "brpc/policy/hasher.h"
+      },
+      "candidate_symbol_ids": [
+        "file:27e4d376b0dc9d833351c487e7b5bd03b68f10b740816f6ffc6c7bff6ac8e865"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-fae8ea276b34fa91",
+      "repository": "aria2",
+      "raw_reference_id": "reference:7bf60cc8cc801cb15651c3d171400203ab1ad6aa77cc2ae6f1768596a8980364",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 166,
+        "end_line": 166,
+        "owner_kind": "File",
+        "owner_qualified_name": "doc.bash_completion.make_bash_completion",
+        "raw_name": "opts",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:827f6468eadb4d3dea44f00993819f61a937811e0b153df68c58af71200a7d65"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-8a70796e56274535",
+      "repository": "brpc",
+      "raw_reference_id": "reference:e7f37b04dc69fd35526bdc27e35605f143c49af06ac45ccbaf1c0c0c14eb18ce",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/brpc_http_rpc_protocol_unittest.cpp",
+        "start_line": 2956,
+        "end_line": 2956,
+        "owner_kind": "Function",
+        "owner_qualified_name": "anonymous.TEST_F",
+        "raw_name": "EXPECT_GT",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-c900f72d67f383ae",
+      "repository": "aria2",
+      "raw_reference_id": "reference:97471397fa4d5b25b3d8451bf4f6deed0eae36704fbebae0d7c555f4dd079013",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "test/ServerStatManTest.cc",
+        "start_line": 53,
+        "end_line": 53,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.ServerStatManTest",
+        "raw_name": "r->getHostname",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-be43e19b68a9a8e9",
+      "repository": "aria2",
+      "raw_reference_id": "reference:17ea6c4c53c90dba43a50664df2013c78e002f1253dc8cd2166f31e81e20f478",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/SimpleRandomizer.cc",
+        "start_line": 38,
+        "end_line": 39,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.SimpleRandomizer",
+        "raw_name": "unistd.h",
+        "target_module": "unistd.h"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-847434aeda664ac6",
+      "repository": "brpc",
+      "raw_reference_id": "reference:ae05f3e353c986d51b96539bba27324af5fa0cbc76a9c26c57d8b1f3077cd269",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 324,
+        "end_line": 324,
+        "owner_kind": "Function",
+        "owner_qualified_name": "tools.lldb_bthread_stack.bthread_end",
+        "raw_name": "reset",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:ccceb740f15ec062cb11474b7f171badac069981627b7e0c38c27bd37aee8e3d"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-2a7fdb7f3a53e49a",
+      "repository": "aria2",
+      "raw_reference_id": "reference:0343ebe8431be983b39c53cb288c0783d40903276241201f50078e36eb788aa5",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/RequestGroupMan.cc",
+        "start_line": 63,
+        "end_line": 64,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.RequestGroupMan",
+        "raw_name": "File.h",
+        "target_module": "File.h"
+      },
+      "candidate_symbol_ids": [
+        "file:70aac1b7f04aa04a1e3a7fd3f61a5eb622d2f8aa4c1003e41f317bd6576eb2ee"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-brpc-5a19585afcd8a6d6",
+      "repository": "brpc",
+      "raw_reference_id": "reference:e486b0e1b35c9568260ec121ddd2a671a51d51ec52365864276b116fe30b7e66",
+      "relation_type": "CALLS",
+      "source": {
+        "path": "src/butil/big_endian.cc",
+        "start_line": 86,
+        "end_line": 86,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.butil.big_endian",
+        "raw_name": "Write",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:7a03a45ecac8804af5754b0b682def1416ce59238609eaf9ec1876c2ea72e1a3"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-011b30e223df40af",
+      "repository": "aria2",
+      "raw_reference_id": "reference:118f1d72d27477494c3b01020208054d9eabd9eddb1aca11b714411e8d8e79c5",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/DiskAdaptor.h",
+        "start_line": 40,
+        "end_line": 41,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.DiskAdaptor",
+        "raw_name": "string",
+        "target_module": "string"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-186715e883536c6f",
+      "repository": "aria2",
+      "raw_reference_id": "reference:12650e109e7042fc06a1318b874880cd42079a6bc5a424dec30bc1bfbd873eb8",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 80,
+        "end_line": 80,
+        "owner_kind": "Function",
+        "owner_qualified_name": "doc.bash_completion.make_bash_completion.output_case",
+        "raw_name": "opts",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:827f6468eadb4d3dea44f00993819f61a937811e0b153df68c58af71200a7d65"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-rocksdb-080cc91dd1133d44",
+      "repository": "rocksdb",
+      "raw_reference_id": "reference:550b30b19d925ea79a52bbabd4e4c5a531914aaab62e6872001277cf3316157e",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "tools/db_crashtest_test.py",
+        "start_line": 595,
+        "end_line": 595,
+        "owner_kind": "Method",
+        "owner_qualified_name": "tools.db_crashtest_test.DBCrashTestTest.test_liveness_params_keep_mixed_workload_and_enable_watchdog",
+        "raw_name": "build_mode_args",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:44eef1de3306c8da4c60cab41b32893b24e7dea47fdb246c9b6df59367a68c43"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-5a4f0360db806a83",
+      "repository": "aria2",
+      "raw_reference_id": "reference:f7b1bb248182a3a2a0b010021810fac90c820da4e905f04f7662b5b7b05dc838",
+      "relation_type": "REFERENCES",
+      "source": {
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 290,
+        "end_line": 290,
+        "owner_kind": "File",
+        "owner_qualified_name": "doc.manual-src.en.mkapiref",
+        "raw_name": "header",
+        "target_module": null
+      },
+      "candidate_symbol_ids": [
+        "symbol:9628e95873bc3f5abc46f119f1425a41d4ea0c6c9d510b47c8973c3dfc57c38c"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-dc272fbb1023afed",
+      "repository": "aria2",
+      "raw_reference_id": "reference:33c77c3d93355873d941c8fc9e5296055ed75c67ee55ae16b1eb0f1ad18a81c5",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "src/AbstractAuthResolver.cc",
+        "start_line": 37,
+        "end_line": 38,
+        "owner_kind": "File",
+        "owner_qualified_name": "src.AbstractAuthResolver",
+        "raw_name": "a2functional.h",
+        "target_module": "a2functional.h"
+      },
+      "candidate_symbol_ids": [
+        "file:90fdefd318a22a34e2a6e18763e82609f9d9a2e8f584a4f34a79d5521c31d6d2"
+      ],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    },
+    {
+      "case_id": "FQV1-aria2-a4092dc76a6af8a7",
+      "repository": "aria2",
+      "raw_reference_id": "reference:842823b4d85d619b835ddcb3435b9c032e84fef9f663ff0f1a832c68bf9088b3",
+      "relation_type": "IMPORTS",
+      "source": {
+        "path": "test/BtRegistryTest.cc",
+        "start_line": 3,
+        "end_line": 4,
+        "owner_kind": "File",
+        "owner_qualified_name": "test.BtRegistryTest",
+        "raw_name": "cppunit/extensions/HelperMacros.h",
+        "target_module": "cppunit/extensions/HelperMacros.h"
+      },
+      "candidate_symbol_ids": [],
+      "build_context": {
+        "build_context_available": null,
+        "compile_commands_available": null,
+        "build_target": null,
+        "platform": null,
+        "preprocessor_context": null,
+        "generated_source_policy": null
+      }
+    }
+  ]
+}

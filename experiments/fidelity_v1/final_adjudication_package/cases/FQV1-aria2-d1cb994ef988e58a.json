@@ -1,0 +1,129 @@
+{
+    "sample_id":  "FQV1-aria2-d1cb994ef988e58a",
+    "batch_id":  "04",
+    "repository":  "aria2",
+    "frozen_repository_commit":  "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "relation_type":  "CALLS",
+    "language_track":  "C/C++",
+    "source_location":  {
+                            "raw_reference_id":  "reference:f3535c4b6f4b014cfe7ad944b7e0f58c0076da2cc202a0fa1aad13897490a064",
+                            "path":  "src/DefaultPeerStorage.cc",
+                            "start_line":  80,
+                            "end_line":  81,
+                            "owner_kind":  "File",
+                            "owner_qualified_name":  "src.DefaultPeerStorage",
+                            "raw_name":  "uniqPeers_.count",
+                            "target_module":  null
+                        },
+    "annotation_candidate_set":  {
+                                     "provenance":  "sealed blind annotation view (frozen annotation-scope candidate information)",
+                                     "candidate_symbol_ids":  [
+                                                                  "symbol:016c4eab81bbfe53383a0b086b2bee99c8f744afa67ac36168c7d9191fc0c303",
+                                                                  "symbol:0beee62709a7d2a1e2b072b15d1e498bf15902fb2628a28ca92f8f49a1079e75",
+                                                                  "symbol:0ed108d1c2091e60ee4885cdf68479d0b256068fd1b835da4abccc25a1a8ecac",
+                                                                  "symbol:13343fed8586daa399a1e5972e0ad0850e8a1d09217b5cede4484220ff0b8315",
+                                                                  "symbol:1bb63d50b5550788bdb19b77c172f4a1be38ebce770f41b986a5d8890915e491",
+                                                                  "symbol:4a0052efe048eaebb7c560a525066449f0c31e81c81bd1e43300b54e50be3dac",
+                                                                  "symbol:57ee6dc2ab6af777f463786a56014a9c4b826901b9296e46c58cfbe6c879389c",
+                                                                  "symbol:77cf69752b7827524beb82975016d4ea921c407c64549cc21c08b2bbd2d58783",
+                                                                  "symbol:7f31ea3ce62ad4c18463b8d42ab6954f68cd72d9ded0015a9c2d571f99eace4c",
+                                                                  "symbol:926bd820e211281624b57d886f4dec2bc876d04fb2e767e89db1efe2253774c4",
+                                                                  "symbol:cbb57882efec996163fa770af55f1a446bf5fe5f956290bc652808550c921e9d",
+                                                                  "symbol:dd113c4b5842ce723187863f3fb7f85c7e0abe528b79844aeb622e916d06d375",
+                                                                  "symbol:e1ac15b4e58d4849a38faa77f1dc932ea832dfa414129c5dcc46dc91ef471b18",
+                                                                  "symbol:e38ef6fcd24bfbe84dec4b51fd7e62f2f9f0edf70ed2ed8725684241901ea39c",
+                                                                  "symbol:e5c8eaf7c4b4b46b63523cdbd128c568cdcf318aa03606f4591ace5e18437898",
+                                                                  "symbol:e9e389b5228acbfb0fd7ab17040daaa9e86fc707479badc5f0bc86f7212ab8b4",
+                                                                  "symbol:fb428e6ab5a2c9a7b74bc0fc08b4e9387fc03dd5b628be4aaf3936f7a124fc33"
+                                                              ]
+                                 },
+    "build_context_information":  {
+                                      "build_context_available":  null,
+                                      "compile_commands_available":  null,
+                                      "build_target":  null,
+                                      "platform":  null,
+                                      "preprocessor_context":  null,
+                                      "generated_source_policy":  null
+                                  },
+    "annotator_a":  {
+                        "annotator_id":  "A",
+                        "sealed_source_file":  "blind_packages/batch-04/annotator-a/output/annotator-a-batch-04-annotations.json",
+                        "language_scope_as_recorded":  "C++",
+                        "gold_relation_exists_as_annotated":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "evidence_locations":  [
+                                                   "src/DefaultPeerStorage.cc:80"
+                                               ],
+                        "navigation_telemetry":  {
+                                                     "navigation_files":  [
+
+                                                                          ],
+                                                     "navigation_files_count":  0,
+                                                     "navigation_path":  [
+
+                                                                         ],
+                                                     "navigation_hop_count":  0,
+                                                     "verification_depth":  "L0",
+                                                     "target_recovered_after_navigation":  false,
+                                                     "recovered_target":  null,
+                                                     "recovery_reason":  null
+                                                 },
+                        "build_context_status":  "NOT_REQUIRED",
+                        "confidence":  "medium",
+                        "difficulty_tags":  [
+                                                "member-call",
+                                                "name-collision"
+                                            ],
+                        "protocol_issue":  "Seventeen opaque candidates lack receiver-type/location mapping.",
+                        "reasoning":  "uniqPeers_.count is a source-level member call."
+                    },
+    "annotator_b":  {
+                        "annotator_id":  "B",
+                        "sealed_source_file":  "blind_packages/batch-04/annotator-b/output/annotation-record-template.json",
+                        "language_scope_as_recorded":  "C/C++",
+                        "gold_relation_exists_as_annotated":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "evidence_locations":  [
+                                                   "src/DefaultPeerStorage.cc:80"
+                                               ],
+                        "navigation_telemetry":  {
+                                                     "navigation_files":  [
+
+                                                                          ],
+                                                     "navigation_files_count":  0,
+                                                     "navigation_path":  [
+
+                                                                         ],
+                                                     "navigation_hop_count":  0,
+                                                     "verification_depth":  "L0",
+                                                     "target_recovered_after_navigation":  false,
+                                                     "recovered_target":  null,
+                                                     "recovery_reason":  null
+                                                 },
+                        "build_context_status":  "EXTERNAL_TARGET",
+                        "confidence":  "HIGH",
+                        "difficulty_tags":  [
+                                                "external-library-or-container-member"
+                                            ],
+                        "protocol_issue":  null,
+                        "reasoning":  "The source-level relation is present, but no target is available within the permitted frozen repository scope."
+                    },
+    "frozen_protocol_version":  [
+                                    "CALLS_V1",
+                                    "EVIDENCE_SCOPE_V1",
+                                    "DECL_DEF_EQUIVALENCE_V1"
+                                ],
+    "package_note":  "source-only adjudication record; contains no system prediction, resolver result, correctness label, or fidelity score"
+}

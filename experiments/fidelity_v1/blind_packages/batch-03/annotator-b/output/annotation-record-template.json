@@ -1,0 +1,2087 @@
+{
+  "artifact": "annotator-b-batch-03-annotation-record-template",
+  "schema_version": 2,
+  "annotator_id": "B",
+  "batch_id": "03",
+  "sample_count": 60,
+  "telemetry_schema": {
+    "navigation_files": "array<string>; repository-relative files read beyond the sample source file; [] if none",
+    "navigation_files_count": "integer >= 0; must equal navigation_files.length",
+    "navigation_path": "array<string>; ordered repository-relative evidence-navigation path; [] if none",
+    "navigation_hop_count": "integer >= 0; number of transitions in navigation_path",
+    "verification_depth": "L0|L1|L2|L3|L4",
+    "target_recovered_after_navigation": "boolean",
+    "recovered_target": "null | {symbol_id:string|null,path:string,start_line:integer|null}",
+    "recovery_reason": "string|null"
+  },
+  "records": [
+    {
+      "sample_id": "FQV1-brpc-8c9d0887e1f9d4fe",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "src/brpc/couchbase.cpp",
+        "start_line": 26
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/brpc/couchbase.cpp:468-468"
+      ],
+      "difficulty_tags": [
+        "macro"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-178d1ff3a0cd7ce9",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/lldb_bthread_stack.py:186-186"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-0fb35dcffa633600",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "utilities/secondary_index/faiss_ivf_index.cc:219-219"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-99a8d24728ae1196",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:d53081f7db0fdd33c859fc23e7177b2e76d252343b3305d28018200eda60295f",
+        "path": "utilities/merge_operators/string_append/stringappend2.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "utilities/merge_operators/string_append/stringappend2.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "options/customizable_test.cc",
+        "utilities/merge_operators/string_append/stringappend2.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:d53081f7db0fdd33c859fc23e7177b2e76d252343b3305d28018200eda60295f",
+        "path": "utilities/merge_operators/string_append/stringappend2.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "options/customizable_test.cc:50-51",
+        "utilities/merge_operators/string_append/stringappend2.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-f66d19a80d90cc4d",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:76c30d487b798bd2d6fcd56f871c724150e176ed79c02e3d4acf3712e50c1890",
+        "path": "db/c_test.c",
+        "start_line": 80
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "db/c_test.c:7046-7046"
+      ],
+      "difficulty_tags": [
+        "macro"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-c4f0776cc2d3f2f9",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:e18d5fe750a8adf5e99b8143656e1edf6c00fa2fb404f60f5f7d9107d7b9cd25",
+        "path": "src/Peer.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/Peer.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/DefaultBtInteractive.cc",
+        "src/Peer.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:e18d5fe750a8adf5e99b8143656e1edf6c00fa2fb404f60f5f7d9107d7b9cd25",
+        "path": "src/Peer.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "src/DefaultBtInteractive.cc:64-65",
+        "src/Peer.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-eb22480ad0a9d65f",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/db_crashtest_test.py:43-43"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-brpc-639b4fbd4eb1a885",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/gdb_bthread_stack.py:104-104"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-aria2-594104f8202cd07c",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/ValueBaseTest.cc:53-53"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-34b5b3e1cb2c3201",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "tools/run_clang_tidy.py",
+        "start_line": 296
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/run_clang_tidy.py:297-297"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-657008a8ca392740",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "test_util/testharness.h",
+        "start_line": 88
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "test_util/testharness.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/compaction/compaction_service_test.cc",
+        "test_util/testharness.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": null,
+        "path": "test_util/testharness.h",
+        "start_line": 88
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "db/compaction/compaction_service_test.cc:2083-2083",
+        "test_util/testharness.h:88"
+      ],
+      "difficulty_tags": [
+        "macro"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-3c112669c1d2a328",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:7e8955f989ecc974888d7c8eb5a96119bb556fa8ad93c26a36c4136622c45f53",
+        "path": "tools/lldb_bthread_stack.py",
+        "start_line": 152
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/lldb_bthread_stack.py:152-152"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-c1e9161df3d24212",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:7a1de257509910ffff4f24071d6dfe8adfed16fbd745cb1b75b4055920f7775c",
+        "path": "example/ubring_performance/client.cpp",
+        "start_line": 207
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "example/ubring_performance/client.cpp:207-207"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-7b8fb60c33671eaf",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:f769cd56c11435aa04604bc12a2ae1d52150eac3665cd4bd2bc487d8735af6c1",
+        "path": "src/brpc/amf.cpp",
+        "start_line": 127
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/brpc/amf.cpp:127-127"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-1013c4ea4951ce6e",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/GZipDecoderTest.cc:4-5"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-aria2-b56746858b1a20aa",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/RpcMethodTest.cc:3-4"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-aria2-c6525c9d8d155f3f",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:01c44fa04d777eb1183ddfb069836eda44dc5b8a6a4e0dcdf145bc219791cd27",
+        "path": "test/UtilTest1.cc",
+        "start_line": 162
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/UtilTest1.cc:162-162"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-85a27eca37b8f8c1",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:4ca0838034b4067c5e3b9de4a2735c4f54df33604c3abedb18552181626693b4",
+        "path": "util/comparator.cc",
+        "start_line": 322
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "util/comparator.cc"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "table/table_test.cc",
+        "util/comparator.cc"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:4ca0838034b4067c5e3b9de4a2735c4f54df33604c3abedb18552181626693b4",
+        "path": "util/comparator.cc",
+        "start_line": 322
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "table/table_test.cc:230-230",
+        "util/comparator.cc:322"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-dc02940ee463a68a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:a7e02dc80988b03f430c0ba7c5d54cad47241e84daf7742cf341226362f77bc5",
+        "path": "src/bencode2.cc",
+        "start_line": 125
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/bencode2.cc:125-125"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-8c0df0a18a9ac226",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:cd330e1e7e294ec2d79eed1f1c3297fb97b277357fcc1acaafa1ca9f8de2cc34",
+        "path": "src/butil/macros.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/butil/macros.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "test/brpc_controller_unittest.cpp",
+        "src/butil/macros.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:cd330e1e7e294ec2d79eed1f1c3297fb97b277357fcc1acaafa1ca9f8de2cc34",
+        "path": "src/butil/macros.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "test/brpc_controller_unittest.cpp:26-27",
+        "src/butil/macros.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-1297e3afcef27b0a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/brpc_uri_unittest.cpp:18-19"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-aria2-e03045f4f066d733",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:3c478b54a61225b0db9098b5ac29a5e7161f062fad3079e8dd5fe62eed11c3ec",
+        "path": "src/DlAbortEx.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/DlAbortEx.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/BtPieceMessage.cc",
+        "src/DlAbortEx.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:3c478b54a61225b0db9098b5ac29a5e7161f062fad3079e8dd5fe62eed11c3ec",
+        "path": "src/DlAbortEx.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "src/BtPieceMessage.cc:44-45",
+        "src/DlAbortEx.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-f22dd80161b9bb6a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:555593a7cebf51866bf46c230507e98f21d62305b814fb132242cd197fd486ea",
+        "path": "src/brpc/versioned_ref_with_id.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/brpc/versioned_ref_with_id.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/brpc/socket.h",
+        "src/brpc/versioned_ref_with_id.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:555593a7cebf51866bf46c230507e98f21d62305b814fb132242cd197fd486ea",
+        "path": "src/brpc/versioned_ref_with_id.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "src/brpc/socket.h:43-44",
+        "src/brpc/versioned_ref_with_id.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-f603c82c16239f57",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:aace0259d5adbac4feae0e9c40e07df66019921fb992c1476660fa27865c2f42",
+        "path": "include/rocksdb/slice_transform.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "include/rocksdb/slice_transform.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db_stress_tool/db_stress_common.h",
+        "include/rocksdb/slice_transform.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:aace0259d5adbac4feae0e9c40e07df66019921fb992c1476660fa27865c2f42",
+        "path": "include/rocksdb/slice_transform.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "db_stress_tool/db_stress_common.h:55-56",
+        "include/rocksdb/slice_transform.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-a2ae789d3de9d28e",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:2730a42ed766ce5e237ce654f5ab4d55c26daebaceb9015523893e311a392b66",
+        "path": "src/FtpConnection.cc",
+        "start_line": 111
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/FtpConnection.cc:387-387"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-eb64f327dadecb5a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:93aca7479aa8dd1c66e0c77e482ae45f1d433b1ed01e2bf806fd795da54f538a",
+        "path": "tools/ldb_test.py",
+        "start_line": 96
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/ldb_test.py:909-909"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-e24d0c9f9a05b8dc",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:bef58f79efa0815953a55ab29f766ef5b79e34905992151678033bb93e145184",
+        "path": "include/rocksdb/options.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "include/rocksdb/options.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "memory/memory_allocator_test.cc",
+        "include/rocksdb/options.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:bef58f79efa0815953a55ab29f766ef5b79e34905992151678033bb93e145184",
+        "path": "include/rocksdb/options.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "memory/memory_allocator_test.cc:14-15",
+        "include/rocksdb/options.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-a7fcfdbc818d1ac0",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:eeba15c7919a91cb1dc3bcef5038b2e2abd3ded7cb4384a13529378214427b66",
+        "path": "test/platform_thread_unittest.cc",
+        "start_line": 45
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/platform_thread_unittest.cc:45-45"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-8fbd7f6e2ec1619a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:8ffc37f47b190be6902c2cb661022013c1ed1ce44ea6da5d3f50e91428327b5f",
+        "path": "include/rocksdb/system_clock.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "include/rocksdb/system_clock.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/internal_stats.h",
+        "include/rocksdb/system_clock.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:8ffc37f47b190be6902c2cb661022013c1ed1ce44ea6da5d3f50e91428327b5f",
+        "path": "include/rocksdb/system_clock.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "db/internal_stats.h:20-21",
+        "include/rocksdb/system_clock.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-3a4f1af91520be3a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:8ffc37f47b190be6902c2cb661022013c1ed1ce44ea6da5d3f50e91428327b5f",
+        "path": "include/rocksdb/system_clock.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "include/rocksdb/system_clock.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "monitoring/perf_step_timer.h",
+        "include/rocksdb/system_clock.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:8ffc37f47b190be6902c2cb661022013c1ed1ce44ea6da5d3f50e91428327b5f",
+        "path": "include/rocksdb/system_clock.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "monitoring/perf_step_timer.h:9-10",
+        "include/rocksdb/system_clock.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-5cfbe4c0f156df21",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:d05f2591a60b7ff107acc5789a8a04918f180ae1d091ce8dc6e7faed3660e88f",
+        "path": "buckifier/util.py",
+        "start_line": 16
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "buckifier/util.py:38-38"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-ccc97e5b37132ace",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/lldb_bthread_stack.py:291-291"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-brpc-9806a502687549e4",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/butil/debug/stack_trace.h:9-10"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-ec017de0157014f4",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "utilities/transactions/timestamped_snapshot_test.cc:465-465"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-1887637cc8bf23ac",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:f290e1b00653f1da944ddaaca1b3f86cef891c03b6154883dcb451cd8b50e93d",
+        "path": "tools/cpu_corruption_injector/injector.py",
+        "start_line": 173
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/cpu_corruption_injector/injector.py:190-190"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-41db0050ca5b26f5",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/db_crashtest_test.py:19-19"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-aria2-3b7ff33941c6d59a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:17-17"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-brpc-a41952e3fd9a42a4",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:e98f0549c09d3a5872427b9ef6f7ca5ff433e1b4444218b5167dc81d1646e8c5",
+        "path": "src/butil/file_util_posix.cc",
+        "start_line": 791
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/butil/file_util_posix.cc:791-792"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-9321f98399a2d154",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:827f6468eadb4d3dea44f00993819f61a937811e0b153df68c58af71200a7d65",
+        "path": "doc/bash_completion/make_bash_completion.py",
+        "start_line": 21
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/bash_completion/make_bash_completion.py:41-41"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-929091560ddad98e",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:77a5f337bac3cf3a0dcdb87e2af4e799c21dc0a512b104140f069f70036fc59b",
+        "path": "src/UDPTrackerClient.cc",
+        "start_line": 50
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/UDPTrackerClient.cc:548-548"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-709dda7bec5bc454",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:3c7d4956d7f9a24049f4490bbbfe62d27ba32de816b442a30403910850d7b736",
+        "path": "src/array_fun.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/array_fun.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/OptionHandlerImpl.cc",
+        "src/array_fun.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:3c7d4956d7f9a24049f4490bbbfe62d27ba32de816b442a30403910850d7b736",
+        "path": "src/array_fun.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "src/OptionHandlerImpl.cc:63-64",
+        "src/array_fun.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-ecdd1dedf78333a5",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/DefaultBtRequestFactory.h:40-41"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-bd1fd621f81874b8",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "typing",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "typing"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "tools/gtest_parallel_repro.py",
+        "typing"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": null,
+        "path": "typing",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "tools/gtest_parallel_repro.py:37-37",
+        "typing:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-5540c7bc187cb8b7",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:d82a01662ff16e90169a3df5b925a2a13275a91f830f2edc50a550411267a5b8",
+        "path": "table/block_based/block_builder.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "table/block_based/block_builder.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "utilities/persistent_cache/persistent_cache_bench.cc",
+        "table/block_based/block_builder.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:d82a01662ff16e90169a3df5b925a2a13275a91f830f2edc50a550411267a5b8",
+        "path": "table/block_based/block_builder.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "utilities/persistent_cache/persistent_cache_bench.cc:21-22",
+        "table/block_based/block_builder.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-4f4f2346428539fb",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:1b077cb0d3160907e61c8a956eebd4936176465a8768cab6183435d91c053cf7",
+        "path": "src/bthread/semaphore.cpp",
+        "start_line": 148
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/bthread/semaphore.cpp"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "test/bthread_semaphore_unittest.cpp",
+        "src/bthread/semaphore.cpp"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:1b077cb0d3160907e61c8a956eebd4936176465a8768cab6183435d91c053cf7",
+        "path": "src/bthread/semaphore.cpp",
+        "start_line": 148
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "test/bthread_semaphore_unittest.cpp:129-129",
+        "src/bthread/semaphore.cpp:148"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-b968fe7da547e59e",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": "build_tools/gtest_parallel.py",
+        "start_line": 367
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "build_tools/gtest_parallel.py:376-376"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-ffc27007c514fb0e",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:be03434e66515b97f4f361902c59548a2160afc5a013a0489e7c67f44cac883b",
+        "path": "src/AuthConfig.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/AuthConfig.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/AuthConfigFactory.cc",
+        "src/AuthConfig.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:be03434e66515b97f4f361902c59548a2160afc5a013a0489e7c67f44cac883b",
+        "path": "src/AuthConfig.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "src/AuthConfigFactory.cc:40-41",
+        "src/AuthConfig.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-c9bbcfab82d72458",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:763b63bb583be4a9b38ea266b77a986b163d5f2272eedaa9005ac7c758ec0301",
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 173
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/manual-src/en/mkapiref.py:173-173"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-6ce1878baf26a770",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/gdb_bthread_stack.py:166-166"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-brpc-52f6cf4151819d66",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "example/ubring_performance/server.cpp:19-20"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-9248edc9695c69cd",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:0a0c800e7522d8c322a74c18ac1474fe016b9ae0cf30ed56108add3f7a264cbb",
+        "path": "util/coding.h",
+        "start_line": 141
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "util/coding.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "db/compaction/compaction_iterator_test.cc",
+        "util/coding.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "symbol:0a0c800e7522d8c322a74c18ac1474fe016b9ae0cf30ed56108add3f7a264cbb",
+        "path": "util/coding.h",
+        "start_line": 141
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "db/compaction/compaction_iterator_test.cc:1483-1483",
+        "util/coding.h:141"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-b070658664f8eb34",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:eaf7375a80f6b724c087232c1e707009b2665fd7d3c006ec1c70f3521de8d5b6",
+        "path": "utilities/transactions/write_prepared_transaction_test.cc",
+        "start_line": 4464
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "utilities/transactions/write_prepared_transaction_test.cc:4464-4464"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-1636f2253aaa4ada",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:4904474f8b06be8394cd467977e81d4a1b0e382863fab5b14c78c0e50ceabbbb",
+        "path": "src/mcpack2pb/generator.cpp",
+        "start_line": 859
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/mcpack2pb/generator.cpp:1399-1399"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-c9448e6fca66878e",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "src/bthread/mutex.cpp:22-23"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-brpc-df438b2594cbeea6",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:00130fe928e08da2fc1a116b760252757e6bf4a2da1674ab0cfaf76f318b1c9e",
+        "path": "tools/gdb_bthread_stack.py",
+        "start_line": 114
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/gdb_bthread_stack.py:114-114"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-683dfb396789c525",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:e2982c8a10c4349b5896d938fdcf7f254a0bff05a0c827a00f9944e8abe1cad7",
+        "path": "tools/rpc_press/client.py",
+        "start_line": 27
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/rpc_press/client.py:27-27"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-aria2-3c279b30b937de3a",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:e4d11ea8c54bfdcb8c48b7f6d64f298d10636211886d06156b575b408d21b25f",
+        "path": "doc/manual-src/en/mkapiref.py",
+        "start_line": 273
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "doc/manual-src/en/mkapiref.py:278-278"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-brpc-d500b530449d4bf0",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "CALLS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "symbol:809cbf81a473610c4bbbd0bb47a00b68000065fb708be7b4e47e7a054b38dd0c",
+        "path": "test/brpc_server_unittest.cpp",
+        "start_line": 1339
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "test/brpc_server_unittest.cpp:1339-1339"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    },
+    {
+      "sample_id": "FQV1-rocksdb-e4c4b582d8cc5646",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "REFERENCES",
+      "language_scope": "Python",
+      "gold_relation_exists": true,
+      "formal_verdict": "NO_VALID_TARGET",
+      "valid_target_count": 0,
+      "selected_target_if_unique": {
+        "symbol_id": null,
+        "path": null,
+        "start_line": null
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [],
+      "navigation_files_count": 0,
+      "navigation_path": [],
+      "navigation_hop_count": 0,
+      "verification_depth": "L1",
+      "target_recovered_after_navigation": false,
+      "recovered_target": null,
+      "recovery_reason": null,
+      "evidence_locations": [
+        "tools/run_clang_tidy.py:305-305"
+      ],
+      "difficulty_tags": [
+        "external_dependency"
+      ],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "The source relation is present, but no target exists within the frozen repository scope."
+    },
+    {
+      "sample_id": "FQV1-brpc-fe445fb412e2fbe0",
+      "batch_id": "03",
+      "annotator_id": "B",
+      "relation_type": "IMPORTS",
+      "language_scope": "C/C++",
+      "gold_relation_exists": true,
+      "formal_verdict": "ONE_VALID_TARGET",
+      "valid_target_count": 1,
+      "selected_target_if_unique": {
+        "symbol_id": "file:f2cdb7ad14b1c00abccdead2700b68795aeccb233618157edd12ace5affe4364",
+        "path": "src/butil/memory/scoped_ptr.h",
+        "start_line": 1
+      },
+      "build_context_status": "NOT_REQUIRED",
+      "navigation_files": [
+        "src/butil/memory/scoped_ptr.h"
+      ],
+      "navigation_files_count": 1,
+      "navigation_path": [
+        "src/butil/file_util.h",
+        "src/butil/memory/scoped_ptr.h"
+      ],
+      "navigation_hop_count": 1,
+      "verification_depth": "L2",
+      "target_recovered_after_navigation": true,
+      "recovered_target": {
+        "symbol_id": "file:f2cdb7ad14b1c00abccdead2700b68795aeccb233618157edd12ace5affe4364",
+        "path": "src/butil/memory/scoped_ptr.h",
+        "start_line": 1
+      },
+      "recovery_reason": "Frozen-source navigation established the target.",
+      "evidence_locations": [
+        "src/butil/file_util.h:30-31",
+        "src/butil/memory/scoped_ptr.h:1"
+      ],
+      "difficulty_tags": [],
+      "confidence": "HIGH",
+      "protocol_issue": null,
+      "reasoning": "Source relation and its in-scope target were verified."
+    }
+  ]
+}

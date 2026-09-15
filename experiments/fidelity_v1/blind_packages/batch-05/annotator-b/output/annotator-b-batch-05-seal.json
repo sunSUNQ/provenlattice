@@ -1,0 +1,7 @@
+{
+  "artifact": "annotator-b-batch-05-seal",
+  "sealed": true,
+  "annotation_sha256": "560d08cc940bdfa6eb4416fd0298a98a441845d184bdcce5e93f5e212f2c220c",
+  "metadata_sha256": "f452c29c9987e4d50376b980bf22fce7903799caf9f2e1d0e456e2877380fb3e",
+  "sealed_at": "2026-09-15T07:03:24.5796425Z"
+}

@@ -1,0 +1,187 @@
+{
+    "package_version":  "final-cpp-adjudication-clean-package-v1",
+    "artifact":  "FINAL_CPP_ADJUDICATION_CLEAN_PACKAGE_V1",
+    "created":  "2026-09-15T07:44:30Z",
+    "builder_role":  "Adjudication Packaging / Governance Agent (not an adjudicator)",
+    "content_class":  "source-only; sealed A/B annotation data and frozen annotation-scope candidate information only",
+    "queue_summary":  {
+                          "total":  13,
+                          "batch_03":  2,
+                          "batch_04":  9,
+                          "batch_05":  2
+                      },
+    "frozen_repository_commits":  {
+                                      "aria2":  "9e7273583f83e881e3ec067b523ba88724088d2f",
+                                      "brpc":  "ae09e960c7291605dda52356cc0c2d45567fb53e",
+                                      "rocksdb":  "37234200b57d8d0a6a5c41f2d9811bbd2e293544"
+                                  },
+    "allowed_repository_access":  {
+                                      "mode":  "read-only",
+                                      "roots":  [
+                                                    "benchmark-repos/aria2",
+                                                    "benchmark-repos/brpc",
+                                                    "benchmark-repos/rocksdb"
+                                                ]
+                                  },
+    "frozen_protocol_version":  {
+                                    "protocols":  [
+                                                      "CALLS_V1",
+                                                      "EVIDENCE_SCOPE_V1",
+                                                      "DECL_DEF_EQUIVALENCE_V1"
+                                                  ],
+                                    "protocol_files":  {
+                                                           "calls-v1.md":  "06397b42c5ff2e1cb66408cd4b87c4252bbf821d0e79fb150915598c83924e9a",
+                                                           "evidence-scope-v1.md":  "f4ae518cf94b0f0f8c4e1bc6677762acd48b5142fe88bf02a8c52755d77ad7e4",
+                                                           "decl-def-equivalence-v1.md":  "03d20234f15ad6ab35c11a45d52764e660322ac50ea0c3ad00c6b6465b393c18"
+                                                       },
+                                    "protocol_provenance":  "byte-identical frozen copies present in every batch blind package (03/04/05, annotators A and B)"
+                                },
+    "allowed_files":  [
+                          {
+                              "path":  "queue.json",
+                              "sha256":  "97a45f1cd3e47e559b178df29154f6e0f91c2a93cb56a000573c8493411e070d"
+                          },
+                          {
+                              "path":  "protocol/calls-v1.md",
+                              "sha256":  "06397b42c5ff2e1cb66408cd4b87c4252bbf821d0e79fb150915598c83924e9a"
+                          },
+                          {
+                              "path":  "protocol/evidence-scope-v1.md",
+                              "sha256":  "f4ae518cf94b0f0f8c4e1bc6677762acd48b5142fe88bf02a8c52755d77ad7e4"
+                          },
+                          {
+                              "path":  "protocol/decl-def-equivalence-v1.md",
+                              "sha256":  "03d20234f15ad6ab35c11a45d52764e660322ac50ea0c3ad00c6b6465b393c18"
+                          },
+                          {
+                              "path":  "protocol/adjudication-instructions.md",
+                              "sha256":  "87e27bd882906451d79f3e247472098bf84222266a068eb2df5a113ee7dcb88b"
+                          },
+                          {
+                              "path":  "cases/FQV1-rocksdb-ec017de0157014f4.json",
+                              "sha256":  "7e7701c12c9c0a83d5e3881260e769e3b7db4beb670c2b20f823f34fdc1031e0"
+                          },
+                          {
+                              "path":  "cases/FQV1-aria2-ecdd1dedf78333a5.json",
+                              "sha256":  "83332f624f324c851b3ab33c2c9d1046c1bb41d59e1f00b81eb85bb70c0a3947"
+                          },
+                          {
+                              "path":  "cases/FQV1-brpc-a7dd1a2db3530e09.json",
+                              "sha256":  "5fd6915af2f68e5a34a44d205de2c2c1d49d6a6e75cbf1d9bb53d2bf046f053f"
+                          },
+                          {
+                              "path":  "cases/FQV1-brpc-126d8bf2305dce60.json",
+                              "sha256":  "1470d270c3df0a82af80fdd9863c926ca7df2913899f4d441f297a477fee3120"
+                          },
+                          {
+                              "path":  "cases/FQV1-aria2-4f7155139b696d14.json",
+                              "sha256":  "e428bab7d4ae18dcced0c73496046377c5f5bf03eaea7f37409d3913b160076f"
+                          },
+                          {
+                              "path":  "cases/FQV1-aria2-4656d1df0792fedd.json",
+                              "sha256":  "0c7045d71d4781ed8e6be900f30bebb8f4815b3a0bd19112836292fb4d6f2269"
+                          },
+                          {
+                              "path":  "cases/FQV1-brpc-711f654582713a22.json",
+                              "sha256":  "45f31d4fe643eb757cc4a3538494750db32a9a73ccda066a1bbd91edd6c84c2f"
+                          },
+                          {
+                              "path":  "cases/FQV1-aria2-d1cb994ef988e58a.json",
+                              "sha256":  "06636df2609a9405c98d2cd1493d705e0129b483332ff8f9d28f443ab6c42626"
+                          },
+                          {
+                              "path":  "cases/FQV1-rocksdb-ecb7a6891b617490.json",
+                              "sha256":  "e58b474a64191f5912ae5fb978016fb339b9ffe154e31455ceeb32c4ca0c0348"
+                          },
+                          {
+                              "path":  "cases/FQV1-rocksdb-aa505d4616aede0b.json",
+                              "sha256":  "08a65678938fe6e783a82ed9e65e8260b056d198ff5dd5adcafd92f3a09918cd"
+                          },
+                          {
+                              "path":  "cases/FQV1-aria2-5c9b99ecc0454a4a.json",
+                              "sha256":  "038b9829a9d4a6371dd33da4005f6103cab44135136bbbb6fba02b2817ab6bc1"
+                          },
+                          {
+                              "path":  "cases/FQV1-brpc-bc38ae52a3ef3090.json",
+                              "sha256":  "12dcecdc52a78d7d4f0869dcde3e72a813218e22723ff54c7624678174993561"
+                          },
+                          {
+                              "path":  "cases/FQV1-brpc-547d0bee05c50525.json",
+                              "sha256":  "f76e0b9365ab79f919374f7a4300ff88b8d130da4e77f400e680c18b5b3a5384"
+                          }
+                      ],
+    "adjudicator_read_rules":  {
+                                   "may_read":  [
+                                                    "every file listed in allowed_files",
+                                                    "frozen repositories at the frozen commits (read-only)"
+                                                ],
+                                   "must_not_read":  [
+                                                         "any file not listed in allowed_files from this experiment directory tree"
+                                                     ]
+                               },
+    "forbidden_paths":  [
+                            "results/pilot-candidates.json",
+                            "any candidate system-output record",
+                            "any system prediction file",
+                            "any resolver output file",
+                            "any Graph Fidelity scoring file",
+                            "any Gold correctness artifact",
+                            "blind_packages/batch-02 (adjudicated batch)",
+                            "results/batch-02-cpp-calls-adjudication.json (final verdicts; exclusion list only at packaging time)"
+                        ],
+    "forbidden_field_patterns":  [
+                                     "predicted_target",
+                                     "system_status",
+                                     "resolver_strategy",
+                                     "resolver_confidence"
+                                 ],
+    "forbidden_field_note":  "field-name patterns are listed here as rule text only; no concrete value of any of these fields exists anywhere in this package",
+    "sealed_source_provenance":  {
+                                     "sealed_records_modified_by_packaging":  false,
+                                     "batches":  {
+                                                     "03":  {
+                                                                "sealed_a_path":  "blind_packages/batch-03/annotator-a/output/annotation-record-template.json",
+                                                                "sealed_a_sha256":  "7c1e8b21616b58d6521a37659354e321d7badc620075f7d98a79ffd365e78dd0",
+                                                                "sealed_b_path":  "blind_packages/batch-03/annotator-b/output/annotation-record-template.json",
+                                                                "sealed_b_sha256":  "ecac4c27782bcff10b5241f38bd6ffba87da117254ae0ac50cf633e976fed2a8",
+                                                                "blind_view_a_path":  "blind_packages/batch-03/annotator-a/input/annotator-a-blind-view.json",
+                                                                "blind_view_a_sha256":  "098c11ad1e7a6200fb589f1d77c4ebec4a27f3b6aaabe53efb580521c884a860",
+                                                                "blind_view_b_path":  "blind_packages/batch-03/annotator-b/input/annotator-b-blind-view.json",
+                                                                "blind_view_b_sha256":  "722c363b3d88c2b1f6624fcc83c153c684f71ad4fa0e9ff9c01f3ebeb81879e5",
+                                                                "batch_manifest_path":  "blind_packages/batch-03/annotator-a/input/batch-03-manifest.json",
+                                                                "batch_manifest_sha256":  "1de6a7ed05e3a08eb709f577e880cada1f7b46cf1e89cd9e19c76d44e291f72d",
+                                                                "queue_anchor":  "blind-agreement-audit-03 (formal_verdict_disagreements) + blind-agreement-audit-03-amendment (cpp preserved metrics)",
+                                                                "queue_anchor_path":  "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\fidelity_v1\\results\\blind-agreement-audit-03.json"
+                                                            },
+                                                     "04":  {
+                                                                "sealed_a_path":  "blind_packages/batch-04/annotator-a/output/annotator-a-batch-04-annotations.json",
+                                                                "sealed_a_sha256":  "94ae500bc830a09f49eb6a9d3642ed770dd3e5741ea20e5444af49842630688d",
+                                                                "sealed_b_path":  "blind_packages/batch-04/annotator-b/output/annotation-record-template.json",
+                                                                "sealed_b_sha256":  "daeb0a4427d2fb90cd40e1270bd2f2ca72e9a93649101b6d35eb2815dae1601f",
+                                                                "blind_view_a_path":  "blind_packages/batch-04/annotator-a/input/annotator-a-blind-view.json",
+                                                                "blind_view_a_sha256":  "0ec2ef07569256e6efb01dcc79fd31503c60fa0e41b30d48e93f390639732069",
+                                                                "blind_view_b_path":  "blind_packages/batch-04/annotator-b/input/annotator-b-blind-view.json",
+                                                                "blind_view_b_sha256":  "ac3f78d911719e139211b52a24c3d4639a9304444cffd25962816a6891dc3414",
+                                                                "batch_manifest_path":  "blind_packages/batch-04/annotator-a/input/batch-04-manifest.json",
+                                                                "batch_manifest_sha256":  "d5ad8c26034e32fa7eb1c1c564d20efa4531e1fefea59e1bc190d307d255afc0",
+                                                                "queue_anchor":  "blind-agreement-audit-04 (disagreement_attribution.adjudication_queue_count = 9)",
+                                                                "queue_anchor_path":  "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\fidelity_v1\\results\\blind-agreement-audit-04.json"
+                                                            },
+                                                     "05":  {
+                                                                "sealed_a_path":  "blind_packages/batch-05/annotator-a/output/annotator-a-batch-05-annotations.json",
+                                                                "sealed_a_sha256":  "08915528c97394f9ee52453190ed7241a125a739e8c3995c222754b951dee622",
+                                                                "sealed_b_path":  "blind_packages/batch-05/annotator-b/output/annotator-b-batch-05-annotation-records.json",
+                                                                "sealed_b_sha256":  "560d08cc940bdfa6eb4416fd0298a98a441845d184bdcce5e93f5e212f2c220c",
+                                                                "blind_view_a_path":  "blind_packages/batch-05/annotator-a/input/annotator-a-blind-view.json",
+                                                                "blind_view_a_sha256":  "be779326bf1ce709c72b54de3a58c1534b7f6a09fb6ce3913342889e761b9d91",
+                                                                "blind_view_b_path":  "blind_packages/batch-05/annotator-b/input/annotator-b-blind-view.json",
+                                                                "blind_view_b_sha256":  "2dff7c7e7365b35f15fa6816065053202d1d30a0b81558cf9a0182be9c7886c1",
+                                                                "batch_manifest_path":  "blind_packages/batch-05/annotator-a/input/batch-05-manifest.json",
+                                                                "batch_manifest_sha256":  "648095bc377eb4841f32e5bed164aa85f52901ddfc566b40d50572f340eae6c3",
+                                                                "queue_anchor":  "blind-agreement-audit-05 (adjudication_queue.entries)",
+                                                                "queue_anchor_path":  "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\fidelity_v1\\results\\blind-agreement-audit-05.json"
+                                                            }
+                                                 }
+                                 },
+    "package_note":  "This package physically contains no ProvenLattice system prediction. Queue membership was derived from sealed annotation records and sealed agreement audits only."
+}

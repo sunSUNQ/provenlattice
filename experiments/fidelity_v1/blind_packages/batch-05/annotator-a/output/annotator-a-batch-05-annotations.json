@@ -1,0 +1,2585 @@
+{
+    "artifact":  "annotator-a-batch-05-annotations",
+    "schema_version":  2,
+    "annotator_id":  "A",
+    "batch_id":  "05",
+    "sample_count":  64,
+    "telemetry_schema":  {
+                             "navigation_files":  "array\u003cstring\u003e; repository-relative files read beyond the sample source file; [] if none",
+                             "navigation_files_count":  "integer \u003e= 0; must equal navigation_files.length",
+                             "navigation_path":  "array\u003cstring\u003e; ordered repository-relative evidence-navigation path; [] if none",
+                             "navigation_hop_count":  "integer \u003e= 0; number of transitions in navigation_path",
+                             "verification_depth":  "L0|L1|L2|L3|L4",
+                             "target_recovered_after_navigation":  "boolean",
+                             "recovered_target":  "null | {symbol_id:string|null,path:string,start_line:integer|null}",
+                             "recovery_reason":  "string|null"
+                         },
+    "records":  [
+                    {
+                        "sample_id":  "FQV1-rocksdb-ce032f4a089f8d7e",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "db/blob/blob_log_format.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "db/db_impl/db_impl_files.cc",
+                                                "db/blob/blob_log_format.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "db/blob/blob_log_format.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "db/db_impl/db_impl_files.cc:15"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 15 is #include \"db/blob/blob_log_format.h\"; the header exists at exactly that repository-relative path, so the import has one valid in-tree target."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8480e9818a0a68c1",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "db/range_del_aggregator.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "db/column_family.cc",
+                                                "db/range_del_aggregator.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "db/range_del_aggregator.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "db/column_family.cc:30"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 30 is #include \"db/range_del_aggregator.h\"; the header exists at exactly that repository-relative path; one valid in-tree target."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-d92c0476f269fe9c",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/DHTMessageTrackerEntry.cc",
+                                                          "start_line":  58
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "src/DHTMessageTrackerEntry.h",
+                                                 "src/DHTMessageTrackerEntry.cc"
+                                             ],
+                        "navigation_files_count":  2,
+                        "navigation_path":  [
+                                                "src/DHTMessageTracker.cc",
+                                                "src/DHTMessageTrackerEntry.h",
+                                                "src/DHTMessageTrackerEntry.cc"
+                                            ],
+                        "navigation_hop_count":  2,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/DHTMessageTrackerEntry.cc",
+                                                 "start_line":  58
+                                             },
+                        "recovery_reason":  "member function definition located by declaration/definition lookup",
+                        "evidence_locations":  [
+                                                   "src/DHTMessageTracker.cc:147-148",
+                                                   "src/DHTMessageTrackerEntry.h:73",
+                                                   "src/DHTMessageTrackerEntry.cc:58"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Lambda parameter ent is const std::unique_ptr\u003cDHTMessageTrackerEntry\u003e\u0026 (line 147); DHTMessageTrackerEntry::isTimeout declared at DHTMessageTrackerEntry.h:73 and defined at DHTMessageTrackerEntry.cc:58; no other isTimeout exists on this receiver type; declaration and definition are the same entity, definition canonical."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-0a7579f1c2d606fa",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/bash_completion/make_bash_completion.py:161",
+                                                   "doc/bash_completion/make_bash_completion.py:6"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 161 reads len(sys.argv); argv is an attribute of the external standard-library module sys (imported at line 6); no binding of argv exists in the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-689cb3a132dec72c",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/gdb_bthread_stack.py:170"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 170 calls str.format on a string literal; str.format is a Python builtin method with no definition in the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8c52969b9353ef75",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/db_crashtest.py:680",
+                                                   "tools/db_crashtest.py:7"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "os at line 680 is the standard-library module imported at line 7; the referenced module is external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-7888d0fa3af3bf94",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/message.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/DefaultPeerStorage.cc",
+                                                "src/message.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/message.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/DefaultPeerStorage.cc:41"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 41 is #include \"message.h\"; the only message.h in the repository is src/message.h, which is the include target."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-34de66dd51d7d889",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/bash_completion/make_bash_completion.py:165",
+                                                   "doc/bash_completion/make_bash_completion.py:6"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 165 calls get_all_options(sys.argv[1]); argv is an attribute of external stdlib module sys (imported at line 6); no in-tree binding exists."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-bc38ae52a3ef3090",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/butil/strings/string_piece.h",
+                                                          "start_line":  214
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "src/butil/strings/string_piece.h"
+                                             ],
+                        "navigation_files_count":  1,
+                        "navigation_path":  [
+                                                "src/brpc/policy/mysql/mysql_authenticator.cpp",
+                                                "src/butil/strings/string_piece.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/butil/strings/string_piece.h",
+                                                 "start_line":  214
+                                             },
+                        "recovery_reason":  "member function definition located by receiver type lookup",
+                        "evidence_locations":  [
+                                                   "src/brpc/policy/mysql/mysql_authenticator.cpp:123",
+                                                   "src/brpc/policy/mysql/mysql_authenticator.cpp:188",
+                                                   "src/butil/strings/string_piece.h:214"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "MEDIUM",
+                        "protocol_issue":  null,
+                        "reasoning":  "schema is const butil::StringPiece\u0026 (function parameter, line 123); butil is vendored in the repository and BasicStringPiece::data() is defined inline at src/butil/strings/string_piece.h:214 (const value_type* data() const { return ptr_; }); single in-tree definition."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-da675d4824d3de3f",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "tools/lldb_bthread_stack.py",
+                                                          "start_line":  57
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/lldb_bthread_stack.py:202",
+                                                   "tools/lldb_bthread_stack.py:57"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 202 assigns global_state.started; the started attribute is bound in GlobalState.__init__ at line 57 (self.started: bool = False); unique same-file binding."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-4a6a52d6a1575c10",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "db/blob/blob_index.h",
+                                                          "start_line":  59
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "db/blob/blob_index.h"
+                                             ],
+                        "navigation_files_count":  1,
+                        "navigation_path":  [
+                                                "db/version_set.cc",
+                                                "db/blob/blob_index.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "db/blob/blob_index.h",
+                                                 "start_line":  59
+                                             },
+                        "recovery_reason":  "member function definition located by receiver type lookup",
+                        "evidence_locations":  [
+                                                   "db/version_set.cc:2783",
+                                                   "db/version_set.cc:2788",
+                                                   "db/blob/blob_index.h:59"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "blob_index is const BlobIndex\u0026 (parameter, line 2783); BlobIndex::IsInlined is an inline member defined at db/blob/blob_index.h:59; single entity."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-a4c16880e7989d82",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "doc/bash_completion/make_bash_completion.py",
+                                                          "start_line":  67
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/bash_completion/make_bash_completion.py:108",
+                                                   "doc/bash_completion/make_bash_completion.py:67"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 108 uses opts inside output_case; the name is bound by the function parameter in def output_case(out, opts) at line 67; unique same-file binding in scope."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-3fa9480748303413",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/BitfieldMan.cc",
+                                                          "start_line":  303
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "src/BitfieldMan.h",
+                                                 "src/BitfieldMan.cc"
+                                             ],
+                        "navigation_files_count":  2,
+                        "navigation_path":  [
+                                                "test/BitfieldManTest.cc",
+                                                "src/BitfieldMan.h",
+                                                "src/BitfieldMan.cc"
+                                            ],
+                        "navigation_hop_count":  2,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/BitfieldMan.cc",
+                                                 "start_line":  303
+                                             },
+                        "recovery_reason":  "member function definition located by overload-resolution over declarations",
+                        "evidence_locations":  [
+                                                   "test/BitfieldManTest.cc:354-355",
+                                                   "src/BitfieldMan.h:131-133",
+                                                   "src/BitfieldMan.cc:303-305"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "The 4-argument call matches the only declared overload bool getSparseMissingUnusedIndex(size_t\u0026, int32_t, const unsigned char*, size_t) const (BitfieldMan.h:131-133); defined at BitfieldMan.cc:303; no competing overload shares this signature."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-cbcf7711e5f13594",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/download_helper.cc",
+                                                          "start_line":  474
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "src/download_helper.h",
+                                                 "src/download_helper.cc"
+                                             ],
+                        "navigation_files_count":  2,
+                        "navigation_path":  [
+                                                "src/RpcMethodImpl.cc",
+                                                "src/download_helper.h",
+                                                "src/download_helper.cc"
+                                            ],
+                        "navigation_hop_count":  2,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/download_helper.cc",
+                                                 "start_line":  474
+                                             },
+                        "recovery_reason":  "free function definition located by declaration/definition lookup",
+                        "evidence_locations":  [
+                                                   "src/RpcMethodImpl.cc:248-250",
+                                                   "src/download_helper.h:124-128",
+                                                   "src/download_helper.cc:474"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Single declaration createRequestGroupForUri at download_helper.h:124 with defaulted trailing flags; the 5-argument call binds it through defaults; unique definition at download_helper.cc:474."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-18d5a833c6c2fef4",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "build_tools/getdeps_fallback_mirror.py:199",
+                                                   "build_tools/getdeps_fallback_mirror.py:11"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "os at line 199 (os.path.join) is the standard-library module imported at line 11; external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-fda81548ed271045",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "test/bthread_setconcurrency_unittest.cpp",
+                                                          "start_line":  147
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "test/bthread_setconcurrency_unittest.cpp:173",
+                                                   "test/bthread_setconcurrency_unittest.cpp:147"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "get_min_concurrency is defined in the same test file at line 147 (int get_min_concurrency()); unique definition; source-sufficient."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-c324e61513645740",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/PieceHashCheckIntegrityEntry.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/StreamCheckIntegrityEntry.h",
+                                                "src/PieceHashCheckIntegrityEntry.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/PieceHashCheckIntegrityEntry.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/StreamCheckIntegrityEntry.h:38"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 38 is #include \"PieceHashCheckIntegrityEntry.h\"; the only file of that name in the repository is src/PieceHashCheckIntegrityEntry.h."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-b064e3bc3c930d8e",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/db_crashtest.py:2392"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "print at line 2392 is the Python builtin function; no in-tree definition exists in the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-703009498cf49040",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "tools/lldb_bthread_stack.py",
+                                                          "start_line":  151
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/lldb_bthread_stack.py:151"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 151 assigns tasks = get_child(block, \"items\").Cast(task_meta_array_type) inside get_all_bthreads; the reference is the local binding created at the same line; unique in scope."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-547d0bee05c50525",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/bthread/bthread.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/bthread/id.cpp",
+                                                "src/bthread/bthread.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/bthread/bthread.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/bthread/id.cpp:28"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 28 is #include \"bthread/bthread.h\"; the header exists at src/bthread/bthread.h in the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-faa39831989581d3",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "tools/block_cache_analyzer/block_cache_trace_analyzer_plot.py",
+                                                          "start_line":  665
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/block_cache_analyzer/block_cache_trace_analyzer_plot.py:666",
+                                                   "tools/block_cache_analyzer/block_cache_trace_analyzer_plot.py:665"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "csv_relative_dir at line 666 is the loop variable bound by the for statement at line 665 (for csv_relative_dir in os.listdir(csv_result_dir)); same-file unique binding."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8b4ca63de7918ec9",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "util/random.cc",
+                                                          "start_line":  45
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "util/random.h",
+                                                 "util/random.cc"
+                                             ],
+                        "navigation_files_count":  2,
+                        "navigation_path":  [
+                                                "db/db_compaction_test.cc",
+                                                "util/random.h",
+                                                "util/random.cc"
+                                            ],
+                        "navigation_hop_count":  2,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "util/random.cc",
+                                                 "start_line":  45
+                                             },
+                        "recovery_reason":  "member function definition located by receiver type lookup",
+                        "evidence_locations":  [
+                                                   "db/db_compaction_test.cc:35",
+                                                   "db/db_compaction_test.cc:5955",
+                                                   "db/db_compaction_test.cc:5959",
+                                                   "util/random.h:91",
+                                                   "util/random.cc:45"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "db_compaction_test.cc includes util/random.h (line 35); rnd is Random rnd(301) (line 5955); ROCKSDB_NAMESPACE::Random::RandomString(int) is declared at util/random.h:91 and defined at util/random.cc:45; single entity."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-23ead0d91af1e773",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/lldb_bthread_stack.py:242"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "GetSelectedTarget at line 242 is a method of the external lldb.SBDebugger debugger object (module lldb imported at line 52); no definition in the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-3211f798b9f9a1a3",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/Request.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/AuthConfigFactory.cc",
+                                                "src/Request.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/Request.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/AuthConfigFactory.cc:45"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 45 is #include \"Request.h\"; the only Request.h in the repository is src/Request.h."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-4c1885be0ee14283",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "db/multi_cf_iterator_impl.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "db/attribute_group_iterator_impl.h",
+                                                "db/multi_cf_iterator_impl.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "db/multi_cf_iterator_impl.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "db/attribute_group_iterator_impl.h:8"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 8 is #include \"db/multi_cf_iterator_impl.h\"; the header exists at that repository-relative path."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-f81580dcfae4a553",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "test/cancelable_callback_unittest.cc:10"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 10 is #include \u003cgtest/gtest.h\u003e; gtest/gtest.h does not exist anywhere in the frozen brpc tree (googletest is an external fetched dependency), so no valid in-tree target exists."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-dba789c9c0b1c6d0",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/c_api_gen/auto_simple_bindings.py:573",
+                                                   "tools/c_api_gen/auto_simple_bindings.py:23"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "re at line 573 is the standard-library module imported at line 23; external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-ec85e572e4b8e254",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "db/blob/blob_file_garbage.h",
+                                                          "start_line":  32
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "db/blob/blob_file_garbage.h"
+                                             ],
+                        "navigation_files_count":  1,
+                        "navigation_path":  [
+                                                "db/version_builder.cc",
+                                                "db/blob/blob_file_garbage.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "db/blob/blob_file_garbage.h",
+                                                 "start_line":  32
+                                             },
+                        "recovery_reason":  "member function definition located by receiver type lookup",
+                        "evidence_locations":  [
+                                                   "db/version_builder.cc:1095",
+                                                   "db/version_builder.cc:1108",
+                                                   "db/blob/blob_file_garbage.h:32"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Receiver is const BlobFileGarbage\u0026 in ApplyBlobFileGarbage (line 1095); BlobFileGarbage::GetGarbageBlobCount is defined inline at db/blob/blob_file_garbage.h:32; BlobFileMeta has a same-name method but a different receiver type, not viable here."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-7307440455e64fdf",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "utilities/transactions/lock/range/range_tree/lib/portability/memory.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "utilities/transactions/lock/range/range_tree/lib/util/dbt.cc",
+                                                "utilities/transactions/lock/range/range_tree/lib/portability/memory.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "utilities/transactions/lock/range/range_tree/lib/portability/memory.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located by relative include-path resolution",
+                        "evidence_locations":  [
+                                                   "utilities/transactions/lock/range/range_tree/lib/util/dbt.cc:60"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 60 is #include \"../portability/memory.h\"; relative to lib/util/dbt.cc it resolves to lib/portability/memory.h, which exists in the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-f9a8ac565c6a2d01",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "db/range_del_aggregator_bench.cc:19"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 19 is #include \u003cstring\u003e; a C++ standard library header, external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-c816f6dc931c4e38",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "test/shared_memory_unittest.cc",
+                                                          "start_line":  625
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "test/shared_memory_unittest.cc:681",
+                                                   "test/shared_memory_unittest.cc:625"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "SharedMemoryProcessTest::TaskTestMain is a static member defined in the same file at line 625 (static int TaskTestMain()); single definition; called at line 681 inside MULTIPROCESS_TEST_MAIN(SharedMemoryTestMain)."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-f53921b30ab21650",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "test/brpc_mysql_pool_concurrency_unittest.cpp:73"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 73 is #include \u003ccstdio\u003e; a C++ standard library header, external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-7d6c74d82bb26ca5",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "doc/bash_completion/make_bash_completion.py",
+                                                          "start_line":  21
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/bash_completion/make_bash_completion.py:21"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 21 assigns opts = {} inside get_all_options; the reference is the local binding created at the same line; unique in scope."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-a2349ea6dc723a04",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "src/crypto_endian.h:8"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 8 is #include \u003ccstdint\u003e; a C++ standard library header, external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-b30835c39e28b8d3",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "doc/sphinx_themes/sphinx_rtd_theme/__init__.py",
+                                                          "start_line":  27
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/sphinx_themes/sphinx_rtd_theme/__init__.py:69",
+                                                   "doc/sphinx_themes/sphinx_rtd_theme/__init__.py:27"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 69 registers config_initiated via app.connect(\u0027config-inited\u0027, config_initiated); the function is defined at line 27 (def config_initiated(app, config)); same-file unique."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-68aa8d67274a5fe1",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "example/auto_concurrency_limiter/server.cpp:31"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 31 is #include \u003cfstream\u003e; a C++ standard library header, external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-dd9fef894c065810",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/manual-src/en/mkapiref.py:289",
+                                                   "doc/manual-src/en/mkapiref.py:284-285"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "MEDIUM",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 289 reads args.header; the attribute is created dynamically by argparse from the \u0027--header\u0027 option string (add_argument at lines 284-285); no explicit in-tree definition or binding of the name header exists."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-8416d9f8783ec637",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "test/brpc_mysql_txn_integration_unittest.cpp",
+                                                          "start_line":  228
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "test/brpc_mysql_txn_integration_unittest.cpp:477",
+                                                   "test/brpc_mysql_txn_integration_unittest.cpp:228"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "RunPlain is a static helper defined in the same test file at line 228 (static bool RunPlain(brpc::Channel\u0026, const std::string\u0026, ...)); single definition in this translation unit; identically named helpers in other files are separate entities."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-1ff7af6ea43d4bde",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "src/bvar/default_variables.cpp:25"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 25 is #include \u003cstdio.h\u003e; a C standard library header, external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-c10fd7262a136c88",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "src/DefaultBtMessageFactory.cc:205"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 205 is msg = std::move(m); std::move is the C++ standard library utility template declared in \u003cutility\u003e, external to the frozen repository; no in-tree definition exists."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-947bfdc67e29eeb1",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/brpc/describable.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/brpc/details/method_status.h",
+                                                "src/brpc/describable.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/brpc/describable.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/brpc/details/method_status.h:24"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 24 is #include \"brpc/describable.h\"; the header exists at src/brpc/describable.h in the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-8b67bd106bb82719",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/util.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "test/FileTest.cc",
+                                                "src/util.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/util.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "test/FileTest.cc:10"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 10 is #include \"util.h\"; no util.h exists under test/; the sole util.h in the repository is src/util.h, which is the include target."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-6f36576e408fd785",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "utilities/trie_index/bitvector.h",
+                                                          "start_line":  384
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "utilities/trie_index/bitvector.h"
+                                             ],
+                        "navigation_files_count":  1,
+                        "navigation_path":  [
+                                                "utilities/trie_index/trie_index_test.cc",
+                                                "utilities/trie_index/bitvector.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "utilities/trie_index/bitvector.h",
+                                                 "start_line":  384
+                                             },
+                        "recovery_reason":  "member function definition located by receiver type lookup",
+                        "evidence_locations":  [
+                                                   "utilities/trie_index/trie_index_test.cc:87",
+                                                   "utilities/trie_index/bitvector.h:384"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "bv is a BitVector; BitVector::FindNthOneBit is an inline member defined at utilities/trie_index/bitvector.h:384; single entity."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-795be216655fd881",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "doc/bash_completion/make_bash_completion.py",
+                                                          "start_line":  165
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/bash_completion/make_bash_completion.py:165"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 165 assigns opts = get_all_options(sys.argv[1]) at module level; the reference is the module-global binding created by the same assignment; unique."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-8fd446e7fc00aac4",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/util.h",
+                                                          "start_line":  177
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "src/util.h"
+                                             ],
+                        "navigation_files_count":  1,
+                        "navigation_path":  [
+                                                "src/RpcMethodImpl.cc",
+                                                "src/util.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/util.h",
+                                                 "start_line":  177
+                                             },
+                        "recovery_reason":  "function template definition located by qualified-name lookup",
+                        "evidence_locations":  [
+                                                   "src/RpcMethodImpl.cc:745",
+                                                   "src/util.h:177-178"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "util::uitos is a function template defined in the header at util.h:177 (template \u003ctypename T\u003e std::string uitos(T n, bool comma = false)); the header template definition is the canonical definition; single entity."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-045d124c81011903",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/butil/atomicops_internals_atomicword_compat.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/butil/atomicops.h",
+                                                "src/butil/atomicops_internals_atomicword_compat.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/butil/atomicops_internals_atomicword_compat.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/butil/atomicops.h:169"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 169 is #include \"butil/atomicops_internals_atomicword_compat.h\" (guarded by #if defined(OS_MACOSX) || defined(OS_OPENBSD)); the directive is present at source level and the header exists at that path in the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-df4c5ba847c40b7e",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "tools/gdb_bthread_stack.py",
+                                                          "start_line":  83
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/gdb_bthread_stack.py:83"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 83 assigns task_meta = gdb.parse_and_eval(...) inside get_all_bthreads; the reference is the local binding created at the same line; unique in scope."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-cb3ff6b5499b6ed4",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/bthread/id.cpp",
+                                                          "start_line":  325
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "src/bthread/id.cpp:391-393",
+                                                   "src/bthread/id.cpp:325"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "bthread::id_create_impl is a static function defined in the same file at line 325; the call at lines 391-393 (extern \"C\" bthread_id_create) names it uniquely."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-456728b1dc72633a",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "include/rocksdb/convenience.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "table/sst_file_reader_test.cc",
+                                                "include/rocksdb/convenience.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "include/rocksdb/convenience.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "table/sst_file_reader_test.cc:17"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 17 is #include \"rocksdb/convenience.h\"; resolved via the repository include/ directory to include/rocksdb/convenience.h, which exists."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-83c1772f11338e16",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/Peer.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "test/UTMetadataRequestExtensionMessageTest.cc",
+                                                "src/Peer.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/Peer.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "test/UTMetadataRequestExtensionMessageTest.cc:7"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 7 is #include \"Peer.h\"; no Peer.h exists under test/; the sole Peer.h in the repository is src/Peer.h."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-5b510fe2efbc743c",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/bvar/collector.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/brpc/rpc_dump.h",
+                                                "src/bvar/collector.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/bvar/collector.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/brpc/rpc_dump.h:25"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 25 is #include \"bvar/collector.h\"; the header exists at src/bvar/collector.h in the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-5c429cff208e2444",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "tools/advisor/advisor/bench_runner.py",
+                                                          "start_line":  28
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/advisor/advisor/bench_runner.py:28",
+                                                   "tools/advisor/advisor/bench_runner.py:22"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 28 assigns file_name = \"\" inside static method get_info_log_file_name (line 22); the reference is the local binding created at the same line; same-named names in other files are distinct scopes."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-f84d7aefd3b8c166",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/db_crashtest.py:354",
+                                                   "tools/db_crashtest.py:8"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "randint at line 354 is an attribute of the standard-library module random (imported at line 8), invoked as random.randint inside a lambda; external to the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-8c54096615d952c2",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "tools/advisor/advisor/db_log_parser.py",
+                                                          "start_line":  56
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "tools/advisor/advisor/db_log_parser.py"
+                                             ],
+                        "navigation_files_count":  1,
+                        "navigation_path":  [
+                                                "tools/advisor/test/test_db_log_parser.py",
+                                                "tools/advisor/advisor/db_log_parser.py"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "tools/advisor/advisor/db_log_parser.py",
+                                                 "start_line":  56
+                                             },
+                        "recovery_reason":  "method definition located by import/qualified-name lookup",
+                        "evidence_locations":  [
+                                                   "tools/advisor/test/test_db_log_parser.py:45",
+                                                   "tools/advisor/test/test_db_log_parser.py:9",
+                                                   "tools/advisor/advisor/db_log_parser.py:31",
+                                                   "tools/advisor/advisor/db_log_parser.py:56"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "db_log is a Log instance (imported from advisor.db_log_parser at line 9); Log.get_human_readable_time is defined at tools/advisor/advisor/db_log_parser.py:56 (class Log at line 31); single definition."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-27893da4faf99d4f",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/gdb_bthread_stack.py:142"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 142 invokes str.format on the string literal \"{}+8*8\"; builtin method external to the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-2b95dc83ef87f9d6",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "table/block_based/full_filter_block.h:12"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 12 is #include \u003cstring\u003e; a C++ standard library header, external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-aria2-11a158e3692ba797",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "doc/bash_completion/make_bash_completion.py:16",
+                                                   "doc/bash_completion/make_bash_completion.py:5"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 16 is re.compile(...); compile is an attribute of the standard-library module re (imported at line 5); external to the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-ac20e1f5d2448741",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/gdb_bthread_stack.py:86"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 86 calls str.format on a string literal inside gdb.parse_and_eval(...); builtin method external to the frozen tree."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-fe537d210a5fb0b6",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "IMPORTS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "src/brpc/details/controller_private_accessor.h",
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+                                                "src/brpc/channel.cpp",
+                                                "src/brpc/details/controller_private_accessor.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "src/brpc/details/controller_private_accessor.h",
+                                                 "start_line":  null
+                                             },
+                        "recovery_reason":  "include target located via repository include-path lookup",
+                        "evidence_locations":  [
+                                                   "src/brpc/channel.cpp:41"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "Line 41 is #include \"brpc/details/controller_private_accessor.h\"; the header exists at that repository-relative path."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-7c9c116938584ddb",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "db/db_test_util.cc",
+                                                          "start_line":  804
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "db/db_test_util.h",
+                                                 "db/db_test_util.cc"
+                                             ],
+                        "navigation_files_count":  2,
+                        "navigation_path":  [
+                                                "db/db_wal_test.cc",
+                                                "db/db_test_util.h",
+                                                "db/db_test_util.cc"
+                                            ],
+                        "navigation_hop_count":  2,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "db/db_test_util.cc",
+                                                 "start_line":  804
+                                             },
+                        "recovery_reason":  "member function definition located by receiver type lookup",
+                        "evidence_locations":  [
+                                                   "db/db_wal_test.cc:1159",
+                                                   "db/db_test_util.h:1209",
+                                                   "db/db_test_util.cc:804"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "DBWALTest derives from DBTestBase; Put(\"\", \"\") matches DBTestBase::Put(const Slice\u0026, const Slice\u0026, WriteOptions wo = WriteOptions()) declared at db_test_util.h:1209 and defined at db/db_test_util.cc:804; the file-local Put at db_wal_test.cc:432 has a different (cf, timestamp) signature and is not viable."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-6dc21b13eb5505ab",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "include/rocksdb/table.h"
+                                             ],
+                        "navigation_files_count":  1,
+                        "navigation_path":  [
+                                                "db/db_iterator_test.cc",
+                                                "include/rocksdb/table.h"
+                                            ],
+                        "navigation_hop_count":  1,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "db/db_iterator_test.cc:2331",
+                                                   "include/rocksdb/table.h:590"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "BlockBasedTableOptions::filter_policy is std::shared_ptr\u003cconst FilterPolicy\u003e (include/rocksdb/table.h:590); .reset() is std::shared_ptr::reset from the C++ standard library (\u003cmemory\u003e), external to the frozen repository."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-3b90b89381b8d13d",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "CALLS",
+                        "language_scope":  "CPP_IN_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "include/rocksdb/utilities/stackable_db.h",
+                                                          "start_line":  651
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+                                                 "include/rocksdb/db.h",
+                                                 "include/rocksdb/utilities/stackable_db.h",
+                                                 "db/db_impl/db_impl.h",
+                                                 "db/db_impl/db_impl.cc"
+                                             ],
+                        "navigation_files_count":  4,
+                        "navigation_path":  [
+                                                "utilities/transactions/transaction_test.cc",
+                                                "include/rocksdb/db.h",
+                                                "include/rocksdb/utilities/stackable_db.h",
+                                                "db/db_impl/db_impl.h",
+                                                "db/db_impl/db_impl.cc"
+                                            ],
+                        "navigation_hop_count":  4,
+                        "verification_depth":  "L1",
+                        "target_recovered_after_navigation":  true,
+                        "recovered_target":  {
+                                                 "symbol_id":  null,
+                                                 "path":  "include/rocksdb/utilities/stackable_db.h",
+                                                 "start_line":  651
+                                             },
+                        "recovery_reason":  "virtual member function definition located by receiver type/name-lookup through the class hierarchy",
+                        "evidence_locations":  [
+                                                   "utilities/transactions/transaction_test.cc:7232",
+                                                   "include/rocksdb/db.h:2527",
+                                                   "include/rocksdb/utilities/stackable_db.h:651-652",
+                                                   "db/db_impl/db_impl.h:566",
+                                                   "db/db_impl/db_impl.cc:2781"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "MEDIUM",
+                        "protocol_issue":  null,
+                        "reasoning":  "db is TransactionDB* (transaction_test.h:43); name lookup finds StackableDB::DefaultColumnFamily (stackable_db.h:651-652, inline definition returning db_-\u003eDefaultColumnFamily()), the final overrider for the receiver\u0027s static type; it forwards to DBImpl::DefaultColumnFamily (db_impl.h:566, db_impl.cc:2781) at runtime; DB::DefaultColumnFamily is pure virtual (db.h:2527); one semantic callee, inline definition canonical; the forwarding implementation is recorded as evidence, not a second target."
+                    },
+                    {
+                        "sample_id":  "FQV1-rocksdb-fd3ed2a1a6bf98dc",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "ONE_VALID_TARGET",
+                        "valid_target_count":  1,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  "build_tools/error_filter.py",
+                                                          "start_line":  26
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "build_tools/error_filter.py:153",
+                                                   "build_tools/error_filter.py:26"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "GTestErrorParser is a class defined at line 26 of the same file (class GTestErrorParser(ErrorParserBase)); line 153 references it in the parser map; unique."
+                    },
+                    {
+                        "sample_id":  "FQV1-brpc-f572753e55b2dad6",
+                        "batch_id":  "05",
+                        "annotator_id":  "A",
+                        "relation_type":  "REFERENCES",
+                        "language_scope":  "PYTHON_OUT_OF_SCOPE",
+                        "gold_relation_exists":  true,
+                        "formal_verdict":  "NO_VALID_TARGET",
+                        "valid_target_count":  0,
+                        "selected_target_if_unique":  {
+                                                          "symbol_id":  null,
+                                                          "path":  null,
+                                                          "start_line":  null
+                                                      },
+                        "build_context_status":  "SOURCE_SUFFICIENT",
+                        "navigation_files":  [
+
+                                             ],
+                        "navigation_files_count":  0,
+                        "navigation_path":  [
+
+                                            ],
+                        "navigation_hop_count":  0,
+                        "verification_depth":  "L0",
+                        "target_recovered_after_navigation":  false,
+                        "recovered_target":  null,
+                        "recovery_reason":  null,
+                        "evidence_locations":  [
+                                                   "tools/lldb_bthread_stack.py:145"
+                                               ],
+                        "difficulty_tags":  [
+
+                                            ],
+                        "confidence":  "HIGH",
+                        "protocol_issue":  null,
+                        "reasoning":  "GetTemplateArgumentType at line 145 is a method of the external lldb.SBType object (module lldb imported at line 52); no definition in the frozen tree."
+                    }
+                ]
+}

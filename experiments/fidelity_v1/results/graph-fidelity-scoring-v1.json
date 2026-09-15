@@ -1,0 +1,1978 @@
+{
+    "artifact":  "graph-fidelity-scoring-v1",
+    "status":  "SCORING_COMPLETE_NO_INTERPRETATION",
+    "scoring_contract_version":  "GRAPH_FIDELITY_SCORING_V1",
+    "created_at":  "2026-09-15T08:50:43Z",
+    "runtime":  "0.70s",
+    "claims":  {
+                   "rq1_verdict":  "NOT WRITTEN IN THIS ARTIFACT",
+                   "note":  "deterministic scoring only; interpretation, failure attribution and paper claims are later phases"
+               },
+    "provenance":  {
+                       "gold_file":  "gold/cpp-structural-relation-gold-v1.json",
+                       "gold_sha256":  "794751acaf5e0a1376619b41e236976b0c904415940cf97242910d759c5a6d93",
+                       "system_prediction_file":  "results/pilot-candidates.json",
+                       "system_prediction_sha256":  "558f78bfd69d5578b09bc9488739808b7e849d196659d1b82d91403453ba2484",
+                       "join_file":  "results/system-gold-join-v1.json",
+                       "join_sha256":  "a9fdd0a5b531e175703c64777c91bd6ba2578cf6db925e392ed1f39752099f6b",
+                       "sampling_frame_file":  "results/sampling-frame-correction-v1.json",
+                       "sampling_frame_sha256":  "f4b338224b7928a0daa2e6bda429ce5ef0b196d8e082519adee7d379ba552771",
+                       "scoring_script":  "tools/score-graph-fidelity-v1.ps1",
+                       "scoring_script_sha256":  "56124783df4e6616263efebdb00cd978a9dac43400a933449ac0ec20f96dbd54",
+                       "scoring_source":  "results/system-gold-join-v1.json (frozen join of sealed gold x canonical system prediction)"
+                   },
+    "input_integrity":  {
+                            "gold_records":  174,
+                            "gold_calls":  86,
+                            "gold_imports":  88,
+                            "gold_layers":  {
+                                                "UNIQUE":  123,
+                                                "DIVERGENT":  6,
+                                                "ABSENT":  44,
+                                                "INDETERMINATE":  1
+                                            },
+                            "system_matched":  174,
+                            "system_missing":  0,
+                            "duplicate_system_ids":  0,
+                            "gold_sha256_consistent_with_join_provenance":  true,
+                            "system_sha256_consistent_with_join_provenance":  true,
+                            "join_sha256_consistent_with_join_artifact":  true,
+                            "per_stratum_gold_counts_equal_frozen_sample_n_cpp":  true,
+                            "membership_recompute_matches_join_derived":  true
+                        },
+    "state_definitions":  {
+                              "CORRECT_RESOLUTION":  "target layer in {UNIQUE, DIVERGENT} AND system resolved AND predicted_target in acceptable_targets (membership; UNIQUE acceptable set == the unique gold target; DIVERGENT never requires canonical match)",
+                              "WRONG_TARGET_RESOLUTION":  "target layer in {UNIQUE, DIVERGENT} AND system resolved AND predicted_target not in acceptable_targets",
+                              "MISSED_RESOLUTION_OPPORTUNITY":  "target layer in {UNIQUE, DIVERGENT} AND system_resolved = false",
+                              "FALSE_RESOLUTION_ON_ABSENT":  "gold layer ABSENT AND system resolved",
+                              "JUSTIFIED_ABSTENTION":  "gold layer ABSENT AND system_resolved = false",
+                              "INDETERMINATE_EXCLUDED":  "gold layer INDETERMINATE; never auto-scored correct or wrong"
+                          },
+    "reconciliation":  {
+                           "cases_classified_exactly_once":  174,
+                           "target_present_reconciled":  "129/129",
+                           "absent_reconciled":  "44/44",
+                           "indeterminate_reconciled":  "1/1",
+                           "membership_recompute_vs_join_derived_mismatches":  0
+                       },
+    "counts":  {
+                   "MISSED_RESOLUTION_OPPORTUNITY":  20,
+                   "INDETERMINATE_EXCLUDED":  1,
+                   "WRONG_TARGET_RESOLUTION":  1,
+                   "FALSE_RESOLUTION_ON_ABSENT":  7,
+                   "CORRECT_RESOLUTION":  108,
+                   "JUSTIFIED_ABSTENTION":  37
+               },
+    "unweighted_sample_view":  {
+                                   "note":  "descriptive sample-level view; not the sole headline",
+                                   "operational_resolution_rate_all_174":  0.672414,
+                                   "resolved_error_decomposition":  {
+                                                                        "resolved_errors_total":  8,
+                                                                        "wrong_target_share":  0.125,
+                                                                        "false_resolution_on_absent_share":  0.875
+                                                                    },
+                                   "sample":  {
+                                                  "n_rows":  174,
+                                                  "n_evaluable":  173,
+                                                  "n_resolved_evaluable":  116,
+                                                  "n_abstained_evaluable":  57,
+                                                  "counts":  {
+                                                                 "correct_resolution":  108,
+                                                                 "wrong_target_resolution":  1,
+                                                                 "missed_resolution_opportunity":  20,
+                                                                 "false_resolution_on_absent":  7,
+                                                                 "justified_abstention":  37,
+                                                                 "indeterminate_excluded":  1
+                                                             },
+                                                  "metrics":  {
+                                                                  "resolved_precision":  0.931034,
+                                                                  "selective_risk":  0.068966,
+                                                                  "resolution_coverage_evaluable":  0.67052,
+                                                                  "target_opportunity_coverage":  0.844961,
+                                                                  "false_resolution_on_absent_rate":  0.159091,
+                                                                  "abstention_rate_evaluable":  0.32948,
+                                                                  "abstention_quality":  0.649123,
+                                                                  "missed_resolution_opportunity_rate":  0.155039
+                                                              }
+                                              }
+                               },
+    "weighted_population_view":  {
+                                     "note":  "frozen weights weight_stratum_cpp / sample_n_cpp per case (sampling-frame-correction-v1); denominators are weight masses of each metric universe; INDETERMINATE excluded from correctness denominators by construction",
+                                     "weight_mass_total":  0.999998,
+                                     "operational_resolution_rate_all_174":  0.187941,
+                                     "resolved_error_decomposition_weighted":  {
+                                                                                   "resolved_errors_weight":  0.018778,
+                                                                                   "wrong_target_share":  0.279299,
+                                                                                   "false_resolution_on_absent_share":  0.720701
+                                                                               },
+                                     "population":  {
+                                                        "n_rows":  174,
+                                                        "n_evaluable":  173,
+                                                        "n_resolved_evaluable":  116,
+                                                        "n_abstained_evaluable":  57,
+                                                        "counts":  {
+                                                                       "correct_resolution":  108,
+                                                                       "wrong_target_resolution":  1,
+                                                                       "missed_resolution_opportunity":  20,
+                                                                       "false_resolution_on_absent":  7,
+                                                                       "justified_abstention":  37,
+                                                                       "indeterminate_excluded":  1
+                                                                   },
+                                                        "metrics":  {
+                                                                        "resolved_precision":  0.899224,
+                                                                        "selective_risk":  0.100776,
+                                                                        "resolution_coverage_evaluable":  0.186633,
+                                                                        "target_opportunity_coverage":  0.243597,
+                                                                        "false_resolution_on_absent_rate":  0.046824,
+                                                                        "abstention_rate_evaluable":  0.813367,
+                                                                        "abstention_quality":  0.339252,
+                                                                        "missed_resolution_opportunity_rate":  0.756403
+                                                                    }
+                                                    }
+                                 },
+    "macro_by_repository":  {
+                                "groups":  {
+                                               "aria2":  {
+                                                             "unweighted":  {
+                                                                                "n_rows":  59,
+                                                                                "n_evaluable":  59,
+                                                                                "n_resolved_evaluable":  39,
+                                                                                "n_abstained_evaluable":  20,
+                                                                                "counts":  {
+                                                                                               "correct_resolution":  34,
+                                                                                               "wrong_target_resolution":  0,
+                                                                                               "missed_resolution_opportunity":  7,
+                                                                                               "false_resolution_on_absent":  5,
+                                                                                               "justified_abstention":  13,
+                                                                                               "indeterminate_excluded":  0
+                                                                                           },
+                                                                                "metrics":  {
+                                                                                                "resolved_precision":  0.871795,
+                                                                                                "selective_risk":  0.128205,
+                                                                                                "resolution_coverage_evaluable":  0.661017,
+                                                                                                "target_opportunity_coverage":  0.829268,
+                                                                                                "false_resolution_on_absent_rate":  0.277778,
+                                                                                                "abstention_rate_evaluable":  0.338983,
+                                                                                                "abstention_quality":  0.65,
+                                                                                                "missed_resolution_opportunity_rate":  0.170732
+                                                                                            }
+                                                                            },
+                                                             "weighted":  {
+                                                                              "n_rows":  59,
+                                                                              "n_evaluable":  59,
+                                                                              "n_resolved_evaluable":  39,
+                                                                              "n_abstained_evaluable":  20,
+                                                                              "counts":  {
+                                                                                             "correct_resolution":  34,
+                                                                                             "wrong_target_resolution":  0,
+                                                                                             "missed_resolution_opportunity":  7,
+                                                                                             "false_resolution_on_absent":  5,
+                                                                                             "justified_abstention":  13,
+                                                                                             "indeterminate_excluded":  0
+                                                                                         },
+                                                                              "metrics":  {
+                                                                                              "resolved_precision":  0.883038,
+                                                                                              "selective_risk":  0.116962,
+                                                                                              "resolution_coverage_evaluable":  0.222622,
+                                                                                              "target_opportunity_coverage":  0.273947,
+                                                                                              "false_resolution_on_absent_rate":  0.092204,
+                                                                                              "abstention_rate_evaluable":  0.777378,
+                                                                                              "abstention_quality":  0.329779,
+                                                                                              "missed_resolution_opportunity_rate":  0.726053
+                                                                                          }
+                                                                          }
+                                                         },
+                                               "brpc":  {
+                                                            "unweighted":  {
+                                                                               "n_rows":  59,
+                                                                               "n_evaluable":  58,
+                                                                               "n_resolved_evaluable":  38,
+                                                                               "n_abstained_evaluable":  20,
+                                                                               "counts":  {
+                                                                                              "correct_resolution":  38,
+                                                                                              "wrong_target_resolution":  0,
+                                                                                              "missed_resolution_opportunity":  7,
+                                                                                              "false_resolution_on_absent":  0,
+                                                                                              "justified_abstention":  13,
+                                                                                              "indeterminate_excluded":  1
+                                                                                          },
+                                                                               "metrics":  {
+                                                                                               "resolved_precision":  1,
+                                                                                               "selective_risk":  0,
+                                                                                               "resolution_coverage_evaluable":  0.655172,
+                                                                                               "target_opportunity_coverage":  0.844444,
+                                                                                               "false_resolution_on_absent_rate":  0,
+                                                                                               "abstention_rate_evaluable":  0.344828,
+                                                                                               "abstention_quality":  0.65,
+                                                                                               "missed_resolution_opportunity_rate":  0.155556
+                                                                                           }
+                                                                           },
+                                                            "weighted":  {
+                                                                             "n_rows":  59,
+                                                                             "n_evaluable":  58,
+                                                                             "n_resolved_evaluable":  38,
+                                                                             "n_abstained_evaluable":  20,
+                                                                             "counts":  {
+                                                                                            "correct_resolution":  38,
+                                                                                            "wrong_target_resolution":  0,
+                                                                                            "missed_resolution_opportunity":  7,
+                                                                                            "false_resolution_on_absent":  0,
+                                                                                            "justified_abstention":  13,
+                                                                                            "indeterminate_excluded":  1
+                                                                                        },
+                                                                             "metrics":  {
+                                                                                             "resolved_precision":  1,
+                                                                                             "selective_risk":  0,
+                                                                                             "resolution_coverage_evaluable":  0.196854,
+                                                                                             "target_opportunity_coverage":  0.267068,
+                                                                                             "false_resolution_on_absent_rate":  0,
+                                                                                             "abstention_rate_evaluable":  0.803146,
+                                                                                             "abstention_quality":  0.327346,
+                                                                                             "missed_resolution_opportunity_rate":  0.732932
+                                                                                         }
+                                                                         }
+                                                        },
+                                               "rocksdb":  {
+                                                               "unweighted":  {
+                                                                                  "n_rows":  56,
+                                                                                  "n_evaluable":  56,
+                                                                                  "n_resolved_evaluable":  39,
+                                                                                  "n_abstained_evaluable":  17,
+                                                                                  "counts":  {
+                                                                                                 "correct_resolution":  36,
+                                                                                                 "wrong_target_resolution":  1,
+                                                                                                 "missed_resolution_opportunity":  6,
+                                                                                                 "false_resolution_on_absent":  2,
+                                                                                                 "justified_abstention":  11,
+                                                                                                 "indeterminate_excluded":  0
+                                                                                             },
+                                                                                  "metrics":  {
+                                                                                                  "resolved_precision":  0.923077,
+                                                                                                  "selective_risk":  0.076923,
+                                                                                                  "resolution_coverage_evaluable":  0.696429,
+                                                                                                  "target_opportunity_coverage":  0.860465,
+                                                                                                  "false_resolution_on_absent_rate":  0.153846,
+                                                                                                  "abstention_rate_evaluable":  0.303571,
+                                                                                                  "abstention_quality":  0.647059,
+                                                                                                  "missed_resolution_opportunity_rate":  0.139535
+                                                                                              }
+                                                                              },
+                                                               "weighted":  {
+                                                                                "n_rows":  56,
+                                                                                "n_evaluable":  56,
+                                                                                "n_resolved_evaluable":  39,
+                                                                                "n_abstained_evaluable":  17,
+                                                                                "counts":  {
+                                                                                               "correct_resolution":  36,
+                                                                                               "wrong_target_resolution":  1,
+                                                                                               "missed_resolution_opportunity":  6,
+                                                                                               "false_resolution_on_absent":  2,
+                                                                                               "justified_abstention":  11,
+                                                                                               "indeterminate_excluded":  0
+                                                                                           },
+                                                                                "metrics":  {
+                                                                                                "resolved_precision":  0.869609,
+                                                                                                "selective_risk":  0.130391,
+                                                                                                "resolution_coverage_evaluable":  0.177421,
+                                                                                                "target_opportunity_coverage":  0.230958,
+                                                                                                "false_resolution_on_absent_rate":  0.051653,
+                                                                                                "abstention_rate_evaluable":  0.822579,
+                                                                                                "abstention_quality":  0.344232,
+                                                                                                "missed_resolution_opportunity_rate":  0.769042
+                                                                                            }
+                                                                            }
+                                                           }
+                                           },
+                                "macro_mean_unweighted":  {
+                                                              "resolved_precision":  0.931624,
+                                                              "selective_risk":  0.068376,
+                                                              "resolution_coverage_evaluable":  0.670873,
+                                                              "target_opportunity_coverage":  0.844726,
+                                                              "false_resolution_on_absent_rate":  0.143875,
+                                                              "abstention_rate_evaluable":  0.329127,
+                                                              "abstention_quality":  0.64902,
+                                                              "missed_resolution_opportunity_rate":  0.155274
+                                                          },
+                                "macro_mean_weighted":  {
+                                                            "resolved_precision":  0.917549,
+                                                            "selective_risk":  0.082451,
+                                                            "resolution_coverage_evaluable":  0.198966,
+                                                            "target_opportunity_coverage":  0.257324,
+                                                            "false_resolution_on_absent_rate":  0.047952,
+                                                            "abstention_rate_evaluable":  0.801034,
+                                                            "abstention_quality":  0.333786,
+                                                            "missed_resolution_opportunity_rate":  0.742676
+                                                        }
+                            },
+    "macro_by_relation":  {
+                              "groups":  {
+                                             "CALLS":  {
+                                                           "unweighted":  {
+                                                                              "n_rows":  86,
+                                                                              "n_evaluable":  85,
+                                                                              "n_resolved_evaluable":  56,
+                                                                              "n_abstained_evaluable":  29,
+                                                                              "counts":  {
+                                                                                             "correct_resolution":  48,
+                                                                                             "wrong_target_resolution":  1,
+                                                                                             "missed_resolution_opportunity":  20,
+                                                                                             "false_resolution_on_absent":  7,
+                                                                                             "justified_abstention":  9,
+                                                                                             "indeterminate_excluded":  1
+                                                                                         },
+                                                                              "metrics":  {
+                                                                                              "resolved_precision":  0.857143,
+                                                                                              "selective_risk":  0.142857,
+                                                                                              "resolution_coverage_evaluable":  0.658824,
+                                                                                              "target_opportunity_coverage":  0.710145,
+                                                                                              "false_resolution_on_absent_rate":  0.4375,
+                                                                                              "abstention_rate_evaluable":  0.341176,
+                                                                                              "abstention_quality":  0.310345,
+                                                                                              "missed_resolution_opportunity_rate":  0.289855
+                                                                                          }
+                                                                          },
+                                                           "weighted":  {
+                                                                            "n_rows":  86,
+                                                                            "n_evaluable":  85,
+                                                                            "n_resolved_evaluable":  56,
+                                                                            "n_abstained_evaluable":  29,
+                                                                            "counts":  {
+                                                                                           "correct_resolution":  48,
+                                                                                           "wrong_target_resolution":  1,
+                                                                                           "missed_resolution_opportunity":  20,
+                                                                                           "false_resolution_on_absent":  7,
+                                                                                           "justified_abstention":  9,
+                                                                                           "indeterminate_excluded":  1
+                                                                                       },
+                                                                            "metrics":  {
+                                                                                            "resolved_precision":  0.86603,
+                                                                                            "selective_risk":  0.13397,
+                                                                                            "resolution_coverage_evaluable":  0.150248,
+                                                                                            "target_opportunity_coverage":  0.190941,
+                                                                                            "false_resolution_on_absent_rate":  0.05018,
+                                                                                            "abstention_rate_evaluable":  0.849752,
+                                                                                            "abstention_quality":  0.32314,
+                                                                                            "missed_resolution_opportunity_rate":  0.809059
+                                                                                        }
+                                                                        }
+                                                       },
+                                             "IMPORTS":  {
+                                                             "unweighted":  {
+                                                                                "n_rows":  88,
+                                                                                "n_evaluable":  88,
+                                                                                "n_resolved_evaluable":  60,
+                                                                                "n_abstained_evaluable":  28,
+                                                                                "counts":  {
+                                                                                               "correct_resolution":  60,
+                                                                                               "wrong_target_resolution":  0,
+                                                                                               "missed_resolution_opportunity":  0,
+                                                                                               "false_resolution_on_absent":  0,
+                                                                                               "justified_abstention":  28,
+                                                                                               "indeterminate_excluded":  0
+                                                                                           },
+                                                                                "metrics":  {
+                                                                                                "resolved_precision":  1,
+                                                                                                "selective_risk":  0,
+                                                                                                "resolution_coverage_evaluable":  0.681818,
+                                                                                                "target_opportunity_coverage":  1,
+                                                                                                "false_resolution_on_absent_rate":  0,
+                                                                                                "abstention_rate_evaluable":  0.318182,
+                                                                                                "abstention_quality":  1,
+                                                                                                "missed_resolution_opportunity_rate":  0
+                                                                                            }
+                                                                            },
+                                                             "weighted":  {
+                                                                              "n_rows":  88,
+                                                                              "n_evaluable":  88,
+                                                                              "n_resolved_evaluable":  60,
+                                                                              "n_abstained_evaluable":  28,
+                                                                              "counts":  {
+                                                                                             "correct_resolution":  60,
+                                                                                             "wrong_target_resolution":  0,
+                                                                                             "missed_resolution_opportunity":  0,
+                                                                                             "false_resolution_on_absent":  0,
+                                                                                             "justified_abstention":  28,
+                                                                                             "indeterminate_excluded":  0
+                                                                                         },
+                                                                              "metrics":  {
+                                                                                              "resolved_precision":  1,
+                                                                                              "selective_risk":  0,
+                                                                                              "resolution_coverage_evaluable":  0.704876,
+                                                                                              "target_opportunity_coverage":  1,
+                                                                                              "false_resolution_on_absent_rate":  0,
+                                                                                              "abstention_rate_evaluable":  0.295124,
+                                                                                              "abstention_quality":  1,
+                                                                                              "missed_resolution_opportunity_rate":  0
+                                                                                          }
+                                                                          }
+                                                         }
+                                         },
+                              "macro_mean_unweighted":  {
+                                                            "resolved_precision":  0.928572,
+                                                            "selective_risk":  0.071428,
+                                                            "resolution_coverage_evaluable":  0.670321,
+                                                            "target_opportunity_coverage":  0.855072,
+                                                            "false_resolution_on_absent_rate":  0.21875,
+                                                            "abstention_rate_evaluable":  0.329679,
+                                                            "abstention_quality":  0.655172,
+                                                            "missed_resolution_opportunity_rate":  0.144928
+                                                        },
+                              "macro_mean_weighted":  {
+                                                          "resolved_precision":  0.933015,
+                                                          "selective_risk":  0.066985,
+                                                          "resolution_coverage_evaluable":  0.427562,
+                                                          "target_opportunity_coverage":  0.59547,
+                                                          "false_resolution_on_absent_rate":  0.02509,
+                                                          "abstention_rate_evaluable":  0.572438,
+                                                          "abstention_quality":  0.66157,
+                                                          "missed_resolution_opportunity_rate":  0.40453
+                                                      }
+                          },
+    "per_stratum":  [
+                        {
+                            "stratum":  "CALLS_RESOLVED",
+                            "stratum_key":  "aria2/CALLS_RESOLVED",
+                            "repository":  "aria2",
+                            "relation":  "CALLS",
+                            "population_N_cpp":  4769,
+                            "sample_n_cpp":  19,
+                            "weight_stratum_cpp":  0.011567,
+                            "gold_layer_counts":  {
+                                                      "target_present":  14,
+                                                      "absent":  5,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  14,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  5,
+                                                   "justified_abstention":  0,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  0.736842,
+                                                       "selective_risk":  0.263158,
+                                                       "resolution_coverage_evaluable":  1,
+                                                       "target_opportunity_coverage":  1,
+                                                       "false_resolution_on_absent_rate":  1,
+                                                       "abstention_rate_evaluable":  0,
+                                                       "abstention_quality":  null,
+                                                       "missed_resolution_opportunity_rate":  0
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  0.736842,
+                                                     "selective_risk":  0.263158,
+                                                     "resolution_coverage_evaluable":  1,
+                                                     "target_opportunity_coverage":  1,
+                                                     "false_resolution_on_absent_rate":  1,
+                                                     "abstention_rate_evaluable":  0,
+                                                     "abstention_quality":  null,
+                                                     "missed_resolution_opportunity_rate":  0
+                                                 }
+                        },
+                        {
+                            "stratum":  "CALLS_NONRESOLVED",
+                            "stratum_key":  "aria2/CALLS_NONRESOLVED",
+                            "repository":  "aria2",
+                            "relation":  "CALLS",
+                            "population_N_cpp":  35874,
+                            "sample_n_cpp":  10,
+                            "weight_stratum_cpp":  0.087011,
+                            "gold_layer_counts":  {
+                                                      "target_present":  7,
+                                                      "absent":  3,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  0,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  7,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  3,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  null,
+                                                       "selective_risk":  null,
+                                                       "resolution_coverage_evaluable":  0,
+                                                       "target_opportunity_coverage":  0,
+                                                       "false_resolution_on_absent_rate":  0,
+                                                       "abstention_rate_evaluable":  1,
+                                                       "abstention_quality":  0.3,
+                                                       "missed_resolution_opportunity_rate":  1
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  null,
+                                                     "selective_risk":  null,
+                                                     "resolution_coverage_evaluable":  0,
+                                                     "target_opportunity_coverage":  0,
+                                                     "false_resolution_on_absent_rate":  0,
+                                                     "abstention_rate_evaluable":  1,
+                                                     "abstention_quality":  0.3,
+                                                     "missed_resolution_opportunity_rate":  1
+                                                 }
+                        },
+                        {
+                            "stratum":  "IMPORTS_RESOLVED",
+                            "stratum_key":  "aria2/IMPORTS_RESOLVED",
+                            "repository":  "aria2",
+                            "relation":  "IMPORTS",
+                            "population_N_cpp":  5961,
+                            "sample_n_cpp":  20,
+                            "weight_stratum_cpp":  0.014458,
+                            "gold_layer_counts":  {
+                                                      "target_present":  20,
+                                                      "absent":  0,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  20,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  0,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  1,
+                                                       "selective_risk":  0,
+                                                       "resolution_coverage_evaluable":  1,
+                                                       "target_opportunity_coverage":  1,
+                                                       "false_resolution_on_absent_rate":  null,
+                                                       "abstention_rate_evaluable":  0,
+                                                       "abstention_quality":  null,
+                                                       "missed_resolution_opportunity_rate":  0
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  1,
+                                                     "selective_risk":  0,
+                                                     "resolution_coverage_evaluable":  1,
+                                                     "target_opportunity_coverage":  1,
+                                                     "false_resolution_on_absent_rate":  null,
+                                                     "abstention_rate_evaluable":  0,
+                                                     "abstention_quality":  null,
+                                                     "missed_resolution_opportunity_rate":  0
+                                                 }
+                        },
+                        {
+                            "stratum":  "IMPORTS_NONRESOLVED",
+                            "stratum_key":  "aria2/IMPORTS_NONRESOLVED",
+                            "repository":  "aria2",
+                            "relation":  "IMPORTS",
+                            "population_N_cpp":  1594,
+                            "sample_n_cpp":  10,
+                            "weight_stratum_cpp":  0.003866,
+                            "gold_layer_counts":  {
+                                                      "target_present":  0,
+                                                      "absent":  10,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  0,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  10,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  null,
+                                                       "selective_risk":  null,
+                                                       "resolution_coverage_evaluable":  0,
+                                                       "target_opportunity_coverage":  null,
+                                                       "false_resolution_on_absent_rate":  0,
+                                                       "abstention_rate_evaluable":  1,
+                                                       "abstention_quality":  1,
+                                                       "missed_resolution_opportunity_rate":  null
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  null,
+                                                     "selective_risk":  null,
+                                                     "resolution_coverage_evaluable":  0,
+                                                     "target_opportunity_coverage":  null,
+                                                     "false_resolution_on_absent_rate":  0,
+                                                     "abstention_rate_evaluable":  1,
+                                                     "abstention_quality":  1,
+                                                     "missed_resolution_opportunity_rate":  null
+                                                 }
+                        },
+                        {
+                            "stratum":  "CALLS_RESOLVED",
+                            "stratum_key":  "brpc/CALLS_RESOLVED",
+                            "repository":  "brpc",
+                            "relation":  "CALLS",
+                            "population_N_cpp":  12599,
+                            "sample_n_cpp":  19,
+                            "weight_stratum_cpp":  0.030558,
+                            "gold_layer_counts":  {
+                                                      "target_present":  18,
+                                                      "absent":  0,
+                                                      "indeterminate":  1
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  18,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  0,
+                                                   "indeterminate_excluded":  1
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  1,
+                                                       "selective_risk":  0,
+                                                       "resolution_coverage_evaluable":  1,
+                                                       "target_opportunity_coverage":  1,
+                                                       "false_resolution_on_absent_rate":  null,
+                                                       "abstention_rate_evaluable":  0,
+                                                       "abstention_quality":  null,
+                                                       "missed_resolution_opportunity_rate":  0
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  1,
+                                                     "selective_risk":  0,
+                                                     "resolution_coverage_evaluable":  1,
+                                                     "target_opportunity_coverage":  1,
+                                                     "false_resolution_on_absent_rate":  null,
+                                                     "abstention_rate_evaluable":  0,
+                                                     "abstention_quality":  null,
+                                                     "missed_resolution_opportunity_rate":  0
+                                                 }
+                        },
+                        {
+                            "stratum":  "CALLS_NONRESOLVED",
+                            "stratum_key":  "brpc/CALLS_NONRESOLVED",
+                            "repository":  "brpc",
+                            "relation":  "CALLS",
+                            "population_N_cpp":  64075,
+                            "sample_n_cpp":  10,
+                            "weight_stratum_cpp":  0.155412,
+                            "gold_layer_counts":  {
+                                                      "target_present":  7,
+                                                      "absent":  3,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  0,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  7,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  3,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  null,
+                                                       "selective_risk":  null,
+                                                       "resolution_coverage_evaluable":  0,
+                                                       "target_opportunity_coverage":  0,
+                                                       "false_resolution_on_absent_rate":  0,
+                                                       "abstention_rate_evaluable":  1,
+                                                       "abstention_quality":  0.3,
+                                                       "missed_resolution_opportunity_rate":  1
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  null,
+                                                     "selective_risk":  null,
+                                                     "resolution_coverage_evaluable":  0,
+                                                     "target_opportunity_coverage":  0,
+                                                     "false_resolution_on_absent_rate":  0,
+                                                     "abstention_rate_evaluable":  1,
+                                                     "abstention_quality":  0.3,
+                                                     "missed_resolution_opportunity_rate":  1
+                                                 }
+                        },
+                        {
+                            "stratum":  "IMPORTS_RESOLVED",
+                            "stratum_key":  "brpc/IMPORTS_RESOLVED",
+                            "repository":  "brpc",
+                            "relation":  "IMPORTS",
+                            "population_N_cpp":  4408,
+                            "sample_n_cpp":  20,
+                            "weight_stratum_cpp":  0.010691,
+                            "gold_layer_counts":  {
+                                                      "target_present":  20,
+                                                      "absent":  0,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  20,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  0,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  1,
+                                                       "selective_risk":  0,
+                                                       "resolution_coverage_evaluable":  1,
+                                                       "target_opportunity_coverage":  1,
+                                                       "false_resolution_on_absent_rate":  null,
+                                                       "abstention_rate_evaluable":  0,
+                                                       "abstention_quality":  null,
+                                                       "missed_resolution_opportunity_rate":  0
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  1,
+                                                     "selective_risk":  0,
+                                                     "resolution_coverage_evaluable":  1,
+                                                     "target_opportunity_coverage":  1,
+                                                     "false_resolution_on_absent_rate":  null,
+                                                     "abstention_rate_evaluable":  0,
+                                                     "abstention_quality":  null,
+                                                     "missed_resolution_opportunity_rate":  0
+                                                 }
+                        },
+                        {
+                            "stratum":  "IMPORTS_NONRESOLVED",
+                            "stratum_key":  "brpc/IMPORTS_NONRESOLVED",
+                            "repository":  "brpc",
+                            "relation":  "IMPORTS",
+                            "population_N_cpp":  2605,
+                            "sample_n_cpp":  10,
+                            "weight_stratum_cpp":  0.006318,
+                            "gold_layer_counts":  {
+                                                      "target_present":  0,
+                                                      "absent":  10,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  0,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  10,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  null,
+                                                       "selective_risk":  null,
+                                                       "resolution_coverage_evaluable":  0,
+                                                       "target_opportunity_coverage":  null,
+                                                       "false_resolution_on_absent_rate":  0,
+                                                       "abstention_rate_evaluable":  1,
+                                                       "abstention_quality":  1,
+                                                       "missed_resolution_opportunity_rate":  null
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  null,
+                                                     "selective_risk":  null,
+                                                     "resolution_coverage_evaluable":  0,
+                                                     "target_opportunity_coverage":  null,
+                                                     "false_resolution_on_absent_rate":  0,
+                                                     "abstention_rate_evaluable":  1,
+                                                     "abstention_quality":  1,
+                                                     "missed_resolution_opportunity_rate":  null
+                                                 }
+                        },
+                        {
+                            "stratum":  "CALLS_RESOLVED",
+                            "stratum_key":  "rocksdb/CALLS_RESOLVED",
+                            "repository":  "rocksdb",
+                            "relation":  "CALLS",
+                            "population_N_cpp":  41084,
+                            "sample_n_cpp":  19,
+                            "weight_stratum_cpp":  0.099648,
+                            "gold_layer_counts":  {
+                                                      "target_present":  17,
+                                                      "absent":  2,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  16,
+                                                   "wrong_target_resolution":  1,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  2,
+                                                   "justified_abstention":  0,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  0.842105,
+                                                       "selective_risk":  0.157895,
+                                                       "resolution_coverage_evaluable":  1,
+                                                       "target_opportunity_coverage":  1,
+                                                       "false_resolution_on_absent_rate":  1,
+                                                       "abstention_rate_evaluable":  0,
+                                                       "abstention_quality":  null,
+                                                       "missed_resolution_opportunity_rate":  0
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  0.842105,
+                                                     "selective_risk":  0.157895,
+                                                     "resolution_coverage_evaluable":  1,
+                                                     "target_opportunity_coverage":  1,
+                                                     "false_resolution_on_absent_rate":  1,
+                                                     "abstention_rate_evaluable":  0,
+                                                     "abstention_quality":  null,
+                                                     "missed_resolution_opportunity_rate":  0
+                                                 }
+                        },
+                        {
+                            "stratum":  "CALLS_NONRESOLVED",
+                            "stratum_key":  "rocksdb/CALLS_NONRESOLVED",
+                            "repository":  "rocksdb",
+                            "relation":  "CALLS",
+                            "population_N_cpp":  226886,
+                            "sample_n_cpp":  9,
+                            "weight_stratum_cpp":  0.550304,
+                            "gold_layer_counts":  {
+                                                      "target_present":  6,
+                                                      "absent":  3,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  0,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  6,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  3,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  null,
+                                                       "selective_risk":  null,
+                                                       "resolution_coverage_evaluable":  0,
+                                                       "target_opportunity_coverage":  0,
+                                                       "false_resolution_on_absent_rate":  0,
+                                                       "abstention_rate_evaluable":  1,
+                                                       "abstention_quality":  0.333333,
+                                                       "missed_resolution_opportunity_rate":  1
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  null,
+                                                     "selective_risk":  null,
+                                                     "resolution_coverage_evaluable":  0,
+                                                     "target_opportunity_coverage":  0,
+                                                     "false_resolution_on_absent_rate":  0,
+                                                     "abstention_rate_evaluable":  1,
+                                                     "abstention_quality":  0.333333,
+                                                     "missed_resolution_opportunity_rate":  1
+                                                 }
+                        },
+                        {
+                            "stratum":  "IMPORTS_RESOLVED",
+                            "stratum_key":  "rocksdb/IMPORTS_RESOLVED",
+                            "repository":  "rocksdb",
+                            "relation":  "IMPORTS",
+                            "population_N_cpp":  8666,
+                            "sample_n_cpp":  20,
+                            "weight_stratum_cpp":  0.021019,
+                            "gold_layer_counts":  {
+                                                      "target_present":  20,
+                                                      "absent":  0,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  20,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  0,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  1,
+                                                       "selective_risk":  0,
+                                                       "resolution_coverage_evaluable":  1,
+                                                       "target_opportunity_coverage":  1,
+                                                       "false_resolution_on_absent_rate":  null,
+                                                       "abstention_rate_evaluable":  0,
+                                                       "abstention_quality":  null,
+                                                       "missed_resolution_opportunity_rate":  0
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  1,
+                                                     "selective_risk":  0,
+                                                     "resolution_coverage_evaluable":  1,
+                                                     "target_opportunity_coverage":  1,
+                                                     "false_resolution_on_absent_rate":  null,
+                                                     "abstention_rate_evaluable":  0,
+                                                     "abstention_quality":  null,
+                                                     "missed_resolution_opportunity_rate":  0
+                                                 }
+                        },
+                        {
+                            "stratum":  "IMPORTS_NONRESOLVED",
+                            "stratum_key":  "rocksdb/IMPORTS_NONRESOLVED",
+                            "repository":  "rocksdb",
+                            "relation":  "IMPORTS",
+                            "population_N_cpp":  3771,
+                            "sample_n_cpp":  8,
+                            "weight_stratum_cpp":  0.009146,
+                            "gold_layer_counts":  {
+                                                      "target_present":  0,
+                                                      "absent":  8,
+                                                      "indeterminate":  0
+                                                  },
+                            "scoring_states":  {
+                                                   "correct_resolution":  0,
+                                                   "wrong_target_resolution":  0,
+                                                   "missed_resolution_opportunity":  0,
+                                                   "false_resolution_on_absent":  0,
+                                                   "justified_abstention":  8,
+                                                   "indeterminate_excluded":  0
+                                               },
+                            "metrics_unweighted":  {
+                                                       "resolved_precision":  null,
+                                                       "selective_risk":  null,
+                                                       "resolution_coverage_evaluable":  0,
+                                                       "target_opportunity_coverage":  null,
+                                                       "false_resolution_on_absent_rate":  0,
+                                                       "abstention_rate_evaluable":  1,
+                                                       "abstention_quality":  1,
+                                                       "missed_resolution_opportunity_rate":  null
+                                                   },
+                            "metrics_weighted":  {
+                                                     "resolved_precision":  null,
+                                                     "selective_risk":  null,
+                                                     "resolution_coverage_evaluable":  0,
+                                                     "target_opportunity_coverage":  null,
+                                                     "false_resolution_on_absent_rate":  0,
+                                                     "abstention_rate_evaluable":  1,
+                                                     "abstention_quality":  1,
+                                                     "missed_resolution_opportunity_rate":  null
+                                                 }
+                        }
+                    ],
+    "highlighted_stratum":  {
+                                "stratum":  "rocksdb CALLS_NONRESOLVED",
+                                "weight_stratum_cpp":  0.550304,
+                                "fact":  "largest population weight among all strata; shown for visibility, no causal interpretation in this artifact",
+                                "entry":  {
+                                              "stratum":  "CALLS_NONRESOLVED",
+                                              "stratum_key":  "rocksdb/CALLS_NONRESOLVED",
+                                              "repository":  "rocksdb",
+                                              "relation":  "CALLS",
+                                              "population_N_cpp":  226886,
+                                              "sample_n_cpp":  9,
+                                              "weight_stratum_cpp":  0.550304,
+                                              "gold_layer_counts":  {
+                                                                        "target_present":  6,
+                                                                        "absent":  3,
+                                                                        "indeterminate":  0
+                                                                    },
+                                              "scoring_states":  {
+                                                                     "correct_resolution":  0,
+                                                                     "wrong_target_resolution":  0,
+                                                                     "missed_resolution_opportunity":  6,
+                                                                     "false_resolution_on_absent":  0,
+                                                                     "justified_abstention":  3,
+                                                                     "indeterminate_excluded":  0
+                                                                 },
+                                              "metrics_unweighted":  {
+                                                                         "resolved_precision":  null,
+                                                                         "selective_risk":  null,
+                                                                         "resolution_coverage_evaluable":  0,
+                                                                         "target_opportunity_coverage":  0,
+                                                                         "false_resolution_on_absent_rate":  0,
+                                                                         "abstention_rate_evaluable":  1,
+                                                                         "abstention_quality":  0.333333,
+                                                                         "missed_resolution_opportunity_rate":  1
+                                                                     },
+                                              "metrics_weighted":  {
+                                                                       "resolved_precision":  null,
+                                                                       "selective_risk":  null,
+                                                                       "resolution_coverage_evaluable":  0,
+                                                                       "target_opportunity_coverage":  0,
+                                                                       "false_resolution_on_absent_rate":  0,
+                                                                       "abstention_rate_evaluable":  1,
+                                                                       "abstention_quality":  0.333333,
+                                                                       "missed_resolution_opportunity_rate":  1
+                                                                   }
+                                          }
+                            },
+    "canonical_node_correctness":  {
+                                       "note":  "semantic correctness (acceptable-target membership) is the primary Resolved Precision input; canonical-node correctness is reported separately and never overrides it. DIVERGENT cases carry no frozen canonical target and are counted as not-evaluable here.",
+                                       "evaluated_resolved_target_present":  109,
+                                       "canonical_match":  105,
+                                       "canonical_mismatch":  1,
+                                       "not_evaluable_no_frozen_canonical":  3
+                                   },
+    "indeterminate_observation":  {
+                                      "sample_id":  "FQV1-brpc-a7dd1a2db3530e09",
+                                      "repository":  "brpc",
+                                      "relation_type":  "CALLS",
+                                      "system_resolved":  true,
+                                      "system_status":  "resolved",
+                                      "resolver_strategy":  "same_file_resolution",
+                                      "resolver_confidence":  0.98,
+                                      "predicted_target":  {
+                                                               "symbol_id":  "symbol:259c7c2656d9f4c76ac426574621db88e26cd7115529cae9ee092a2e1d145dbc",
+                                                               "kind":  "Function",
+                                                               "qualified_name":  "butil.anonymous.__cpuid",
+                                                               "path":  "src/butil/cpu.cc",
+                                                               "start_line":  70,
+                                                               "end_line":  76
+                                                           },
+                                      "note":  "observation only; excluded from every correctness/risk/abstention denominator by contract"
+                                  },
+    "scoring_error_cases":  [
+                                {
+                                    "sample_id":  "FQV1-aria2-713b641e93cc620c",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:8588c2758df8da224a8ee94525093db492e0cca936b5b532eefba3377f086581",
+                                                              "path":  "src/ValueBase.cc",
+                                                              "start_line":  123,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:8588c2758df8da224a8ee94525093db492e0cca936b5b532eefba3377f086581",
+                                                                        "path":  "src/ValueBase.cc",
+                                                                        "start_line":  123,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-brpc-68baef18ae4bd3ee",
+                                    "repository":  "brpc",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:84b06e722d1225bcf45dd201a318d63b977946eaaeb6b97efa870af164125588",
+                                                              "path":  "src/brpc/couchbase.h",
+                                                              "start_line":  461,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:84b06e722d1225bcf45dd201a318d63b977946eaaeb6b97efa870af164125588",
+                                                                        "path":  "src/brpc/couchbase.h",
+                                                                        "start_line":  461,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:84b06e722d1225bcf45dd201a318d63b977946eaaeb6b97efa870af164125588",
+                                                                 "symbol:f8bebafa3bd81bc475b89d5f17bd8c8fadd63ccb89dd5410b30c9695bf5cce23"
+                                                             ],
+                                    "resolver_strategy":  "same_file_resolution",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-brpc-b210f3349b031961",
+                                    "repository":  "brpc",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:3d377a7ed1fb9d37e5d3efd2fcf7e4e61f86235d4f2106afc12e9b5fa4fdb942",
+                                                              "path":  "src/brpc/redis_reply.h",
+                                                              "start_line":  261,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:3d377a7ed1fb9d37e5d3efd2fcf7e4e61f86235d4f2106afc12e9b5fa4fdb942",
+                                                                        "path":  "src/brpc/redis_reply.h",
+                                                                        "start_line":  261,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:0115d7480510c55fbc92b9021138b4409ca8feef9c61c24c5f1e1cbc2c0240b9",
+                                                                 "symbol:1b859fd1343943dcbc05725f528f1155dc1f9770f9164d0ae9720efa72fb6aad",
+                                                                 "symbol:3d377a7ed1fb9d37e5d3efd2fcf7e4e61f86235d4f2106afc12e9b5fa4fdb942"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-8e526ba5ac0d956a",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "FALSE_RESOLUTION_ON_ABSENT",
+                                    "gold_target_layer":  "ABSENT",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  null,
+                                                              "start_line":  null,
+                                                              "qualified_name":  "std::set\u003cstd::shared_ptr\u003cBlobFile\u003e, BlobFileComparatorTTL\u003e::erase"
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  null,
+                                                                        "start_line":  null,
+                                                                        "qualified_name":  "std::set\u003cstd::shared_ptr\u003cBlobFile\u003e, BlobFileComparatorTTL\u003e::erase"
+                                                                    }
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:6a35a63b78c638c0bbe768f2482f6b0857eb89406f8e09c0df6b0d26298af053",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "ROCKSDB_NAMESPACE.WritePreparedTxnDB.PreparedHeap.erase",
+                                                             "path":  "utilities/transactions/write_prepared_txn_db.h",
+                                                             "start_line":  644,
+                                                             "end_line":  660
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:6a35a63b78c638c0bbe768f2482f6b0857eb89406f8e09c0df6b0d26298af053"
+                                                             ],
+                                    "resolver_strategy":  "unique_symbol_resolution",
+                                    "resolver_confidence":  0.75
+                                },
+                                {
+                                    "sample_id":  "FQV1-brpc-d12b7bdc3ecd5bbc",
+                                    "repository":  "brpc",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "DIVERGENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:82120524ca00e8c9d25fe43f384959c0fc33f42a3abfd9f6a914232b8541d488",
+                                                                        "path":  null,
+                                                                        "start_line":  null,
+                                                                        "qualified_name":  null
+                                                                    },
+                                                                    {
+                                                                        "symbol_id":  "symbol:f33946fda2e5c4f4f7d3314a6d9677fa94b8e8cab2c983f15d7ba8674f5d0fd4",
+                                                                        "path":  "src/bthread/bthread.cpp",
+                                                                        "start_line":  335,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:82120524ca00e8c9d25fe43f384959c0fc33f42a3abfd9f6a914232b8541d488",
+                                                                 "symbol:f33946fda2e5c4f4f7d3314a6d9677fa94b8e8cab2c983f15d7ba8674f5d0fd4"
+                                                             ],
+                                    "resolver_strategy":  "qualified_name_resolution",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-52bdba205b5ce686",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:d9b0531865542ac0b4f9850fd19bb81c6981d4d3b10ce28afaa66c738befaf15",
+                                                              "path":  null,
+                                                              "start_line":  null,
+                                                              "qualified_name":  "aria2::HttpHeader::setStatusCode(int)"
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:d9b0531865542ac0b4f9850fd19bb81c6981d4d3b10ce28afaa66c738befaf15",
+                                                                        "path":  null,
+                                                                        "start_line":  null,
+                                                                        "qualified_name":  "aria2::HttpHeader::setStatusCode(int)"
+                                                                    },
+                                                                    {
+                                                                        "symbol_id":  "symbol:01af629eaf947b1f6d7f350067727e17a08d497f4019f012863a0aa15711c946",
+                                                                        "path":  null,
+                                                                        "start_line":  null,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-0f84707a755b6d84",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "FALSE_RESOLUTION_ON_ABSENT",
+                                    "gold_target_layer":  "ABSENT",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  null,
+                                                              "start_line":  null,
+                                                              "qualified_name":  "std::string::size() const"
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  null,
+                                                                        "start_line":  null,
+                                                                        "qualified_name":  "std::string::size() const"
+                                                                    }
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:09276028ee2eb90c14b4bb3cb04035b818d1419fca335ca7284be69ec847572c",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "aria2.CookieStorage.size",
+                                                             "path":  "src/CookieStorage.cc",
+                                                             "start_line":  426,
+                                                             "end_line":  433
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:09276028ee2eb90c14b4bb3cb04035b818d1419fca335ca7284be69ec847572c"
+                                                             ],
+                                    "resolver_strategy":  "same_file_resolution",
+                                    "resolver_confidence":  0.98
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-c900f72d67f383ae",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:6f6e06fc6c597b1b6a85f39a0eda56695d83af81f31dddf14a0321d9a24ac2b4",
+                                                              "path":  null,
+                                                              "start_line":  null,
+                                                              "qualified_name":  "aria2::ServerStat::getHostname() const"
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:6f6e06fc6c597b1b6a85f39a0eda56695d83af81f31dddf14a0321d9a24ac2b4",
+                                                                        "path":  null,
+                                                                        "start_line":  null,
+                                                                        "qualified_name":  "aria2::ServerStat::getHostname() const"
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-brpc-8c9d0887e1f9d4fe",
+                                    "repository":  "brpc",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "src/brpc/couchbase.cpp",
+                                                              "start_line":  26,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "src/brpc/couchbase.cpp",
+                                                                        "start_line":  26,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-657008a8ca392740",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "test_util/testharness.h",
+                                                              "start_line":  88,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "test_util/testharness.h",
+                                                                        "start_line":  88,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-c6525c9d8d155f3f",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "DIVERGENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "src/util.h",
+                                                                        "start_line":  1,
+                                                                        "qualified_name":  null
+                                                                    },
+                                                                    {
+                                                                        "symbol_id":  "symbol:01c44fa04d777eb1183ddfb069836eda44dc5b8a6a4e0dcdf145bc219791cd27",
+                                                                        "path":  "test/UtilTest1.cc",
+                                                                        "start_line":  162,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:01c44fa04d777eb1183ddfb069836eda44dc5b8a6a4e0dcdf145bc219791cd27",
+                                                                 "symbol:d51e4ce94870d6bf7329513d3ba9bbe5dd19422934df303ec4fb03c7932a2a0d",
+                                                                 "symbol:f8e90274ae8edefb00c86ee0391bfcd1e5cf1f355ed2db01500d5a6269aa14d0"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-85a27eca37b8f8c1",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:4ca0838034b4067c5e3b9de4a2735c4f54df33604c3abedb18552181626693b4",
+                                                              "path":  "util/comparator.cc",
+                                                              "start_line":  322,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:4ca0838034b4067c5e3b9de4a2735c4f54df33604c3abedb18552181626693b4",
+                                                                        "path":  "util/comparator.cc",
+                                                                        "start_line":  322,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:4ca0838034b4067c5e3b9de4a2735c4f54df33604c3abedb18552181626693b4",
+                                                                 "symbol:dc37ba182d2702a17ef03ec6fcd2329b94b46fa09715439199d445c3e5a8ebf0"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-ec017de0157014f4",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "third-party/gtest-1.8.1/fused-src/gtest/gtest.h",
+                                                              "start_line":  22089,
+                                                              "qualified_name":  "::RUN_ALL_TESTS"
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "third-party/gtest-1.8.1/fused-src/gtest/gtest.h",
+                                                                        "start_line":  22087,
+                                                                        "qualified_name":  null
+                                                                    },
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "third-party/gtest-1.8.1/fused-src/gtest/gtest.h",
+                                                                        "start_line":  22089,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-4f7155139b696d14",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "FALSE_RESOLUTION_ON_ABSENT",
+                                    "gold_target_layer":  "ABSENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:56a4cc464228d3ec2d4801226726eb74c8c9f8abeb295d9c90a383bf832b6ea2",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "aria2.IndexedList.push_back",
+                                                             "path":  "src/IndexedList.h",
+                                                             "start_line":  333,
+                                                             "end_line":  344
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:56a4cc464228d3ec2d4801226726eb74c8c9f8abeb295d9c90a383bf832b6ea2"
+                                                             ],
+                                    "resolver_strategy":  "unique_symbol_resolution",
+                                    "resolver_confidence":  0.75
+                                },
+                                {
+                                    "sample_id":  "FQV1-brpc-51d58c46a6424852",
+                                    "repository":  "brpc",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:710faba3f341dffdc0112c8e864d7e403dd1906dce23a63968ea12ad77feaed5",
+                                                              "path":  "test/brpc_block_pool_unittest.cpp",
+                                                              "start_line":  188,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:710faba3f341dffdc0112c8e864d7e403dd1906dce23a63968ea12ad77feaed5",
+                                                                        "path":  "test/brpc_block_pool_unittest.cpp",
+                                                                        "start_line":  188,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:710faba3f341dffdc0112c8e864d7e403dd1906dce23a63968ea12ad77feaed5",
+                                                                 "symbol:76ba32d5d88c7dc117c2a61f0344bd82f44767c2ec02a846646d244237001f77"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-e23ab7dea713cf57",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:0036c5265da4263a73df1dd1e69ffd8b6253cf07212a3c2914f0e1a92d839684",
+                                                              "path":  "include/rocksdb/advanced_cache.h",
+                                                              "start_line":  390,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:0036c5265da4263a73df1dd1e69ffd8b6253cf07212a3c2914f0e1a92d839684",
+                                                                        "path":  "include/rocksdb/advanced_cache.h",
+                                                                        "start_line":  390,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:0036c5265da4263a73df1dd1e69ffd8b6253cf07212a3c2914f0e1a92d839684",
+                                                                 "symbol:00bc30d798e6bb95c5eb971d7d97df5d3e37af9a77106aac8d4f0affc019da86",
+                                                                 "symbol:2901af4982fa13f95cd985a02b21078f4f28709dc8d9b01b30b3360a70ecd118",
+                                                                 "symbol:29c05eb6e1f7378a334adc803364dab04e59e28df9dd36ae1e9863612245a30e",
+                                                                 "symbol:804055160c6315089a9eb10ae6e06fbd53fea28d23a3a9d4e4b3ce2bd3b63107",
+                                                                 "symbol:d71afbbe84043b698c489f36c586e777f15f83e6e4c34fcd8ea0a28701813f25"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-4656d1df0792fedd",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "FALSE_RESOLUTION_ON_ABSENT",
+                                    "gold_target_layer":  "ABSENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:89523111e5baa81245166eb375aa98e6422c0676ebc197d991c34fb5d83b68ac",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "aria2.IndexedList.move",
+                                                             "path":  "src/IndexedList.h",
+                                                             "start_line":  515,
+                                                             "end_line":  559
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:89523111e5baa81245166eb375aa98e6422c0676ebc197d991c34fb5d83b68ac"
+                                                             ],
+                                    "resolver_strategy":  "unique_symbol_resolution",
+                                    "resolver_confidence":  0.75
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-ecb7a6891b617490",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "WRONG_TARGET_RESOLUTION",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "include/rocksdb/slice.h",
+                                                              "start_line":  61,
+                                                              "qualified_name":  "ROCKSDB_NAMESPACE::Slice::size"
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "include/rocksdb/slice.h",
+                                                                        "start_line":  61,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:a3995c1ccc5a1bd2d0880ef952b52f6f438e1b82f2515729ec52a817fef219bd",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "ROCKSDB_NAMESPACE.MultiGetJNIKeys.size",
+                                                             "path":  "java/rocksjni/jni_multiget_helpers.cc",
+                                                             "start_line":  123,
+                                                             "end_line":  125
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:a3995c1ccc5a1bd2d0880ef952b52f6f438e1b82f2515729ec52a817fef219bd"
+                                                             ],
+                                    "resolver_strategy":  "same_file_resolution",
+                                    "resolver_confidence":  0.98
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-aa505d4616aede0b",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "FALSE_RESOLUTION_ON_ABSENT",
+                                    "gold_target_layer":  "ABSENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:942fcc22881224fe8ced3e5a1c266bea72c556324355fd647966c937fe6e5551",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "ROCKSDB_NAMESPACE.autovector.emplace_back",
+                                                             "path":  "util/autovector.h",
+                                                             "start_line":  298,
+                                                             "end_line":  305
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:942fcc22881224fe8ced3e5a1c266bea72c556324355fd647966c937fe6e5551"
+                                                             ],
+                                    "resolver_strategy":  "unique_symbol_resolution",
+                                    "resolver_confidence":  0.75
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-5c9b99ecc0454a4a",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "FALSE_RESOLUTION_ON_ABSENT",
+                                    "gold_target_layer":  "ABSENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:56a4cc464228d3ec2d4801226726eb74c8c9f8abeb295d9c90a383bf832b6ea2",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "aria2.IndexedList.push_back",
+                                                             "path":  "src/IndexedList.h",
+                                                             "start_line":  333,
+                                                             "end_line":  344
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:56a4cc464228d3ec2d4801226726eb74c8c9f8abeb295d9c90a383bf832b6ea2"
+                                                             ],
+                                    "resolver_strategy":  "unique_symbol_resolution",
+                                    "resolver_confidence":  0.75
+                                },
+                                {
+                                    "sample_id":  "FQV1-brpc-c854e345d2d4b8a8",
+                                    "repository":  "brpc",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:31ada0fc288452cf67b5653d51b9b0a4351458abb97789bd55b1fe909d566df3",
+                                                              "path":  "test/string_util_unittest.cc",
+                                                              "start_line":  1089,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:31ada0fc288452cf67b5653d51b9b0a4351458abb97789bd55b1fe909d566df3",
+                                                                        "path":  "test/string_util_unittest.cc",
+                                                                        "start_line":  1089,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:31ada0fc288452cf67b5653d51b9b0a4351458abb97789bd55b1fe909d566df3",
+                                                                 "symbol:9000c929681ff3f0ad0d7f8716517439fb7767d09b6f8ed0db290c061ab08e25",
+                                                                 "symbol:b89fdd662861b95e3d30ecb7d72b0052b3185567e9d02ecdde99f3e20201683c",
+                                                                 "symbol:ce165939d8d8b284905691ea8588eab65706ea8bbce71324287ff1d0132f5923"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-0102241c89b94614",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  "symbol:3a77504dba91c1c2b5fb0b81dbd7da5a16d10426060ed001b9ba7bdab808b0a4",
+                                                              "path":  "test/HttpHeaderTest.cc",
+                                                              "start_line":  145,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  "symbol:3a77504dba91c1c2b5fb0b81dbd7da5a16d10426060ed001b9ba7bdab808b0a4",
+                                                                        "path":  "test/HttpHeaderTest.cc",
+                                                                        "start_line":  145,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:3a77504dba91c1c2b5fb0b81dbd7da5a16d10426060ed001b9ba7bdab808b0a4",
+                                                                 "symbol:5e879451ea51ed9f426b126ba975e6db0c93214ab231bd5c95686afd17356453",
+                                                                 "symbol:61d0ee877acce5acc922e49f2e53f44e55473a834782fd5b6120214947b0eb0d",
+                                                                 "symbol:794307db615489e84b71ea4d2c8e9db548b3699640a7d43ca7d68c97e9a08c1a",
+                                                                 "symbol:8c36fe4d12b52b5353a06631b6c0b6ccd51c339ae055145792e34648d6893b07",
+                                                                 "symbol:97914b4daf3ec058ce74bc3a21a228fbd0d12ae4e12143a527cc7a064e7941f3",
+                                                                 "symbol:a4d06b0ac8bbd22973c0b650920055c5248d25a046b32687ff4627c00f0b7856",
+                                                                 "symbol:a69103e1ce097a6420fcacb839f2131f5139f742af3c74b0f0ae660742fb7b69",
+                                                                 "symbol:a924610d05c2f6965f834e2f8d68f208d9df01c621a172b195d74477a0b1fc9d",
+                                                                 "symbol:d0036ea88824dd3b6fd434fed5d9c7cbad770407a96e22b457e287f0e8cac7b0",
+                                                                 "symbol:e4a756a4a67c3a48459e87c05e4e3d96a0106a36d0ce02d32bd24e9dc8bb9448",
+                                                                 "symbol:e5b859363160ca1970fafa9b155bbabda97b18d5ba18f408fc6bd6e2247e94d7"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-d92c0476f269fe9c",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "src/DHTMessageTrackerEntry.cc",
+                                                              "start_line":  58,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "src/DHTMessageTrackerEntry.cc",
+                                                                        "start_line":  58,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-brpc-bc38ae52a3ef3090",
+                                    "repository":  "brpc",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "src/butil/strings/string_piece.h",
+                                                              "start_line":  214,
+                                                              "qualified_name":  "butil::BasicStringPiece\u003cSTRING_TYPE\u003e::data"
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "src/butil/strings/string_piece.h",
+                                                                        "start_line":  214,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:00f115171424c41d67c8e9e554ed88a56ed070df06db893bd9b60d28945c8e2c",
+                                                                 "symbol:018ac1f73f3631ef5e9cd52b813ba8aba2ea2e2ac0cd9d0556ed8c2844c53a82",
+                                                                 "symbol:0293ac7f62e145a70c57316c6a3a6287ff843ba7761b68b91be93b075475949a",
+                                                                 "symbol:031e041254d09bc09a308f023cd5bb5b49558ec5c3975e5f8bf0768a43919d12",
+                                                                 "symbol:050fdb3fbd79de7e9e2ae04e4dd4a72eef8149be25178a4b6cd8a1203fd63499",
+                                                                 "symbol:0e9e1b6c4dc90968bae08b3ce291928092efa2559cf231e2f222871a27e58616",
+                                                                 "symbol:1111d52fea1fd965de21fb0d0c62e0c7bb9db7b3377dbed11b3604c2a87dad6c",
+                                                                 "symbol:131247b4202f43443d01b723dfe41feb95c5b10a464b88892552284206044f2d",
+                                                                 "symbol:14ebb36f134f1570b5b97313c7079d6ea552682fc7ae8ebf190da6d16c767b0a",
+                                                                 "symbol:153ea5d3367d54c974e43d64c0b577ebf605b8d4af269e79ac4fa1fe6c09bae2",
+                                                                 "symbol:174bd8630f087e1fce155dba57f0b41e5b8086cbdd294cb754eee8b8f9730ab9",
+                                                                 "symbol:1b3e58fc3bf514798765f2d8b6eb915216340d2d28c401004a0dcb3c06e73116",
+                                                                 "symbol:1c179e56158451bc5c5b0d488fac27af2201c67987e42e9a4e7a566f07bd39bd",
+                                                                 "symbol:1f1aed279894568a14fe709741a4025ca8f5b11a77bd2c4b1617968fd0d4e440",
+                                                                 "symbol:214364a97c3a91ecb1a45475629b7ea7dcec0f8f3fb588a2d9b3c7c3cff7456c",
+                                                                 "symbol:216426c83775b9487b7ad149672b57441d414772973f5d9cf944b5de0a4b10db",
+                                                                 "symbol:2270992a17db1e177180d9cbe060e29ac30abf1176a99327db4d16dc46192cdd",
+                                                                 "symbol:2697b8cbe25612dc9d58a68bf46d202317557990b6a0dd408639550c35fdaa5c",
+                                                                 "symbol:2a61352e54dc3c18c496c7da5d7ca9b458483cfe5e8b5196c5d57be8c075b835",
+                                                                 "symbol:2b7bd0b32a74c411ecc2f4de598d8fca0a64efe94f35183dd23c5dddcdaf1df9",
+                                                                 "symbol:2d448df7bfe09df115c0fba8fc73a3f49eee72f84ac4cfddf1887a69b1027f29",
+                                                                 "symbol:2e25ca4fae42aa1c99e50a91ce652b5b4a006322326078a55ca718cd7bc18ba9",
+                                                                 "symbol:2ea189363c3ad6f2774b730e584ca121053963ef72743d0a19153cd8478ee6e1",
+                                                                 "symbol:3591f2dd793233ee95d48a0997cd3971bf02475f89c38c184b1e9089ef0bee78",
+                                                                 "symbol:386881e3c66606a5c8db9cddd9966e724631a3a8d6a7c4ac0b4d1abc815efa3b",
+                                                                 "symbol:390f9ae927e52eedfc3e855f94bbfe543af15e48c923b975bed6f9a6f64b3017",
+                                                                 "symbol:3c8b8203e78ba824d9d2e3a30713ced89f509fc94fdfd2b0651329dd53bda0fa",
+                                                                 "symbol:4387851489cfcdc06e9f9701ff9c7e02484622de2cc2a526a710845e1fa2876f",
+                                                                 "symbol:4bb9031e93deb9780a22835dc2d5088eaf258918cb0cbe1a1bbbe2081f15ce7e",
+                                                                 "symbol:4dca12b60591f81c678ee1e1a79e754b0609b2dc286411641b4136ab2ddca896",
+                                                                 "symbol:534c6cbbb7935a0f16b4240f95b0c2eb113750f5f321c82167f4b4ae70de3db6",
+                                                                 "symbol:5365a573b807aeb6835574cef8439b7720dea5bbd9c1ab4511772311eeab275a",
+                                                                 "symbol:56df43d7b1c0f8f80caadf2203b021b5c3fecd5f9f5cf96458a388a27ea77b18",
+                                                                 "symbol:5d23a2296bfa70d69319c2ee01f78b8ef9f4e47109d31bbd71422813011186ce",
+                                                                 "symbol:629620ef7355b9f1f85aa6d59da432cc136e3a31cd4b3e539bd7ed7a51e83f72",
+                                                                 "symbol:63d2c16030877445331b9a4d0320957fd556f3ddccf607f6fd65aae43761e9c8",
+                                                                 "symbol:64c19a35726556385eea9c558165f0858f029fc0368f451cc1e41c27c84a6a84",
+                                                                 "symbol:69bd061eec9efbb38a1ef66418ac0e798cad78096cc563b14c095e379e94cd7c",
+                                                                 "symbol:6d11afe8fbc739d422eccf621607e03a1d7faa560310e7481fae1af5ce837d7f",
+                                                                 "symbol:6f96ba6f7452bc6170f4ce854ec9ffb1e8f94ea5520739e32475d854cabf3adc",
+                                                                 "symbol:72e28b7c9525ee0e9037771d1d9070398646f52d6d00874f8e1df02e433645ef",
+                                                                 "symbol:739525d0ed469535becb207bec0921cf7b3cfb2b692b8e0eb667c5cdffb2b302",
+                                                                 "symbol:73a633a8a6402eed38c3d11ee5eb3063bbb82a88eab1b3657e87e8b019c06ff8",
+                                                                 "symbol:7864806dda78b9a13b495edd2cead10a3bdd691b0bae9f275e999fe8a777ce46",
+                                                                 "symbol:7906a51da38e3f84d0b635ee7c34b2baf640a2f29f87a4dd7eeb67c301687c93",
+                                                                 "symbol:7939730fb2d59e172eda707257e8a5fd025a79edf74d33425d5f1e1bbdf12802",
+                                                                 "symbol:7d1f7084b847ac7232ab6cfe84dc3984170683ad69f975455be022b81a892afa",
+                                                                 "symbol:7d43ecd10af468e6249a645234392ab2e717c4144290b10778fc2eb42fd9f972",
+                                                                 "symbol:804b890bede2dbef940d14bfd214acbb4a5141f1ccd48b484f827d8e91b5294d",
+                                                                 "symbol:8337ac8de141236f10202c666064cb83525537b9a203522b6f6600841d4fe332",
+                                                                 "symbol:839698ada4f0bd5f2d0bf4b9b4f55d7ee512756eb9068aceb7650435eac12508",
+                                                                 "symbol:896a7c18027027f19be1678fb74978931d6d3d39ead565b6c544133f498eaa7c",
+                                                                 "symbol:896dec2530eba37aa98c660124ae4c466358a41bc0bdef12390614a871fcd74b",
+                                                                 "symbol:8c7fe895d29b8cac06ac08aa64d62ddabd5a071d244e1bd8309de70c1bb06593",
+                                                                 "symbol:8d0911beb1ecf59526143fd72fc10c64cb02789214119c565c04c25d2cfc317f",
+                                                                 "symbol:8efa6a47535a2a1bf7e5be5abac49e7864b9403d5f4d21512130dbe9e219c5d3",
+                                                                 "symbol:8fe451d152b0b4d88a4082833269d65af446dcd3ff9a3cfff69e4e1ea9ee2043",
+                                                                 "symbol:91d2fe815b7661588cdfcfced5a4b22e514d86fee6d7ccca3df5e1d104378bf3",
+                                                                 "symbol:91e8dcf40b58ff2903754bb3f5033f4ff2c2a3bb8bc6c674af263f54ff070382",
+                                                                 "symbol:9531be3be52fa9240295597b2f52b65cc7a24a2f4a93f51b86429483bb380840",
+                                                                 "symbol:98057c8369cac2ed37999c50643248f92548429b5a7d801ba216eee2bb5c6cdd",
+                                                                 "symbol:99740ddd59068d79e88c286669c142af7816a05e98ca4e37ac25c29ec8362f17",
+                                                                 "symbol:9a7a589e50d9488342669797bedbc2bb2c735f58a7c69a8982143230b49380d9",
+                                                                 "symbol:9b67b094781279c749675a62f30ce5fd15fa99bc25dd9f284e5703719b83eb92",
+                                                                 "symbol:a0fe8245ceb3f84fc57243042ede86dc6f0ded473c127066814fa5eb6d1c4f83",
+                                                                 "symbol:a1f63f951bf553270f16c4f5452e9da1c13873a66922ebeffea6ea94dcb801a6",
+                                                                 "symbol:a244edd49fc4bdfca5431c67cdb5d306b3218be79d94635912764135d05da06f",
+                                                                 "symbol:a24a114301794248053a90d861c474d3508b8f578cba1aafa94df5fd6d2f683f",
+                                                                 "symbol:a52151fdb876f697a1465b481741b1fc9fc77e7dc560c90bc05b6fbf3b77dac7",
+                                                                 "symbol:aec72c4fe5ba6b2e6cad75d3a6a8254136bc5c245dfcbbc0ec91e11342faf5b7",
+                                                                 "symbol:af7f71137a432fe50f545b00b14c29deaae4ab2e8b54785672cf203f126c53c4",
+                                                                 "symbol:bccbfaf0e78a7b6a4f8cb6b8c67911cd90b9e76fac2c954694ed6cf5a5ff8115",
+                                                                 "symbol:c02c5c056069222964296e941aca7ff068d93413c5106db52110deb4d64b5558",
+                                                                 "symbol:c2ff60f427eb777cbcdc4e7c00610e45a29b06df0b66d65d8179705aa5ef67b0",
+                                                                 "symbol:c38b81dee029a3892faf380e6d8363232de70ed3d5982847eb39504509a3cdf6",
+                                                                 "symbol:cb3cc4ea9d52b9dbdfe2c8ff75719b061567ced30026c40814b849816f2a3407",
+                                                                 "symbol:ce15bd8d17bd14e075fe15473c3bbf10ed46ae8d6d3361cc5a997e09c81a2bf4",
+                                                                 "symbol:ceaead534c7f490388ce566728e7ede0e444a405bc80b8b8c5c64d8c196c6726",
+                                                                 "symbol:d2992065bc86ab2b2b4f5801bc5b673b1140d15991cd4310eae7c250dea3fc66",
+                                                                 "symbol:d37fcd9865e462177fd2e96e696ed6a09f1c3572f5596de6bfb3cea156d144a5",
+                                                                 "symbol:dc35c8bcaf864dc9d60218eac7ce47ee6d06981fdf8fcc69a7b1973a97c6da81",
+                                                                 "symbol:dcb6b44d703a439e0f29e71e7d7f6f0d3bf23c5c02b9ecaade3c3eb7d66b1e02",
+                                                                 "symbol:df2e47196f25cfb7a26322ab91c779d03747bf03b6630f172302a1e8a2b86a1f",
+                                                                 "symbol:df6ee89631d191f4f2d069ab99b14a99bf3ddeec04d7f81888ef8b5fb907c17f",
+                                                                 "symbol:e166058a0edf4f3aa96cb822ee8a66c7ccabc90799cd8be95aa4d2f04d206e11",
+                                                                 "symbol:e407e1102df0e824275f02b1f5f42119d20fc39f22dd21327fcd8768f478c519",
+                                                                 "symbol:e46989cc5a84668c861aef1b129b2cd06907a41da55918d95a40374e830771a1",
+                                                                 "symbol:e501f39fec513c974518292cf439c749d234e76de6bd998eeed0b82f15b8c691",
+                                                                 "symbol:e560bcb06430d076c98f16de6661a6589782e6a3c5fc0f13bb083e46672e1918",
+                                                                 "symbol:ed4c8f8896f58421f82eee36fac3757855683ee7f9b9ef057fa88ad3b7aa7438",
+                                                                 "symbol:f00986562fa14791c3afb8bdbaa9cd0c42d6754ca2ec304fe1777ba8517f814d",
+                                                                 "symbol:f05fd2320d244e70bbba7bd38c01946e3f9d77bfea0df5806d65a4012e0a96ef",
+                                                                 "symbol:f38e89a17f9dee7c02db6554fc8cfccb4192d732a268e3c70b220ab4639284f1",
+                                                                 "symbol:f85148474bad78a6e1119b0bb3d61e2237b40e7c3bea770dd4a6dbd8785d6f94",
+                                                                 "symbol:f8f2629ce257bbc44bd0dee1debd9cca311a3060886c580b1699dc4f0a4723ae",
+                                                                 "symbol:f9efd39c6fe77db63ad6b94b0669fa224c7cd37ce2c6a361d592833934a546a4",
+                                                                 "symbol:fb2d460713e99407e03340476567b5746ac041cefa915e1b173fae69824823a8"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-3fa9480748303413",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "src/BitfieldMan.cc",
+                                                              "start_line":  303,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "src/BitfieldMan.cc",
+                                                                        "start_line":  303,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:17d5aae1e1e949017f3bf88d05ce5f1ccaafa7ba91e23d25f511b5ab405593b5",
+                                                                 "symbol:6d828110127579dee576c5ecc0c9ec1655f6ff41e84ce0d74318f5c9d3b365e6",
+                                                                 "symbol:f93c721cb14278e0ddda253146fa63e0a862273b0b083159f4ae4d422c4c14c7"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-8b4ca63de7918ec9",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "UNIQUE",
+                                    "gold_final_target":  {
+                                                              "symbol_id":  null,
+                                                              "path":  "util/random.cc",
+                                                              "start_line":  45,
+                                                              "qualified_name":  null
+                                                          },
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "util/random.cc",
+                                                                        "start_line":  45,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "ambiguous",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+                                                                 "symbol:8dc4c048eeabfe607c763adb34e42f38ce61a22b3521b55422f55ee7e2a4420a",
+                                                                 "symbol:9a8e6a5e2fa9a5d7d60619c4df356d28ec0321d23bd87bcf816ad9a7c0aeb719",
+                                                                 "symbol:d1257f903f211698fd24a5aa78b16b707ffacd42a5a5f77be2added1d12b8e98"
+                                                             ],
+                                    "resolver_strategy":  "ambiguous",
+                                    "resolver_confidence":  0.0
+                                },
+                                {
+                                    "sample_id":  "FQV1-aria2-c10fd7262a136c88",
+                                    "repository":  "aria2",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_RESOLVED",
+                                    "scoring_state":  "FALSE_RESOLUTION_ON_ABSENT",
+                                    "gold_target_layer":  "ABSENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+
+                                                                ],
+                                    "system_status":  "resolved",
+                                    "predicted_target":  {
+                                                             "symbol_id":  "symbol:89523111e5baa81245166eb375aa98e6422c0676ebc197d991c34fb5d83b68ac",
+                                                             "kind":  "Method",
+                                                             "qualified_name":  "aria2.IndexedList.move",
+                                                             "path":  "src/IndexedList.h",
+                                                             "start_line":  515,
+                                                             "end_line":  559
+                                                         },
+                                    "system_candidate_set":  [
+                                                                 "symbol:89523111e5baa81245166eb375aa98e6422c0676ebc197d991c34fb5d83b68ac"
+                                                             ],
+                                    "resolver_strategy":  "unique_symbol_resolution",
+                                    "resolver_confidence":  0.75
+                                },
+                                {
+                                    "sample_id":  "FQV1-rocksdb-3b90b89381b8d13d",
+                                    "repository":  "rocksdb",
+                                    "relation":  "CALLS",
+                                    "stratum":  "CALLS_NONRESOLVED",
+                                    "scoring_state":  "MISSED_RESOLUTION_OPPORTUNITY",
+                                    "gold_target_layer":  "DIVERGENT",
+                                    "gold_final_target":  null,
+                                    "gold_acceptable_targets":  [
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "include/rocksdb/utilities/stackable_db.h",
+                                                                        "start_line":  651,
+                                                                        "qualified_name":  null
+                                                                    },
+                                                                    {
+                                                                        "symbol_id":  null,
+                                                                        "path":  "include/rocksdb/db.h",
+                                                                        "start_line":  2527,
+                                                                        "qualified_name":  null
+                                                                    }
+                                                                ],
+                                    "system_status":  "unresolved",
+                                    "predicted_target":  null,
+                                    "system_candidate_set":  [
+
+                                                             ],
+                                    "resolver_strategy":  "unresolved",
+                                    "resolver_confidence":  0.0
+                                }
+                            ],
+    "discipline":  {
+                       "gold_mutation":  0,
+                       "system_prediction_mutation":  0,
+                       "resolver_or_candidate_generation_repair":  0,
+                       "new_annotation_or_adjudication":  0,
+                       "reproducibility":  "all metrics recomputed by tools/score-graph-fidelity-v1.ps1 from frozen inputs"
+                   }
+}

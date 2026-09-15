@@ -1,0 +1,103 @@
+{
+  "artifact": "BATCH_02_CPP_CALLS_SOURCE_ONLY_ADJUDICATION_V1",
+  "batch_id": "batch_02",
+  "status": "SEALED",
+  "scope": {
+    "relation_type": "CALLS",
+    "language_scope": "CPP_IN_SCOPE",
+    "case_count": 4,
+    "case_scope_exact": true
+  },
+  "blindness": {
+    "source_only": true,
+    "a_b_verdict_and_evidence_read": true,
+    "system_prediction_read": false,
+    "resolver_status_strategy_confidence_read": false,
+    "system_selected_target_read": false,
+    "fidelity_metrics_read": false,
+    "later_batch_outcome_read": false,
+    "violations": []
+  },
+  "protocols": [
+    "CALLS_V1",
+    "Evidence Scope V1",
+    "Declaration-Definition Equivalence V1"
+  ],
+  "adjudications": [
+    {
+      "case_id": "FQV1-rocksdb-8e526ba5ac0d956a",
+      "final_gold_verdict": "NO_VALID_TARGET",
+      "relation_present": true,
+      "valid_target_count": 0,
+      "canonical_source_target": "std::set<std::shared_ptr<BlobFile>, BlobFileComparatorTTL>::erase",
+      "canonical_target_symbol_id": null,
+      "rationale": "At utilities/blob_db/blob_db_impl.cc:1631 the receiver is open_ttl_files_. Its declaration at utilities/blob_db/blob_db_impl.h:427 gives it type std::set<std::shared_ptr<BlobFile>, BlobFileComparatorTTL>. The invoked member is therefore std::set::erase, not the repository candidate belonging to a different owning type.",
+      "failure_mechanism": "SAME_NAME_WRONG_RECEIVER_OWNER",
+      "correct_target_present_in_candidate_set": false,
+      "cross_file_recovery_necessary": true,
+      "evidence_locations": [
+        "utilities/blob_db/blob_db_impl.cc:1631",
+        "utilities/blob_db/blob_db_impl.h:427"
+      ]
+    },
+    {
+      "case_id": "FQV1-aria2-52bdba205b5ce686",
+      "final_gold_verdict": "ONE_VALID_TARGET",
+      "relation_present": true,
+      "valid_target_count": 1,
+      "canonical_source_target": "aria2::HttpHeader::setStatusCode(int)",
+      "canonical_target_symbol_id": "symbol:d9b0531865542ac0b4f9850fd19bb81c6981d4d3b10ce28afaa66c738befaf15",
+      "acceptable_declaration_twin": "symbol:01af629eaf947b1f6d7f350067727e17a08d497f4019f012863a0aa15711c946",
+      "rationale": "At test/HttpResponseTest.cc:252 getHttpHeader() yields HttpHeader*, so setStatusCode(308) resolves uniquely to HttpHeader::setStatusCode(int). The declaration is at src/HttpHeader.h:116 and the canonical definition is at src/HttpHeader.cc:180. Evidence Scope V1 permits recovery even though the candidate list is empty.",
+      "failure_mechanism": "EMPTY_CANDIDATE_SET_TARGET_RECOVERABLE_BY_ALLOWED_NAVIGATION",
+      "correct_target_present_in_candidate_set": false,
+      "cross_file_recovery_necessary": true,
+      "evidence_locations": [
+        "test/HttpResponseTest.cc:252",
+        "src/HttpHeader.h:116",
+        "src/HttpHeader.cc:180"
+      ]
+    },
+    {
+      "case_id": "FQV1-aria2-0f84707a755b6d84",
+      "final_gold_verdict": "NO_VALID_TARGET",
+      "relation_present": true,
+      "valid_target_count": 0,
+      "canonical_source_target": "std::string::size() const",
+      "canonical_target_symbol_id": null,
+      "rationale": "At src/CookieStorage.cc:157 data is declared locally as std::string. Each data.size() call at line 159 therefore invokes std::string::size(), while the supplied candidate is the unrelated CookieStorage::size() defined at line 426.",
+      "failure_mechanism": "SAME_NAME_WRONG_RECEIVER_OWNER",
+      "correct_target_present_in_candidate_set": false,
+      "cross_file_recovery_necessary": false,
+      "evidence_locations": [
+        "src/CookieStorage.cc:157",
+        "src/CookieStorage.cc:159",
+        "src/CookieStorage.cc:426"
+      ]
+    },
+    {
+      "case_id": "FQV1-aria2-c900f72d67f383ae",
+      "final_gold_verdict": "ONE_VALID_TARGET",
+      "relation_present": true,
+      "valid_target_count": 1,
+      "canonical_source_target": "aria2::ServerStat::getHostname() const",
+      "canonical_target_symbol_id": "symbol:6f6e06fc6c597b1b6a85f39a0eda56695d83af81f31dddf14a0321d9a24ac2b4",
+      "rationale": "At test/ServerStatManTest.cc:51 r is std::shared_ptr<ServerStat>; line 53 invokes r->getHostname() inside an assertion macro. CALLS_V1 preserves this source-level call, and the unique inline definition is ServerStat::getHostname() const at src/ServerStat.h:59. Evidence Scope V1 permits recovery from the empty candidate list.",
+      "failure_mechanism": "EMPTY_CANDIDATE_SET_TARGET_RECOVERABLE_BY_ALLOWED_NAVIGATION",
+      "correct_target_present_in_candidate_set": false,
+      "cross_file_recovery_necessary": true,
+      "evidence_locations": [
+        "test/ServerStatManTest.cc:51",
+        "test/ServerStatManTest.cc:53",
+        "src/ServerStat.h:59"
+      ]
+    }
+  ],
+  "validation": {
+    "schema_violations": 0,
+    "case_scope_violations": 0,
+    "blindness_violations": 0,
+    "sealed_annotation_records_modified": false,
+    "repository_mutation": false
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "artifact": "a02-clean-blind-package-audit",
+  "allowed_files_count": 6,
+  "unexpected_files_count": 0,
+  "hash_verification": {
+    "protocol/calls-v1.md": true,
+    "protocol/evidence-scope-v1.md": true,
+    "protocol/decl-def-equivalence-v1.md": true,
+    "protocol/annotation-instructions-v1.md": true,
+    "input/batch-02-manifest.json": true,
+    "input/annotator-a-blind-view.json": true
+  },
+  "case_count": 60,
+  "case_alignment": "60/60",
+  "annotator_b_result_hits": 0,
+  "agreement_result_hits": 0,
+  "adjudication_result_hits": 0,
+  "system_prediction_hits": 0,
+  "historical_case_outcome_hits": 0,
+  "blind_view_forbidden_field_hits": {
+    "system_status": 0,
+    "resolution_strategy": 0,
+    "resolver_strategy": 0,
+    "resolver_confidence": 0,
+    "system_selected_target": 0,
+    "system_verdict": 0,
+    "predicted_target": 0,
+    "annotator_b": 0,
+    "annotator-b": 0,
+    "agreement_result": 0,
+    "adjudication_result": 0,
+    "fidelity_score": 0
+  },
+  "package_payload_unexpected_forbidden_hits": {},
+  "decl_def_manual_review": {
+    "annotator_b_information": 0,
+    "batch_02_concrete_result": 0,
+    "concrete_fidelity_sample_target": 0,
+    "calibration_outcome": 0,
+    "result": "PASS"
+  },
+  "manual_review": "PASS",
+  "overall": "PASS",
+  "notes": "Occurrences of prohibited-asset terms in annotation-instructions are policy prohibitions only; no result data or system prediction fields are present in the blind view."
+}

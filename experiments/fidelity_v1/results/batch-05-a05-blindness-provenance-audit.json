@@ -1,0 +1,70 @@
+{
+  "artifact": "batch-05-a05-blindness-provenance-audit",
+  "created": "2026-09-15",
+  "audit_scope": "A05 annotation blindness contamination assessment (packaging-role session sharing)",
+  "status": "RETAIN",
+  "subject": {
+    "annotator_id": "A",
+    "batch_id": "05",
+    "samples": 64,
+    "model": "glm-5.3-flash",
+    "execution_note": "blind_packages/batch-05/annotator-a/output/annotator-a-batch-05-execution-note.md"
+  },
+  "answers": {
+    "Q1_packaging_blind_safe_only": false,
+    "Q1_note": "Packaging legitimately read the frozen candidate set containing system fields; all written package payloads are blind-safe (A blind view forbidden-key rescan = 0; builder extracts only system.candidate_symbol_ids).",
+    "Q2_batch05_case_specific_exposure": {
+      "system_status": 0,
+      "selected_target": 0,
+      "resolver_strategy": 0,
+      "resolver_confidence": 0,
+      "system_verdict": 0,
+      "fidelity_result": 0
+    },
+    "Q3_classification": {
+      "batch05_field_name_or_scan_only": true,
+      "batch05_aggregate_metadata": true,
+      "batch05_aggregate_detail": {
+        "CALLS_RESOLVED": 12,
+        "CALLS_NONRESOLVED": 7,
+        "IMPORTS_RESOLVED": 15,
+        "IMPORTS_NONRESOLVED": 7,
+        "REFERENCES_RESOLVED": 18,
+        "REFERENCES_NONRESOLVED": 5,
+        "per_case_attribution": false
+      },
+      "concrete_per_case_prediction_content": {
+        "count": 2,
+        "in_batch05": 0,
+        "cases": [
+          {"case_id": "FQV1-aria2-e057f6d338d4b31b", "frozen_batch": "batch_01_calibration", "in_batch05": false},
+          {"case_id": "FQV1-aria2-5a4f0360db806a83", "frozen_batch": "batch_02", "in_batch05": false}
+        ],
+        "membership_verification": "verified against frozen full-annotation-execution-plan-v1 batch manifests; 269-case partition duplicate-free (no cross-batch overlap)"
+      }
+    },
+    "Q4_timing": "Both concrete exposures (non-Batch-05 cases) occurred during packaging, before A05 annotation. No Batch 05 concrete per-case exposure occurred at any time."
+  },
+  "evidence": {
+    "primary": "complete opencode session transcript (enumerable record of all tool-mediated accesses and outputs); PSReadLine interactive history contains 0 experiment entries (tool-mediated commands are not written there)",
+    "corroborating": [
+      "blind_packages/batch-05/annotator-a/input/annotator-a-blind-view.json forbidden-key rescan = 0 hits",
+      "tools/build-batch-05-blind-packages.ps1 system references limited to forbidden-key pattern names and instruction prose; extracts only candidate_symbol_ids",
+      "temp workspace scripts contain no system prediction values (merges only annotator decision fields)",
+      "package audits (annotator-a/annotator-b) forbidden_field_hits = 0, system_prediction_leakage_hits = 0"
+    ],
+    "limitations": [
+      "no OS-level file-access audit log exists for tool-mediated reads; the session transcript is the complete access record",
+      "supplementary disclosure: batch_02 exposed case shares file doc/manual-src/en/mkapiref.py with A05 case FQV1-aria2-dd9fef894c065810 (different case, line, batch); A05 verdict for it runs opposite to the exposure direction; recorded as corroboration only, not a basis for RETAIN"
+    ]
+  },
+  "gate": {
+    "batch05_case_specific_system_prediction_exposure": 0,
+    "role_separation_deviation": true,
+    "a05_blindness_status": "VALID",
+    "a05_usable_for_agreement_audit_05": true,
+    "a05_clean_rerun_required": false,
+    "sealed_records_modified": 0,
+    "agreement_audit_05_prerequisite": "B05 must be completed in a fresh executor session (B05 attempt in the A05 session was BLOCKED/INVALID, 0/64); Agreement Audit 05 must not run until then"
+  }
+}

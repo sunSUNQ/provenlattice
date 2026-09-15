@@ -1,0 +1,21 @@
+{
+  "artifact": "annotator-b-batch-05-execution-metadata",
+  "annotator_id": "B",
+  "batch_id": "05",
+  "agent": "Codex",
+  "model": "GPT-5",
+  "reasoning_effort": "UNKNOWN",
+  "package_hash": "8e6165089cf475b4496c7b96d5de9e2eadc2a1b080ba19baf3039a955cf14e99",
+  "start_time": "UNKNOWN",
+  "end_time": "2026-09-15T07:03:24.5706663Z",
+  "blindness_violations": 0,
+  "opposite_annotator_access": 0,
+  "system_prediction_access": 0,
+  "repository_mutation": 0,
+  "protocol_issues": 0,
+  "schema_violations": 0,
+  "samples": 64,
+  "cpp_primary": 39,
+  "python_audit_only": 25,
+  "sealed": true
+}
