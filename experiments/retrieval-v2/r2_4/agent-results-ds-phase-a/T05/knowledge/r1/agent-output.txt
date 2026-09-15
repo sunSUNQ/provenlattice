@@ -1,0 +1,74 @@
+I have everything needed. Here's the synthesis.
+
+---
+
+# Module: Backup Request (rate-limited backup requests) — `src/brpc/backup_request_policy.{h,cpp}`
+
+## What the document describes
+`docs/cn/backup_request.md` (mirrored as `docs/en/backup_request.md`) is the module's reference doc. Its heading path — "当后端server可以挂在一个命名服务内时 / Backup Request 限流 / 使用内置限流策略" (EN: "When backend servers can be hung in a naming service / Rate-limited backup requests / Using the built-in rate-limiting policy") — defines the scope: when the client's backends sit behind a naming service, a backup ("hedged") request is fired if the primary RPC exceeds `backup_request_ms`, and the module caps the backup fraction so it doesn't amplify load during latency spikes.
+
+## Responsibilities
+- **Configuration surface** — `brpc::RateLimitedBackupPolicyOptions` (`src/brpc/backup_request_policy.h:45-65`): `backup_request_ms` (default −1 = inherit `ChannelOptions.backup_request_ms`, only via the channel-level policy), `max_backup_ratio` (h:56, default 0.1, range (0,1]), `window_size_seconds` (h:60, default 10, [1,3600]), `update_interval_seconds` (h:64, default 5, ≥1).
+- **Factory / key entry point** — `brpc::CreateRateLimitedBackupPolicy(const RateLimitedBackupPolicyOptions&)` (`backup_request_policy.h:75-76`); returns `nullptr` on invalid parameters (per doc).
+- **Concrete policy** — class `brpc::RateLimitedBackupPolicy` (`src/brpc/backup_request_policy.cpp:114-140`), the object the factory produces.
+- **Policy interface** — `brpc::BackupRequestPolicy` (resolved at `src/brpc/controller.h:75`); the type stored in the doc's sample (`std::unique_ptr<brpc::BackupRequestPolicy>`).
+- **Rate-limiting behavior** (doc "实现说明" / "Implementation notes", lines 110-115): ratio computed over a sliding window with bvar counters; cached value refreshed at most once per `update_interval_seconds` via lock-free CAS (≈two atomic loads per RPC); backup decisions counted immediately, total RPCs on completion (approximate best-effort throttling); each rate-limited channel keeps two `bvar::Window` sampler tasks.
+
+## Integration / entry points in the RPC stack
+- `brpc::ChannelOptions` (`src/brpc/channel.h:44-167`) carries both classic and policy-based knobs: `backup_request_ms` (channel.h:69) and `backup_request_policy` (channel.h:126). Usage: set `options.backup_request_policy = policy.get()` then `channel.Init(...)`.
+- Per-request (Controller) injection: `brpc::Controller::set_backup_request_policy(BackupRequestPolicy*)` (`src/brpc/controller.h:215-217`).
+
+## Dependency / call relationships
+- **Doc → code (cross-layer links)** tie the doc sections to the module: cn §48-83 → `RateLimitedBackupPolicyOptions` and each field, en §48-83 likewise, and the "Implementation notes" sections (§110-115, cn+en) → `update_interval_seconds` (E-XLINK-02e59d12, E-XLINK-d0c193c0, E-XLINK-0db7d027, E-XLINK-bccb83cb, E-XLINK-bdb9ae4d, E-XLINK-816bb1d6, E-XLINK-e3fe9b3d, E-XLINK-8c53d0b5, E-XLINK-94055898, E-XLINK-f4c89a2e).
+- **Call edge**: `src/brpc/controller.cpp` CALLS `brpc.Controller.set_backup_request_policy` (internal scope) — the only call relation the graph exposes for this module (E-CALL-25c68605c12fbc0162c479b7).
+- **Ownership chain**: factory (*consumes* `RateLimitedBackupPolicyOptions`, *produces* a `BackupRequestPolicy*`) → assigned to `ChannelOptions.backup_request_policy` / injected via `Controller` → caller owns the policy, which must outlive the channel (doc: "destroy the channel before the policy").
+- **Inheritance rule**: `RateLimitedBackupPolicyOptions.backup_request_ms = -1` falls back to `ChannelOptions.backup_request_ms`, but only when set via `ChannelOptions.backup_request_policy`; at Controller level there is no channel-level fallback.
+- All resolved symbols are members of the `src/brpc` directory shard (E-SHARD-ff456a00, E-SHARD-26c1a7f4, E-SHARD-8dd048e3, E-SHARD-3f03950c, E-SHARD-2552e548, E-SHARD-3286c0a9, E-SHARD-202ed66e, E-SHARD-1c3a8672).
+
+## Key symbols summary
+| Symbol | Location | Role |
+|---|---|---|
+| `brpc::CreateRateLimitedBackupPolicy` | backup_request_policy.h:75-76 | Factory entry point |
+| `brpc::RateLimitedBackupPolicyOptions` (+ 4 fields) | backup_request_policy.h:45-65 | Config (ratio/window/refresh/timeout) |
+| `brpc::RateLimitedBackupPolicy` | backup_request_policy.cpp:114-140 | Concrete policy |
+| `brpc::BackupRequestPolicy` | controller.h:75 | Policy type / interface |
+| `brpc::Controller::set_backup_request_policy` | controller.h:215-217 | Per-request injection |
+| `brpc::ChannelOptions.backup_request_policy` | channel.h:126 | Channel-level injection |
+| `brpc::ChannelOptions.backup_request_ms` | channel.h:69 | Timeout-based backup trigger |
+
+Evidence Used:
+- E-CODE-20376c6ce1b46be66b8a2d4a
+- E-CODE-101af5df67edff6525a07f32
+- E-CODE-b0084bb3666dc9334e24c04c
+- E-CODE-95e2b12098d2b3e4abea769b
+- E-CODE-0b76244cf316042f9eba74c6
+- E-CODE-ff9667fa55ca56e043c8ec51
+- E-CODE-e60026bb903e97faad958cd1
+- E-CODE-c2f8a2e93cb05e73b643fbbe
+- E-CODE-1de19aded3d4104972c0dee8
+- E-CODE-bafd8543b33c361bcebc7be3
+- E-CODE-ce927edae61e6497ab4066dc
+- E-DOC-3bc0cae4196abbf247304ed4
+- E-DOC-9d9674320ddc2684f8d2773a
+- E-DOC-f64718932994b6e536e183ab
+- E-DOC-3d047e723af4c7446012da31
+- E-DOC-c46e94bb27b9f6c2c25be8ab
+- E-XLINK-02e59d12b69fb54749eacbc0
+- E-XLINK-d0c193c0b2c38994b2ee0476
+- E-XLINK-0db7d027bd2e12fd888a715d
+- E-XLINK-bccb83cb20d7338263869c90
+- E-XLINK-bdb9ae4d1aa9c5a37a952de7
+- E-XLINK-816bb1d620b4d108433d0bfc
+- E-XLINK-e3fe9b3d924d68f482bd290f
+- E-XLINK-8c53d0b57aa40968e9c8ba17
+- E-XLINK-94055898215a0b82739dc237
+- E-XLINK-f4c89a2e0346fb42c4ba8a91
+- E-CALL-25c68605c12fbc0162c479b7
+- E-SHARD-ff456a001cb319fead96d882
+- E-SHARD-26c1a7f4ef4488b736bb987f
+- E-SHARD-8dd048e3af53406937b7722c
+- E-SHARD-3f03950c75a3b031d019aa90
+- E-SHARD-2552e54803910ed3b142a7f4
+- E-SHARD-3286c0a96cd49d2a01e6d193
+- E-SHARD-202ed66efea6a02de6fb5a43
+- E-SHARD-1c3a86727e7b28b6b7837cbe

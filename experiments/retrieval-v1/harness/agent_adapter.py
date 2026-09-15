@@ -122,6 +122,7 @@ class CommandAgentAdapter:
                         event.returned_evidence = int(structured.get("returned_evidence_count") or len(ids))
                         event.bundle_size = structured.get("bundle_size")
                         event.query_latency = structured.get("query_time_ms")
+                        event.raw["bundle"] = structured.get("bundle")
                     if event.operation == "read" and isinstance(event.target, str):
                         event.files = [event.target]
             elif value.get("type") == "result":

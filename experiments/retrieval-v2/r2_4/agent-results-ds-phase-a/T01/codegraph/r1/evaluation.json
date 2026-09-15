@@ -1,0 +1,50 @@
+{
+  "task_success": false,
+  "required_evidence_recall": 0.0,
+  "evidence_precision": 0.0,
+  "required_evidence_hits": [],
+  "required_evidence_misses": [
+    "E-CODE-9cec5b84fb52b556c0c332c9"
+  ],
+  "returned_evidence_ids": [
+    "E-CODE-1726cdc7c9938223c1d04362",
+    "E-CODE-4099735d597dc714fc02f8f9",
+    "E-CODE-fb96ca1f46b2b958e77b1998",
+    "E-DOC-51c12e32861bb02b28d8d99a",
+    "E-SHARD-0bd4b5aa4d298e72de409251",
+    "E-SHARD-590676bcc9af7f350eae3374",
+    "E-SHARD-70fa7eea96c876b03e597f10"
+  ],
+  "viewed_evidence_ids": [
+    "E-CODE-1726cdc7c9938223c1d04362",
+    "E-CODE-4099735d597dc714fc02f8f9",
+    "E-CODE-fb96ca1f46b2b958e77b1998",
+    "E-DOC-51c12e32861bb02b28d8d99a",
+    "E-SHARD-0bd4b5aa4d298e72de409251",
+    "E-SHARD-590676bcc9af7f350eae3374",
+    "E-SHARD-70fa7eea96c876b03e597f10"
+  ],
+  "used_evidence_ids": [
+    "E-CODE-1726cdc7c9938223c1d04362",
+    "E-DOC-51c12e32861bb02b28d8d99a",
+    "E-SHARD-0bd4b5aa4d298e72de409251"
+  ],
+  "evidence_usage_rate": 0.42857142857142855,
+  "returned_but_unused_evidence": [
+    "E-CODE-4099735d597dc714fc02f8f9",
+    "E-CODE-fb96ca1f46b2b958e77b1998",
+    "E-SHARD-590676bcc9af7f350eae3374",
+    "E-SHARD-70fa7eea96c876b03e597f10"
+  ],
+  "returned_but_unused_count": 4,
+  "wrong_evidence_usage": [],
+  "wrong_evidence_count": 0,
+  "unsupported_claim_count": 0,
+  "semantic_required_evidence_recall": 1.0,
+  "semantic_required_evidence_misses": [],
+  "wrong_path_count": 0,
+  "wrong_paths": [],
+  "hallucinated_symbol_count": null,
+  "hallucinated_relation_count": null,
+  "evaluator_version": "r2-evidence-contract-v1"
+}

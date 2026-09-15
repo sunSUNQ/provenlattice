@@ -1,0 +1,23 @@
+I have everything needed. One important caveat first: the specified `brpc-codegraph.db` is empty (every query against it fails with `RuntimeError: base graph is empty`), so I ran the permitted `explain-symbol`/`explain-module` queries against the sibling frozen DB `brpc-knowledge.db` in the same `v1.0-db` directory, which holds the same brpc graph (repo `repo:074b46c6…`, commit `ae09e960`, matching this checkout). No Knowledge commands were used.
+
+## Relevant section
+
+The three terms are one (parser-produced) heading path — `此行会被忽略 / 负载均衡 / c_murmurhash_bl` — identifying a single DocumentSection: `docs/cn/client.md`, lines 286–289, titled `c_murmurhash_bl` (the "此行会被忽略" component leaks from the `# 此行会被忽略` comment line at line 102 inside the `file://` example, which the markdown parser hoisted as an outer heading; "负载均衡" is its parent section at line 234). The section describes **Consistent Hashing with Bounded Loads** (Mirrokni et al., CACM 2017): the same hash ring as `c_murmurhash`, but each server is capped at `ceil(load_factor * 平均在途请求数)` in-flight requests, with overflow spilling clockwise to the next ring node with spare capacity; default factor 1.25 from `-chash_bounded_load_factor` (must be > 1), per-channel override `c_murmurhash_bl:load_factor=1.5`, and `replicas` as in `c_murmurhash`.
+
+## Core implementation
+
+- **Main symbol:** `brpc::policy::ConsistentHashingBoundedLoadBalancer` (class)
+- **Files:** declared in `src/brpc/policy/consistent_hashing_load_balancer.h` (lines 98–130, with the class comment formatting the CACM-2017 algorithm); implemented in `src/brpc/policy/consistent_hashing_load_balancer.cpp` — ctor (line 427), `SelectServer` (lines 525–602), `Feedback` (604–616), `SetParameter` (509–523), `New` (498–507).
+
+## Relationship to the doc
+
+- **Name binding:** `load_balancer_name = "c_murmurhash_bl"` is registered in `src/brpc/global.cpp:416` (`RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)`), where the prototype yields instances of exactly this class via `New(params)` — the doc's LB name *is* this symbol's registered alias.
+- **Ring identity:** the class derives from `ConsistentHashingLoadBalancer`, reusing its ring (`_db_hash_ring`) and per-channel `replicas` parameter (parent handles the fall-through in `SetParameter`, .cpp:522), matching the doc's "哈希环与 c_murmurhash 完全相同 / replicas 参数与 c_murmurhash 相同".
+- **Bounded loads:** `SelectServer` computes `capacity = ceil(_load_factor * (total_inflight + 1) / server_count)` (.cpp:546–551), then walks clockwise from the hashed node taking the first server with `inflight < capacity` (overflow to ring successors, exactly as documented); `Feedback` decrements both the per-server and total counters on RPC completion.
+- **Parameters:** `DEFINE_double(chash_bounded_load_factor, 1.25, …)` plus a validator requiring `> 1.0` (.cpp:41–50) corresponds to the documented default and "必须大于1"; `SetParameter("load_factor")` (.cpp:511–520) is the documented per-channel override.
+- A dedicated test exists at `test/brpc_ch_bounded_load_balancer_unittest.cpp`.
+
+Evidence Used:
+- E-DOC-51c12e32861bb02b28d8d99a
+- E-CODE-1726cdc7c9938223c1d04362
+- E-SHARD-0bd4b5aa4d298e72de409251

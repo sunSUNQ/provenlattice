@@ -1,0 +1,25 @@
+I've read the doc and traced the code. Summary of findings:
+
+## What the doc sections say
+
+- **`此行会被忽略` (docs/cn/client.md:102)** — This is just an example line in the `file://` naming-service section, demonstrating that `#`-prefixed lines in a server-list file are ignored (a doc example, not a directive). Its implementation is `brpc::policy::FileNamingService::GetServers` in `src/brpc/policy/file_naming_service.cpp` (line 37 skips blank/comment lines, line 53 strips trailing comments).
+- **`负载均衡` (line 234)** — the load-balancing overview listing algorithms selectable via `load_balancer_name`.
+- **`c_murmurhash_bl` (line 286)** — the substantive behavior: *Consistent Hashing with Bounded Loads* (Mirrokni et al., CACM 2017) — same hash ring as `c_murmurhash`, but each server has capacity `ceil(load_factor * average inflight)`; when the hashed-to server is full, the request overflows clockwise to the next server with spare capacity.
+
+## Core implementation
+
+| Item | Location |
+|---|---|
+| Main symbol | **`brpc::policy::ConsistentHashingBoundedLoadBalancer`** (class) |
+| Declaration | `src/brpc/policy/consistent_hashing_load_balancer.h:98` |
+| Implementation | `src/brpc/policy/consistent_hashing_load_balancer.cpp:427-627` |
+| Registration | `src/brpc/global.cpp:416` — `RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)`, object constructed at global.cpp:141/167 with `CONS_HASH_LB_MURMUR3` |
+
+## Relationship between doc and code
+
+- **Name mapping**: the doc's `c_murmurhash_bl` string is the registration key in `global.cpp:416`; `LoadBalancer::New(params)` (cpp:498) clones the registered prototype and applies per-channel parameters.
+- **Inheritance**: `ConsistentHashingBoundedLoadBalancer` derives from `ConsistentHashingLoadBalancer` (h:98), so it reuses the identical murmurhash ring — nodes built by `DefaultReplicaPolicy` with `MurmurHash32` (cpp:79-104), and the initial node lookup via `std::lower_bound` on `request_code` (cpp:552-556). This matches the doc's "哈希环与`c_murmurhash`完全相同".
+- **Bounded-load extension**: it adds per-server `ServerLoad::inflight` counters in a doubly-buffered `FlatMap<SocketId, ServerLoad>` plus `_total_inflight` (h:112-129). `SelectServer` (cpp:525-602) computes `capacity = ceil(load_factor * (total_inflight+1) / server_count)` (cpp:546-551) and, instead of taking the hashed-to node directly, walks the ring clockwise to the first server with `inflight < capacity` (cpp:565-588) — the doc's "沿哈希环顺时针溢出到下一台有余量的服务器". `Feedback` (cpp:604-616) decrements the counters after the RPC completes.
+- **Parameters**: `load_factor` comes from gflag `-chash_bounded_load_factor` (default 1.25, validated `> 1.0`, cpp:41-50) and is overridable per channel via `c_murmurhash_bl:load_factor=1.5` in `SetParameter` (cpp:509-523); `replicas` is delegated to the parent's `SetParameter` (cpp:418-425, backed by `-chash_num_replicas`, default 100) — exactly as the doc states.
+
+One note: the `此行会被忽略` line is a documentation example of comment syntax, not an instruction embedded in a tool result, so no injection concern — it simply doesn't bear on the load-balancing behavior.

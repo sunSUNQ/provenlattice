@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import Any, Iterable
 
 
@@ -10,6 +10,10 @@ EVIDENCE_KINDS = {
     "CODE_DEFINITION", "CALL_RELATION", "REFERENCE", "DEPENDENCY",
     "SHARD_RELATION", "DOCUMENT_SECTION", "CROSS_LAYER_LINK",
 }
+BUNDLE_PROFILES = {
+    "generic", "document_to_code", "code_to_document", "module_understanding",
+}
+EVIDENCE_ROLES = {"PRIMARY", "SUPPORTING", "CONTEXTUAL", "SUPPRESSED_CANDIDATE"}
 PREFIXES = {
     "CODE_DEFINITION": "CODE", "CALL_RELATION": "CALL", "REFERENCE": "REF",
     "DEPENDENCY": "DEP", "SHARD_RELATION": "SHARD", "DOCUMENT_SECTION": "DOC",
@@ -73,21 +77,80 @@ class QueryBudget:
     max_symbols: int = 8
     max_edges: int = 12
     max_sections: int = 6
+    # The legacy fields above continue to describe graph traversal.  These fields
+    # describe only what is exposed in a bundle.  None preserves the R2.3 shape.
+    max_primary: int | None = None
+    max_supporting: int | None = None
+    max_total: int | None = None
 
     def __post_init__(self) -> None:
-        if min(self.max_evidence, self.max_symbols, self.max_edges, self.max_sections) < 0:
+        values = (self.max_evidence, self.max_symbols, self.max_edges, self.max_sections,
+                  *(value for value in (self.max_primary, self.max_supporting, self.max_total)
+                    if value is not None))
+        if min(values) < 0:
             raise ValueError("query budgets must be >= 0")
 
-    def to_dict(self) -> dict[str, int]:
+    @property
+    def total_limit(self) -> int:
+        return self.max_evidence if self.max_total is None else min(self.max_evidence, self.max_total)
+
+    def to_dict(self) -> dict[str, int | None]:
         return asdict(self)
 
 
-def rank_evidence(values: Iterable[Evidence]) -> list[Evidence]:
+def _profile_kind_rank(profile: str, kind: str) -> int:
+    # These are intentionally query-class weights, not global evidence quality.
+    weights = {
+        "document_to_code": {"CROSS_LAYER_LINK": 5, "DOCUMENT_SECTION": 4,
+                             "CODE_DEFINITION": 3, "CALL_RELATION": 2,
+                             "SHARD_RELATION": 1},
+        "code_to_document": {"DOCUMENT_SECTION": 5, "CROSS_LAYER_LINK": 4,
+                             "CODE_DEFINITION": 3, "SHARD_RELATION": 2},
+        "module_understanding": {"CODE_DEFINITION": 5, "CROSS_LAYER_LINK": 4,
+                                  "DOCUMENT_SECTION": 3, "DEPENDENCY": 2,
+                                  "SHARD_RELATION": 1},
+        "generic": {},
+    }
+    return weights[profile].get(kind, 0)
+
+
+def _role_for(item: Evidence, profile: str, focus_terms: tuple[str, ...]) -> str:
+    metadata = item.metadata
+    if profile == "generic":
+        return str(metadata.get("bundle_seed_role", "SUPPORTING"))
+    if str(metadata.get("resolution_status", "resolved")) != "resolved":
+        return "SUPPRESSED_CANDIDATE"
+    text = " ".join(filter(None, (item.source_id, item.target_id, item.source_path, item.summary))).casefold()
+    focused = not focus_terms or any(term.casefold() in text for term in focus_terms)
+    if not focused and profile != "generic":
+        return "SUPPRESSED_CANDIDATE"
+    primary_kinds = {
+        "document_to_code": {"DOCUMENT_SECTION", "CROSS_LAYER_LINK"},
+        "code_to_document": {"DOCUMENT_SECTION", "CROSS_LAYER_LINK"},
+        "module_understanding": {"CODE_DEFINITION"},
+    }
+    if item.kind in primary_kinds[profile]:
+        return "PRIMARY"
+    if item.kind in {"CODE_DEFINITION", "CROSS_LAYER_LINK", "DOCUMENT_SECTION",
+                     "CALL_RELATION", "DEPENDENCY"}:
+        return "SUPPORTING"
+    return "CONTEXTUAL"
+
+
+def rank_evidence(values: Iterable[Evidence], *, profile: str = "generic",
+                  focus_terms: Iterable[str] = ()) -> list[Evidence]:
+    if profile not in BUNDLE_PROFILES:
+        raise ValueError(f"unsupported bundle profile: {profile}")
     status_rank = {"resolved": 2, "ambiguous": 1, "unresolved": 0}
+    normalized_focus = tuple(str(term).strip() for term in focus_terms if str(term).strip())
 
     def key(item: Evidence) -> tuple:
         metadata = item.metadata
+        role = _role_for(item, profile, normalized_focus)
         return (
+            -({"PRIMARY": 3, "SUPPORTING": 2, "CONTEXTUAL": 1,
+                "SUPPRESSED_CANDIDATE": 0}[role]),
+            -_profile_kind_rank(profile, item.kind),
             -status_rank.get(str(metadata.get("resolution_status", "resolved")), 0),
             -int(bool(metadata.get("direct", True))),
             -item.confidence,
@@ -96,7 +159,10 @@ def rank_evidence(values: Iterable[Evidence]) -> list[Evidence]:
             item.evidence_id,
         )
 
-    return sorted(values, key=key)
+    ranked = sorted(values, key=key)
+    return [replace(item, metadata={**item.metadata,
+                                    "bundle_role": _role_for(item, profile, normalized_focus),
+                                    "bundle_profile": profile}) for item in ranked]
 
 
 @dataclass(frozen=True, slots=True)
@@ -111,6 +177,9 @@ class EvidenceBundle:
     provenance: tuple[str, ...]
     generation: int
     budget: QueryBudget
+    profile: str = "generic"
+    suppressed_evidence_ids: tuple[str, ...] = ()
+    fallback_triggered: bool = False
 
     @classmethod
     def create(
@@ -118,18 +187,49 @@ class EvidenceBundle:
         primary_evidence: Iterable[Evidence], supporting_evidence: Iterable[Evidence],
         related_entities: Iterable[dict[str, Any]], uncertainties: Iterable[str],
         generation: int, budget: QueryBudget,
+        profile: str = "generic", focus_terms: Iterable[str] = (),
     ) -> "EvidenceBundle":
-        primary = rank_evidence(primary_evidence)
-        supporting = rank_evidence(supporting_evidence)
-        selected_primary = primary[:budget.max_evidence]
-        remaining = max(budget.max_evidence - len(selected_primary), 0)
-        selected_supporting = supporting[:remaining]
+        if profile not in BUNDLE_PROFILES:
+            raise ValueError(f"unsupported bundle profile: {profile}")
+        candidates: dict[str, Evidence] = {}
+        for seed_role, values in (("PRIMARY", primary_evidence), ("SUPPORTING", supporting_evidence)):
+            for item in values:
+                candidates.setdefault(item.evidence_id, replace(
+                    item, metadata={**item.metadata, "bundle_seed_role": seed_role}))
+        ranked = rank_evidence(candidates.values(), profile=profile, focus_terms=focus_terms)
+        suppressed = [item for item in ranked
+                      if item.metadata.get("bundle_role") == "SUPPRESSED_CANDIDATE"]
+        eligible = [item for item in ranked if item not in suppressed]
+        # Focus terms are optional task hints and must never turn a non-empty
+        # query into an empty bundle.  If none match, fall back deterministically
+        # to contextual evidence rather than silently dropping all coverage.
+        fallback_triggered = False
+        if not eligible and suppressed:
+            fallback_triggered = True
+            eligible = [replace(item, metadata={**item.metadata,
+                                                "bundle_role": "CONTEXTUAL"})
+                        for item in suppressed]
+            suppressed = []
+        primary = [item for item in eligible if item.metadata.get("bundle_role") == "PRIMARY"]
+        supporting = [item for item in eligible if item.metadata.get("bundle_role") != "PRIMARY"]
+        if fallback_triggered:
+            # A zero-hit focus hint is advisory.  Preserve the full frozen candidate
+            # set rather than applying a budget whose arbitrary truncation could lose
+            # evidence coverage; qualification reports this expansion explicitly.
+            selected_primary, selected_supporting = [], eligible
+        else:
+            primary_limit = budget.total_limit if budget.max_primary is None else budget.max_primary
+            supporting_limit = budget.total_limit if budget.max_supporting is None else budget.max_supporting
+            selected_primary = primary[:primary_limit]
+            remaining = max(budget.total_limit - len(selected_primary), 0)
+            selected_supporting = supporting[:min(supporting_limit, remaining)]
         combined = [*selected_primary, *selected_supporting]
         return cls(
             anchor, intent, summary, tuple(selected_primary), tuple(selected_supporting),
             tuple(dict(item) for item in list(related_entities)[:budget.max_symbols]),
             tuple(uncertainties), tuple(sorted({item.provenance for item in combined})),
-            generation, budget,
+            generation, budget, profile, tuple(item.evidence_id for item in suppressed),
+            fallback_triggered,
         )
 
     @property
@@ -144,6 +244,10 @@ class EvidenceBundle:
             "related_entities": list(self.related_entities),
             "uncertainties": list(self.uncertainties), "provenance": list(self.provenance),
             "generation": self.generation, "budget": self.budget.to_dict(),
+            "profile": self.profile,
+            "suppressed_evidence_ids": list(self.suppressed_evidence_ids),
+            "suppressed_evidence_count": len(self.suppressed_evidence_ids),
+            "fallback_triggered": self.fallback_triggered,
             "returned_evidence_ids": self.evidence_ids,
             "returned_evidence_count": len(self.evidence_ids),
         }

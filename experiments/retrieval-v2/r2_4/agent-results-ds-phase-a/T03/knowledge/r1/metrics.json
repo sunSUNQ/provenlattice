@@ -1,0 +1,80 @@
+{
+  "tool_turns": 11,
+  "read_calls": 0,
+  "grep_calls": 1,
+  "glob_calls": 0,
+  "shell_calls": 0,
+  "graph_queries": 7,
+  "knowledge_queries": 3,
+  "unique_files_read": 1,
+  "files_read": [
+    "docs/en/client.md"
+  ],
+  "total_file_chars_read": 0,
+  "total_tool_output_chars": 43628,
+  "duration_ms": 76917.2012,
+  "input_tokens": 39407,
+  "output_tokens": 15730,
+  "cache_tokens": 242944,
+  "total_tokens": 298081,
+  "returned_graph_evidence": 13,
+  "returned_graph_edges": 0,
+  "observed_evidence_ids": [
+    "E-CODE-958e25377596d1f5e9455d79",
+    "E-CODE-9cec5b84fb52b556c0c332c9",
+    "E-CODE-9e5dad16bdada6bf74a32ea8",
+    "E-DOC-4f0b034d78a060fee26a2786",
+    "E-DOC-51c12e32861bb02b28d8d99a",
+    "E-SHARD-6487ab8c99b36b477f261e90",
+    "E-SHARD-9a8610a36d91174789a5fe51",
+    "E-SHARD-a461588518613b5b55f3fa0d",
+    "E-XLINK-3284c4dde04ede3b45992a17",
+    "E-XLINK-e0e9be2cf50f895bf973243a"
+  ],
+  "observed_used_evidence_ids": [
+    "E-CODE-958e25377596d1f5e9455d79",
+    "E-CODE-9cec5b84fb52b556c0c332c9",
+    "E-CODE-9e5dad16bdada6bf74a32ea8",
+    "E-DOC-51c12e32861bb02b28d8d99a",
+    "E-SHARD-6487ab8c99b36b477f261e90",
+    "E-XLINK-3284c4dde04ede3b45992a17",
+    "E-XLINK-e0e9be2cf50f895bf973243a"
+  ],
+  "viewed_evidence_ids": [
+    "E-CODE-958e25377596d1f5e9455d79",
+    "E-CODE-9cec5b84fb52b556c0c332c9",
+    "E-CODE-9e5dad16bdada6bf74a32ea8",
+    "E-DOC-4f0b034d78a060fee26a2786",
+    "E-DOC-51c12e32861bb02b28d8d99a",
+    "E-SHARD-6487ab8c99b36b477f261e90",
+    "E-SHARD-9a8610a36d91174789a5fe51",
+    "E-SHARD-a461588518613b5b55f3fa0d",
+    "E-XLINK-3284c4dde04ede3b45992a17",
+    "E-XLINK-e0e9be2cf50f895bf973243a"
+  ],
+  "returned_but_unused_evidence_ids": [
+    "E-DOC-4f0b034d78a060fee26a2786",
+    "E-SHARD-9a8610a36d91174789a5fe51",
+    "E-SHARD-a461588518613b5b55f3fa0d"
+  ],
+  "returned_but_unused_evidence": 3,
+  "evidence_usage_rate": 0.7,
+  "query_latencies_ms": [
+    144.97610001126304,
+    35.991700016893446,
+    21.476199966855347,
+    424.0245000110008,
+    21.178999973926693,
+    148.88989995233715,
+    145.68409998901188,
+    441.0846999962814,
+    143.1884000194259
+  ],
+  "graph_evidence_hit_rate": 0.7,
+  "cross_layer_edge_utilization": null,
+  "time_to_first_relevant_evidence_ms": null,
+  "turns_to_first_relevant_evidence": 1,
+  "native_exploration_avoided": null,
+  "permission_denial_count": 0,
+  "retrieval_permission_denial_count": 0
+}

@@ -87,6 +87,25 @@ class EvidenceContractTests(unittest.TestCase):
         self.assertLessEqual(len(first.evidence_ids), 3)
         self.assertLessEqual(len(first.related_entities), 2)
 
+    def test_task_profile_assigns_roles_suppresses_unresolved_and_honors_role_budgets(self) -> None:
+        document = sample("DOCUMENT_SECTION", "document")
+        link = sample("CROSS_LAYER_LINK", "link")
+        code = sample("CODE_DEFINITION", "code")
+        unresolved = sample("CROSS_LAYER_LINK", "candidate", status="ambiguous")
+        bundle = EvidenceBundle.create(
+            anchor="document", intent="find_related_code", summary="summary",
+            primary_evidence=[document, link, code], supporting_evidence=[unresolved],
+            related_entities=[], uncertainties=[], generation=1,
+            budget=QueryBudget(max_evidence=8, max_primary=1, max_supporting=1, max_total=2),
+            profile="document_to_code",
+        )
+        self.assertEqual(len(bundle.primary_evidence), 1)
+        self.assertEqual(len(bundle.supporting_evidence), 1)
+        self.assertEqual(bundle.primary_evidence[0].metadata["bundle_role"], "PRIMARY")
+        self.assertNotIn(unresolved.evidence_id, bundle.evidence_ids)
+        self.assertEqual(bundle.suppressed_evidence_ids, (unresolved.evidence_id,))
+        self.assertEqual(bundle.to_dict()["profile"], "document_to_code")
+
     def test_structured_queries_are_deterministic_bounded_and_traceable(self) -> None:
         with GraphQuery(self.database) as query:
             first = query.explain_symbol(

@@ -18,7 +18,7 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
              adapter, timeout: float = 900, verify_commit: bool = True, repetition: int = 1,
              model_id: str = "unknown", claude_version: str = "unknown",
              provenlattice_commit: str | None = None, database: str | None = None,
-             attempt: int = 1, protocol: str = "r1") -> dict:
+             attempt: int = 1, protocol: str = "r1", environment_overrides: dict[str, str] | None = None) -> dict:
     if arm not in ARM_TOOLS:
         raise ValueError(f"unknown arm: {arm}")
     run_key = f"{task.task_id}.{arm}.r{repetition}"
@@ -41,6 +41,7 @@ def run_task(task: TaskDefinition, arm: str, repo_path: str | Path, output_root:
         environment["PL_R2_EVIDENCE_CONTRACT"] = "1"
     if database:
         environment["PL_R1_DATABASE"] = str(Path(database).resolve())
+    environment.update(environment_overrides or {})
     request = RunRequest(run_id, task.task_id, repo_path, task.commit, arm, task.prompt,
                          sorted(ARM_TOOLS[arm]), environment, timeout)
     if errors:

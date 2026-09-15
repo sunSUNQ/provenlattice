@@ -1,0 +1,9 @@
+{"run_key": "T01.native.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T01.codegraph.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T01.knowledge.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T03.native.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T03.codegraph.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T03.knowledge.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T05.native.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T05.codegraph.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}
+{"run_key": "T05.knowledge.r1", "status": "failed", "task_success": false, "concept_recall": 0.0}

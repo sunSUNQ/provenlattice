@@ -1,0 +1,35 @@
+{
+  "bundles": [
+    {
+      "query_id": "Q-473f084756748d357211",
+      "query_type": "explain_symbol",
+      "bundle_profile": "code_to_document",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-XLINK-3284c4dde04ede3b45992a17",
+        "E-XLINK-e0e9be2cf50f895bf973243a"
+      ],
+      "supporting_evidence_ids": [
+        "E-CODE-9cec5b84fb52b556c0c332c9",
+        "E-SHARD-6487ab8c99b36b477f261e90"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-6487ab8c99b36b477f261e90"
+      ],
+      "suppressed_evidence_ids": [
+        "E-DOC-1ff03fb4980a8d208a8e97e7",
+        "E-DOC-51c12e32861bb02b28d8d99a"
+      ],
+      "bundle_size": 9098
+    }
+  ]
+}

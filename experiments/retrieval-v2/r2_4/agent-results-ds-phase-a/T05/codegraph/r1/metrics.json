@@ -1,0 +1,75 @@
+{
+  "tool_turns": 51,
+  "read_calls": 22,
+  "grep_calls": 15,
+  "glob_calls": 10,
+  "shell_calls": 1,
+  "graph_queries": 3,
+  "knowledge_queries": 0,
+  "unique_files_read": 16,
+  "files_read": [
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\README.md",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\measure.ps1",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-codegraph.db",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\retrieval-v1\\build_tasks.py",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\retrieval-v2\\README.md",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\retrieval-v2\\r2_4\\agent-results\\T05\\knowledge\\r1\\bundle-manifest.json",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\retrieval-v2\\r2_4\\results\\qualification-r2.4.md",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\retrieval-v2\\tasks\\T05.json",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice.egg-info\\PKG-INFO",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\__init__.py",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\cli.py",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\knowledge.py",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\overlay.py",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\query.py",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\shard.py",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\storage.py"
+  ],
+  "total_file_chars_read": 114146,
+  "total_tool_output_chars": 189524,
+  "duration_ms": 277353.5526,
+  "input_tokens": 83154,
+  "output_tokens": 48841,
+  "cache_tokens": 2453632,
+  "total_tokens": 2585627,
+  "returned_graph_evidence": 6,
+  "returned_graph_edges": 0,
+  "observed_evidence_ids": [
+    "E-CODE-20376c6ce1b46be66b8a2d4a",
+    "E-DOC-3d047e723af4c7446012da31",
+    "E-DOC-9d9674320ddc2684f8d2773a",
+    "E-SHARD-26c1a7f4ef4488b736bb987f",
+    "E-XLINK-02e59d12b69fb54749eacbc0",
+    "E-XLINK-d0c193c0b2c38994b2ee0476"
+  ],
+  "observed_used_evidence_ids": [
+    "E-CODE-20376c6ce1b46be66b8a2d4a",
+    "E-DOC-9d9674320ddc2684f8d2773a",
+    "E-SHARD-26c1a7f4ef4488b736bb987f",
+    "E-XLINK-02e59d12b69fb54749eacbc0"
+  ],
+  "viewed_evidence_ids": [
+    "E-CODE-20376c6ce1b46be66b8a2d4a",
+    "E-DOC-3d047e723af4c7446012da31",
+    "E-DOC-9d9674320ddc2684f8d2773a",
+    "E-SHARD-26c1a7f4ef4488b736bb987f",
+    "E-XLINK-02e59d12b69fb54749eacbc0",
+    "E-XLINK-d0c193c0b2c38994b2ee0476"
+  ],
+  "returned_but_unused_evidence_ids": [
+    "E-DOC-3d047e723af4c7446012da31",
+    "E-XLINK-d0c193c0b2c38994b2ee0476"
+  ],
+  "returned_but_unused_evidence": 2,
+  "evidence_usage_rate": 0.6666666666666666,
+  "query_latencies_ms": [
+    144.3987999809906
+  ],
+  "graph_evidence_hit_rate": 0.6666666666666666,
+  "cross_layer_edge_utilization": null,
+  "time_to_first_relevant_evidence_ms": null,
+  "turns_to_first_relevant_evidence": 48,
+  "native_exploration_avoided": null,
+  "permission_denial_count": 1,
+  "retrieval_permission_denial_count": 0
+}

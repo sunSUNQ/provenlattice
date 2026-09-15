@@ -1,0 +1,26 @@
+﻿{
+    "protocol":  "r2.3",
+    "phase":  "qualification",
+    "attempt":  1,
+    "run_key":  "T01.native.r1",
+    "classification":  "INFRASTRUCTURE / Claude process failed before task execution",
+    "retryable":  true,
+    "protocol_clause":  "section 12 (recoverable infrastructure failure)",
+    "evidence":  {
+                     "agent_output":  "Not logged in - Please run /login",
+                     "exit_reason":  "agent_nonzero_exit",
+                     "tool_calls":  0,
+                     "duration_ms":  1109.1,
+                     "actual_model_id":  "claude-sonnet-4-5-20250929",
+                     "actual_claude_ver":  "2.1.268",
+                     "policy_violations":  [
+
+                                           ],
+                     "git_status_dirty":  false
+                 },
+    "root_cause":  "ANTHROPIC_AUTH_TOKEN absent from the execution environment; Claude Code CLI unauthenticated",
+    "remediation":  "Restored transport credential from project .env (same ANTHROPIC_BASE_URL endpoint, frozen model id unchanged); verified by transport probe",
+    "semantics_impact":  "NONE - transport-only; no scoring, prompt, evaluator, ground-truth or capability change",
+    "artifacts_preserved":  true,
+    "archived_at":  "2026-09-11T12:01:23.3811864+08:00"
+}

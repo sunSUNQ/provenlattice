@@ -1,0 +1,45 @@
+{
+  "task_success": false,
+  "required_evidence_recall": 1.0,
+  "evidence_precision": 0.5,
+  "required_evidence_hits": [
+    "E-CODE-9cec5b84fb52b556c0c332c9"
+  ],
+  "required_evidence_misses": [],
+  "returned_evidence_ids": [
+    "E-CODE-9cec5b84fb52b556c0c332c9",
+    "E-SHARD-6487ab8c99b36b477f261e90",
+    "E-XLINK-3284c4dde04ede3b45992a17",
+    "E-XLINK-e0e9be2cf50f895bf973243a"
+  ],
+  "viewed_evidence_ids": [
+    "E-CODE-9cec5b84fb52b556c0c332c9",
+    "E-SHARD-6487ab8c99b36b477f261e90",
+    "E-XLINK-3284c4dde04ede3b45992a17",
+    "E-XLINK-e0e9be2cf50f895bf973243a"
+  ],
+  "used_evidence_ids": [
+    "E-CODE-9cec5b84fb52b556c0c332c9",
+    "E-SHARD-6487ab8c99b36b477f261e90",
+    "E-XLINK-3284c4dde04ede3b45992a17",
+    "E-XLINK-e0e9be2cf50f895bf973243a"
+  ],
+  "evidence_usage_rate": 1.0,
+  "returned_but_unused_evidence": [],
+  "returned_but_unused_count": 0,
+  "wrong_evidence_usage": [],
+  "wrong_evidence_count": 0,
+  "unsupported_claim_count": 0,
+  "semantic_required_evidence_recall": 1.0,
+  "semantic_required_evidence_misses": [],
+  "wrong_path_count": 4,
+  "wrong_paths": [
+    "docs/cn/client.md#79c3f03a99dbabb5",
+    "docs/cn/client.md**",
+    "docs/en/client.md#10b2646294acf078",
+    "docs/en/client.md**"
+  ],
+  "hallucinated_symbol_count": null,
+  "hallucinated_relation_count": null,
+  "evaluator_version": "r2-evidence-contract-v1"
+}

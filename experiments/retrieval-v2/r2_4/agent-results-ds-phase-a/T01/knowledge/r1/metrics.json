@@ -1,0 +1,79 @@
+{
+  "tool_turns": 20,
+  "read_calls": 4,
+  "grep_calls": 5,
+  "glob_calls": 0,
+  "shell_calls": 0,
+  "graph_queries": 8,
+  "knowledge_queries": 3,
+  "unique_files_read": 8,
+  "files_read": [
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc\\src\\brpc\\global.cpp",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc\\src\\brpc\\policy\\consistent_hashing_load_balancer.cpp",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc\\src\\brpc\\policy\\consistent_hashing_load_balancer.h",
+    "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\brpc\\src\\brpc\\socket.h",
+    "docs/cn/client.md",
+    "docs/cn/client.md#c_murmurhash_bl",
+    "src/brpc/policy",
+    "src/brpc/policy/consistent_hashing_load_balancer.cpp"
+  ],
+  "total_file_chars_read": 9669,
+  "total_tool_output_chars": 43775,
+  "duration_ms": 86037.163,
+  "input_tokens": 37581,
+  "output_tokens": 17882,
+  "cache_tokens": 293248,
+  "total_tokens": 348711,
+  "returned_graph_evidence": 7,
+  "returned_graph_edges": 0,
+  "observed_evidence_ids": [
+    "E-CODE-1726cdc7c9938223c1d04362",
+    "E-CODE-4099735d597dc714fc02f8f9",
+    "E-CODE-958e25377596d1f5e9455d79",
+    "E-DOC-84c6687a4e0a0cb4d722f06e",
+    "E-SHARD-0bd4b5aa4d298e72de409251",
+    "E-SHARD-70fa7eea96c876b03e597f10",
+    "E-SHARD-9a8610a36d91174789a5fe51"
+  ],
+  "observed_used_evidence_ids": [
+    "E-CODE-1726cdc7c9938223c1d04362",
+    "E-CODE-4099735d597dc714fc02f8f9",
+    "E-CODE-958e25377596d1f5e9455d79",
+    "E-DOC-84c6687a4e0a0cb4d722f06e",
+    "E-SHARD-0bd4b5aa4d298e72de409251",
+    "E-SHARD-9a8610a36d91174789a5fe51"
+  ],
+  "viewed_evidence_ids": [
+    "E-CODE-1726cdc7c9938223c1d04362",
+    "E-CODE-4099735d597dc714fc02f8f9",
+    "E-CODE-958e25377596d1f5e9455d79",
+    "E-DOC-84c6687a4e0a0cb4d722f06e",
+    "E-SHARD-0bd4b5aa4d298e72de409251",
+    "E-SHARD-70fa7eea96c876b03e597f10",
+    "E-SHARD-9a8610a36d91174789a5fe51"
+  ],
+  "returned_but_unused_evidence_ids": [
+    "E-SHARD-70fa7eea96c876b03e597f10"
+  ],
+  "returned_but_unused_evidence": 1,
+  "evidence_usage_rate": 0.8571428571428571,
+  "query_latencies_ms": [
+    422.2223000251688,
+    22.297099989373237,
+    145.77980001922697,
+    413.33519999170676,
+    143.9902000129223,
+    22.1527999965474,
+    20.969800010789186,
+    20.73200000450015,
+    20.396500010974705,
+    143.7758000101894
+  ],
+  "graph_evidence_hit_rate": 0.8571428571428571,
+  "cross_layer_edge_utilization": null,
+  "time_to_first_relevant_evidence_ms": null,
+  "turns_to_first_relevant_evidence": 1,
+  "native_exploration_avoided": null,
+  "permission_denial_count": 0,
+  "retrieval_permission_denial_count": 0
+}

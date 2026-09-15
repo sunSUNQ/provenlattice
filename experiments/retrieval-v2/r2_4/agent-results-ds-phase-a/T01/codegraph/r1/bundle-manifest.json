@@ -1,0 +1,165 @@
+{
+  "bundles": [
+    {
+      "query_id": "Q-1fb101b240c5a4791137",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-CODE-fb96ca1f46b2b958e77b1998",
+        "E-SHARD-590676bcc9af7f350eae3374"
+      ],
+      "contextual_evidence_ids": [
+        "E-CODE-fb96ca1f46b2b958e77b1998",
+        "E-SHARD-590676bcc9af7f350eae3374"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 2935
+    },
+    {
+      "query_id": "Q-330f25ec3a3f82c2d275",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-DOC-51c12e32861bb02b28d8d99a"
+      ],
+      "contextual_evidence_ids": [
+        "E-DOC-51c12e32861bb02b28d8d99a"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 2813
+    },
+    {
+      "query_id": "Q-df8834d19116400a457e",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-CODE-4099735d597dc714fc02f8f9",
+        "E-SHARD-70fa7eea96c876b03e597f10"
+      ],
+      "contextual_evidence_ids": [
+        "E-CODE-4099735d597dc714fc02f8f9",
+        "E-SHARD-70fa7eea96c876b03e597f10"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3161
+    },
+    {
+      "query_id": "Q-6089c83acc8d2877dc62",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 581
+    },
+    {
+      "query_id": "Q-f09e0f1b3f2697aeec4a",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-CODE-1726cdc7c9938223c1d04362",
+        "E-SHARD-0bd4b5aa4d298e72de409251"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-0bd4b5aa4d298e72de409251"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3186
+    },
+    {
+      "query_id": "Q-0fd2361cc8b718c4e97f",
+      "query_type": "explain_module",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 662
+    },
+    {
+      "query_id": "Q-3c2e14a4ff7f22920a88",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 657
+    }
+  ]
+}

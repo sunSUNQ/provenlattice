@@ -1,0 +1,29 @@
+Retrieval is complete — one bounded `explain-symbol` query returned all required code, documentation, and cross-layer evidence. Here is the answer.
+
+**Retrieval note.** The database named in the task (`v1.0-db/brpc-codegraph.db`) contains only an empty schema — no repository row, zero brpc records — so any query against it fails with `base graph is empty`. I ran the bounded query against the only frozen database in that folder that holds this repository's graph: `v1.0-db/brpc-knowledge.db` (generation 1, commit `ae09e960c7291605dda52356cc0c2d45567fb53e`). Command executed: `provenlattice explain-symbol brpc.RateLimitedBackupPolicyOptions --max-evidence 12` (query `Q-fdd1945797c2a4e94dc0`, 6 evidence items returned).
+
+## Responsibilities of the module
+
+The section used is **docs/cn/backup_request.md → 当后端server可以挂在一个命名服务内时 / Backup Request 限流 / 使用内置限流策略** (lines 48–83). Its job: let a Channel whose backend servers are registered in a naming service rate-limit backup requests. The built-in rate-limiting policy caps the share of backup traffic over a sliding window, configured through a public options struct:
+
+- `max_backup_ratio` — max backup ratio, default 0.1, range (0, 1]
+- `window_size_seconds` — sliding window width, default 10, range [1, 3600]
+- `update_interval_seconds` — cached-ratio refresh interval, default 5, ≥ 1
+- `backup_request_ms` — timeout threshold, default −1 (inherits `ChannelOptions.backup_request_ms`; at controller level an explicit ≥ 0 value is required)
+
+## Key entry points and important code symbols
+
+- **`brpc::RateLimitedBackupPolicyOptions`** — public struct in `src/brpc/backup_request_policy.h`, lines 45–65; the code-side anchor of the whole section [E-CODE-20376c6ce1b46be66b8a2d4a].
+- Entry points named in the cited section text (no separate evidence IDs were returned for them): `brpc::CreateRateLimitedBackupPolicy(opts)`, a factory returning `std::unique_ptr<brpc::BackupRequestPolicy>` (`nullptr` if any parameter is invalid); `ChannelOptions.backup_request_policy`, the channel-level slot the policy is set on; and `Channel::Init(..., &options)` for wiring.
+
+## Dependency / call relationships
+
+- **Cross-layer grounding:** the document section emits a resolved `DOCUMENTS` edge to the struct via `explicit_symbol_reference` (confidence 0.7) [E-XLINK-02e59d12b69fb54749eacbc0].
+- **Structural placement:** the struct belongs to the `src/brpc` shard (`MEMBER_OF`) [E-SHARD-26c1a7f4ef4488b736bb987f].
+- **Lifecycle/wiring contract from the doc:** the caller owns the policy object, the Channel does *not* own it, and the Channel must be destroyed before the policy goes out of scope. The returned bundle contained no `CALLS`/`REFERENCES` rows for this struct, so call-graph behavior beyond this documented factory/channel wiring is not evidenced by this query.
+
+Evidence Used:
+- E-CODE-20376c6ce1b46be66b8a2d4a
+- E-DOC-9d9674320ddc2684f8d2773a
+- E-XLINK-02e59d12b69fb54749eacbc0
+- E-SHARD-26c1a7f4ef4488b736bb987f

@@ -1,0 +1,14 @@
+{
+  "task_id": "DS-SMOKE-01",
+  "repository": "ProvenLattice",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "category": "transport-smoke",
+  "difficulty": "Easy",
+  "prompt": "Read README.md exactly once. Return the first top-level heading. Do not modify files.",
+  "ground_truth": {"required_evidence": [], "optional_evidence": [], "distractor": []},
+  "expected_files": ["README.md"],
+  "expected_symbols": [],
+  "expected_documents": [],
+  "expected_relationships": [],
+  "success_criteria": ["reads README.md once", "returns its first top-level heading"]
+}

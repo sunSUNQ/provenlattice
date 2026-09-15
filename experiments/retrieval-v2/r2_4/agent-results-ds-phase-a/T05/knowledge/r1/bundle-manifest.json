@@ -1,0 +1,672 @@
+{
+  "bundles": [
+    {
+      "query_id": "Q-8c152ee4996261942e82",
+      "query_type": "find_related_code",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-DOC-3bc0cae4196abbf247304ed4"
+      ],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 1486
+    },
+    {
+      "query_id": "Q-9b9946b648697d17ddd0",
+      "query_type": "explain_module",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 620
+    },
+    {
+      "query_id": "Q-6190369d66544389962b",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 589
+    },
+    {
+      "query_id": "Q-9d9cccb03e0787ed23ac",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 587
+    },
+    {
+      "query_id": "Q-2c1b9110453ed59e0e0b",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-bafd8543b33c361bcebc7be3"
+      ],
+      "supporting_evidence_ids": [
+        "E-SHARD-3286c0a96cd49d2a01e6d193"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-3286c0a96cd49d2a01e6d193"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3018
+    },
+    {
+      "query_id": "Q-d158de5814a923ebae90",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-e60026bb903e97faad958cd1"
+      ],
+      "supporting_evidence_ids": [
+        "E-SHARD-ff456a001cb319fead96d882"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-ff456a001cb319fead96d882"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 2973
+    },
+    {
+      "query_id": "Q-c8609ae0d0dac5d3254b",
+      "query_type": "find_related_documents",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 632
+    },
+    {
+      "query_id": "Q-30c43db3fbbae589109c",
+      "query_type": "find_related_documents",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 643
+    },
+    {
+      "query_id": "Q-8e7fe327a2a14cf9ae2c",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-e60026bb903e97faad958cd1"
+      ],
+      "supporting_evidence_ids": [
+        "E-SHARD-ff456a001cb319fead96d882"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-ff456a001cb319fead96d882"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 2978
+    },
+    {
+      "query_id": "Q-874456ba15de39ad9d71",
+      "query_type": "find_related_code",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-DOC-1e4659da5cca81498a62ec85"
+      ],
+      "contextual_evidence_ids": [
+        "E-DOC-1e4659da5cca81498a62ec85"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 1484
+    },
+    {
+      "query_id": "Q-efcfebef55a7cc29512b",
+      "query_type": "explain_module",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 598
+    },
+    {
+      "query_id": "Q-efde97020637b5bf48de",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-CODE-ce927edae61e6497ab4066dc",
+        "E-SHARD-1c3a86727e7b28b6b7837cbe"
+      ],
+      "contextual_evidence_ids": [
+        "E-CODE-ce927edae61e6497ab4066dc",
+        "E-SHARD-1c3a86727e7b28b6b7837cbe"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 2947
+    },
+    {
+      "query_id": "Q-43bb26a36d803edebfad",
+      "query_type": "explain_module",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-XLINK-02e59d12b69fb54749eacbc0",
+        "E-XLINK-0db7d027bd2e12fd888a715d",
+        "E-XLINK-94055898215a0b82739dc237",
+        "E-XLINK-bdb9ae4d1aa9c5a37a952de7",
+        "E-XLINK-e3fe9b3d924d68f482bd290f"
+      ],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [
+        "E-CODE-0337f66e0641289406e5a471",
+        "E-CODE-1628373514556171fc6d87df",
+        "E-CODE-507e252f46e7290bd7aac8ba",
+        "E-CODE-653c4e9bdbeb00a7785f3357",
+        "E-CODE-67e47d32b82602cf8764d21b",
+        "E-CODE-b776ea0acee6336cd6ea08e5",
+        "E-CODE-b7ed612a6ec19ff529bbc096",
+        "E-CODE-e083f9e2a9063e254bce87a4",
+        "E-XLINK-beb5117cfe74929482bd6cc1",
+        "E-SHARD-0022ab69417782d15e28c5e9",
+        "E-SHARD-006c156346b9baf0b46a66b5",
+        "E-SHARD-00cada4fa0708c4116b642bc",
+        "E-SHARD-00d46c6d9420bae077f4cac5",
+        "E-SHARD-00de649a0b39c3d1551d6425",
+        "E-SHARD-00f7683eef2d717c46537ff6",
+        "E-SHARD-016acf0f9bc82f0101992c12",
+        "E-SHARD-0256ab16d61c779f1bb9d965",
+        "E-SHARD-02904152433c261ccc2de66d",
+        "E-SHARD-029cff5ab31be0e1a89b3f14",
+        "E-SHARD-03325a61edacd7d5f4d4b73d",
+        "E-SHARD-033882ea554349a4afea2351"
+      ],
+      "bundle_size": 13064
+    },
+    {
+      "query_id": "Q-e770a8a1561e9c035556",
+      "query_type": "find_related_documents",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 614
+    },
+    {
+      "query_id": "Q-35aa3550e06643dbe81c",
+      "query_type": "find_related_documents",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 622
+    },
+    {
+      "query_id": "Q-e1539680f71145a3041d",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-20376c6ce1b46be66b8a2d4a"
+      ],
+      "supporting_evidence_ids": [
+        "E-XLINK-02e59d12b69fb54749eacbc0",
+        "E-XLINK-d0c193c0b2c38994b2ee0476",
+        "E-DOC-3d047e723af4c7446012da31",
+        "E-DOC-9d9674320ddc2684f8d2773a",
+        "E-SHARD-26c1a7f4ef4488b736bb987f"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-26c1a7f4ef4488b736bb987f"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 12879
+    },
+    {
+      "query_id": "Q-12a2c6a1233d99c2a67a",
+      "query_type": "explain_module",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-XLINK-02e59d12b69fb54749eacbc0",
+        "E-XLINK-0db7d027bd2e12fd888a715d",
+        "E-XLINK-94055898215a0b82739dc237",
+        "E-XLINK-bdb9ae4d1aa9c5a37a952de7",
+        "E-XLINK-e3fe9b3d924d68f482bd290f"
+      ],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [
+        "E-CODE-0337f66e0641289406e5a471",
+        "E-CODE-1628373514556171fc6d87df",
+        "E-CODE-507e252f46e7290bd7aac8ba",
+        "E-CODE-653c4e9bdbeb00a7785f3357",
+        "E-CODE-67e47d32b82602cf8764d21b",
+        "E-CODE-b776ea0acee6336cd6ea08e5",
+        "E-CODE-b7ed612a6ec19ff529bbc096",
+        "E-CODE-e083f9e2a9063e254bce87a4",
+        "E-XLINK-beb5117cfe74929482bd6cc1",
+        "E-SHARD-0022ab69417782d15e28c5e9",
+        "E-SHARD-006c156346b9baf0b46a66b5",
+        "E-SHARD-00cada4fa0708c4116b642bc",
+        "E-SHARD-00d46c6d9420bae077f4cac5",
+        "E-SHARD-00de649a0b39c3d1551d6425",
+        "E-SHARD-00f7683eef2d717c46537ff6",
+        "E-SHARD-016acf0f9bc82f0101992c12",
+        "E-SHARD-0256ab16d61c779f1bb9d965",
+        "E-SHARD-02904152433c261ccc2de66d",
+        "E-SHARD-029cff5ab31be0e1a89b3f14",
+        "E-SHARD-03325a61edacd7d5f4d4b73d",
+        "E-SHARD-033882ea554349a4afea2351"
+      ],
+      "bundle_size": 13075
+    },
+    {
+      "query_id": "Q-4719725d640abed194fb",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-0b76244cf316042f9eba74c6"
+      ],
+      "supporting_evidence_ids": [
+        "E-SHARD-8dd048e3af53406937b7722c"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-8dd048e3af53406937b7722c"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3172
+    },
+    {
+      "query_id": "Q-db75e21d528d31ae9446",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-1de19aded3d4104972c0dee8"
+      ],
+      "supporting_evidence_ids": [
+        "E-SHARD-202ed66efea6a02de6fb5a43"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-202ed66efea6a02de6fb5a43"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3048
+    },
+    {
+      "query_id": "Q-03b4fbafc7dc7cf14965",
+      "query_type": "find_related_documents",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 652
+    },
+    {
+      "query_id": "Q-eb7aea4862b57823f8fc",
+      "query_type": "explain_module",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 634
+    },
+    {
+      "query_id": "Q-db776762559cf1ca2cee",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-95e2b12098d2b3e4abea769b"
+      ],
+      "supporting_evidence_ids": [
+        "E-XLINK-8c53d0b57aa40968e9c8ba17",
+        "E-XLINK-94055898215a0b82739dc237",
+        "E-XLINK-e3fe9b3d924d68f482bd290f",
+        "E-XLINK-f4c89a2e0346fb42c4ba8a91",
+        "E-DOC-3d047e723af4c7446012da31",
+        "E-DOC-9d9674320ddc2684f8d2773a",
+        "E-DOC-c46e94bb27b9f6c2c25be8ab",
+        "E-DOC-f64718932994b6e536e183ab",
+        "E-SHARD-f41b84349e240f582882c51c"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-f41b84349e240f582882c51c"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 20764
+    },
+    {
+      "query_id": "Q-432eb8f4b1e7ce5d9c17",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-101af5df67edff6525a07f32"
+      ],
+      "supporting_evidence_ids": [
+        "E-XLINK-0db7d027bd2e12fd888a715d",
+        "E-XLINK-bccb83cb20d7338263869c90",
+        "E-DOC-3d047e723af4c7446012da31",
+        "E-DOC-9d9674320ddc2684f8d2773a",
+        "E-SHARD-b148abcb1de6b3d2a7c9e323"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-b148abcb1de6b3d2a7c9e323"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 12953
+    },
+    {
+      "query_id": "Q-13b76bfc2284d2f5b09f",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-b0084bb3666dc9334e24c04c"
+      ],
+      "supporting_evidence_ids": [
+        "E-XLINK-816bb1d620b4d108433d0bfc",
+        "E-XLINK-bdb9ae4d1aa9c5a37a952de7",
+        "E-DOC-3d047e723af4c7446012da31",
+        "E-DOC-9d9674320ddc2684f8d2773a",
+        "E-SHARD-2069ec6b0984a2d4b36140f7"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-2069ec6b0984a2d4b36140f7"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 12977
+    },
+    {
+      "query_id": "Q-4143e854ae6b44301011",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [
+        "E-CODE-ff9667fa55ca56e043c8ec51"
+      ],
+      "supporting_evidence_ids": [
+        "E-SHARD-3f03950c75a3b031d019aa90"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-3f03950c75a3b031d019aa90"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3042
+    },
+    {
+      "query_id": "Q-a91569bd1116c71cca20",
+      "query_type": "explain_symbol",
+      "bundle_profile": "module_understanding",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 613
+    }
+  ]
+}

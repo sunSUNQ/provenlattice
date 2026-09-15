@@ -1,0 +1,58 @@
+## What the module is
+
+`docs/cn/backup_request.md` documents brpc's **backup request (对冲请求) mechanism** — a Channel-level redundancy feature: send an RPC to one server, and if no reply arrives within `backup_request_ms`, send the same request to another server; whichever returns first wins. The doc's three requested sections map to:
+
+1. **当后端server可以挂在一个命名服务内时** (doc:3-5) — enable per-Channel via `ChannelOptions.backup_request_ms`.
+2. **Backup Request 限流** (doc:42-46) — a pluggable `BackupRequestPolicy` interface to throttle backup sends; priority `backup_request_policy` > `backup_request_ms`.
+3. **使用内置限流策略** (doc:48-82, 110-114) — factory `CreateRateLimitedBackupPolicy` + `RateLimitedBackupPolicyOptions` (sliding-window ratio limiter).
+
+The doc's other half (doc:116-120) covers the "servers not in one naming service" case; the recommended SelectiveChannel path reuses the same machinery (see below).
+
+## Key code symbols
+
+**Public API — `src/brpc/backup_request_policy.h`** (the module's own header, only pulled in by `channel.h:37`):
+- `brpc::BackupRequestPolicy` (`backup_request_policy.h:26-41`) — abstract interface with three virtuals: `GetBackupRequestMs(const Controller*)` (h:34; returns -1 = inherit `ChannelOptions.backup_request_ms`, other negative = disable backup), `DoBackup(const Controller*)` (h:37; whether to actually send the backup), `OnRPCEnd(const Controller*)` (h:40; per-RPC completion hook). Matches the doc's interface listing (doc:88-108, and `docs/cn/client.md:730-747`).
+- `brpc::RateLimitedBackupPolicyOptions` (h:45-65) — 4 fields matching the doc's parameter table (doc:73-81): `backup_request_ms=-1`, `max_backup_ratio=0.1`, `window_size_seconds=10`, `update_interval_seconds=5`.
+- `brpc::CreateRateLimitedBackupPolicy()` (h:75-76) — factory, "caller owns the returned pointer", "Returns nullptr on invalid parameters" (doc:62-63, 82).
+
+**Implementation — `src/brpc/backup_request_policy.cpp`**:
+- `BackupRateLimiter` (cpp:31-110) — internal sliding-window stats. Two `bvar::Adder<int64_t>` counters wrapped in two `bvar::Window` samplers (cpp:103-106; the doc's "每个使用限流的Channel会维护两个 bvar::Window 采样任务", doc:114). `ShouldAllow()` (cpp:51-88) reads the cached ratio with relaxed atomics and uses a CAS to elect at most one thread per `update_interval` to recompute the ratio (cpp:56-58; doc:112 "无锁CAS选举"); it counts the backup decision immediately (`_backup_count << 1`, cpp:85; doc:113 "Backup决策在做出时立即计数"). `OnRPCEnd()` counts completed user-level RPCs (`_total_count << 1`, cpp:96; doc:113 "总RPC数在完成时统计"). Cold-start / latency-spike fallbacks at cpp:63-76 (covered by tests below).
+- `RateLimitedBackupPolicy : public BackupRequestPolicy` (cpp:114-140) — composes the limiter: `GetBackupRequestMs` returns the configured ms, `DoBackup` → `ShouldAllow()`, `OnRPCEnd` → limiter.
+- Factory validation (cpp:142-175): each invalid range returns `nullptr` with a `LOG(ERROR)`; warns (not fails) when `update_interval_seconds > window_size_seconds` (cpp:164-168).
+
+**Integration points (entry points into the mechanism):**
+- `ChannelOptions::backup_request_ms` (`channel.h:60-68`) and `ChannelOptions::backup_request_policy` (`channel.h:119-126`, "NOT owned by channel", "Priority: `backup_request_policy' > `backup_request_ms'"); default-initialized to `nullptr` in `channel.cpp:68`.
+- `Controller::set_backup_request_ms()` / `set_backup_request_policy()` (`controller.h:214-217`), member `_backup_request_policy` (`controller.h:923-924`), `has_backup_request()` (`controller.h:237`).
+- `Controller::backup_request_ms()` (`controller.cpp:587-603`) — resolves the effective value: if a policy exists, calls `policy->GetBackupRequestMs(this)`; sentinel `-1` keeps the channel-level value, anything else overrides (matches docs/cn/client.md:724-728).
+- `EBACKUPREQUEST` errno (`errno.proto:32`, registered `controller.cpp:65`) and timer handler `HandleBackupRequest` (`channel.cpp:475-478`) which fires `bthread_id_error(correlation_id, EBACKUPREQUEST)`.
+
+## Call / dependency relationships
+
+Runtime flow (all line-cited):
+
+```
+Channel::CallMethod (channel.cpp:480)
+ ├─ copy ChannelOptions → Controller, only if controller unset (channel.cpp:570-574;
+ │   streaming RPCs clear both, channel.cpp:609-614)
+ ├─ cntl->backup_request_ms()  ──▶ policy->GetBackupRequestMs()   (controller.cpp:590)
+ └─ if ms >= 0 && ms < timeout: bthread_timer_add(HandleBackupRequest)  (channel.cpp:616-637)
+        └─ EBACKUPREQUEST → Controller::OnVersionedRPCReturned (controller.cpp:872-876)
+              └─ policy && !policy->DoBackup() → abandon backup (controller.cpp:877-882)
+                 else: exclude current server (ExcludedServers, cpp:896-906),
+                       _unfinished_call = new Call, ++nretry, FLAGS_BACKUP_REQUEST,
+                       IssueRPC to (best-effort) another server (cpp:907-912)
+RPC end → Controller::OnRPCEnd (controller.cpp:1260-1265)
+        └─ policy->OnRPCEnd() → BackupRateLimiter counts total (backup_request_policy.cpp:90-97)
+```
+
+- `DoBackup()` is invoked on the **EBACKUPREQUEST** branch, i.e. only after the backup timer fires; skipping it (`-1`/other-negative ms or a throttled policy) leaves the original request in flight. Speculative rate-limiting happens there; the limiter's `ShouldAllow()` does the CAS refresh.
+- `OnRPCEnd` is called **once per user-level RPC, not per leg** (comment `backup_request_policy.cpp:91`); backup legs are internally terminated with `EBACKUPREQUEST` (`controller.cpp:1150-1157`). Sync RPCs call it in `Channel::CallMethod` (`channel.cpp:662`), async in the done path (`controller.cpp:1235`, `1274`); Selective/Parallel channels also call it (`selective_channel.cpp:606`, `parallel_channel.cpp:396,754`).
+- Ownership/lifetime: Channel and Controller hold **raw pointers**, no ownership (channel.h:123-124; doc:62-70, 106). Note the doc's caveat (doc:77) is enforced by `channel.cpp:570`: controller-injected policies bypass the channel-level `backup_request_ms` fallback, so a policy returning -1 with no controller-level ms has no base value — `controller.h:108` (`UNSET_MAGIC_NUM`) is the unset sentinel.
+- Backup consumes a retry slot (`controller.cpp:910`; docs/cn/client.md:722 "backup request会消耗一次重试次数"), and the backup is routed to a different server by best effort via `ExcludedServers` (controller.cpp:896-906; doc:5, client.md:722).
+- SelectiveChannel (doc:118): `SelectiveChannel` embeds a private `Channel _chan` (`selective_channel.h:107`) and delegates `_chan.CallMethod(...)` (`selective_channel.cpp:603`), so the identical timer/backup path runs, with the schan load balancer picking another sub channel — consistent with `selective_channel.h:38-44` ("schan has a separate layer of retrying and backup request… calls a sub channel with the request").
+- External dependencies of the module: `controller.h` (interface takes `const Controller*`), and for the built-in limiter `bvar/reducer.h`, `bvar/window.h`, `butil/atomicops.h`, `butil/time.h`, `butil/logging.h` (`backup_request_policy.cpp:18-24`).
+
+## Test / example evidence
+
+- `test/brpc_channel_unittest.cpp`: mock `BackupRequestPolicyImpl` (2188-2203), wired through `ChannelOptions.backup_request_policy` in `SetUpChannel` (364-375), exercised by `TEST_F(ChannelTest, backup_request_policy)` (3194-3198). `RateLimitedBackupPolicyTest` (3460+) covers factory validation (3462-3508), the `-1` inherit sentinel (3510-3517), cold start (3519-3542), and the "backup suppressed until an RPC leg completes" conservative path (3544-3548), mirroring the code comments at `backup_request_policy.cpp:56-76`.
+- `example/backup_request_c++/client.cpp:34,50` (2 ms trigger) and `server.cpp:29,58-72` (sleeps 20 ms on even-index requests), exactly as described in doc:7.

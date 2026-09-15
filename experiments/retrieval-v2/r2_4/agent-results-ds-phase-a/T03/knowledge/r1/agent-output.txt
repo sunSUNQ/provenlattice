@@ -1,0 +1,30 @@
+All queries are done — the evidence is consistent. Here is the analysis.
+
+## Anchor symbol: `brpc.policy.AddServersInBatch.replicas`
+
+The database resolves the anchor to a **Function** named `replicas`, signature `()`, at `src/brpc/policy/consistent_hashing_load_balancer.cpp:265`, in shard `src/brpc` (E-CODE-9cec5b84fb52b556c0c332c9, E-SHARD-6487ab8c99b36b477f261e90). Its containment context pins down its role:
+
+- It sits inside the method `brpc.policy.ConsistentHashingLoadBalancer.AddServersInBatch(const std::vector<ServerId>& servers)`, defined at `consistent_hashing_load_balancer.cpp:261–282` (E-CODE-9e5dad16bdada6bf74a32ea8) — i.e., in the batch server-addition path that (re)builds the consistent-hashing ring.
+- That method belongs to class `brpc.policy.ConsistentHashingLoadBalancer` (declared in `src/brpc/policy/consistent_hashing_load_balancer.h:46–91`, E-CODE-958e25377596d1f5e9455d79) — the load balancer implementing brpc's consistent-hashing policies.
+
+So `replicas` is the entity in the ring-construction code that carries the per-server **ring replica (virtual node) count** when servers are added in batch. Notably, the DB itself distinguished the enclosing scope as "AddServersInBatch" even though the anchor omits the class name (the method's fully qualified name is `...ConsistentHashingLoadBalancer.AddServersInBatch`), and both share the same source file and hash lineage.
+
+## Documented design / use
+
+Cross-layer traversal from the symbol returned exactly two documentation sections, both linked via `explicit_symbol_reference` (relation `DOCUMENTS`, resolved, confidence 0.7) — the docs literally name the `replicas` parameter:
+
+1. **`docs/en/client.md` §"c_murmurhash_bl"** (anchor `10b2646294acf078`, lines 287–290) — E-XLINK-e0e9be2cf50f895bf973243a. This section describes the bounded-loads variant and states verbatim: "...The `replicas` parameter is supported as in `c_murmurhash`." Its surrounding text defines the design: the ring is "identical to `c_murmurhash`" but each server gets capacity `ceil(load_factor * average in-flight requests)`; a saturated server overflows the request "clockwise to the next server on the ring with spare capacity", keeping caches effective; the factor defaults from `-chash_bounded_load_factor` (1.25) and is overridable per channel via `c_murmurhash_bl:load_factor=1.5`.
+2. **`docs/cn/client.md` §"c_murmurhash_bl"** (anchor `79c3f03a99dbabb5`, lines 286–289) — E-XLINK-3284c4dde04ede3b45992a17 (section entity E-DOC-51c12e32861bb02b28d8d99a). The Chinese mirror of the same content, ending with the statement that `replicas` behaves the same as in `c_murmurhash` (与 `c_murmurhash` 相同).
+
+## Code / document evidence reconciliation
+
+The code symbol and the document line up: `replicas` appears in `ConsistentHashingLoadBalancer::AddServersInBatch` — the code that builds the ring when a server list is added — and the documentation's `c_murmurhash_bl` section is the repository text that describes this parameter's design and use, explicitly affirming that `replicas` in the bounded-loads load balancer is supported identically to `c_murmurhash` (consistent with the doc's statement that the hash ring itself is identical to `c_murmurhash`, differing only in the capacity/overflow behavior). A broader pass (`find-related-documents` on the symbol; `find-related-code` from `docs/en/client.md` and from the EN section itself) returned no further documents or resolved code links — these two `c_murmurhash_bl` sections of `docs/en/client.md` and `docs/cn/client.md` are the documentation the repository provides for this symbol.
+
+Evidence Used:
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-SHARD-6487ab8c99b36b477f261e90
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-XLINK-e0e9be2cf50f895bf973243a
+- E-CODE-9e5dad16bdada6bf74a32ea8
+- E-CODE-958e25377596d1f5e9455d79
+- E-DOC-51c12e32861bb02b28d8d99a

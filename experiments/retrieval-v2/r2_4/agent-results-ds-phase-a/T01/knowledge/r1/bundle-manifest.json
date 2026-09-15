@@ -1,0 +1,225 @@
+{
+  "bundles": [
+    {
+      "query_id": "Q-e5360534403986911199",
+      "query_type": "find_related_code",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-DOC-84c6687a4e0a0cb4d722f06e"
+      ],
+      "contextual_evidence_ids": [
+        "E-DOC-84c6687a4e0a0cb4d722f06e"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 1446
+    },
+    {
+      "query_id": "Q-ad89225d66513ee77f55",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 581
+    },
+    {
+      "query_id": "Q-df8834d19116400a457e",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-CODE-4099735d597dc714fc02f8f9",
+        "E-SHARD-70fa7eea96c876b03e597f10"
+      ],
+      "contextual_evidence_ids": [
+        "E-CODE-4099735d597dc714fc02f8f9",
+        "E-SHARD-70fa7eea96c876b03e597f10"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3161
+    },
+    {
+      "query_id": "Q-fcde29ed20f52e7a911d",
+      "query_type": "find_related_code",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 641
+    },
+    {
+      "query_id": "Q-f09e0f1b3f2697aeec4a",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-CODE-1726cdc7c9938223c1d04362",
+        "E-SHARD-0bd4b5aa4d298e72de409251"
+      ],
+      "contextual_evidence_ids": [
+        "E-SHARD-0bd4b5aa4d298e72de409251"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3186
+    },
+    {
+      "query_id": "Q-1d10039853dc71f6a6c6",
+      "query_type": "find_related_documents",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 669
+    },
+    {
+      "query_id": "Q-b3fbcfda1479ae7205f3",
+      "query_type": "explain_module",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 16,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 670
+    },
+    {
+      "query_id": "Q-68ed07dddc1a4227125f",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 655
+    },
+    {
+      "query_id": "Q-d70aedd971666e6388c2",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [],
+      "contextual_evidence_ids": [],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 597
+    },
+    {
+      "query_id": "Q-fdeb4cf5656a92f6a374",
+      "query_type": "explain_symbol",
+      "bundle_profile": "document_to_code",
+      "focus_terms": [],
+      "budget": {
+        "max_edges": 12,
+        "max_evidence": 12,
+        "max_primary": 8,
+        "max_sections": 6,
+        "max_supporting": 12,
+        "max_symbols": 8,
+        "max_total": 24
+      },
+      "primary_evidence_ids": [],
+      "supporting_evidence_ids": [
+        "E-CODE-958e25377596d1f5e9455d79",
+        "E-SHARD-9a8610a36d91174789a5fe51"
+      ],
+      "contextual_evidence_ids": [
+        "E-CODE-958e25377596d1f5e9455d79",
+        "E-SHARD-9a8610a36d91174789a5fe51"
+      ],
+      "suppressed_evidence_ids": [],
+      "bundle_size": 3152
+    }
+  ]
+}

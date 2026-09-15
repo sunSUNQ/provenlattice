@@ -1,0 +1,36 @@
+The evidence chain is complete. Here is the analysis.
+
+## Symbol analysis: `brpc.policy.AddServersInBatch.replicas`
+
+The symbol resolves to the local variable `replicas` inside `brpc::policy::ConsistentHashingLoadBalancer::AddServersInBatch` (`src/brpc/policy/consistent_hashing_load_balancer.cpp:265`). Its role:
+
+- It is a scratch buffer (`std::vector<Node>` of hash-ring nodes) reserved to `_num_replicas` entries (line 266) that holds the **virtual nodes** built for one server at a time. For each `ServerId` in the input batch, `GetReplicaPolicy(_type)->Build(servers[i], _num_replicas, &replicas)` produces exactly `_num_replicas` hash points for that server (lines 267–271; `DefaultReplicaPolicy::Build` hashes `"<endpoint>-<i>"` for `i` in `[0, num_replicas)`, lines 79–104), which are then appended to `add_nodes` and atomically merged into the hash ring via `_db_hash_ring.ModifyWithForeground(AddBatch, ...)`. The return value `ret / _num_replicas` (line 277) is the number of servers added — so `replicas` is the unit of accounting for a batch add.
+- `_num_replicas` — the count that `replicas` is sized by — defaults from the gflag `chash_num_replicas` (default 100), defined with the comment "default number of replicas per server in chash, overridable per channel with the `replicas' parameter" (lines 36–38), initialized at line 174, and overridable per channel in `SetParameter`: `if (key == "replicas") return butil::StringToSizeT(value, &_num_replicas);` (lines 420–421).
+
+## Document that describes it
+
+**Primary: `docs/cn/consistent_hashing.md`.** (The English file `docs/en/consistent_hashing.md` is an untranslated stub that redirects to the Chinese version, so the Chinese document is the authoritative one.) The relevant section is **"# 虚拟节点个数" (Number of virtual nodes)**:
+
+> 通过 -chash_num_replicas 可设置默认的虚拟节点个数，默认值为100。对于某些特殊场合，对虚拟节点个数有自定义的需求，可以通过将 *load_balancer_name* 加上参数 replicas=<num> 配置，如：
+> ```c++
+> channel.Init("http://...", "c_murmurhash:replicas=150", &options);
+> ```
+
+Translation: the default count of virtual nodes is set by `-chash_num_replicas` (default 100); the count can be customized per channel by appending `replicas=<num>` to *load_balancer_name*, e.g. `"c_murmurhash:replicas=150"`.
+
+The design rationale for these `replicas` is in the same document's **"# 实现方式" (Implementation)** section (line 23): each server computes `m` hash values, dividing the 32-bit value space into `n*m` intervals; these extra hash values smooth the interval sizes and are called **virtual nodes** (虚拟节点); deleting a server merges its `m` intervals into neighbors, spreading its requests evenly — which is exactly the `_num_replicas`-per-server behavior the code implements.
+
+A secondary in-repo citation is `docs/en/client.md:281` (and `docs/cn/client.md:280`), in the `c_murmurhash` section:
+
+> Number of virtual nodes per server defaults to -chash_num_replicas(default 100) and can be overridden per channel: `c_murmurhash:replicas=300`.
+
+## Code/document correspondence
+
+| Document statement | Code evidence |
+|---|---|
+| Default count = `-chash_num_replicas`, default 100 | `DEFINE_int32(chash_num_replicas, 100, "default number of replicas per server in chash, ...")` — `consistent_hashing_load_balancer.cpp:36-38`; `_num_replicas(FLAGS_chash_num_replicas)` — line 174 |
+| Per-channel override `replicas=<num>` | `SetParameter`: `if (key == "replicas") ... StringToSizeT(value, &_num_replicas)` — lines 420-421, reached via `SetParameters`/`New(params)` (lines 300-307, 404-416) from `load_balancer_name` |
+| `m` hash values per server = virtual nodes | `DefaultReplicaPolicy::Build` loops `i < num_replicas`, hashing `"<endpoint>-<i>"` into one `Node` each — lines 79-104; the `ReplicaPolicy::Build(server, num_replicas, replicas)` interface — lines 55-63 |
+| n*m ring size / batch insertion | `AddServersInBatch` reserves `servers.size() * _num_replicas` (line 264) and checks `ret % _num_replicas == 0` (line 276), i.e. ring size is always a multiple of the replica count per server |
+
+In short: the `replicas` symbol in `AddServersInBatch` is the code realization of the "virtual nodes" concept whose count is documented in `docs/cn/consistent_hashing.md` §虚拟节点个数 (with §实现方式 explaining why they exist), configured by `-chash_num_replicas` / the per-channel `replicas=` parameter.

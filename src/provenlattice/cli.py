@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from pprint import pprint
 
@@ -77,6 +78,14 @@ def build_parser() -> argparse.ArgumentParser:
         child.add_argument("--max-symbols", type=int, default=8)
         child.add_argument("--max-edges", type=int, default=12)
         child.add_argument("--max-sections", type=int, default=6)
+        child.add_argument("--max-primary", type=int)
+        child.add_argument("--max-supporting", type=int)
+        child.add_argument("--max-total", type=int)
+        child.add_argument("--bundle-profile", choices=(
+            "generic", "document_to_code", "code_to_document", "module_understanding"),
+            default=None)
+        child.add_argument("--focus-term", action="append", default=[],
+                           help="task-specific term used only for bundle ranking; repeatable")
         return child
 
     evidence_command("explain-symbol", ["explain_symbol"])
@@ -140,14 +149,23 @@ def run(args: argparse.Namespace) -> dict:
             return query.get_subgraph(args.anchor, args.max_hops, args.max_nodes)
         budget = {"max_evidence": args.max_evidence, "max_symbols": args.max_symbols,
                   "max_edges": args.max_edges, "max_sections": args.max_sections}
+        def configured(name: str, explicit):
+            return explicit if explicit is not None else os.environ.get(name)
+        bundle_options = {"max_primary": configured("PL_R2_4_MAX_PRIMARY", args.max_primary),
+                          "max_supporting": configured("PL_R2_4_MAX_SUPPORTING", args.max_supporting),
+                          "max_total": configured("PL_R2_4_MAX_TOTAL", args.max_total),
+                          "bundle_profile": configured("PL_R2_4_BUNDLE_PROFILE", args.bundle_profile) or "generic",
+                          "focus_terms": tuple(args.focus_term) or tuple(filter(None, os.environ.get("PL_R2_4_FOCUS_TERMS", "").split("\x1f")))}
+        for key in ("max_primary", "max_supporting", "max_total"):
+            if isinstance(bundle_options[key], str): bundle_options[key] = int(bundle_options[key])
         if args.command in {"explain-symbol", "explain_symbol"}:
-            return query.explain_symbol(args.anchor, **budget)
+            return query.explain_symbol(args.anchor, **budget, **bundle_options)
         if args.command in {"explain-module", "explain_module"}:
-            return query.explain_module(args.anchor, **budget)
+            return query.explain_module(args.anchor, **budget, **bundle_options)
         if args.command in {"find-related-code", "find_related_code"}:
-            return query.find_related_code(args.anchor, **budget)
+            return query.find_related_code(args.anchor, **budget, **bundle_options)
         if args.command in {"find-related-documents", "find_related_documents"}:
-            return query.find_related_documents(args.anchor, **budget)
+            return query.find_related_documents(args.anchor, **budget, **bundle_options)
         if args.command in {"trace-evidence", "trace_evidence"}:
             return query.trace_evidence(args.anchor, **budget)
     raise ValueError(f"unknown command: {args.command}")

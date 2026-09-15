@@ -1,0 +1,63 @@
+{
+  "task_success": true,
+  "concept_recall": 1.0,
+  "concepts": [
+    {
+      "concept_id": "documented-bounded-load-behavior",
+      "satisfied": true
+    },
+    {
+      "concept_id": "bounded-load-core-implementation",
+      "satisfied": true
+    },
+    {
+      "concept_id": "implementation-location",
+      "satisfied": true
+    }
+  ],
+  "exact_evidence_recall": 1.0,
+  "exact_evidence_hits": [
+    "E-CODE-1726CDC7C9938223C1D04362"
+  ],
+  "exact_evidence_misses": [],
+  "evidence_precision": 1.0,
+  "returned_evidence_ids": [
+    "E-CODE-1726CDC7C9938223C1D04362",
+    "E-CODE-4099735D597DC714FC02F8F9",
+    "E-CODE-958E25377596D1F5E9455D79",
+    "E-DOC-84C6687A4E0A0CB4D722F06E",
+    "E-SHARD-0BD4B5AA4D298E72DE409251",
+    "E-SHARD-70FA7EEA96C876B03E597F10",
+    "E-SHARD-9A8610A36D91174789A5FE51"
+  ],
+  "exposed_evidence_ids": [
+    "E-CODE-1726CDC7C9938223C1D04362",
+    "E-CODE-4099735D597DC714FC02F8F9",
+    "E-CODE-958E25377596D1F5E9455D79",
+    "E-DOC-84C6687A4E0A0CB4D722F06E",
+    "E-SHARD-0BD4B5AA4D298E72DE409251",
+    "E-SHARD-70FA7EEA96C876B03E597F10",
+    "E-SHARD-9A8610A36D91174789A5FE51"
+  ],
+  "used_evidence_ids": [
+    "E-CODE-1726CDC7C9938223C1D04362",
+    "E-CODE-4099735D597DC714FC02F8F9",
+    "E-CODE-958E25377596D1F5E9455D79",
+    "E-DOC-84C6687A4E0A0CB4D722F06E",
+    "E-SHARD-0BD4B5AA4D298E72DE409251",
+    "E-SHARD-9A8610A36D91174789A5FE51"
+  ],
+  "citation_classifications": {
+    "E-CODE-1726CDC7C9938223C1D04362": "SUPPORTED_EXACT",
+    "E-CODE-4099735D597DC714FC02F8F9": "SUPPORTED_CONTEXTUAL",
+    "E-CODE-958E25377596D1F5E9455D79": "SUPPORTED_CONTEXTUAL",
+    "E-DOC-84C6687A4E0A0CB4D722F06E": "SUPPORTED_CONTEXTUAL",
+    "E-SHARD-0BD4B5AA4D298E72DE409251": "SUPPORTED_CONTEXTUAL",
+    "E-SHARD-9A8610A36D91174789A5FE51": "SUPPORTED_CONTEXTUAL"
+  },
+  "unsupported_citation_count": 0,
+  "invalid_evidence_count": 0,
+  "wrong_path_count": 0,
+  "wrong_paths": [],
+  "evaluator_version": "r2.2-groundtruth-v2"
+}

@@ -1,0 +1,29 @@
+{
+  "task_success": true,
+  "concept_recall": 1.0,
+  "concepts": [
+    {
+      "concept_id": "replicas-virtual-node-role",
+      "satisfied": true
+    },
+    {
+      "concept_id": "replicas-documentation",
+      "satisfied": true
+    }
+  ],
+  "exact_evidence_recall": 0.0,
+  "exact_evidence_hits": [],
+  "exact_evidence_misses": [
+    "E-CODE-9CEC5B84FB52B556C0C332C9"
+  ],
+  "evidence_precision": null,
+  "returned_evidence_ids": [],
+  "exposed_evidence_ids": [],
+  "used_evidence_ids": [],
+  "citation_classifications": {},
+  "unsupported_citation_count": 0,
+  "invalid_evidence_count": 0,
+  "wrong_path_count": 0,
+  "wrong_paths": [],
+  "evaluator_version": "r2.2-groundtruth-v2"
+}

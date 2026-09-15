@@ -1,0 +1,36 @@
+{
+  "task_success": false,
+  "required_evidence_recall": 0.0,
+  "evidence_precision": 0.0,
+  "required_evidence_hits": [],
+  "required_evidence_misses": [
+    "E-CODE-9cec5b84fb52b556c0c332c9"
+  ],
+  "returned_evidence_ids": [],
+  "viewed_evidence_ids": [],
+  "used_evidence_ids": [],
+  "evidence_usage_rate": null,
+  "returned_but_unused_evidence": [],
+  "returned_but_unused_count": 0,
+  "wrong_evidence_usage": [],
+  "wrong_evidence_count": 0,
+  "unsupported_claim_count": 0,
+  "semantic_required_evidence_recall": 0.0,
+  "semantic_required_evidence_misses": [
+    {
+      "type": "symbol",
+      "value": "brpc.policy.AddServersInBatch.replicas"
+    },
+    {
+      "type": "document_section",
+      "value": "documentsection:2036840a5ff662a2e81cc0e599e2170f0a357e4498e11548fa8cf6b79444491a",
+      "heading_path": "此行会被忽略 / 负载均衡 / c_murmurhash_bl",
+      "file": "docs/cn/client.md"
+    }
+  ],
+  "wrong_path_count": 0,
+  "wrong_paths": [],
+  "hallucinated_symbol_count": null,
+  "hallucinated_relation_count": null,
+  "evaluator_version": "r2-evidence-contract-v1"
+}

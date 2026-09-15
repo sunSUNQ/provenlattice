@@ -449,9 +449,11 @@ class GraphQuery:
                             query_type="subgraph", anchor=anchor)
 
     @staticmethod
-    def _budget(max_evidence: int, max_symbols: int, max_edges: int,
-                max_sections: int) -> QueryBudget:
-        return QueryBudget(max_evidence, max_symbols, max_edges, max_sections)
+    def _budget(max_evidence: int, max_symbols: int, max_edges: int, max_sections: int,
+                max_primary: int | None = None, max_supporting: int | None = None,
+                max_total: int | None = None) -> QueryBudget:
+        return QueryBudget(max_evidence, max_symbols, max_edges, max_sections,
+                           max_primary, max_supporting, max_total)
 
     @staticmethod
     def _evidence_from(result: dict) -> list[Evidence]:
@@ -469,9 +471,13 @@ class GraphQuery:
                 "bundle_size": len(json.dumps(value, ensure_ascii=False)), "bundle": value}
 
     def explain_symbol(self, symbol: str, *, max_evidence: int = 20, max_symbols: int = 8,
-                       max_edges: int = 12, max_sections: int = 6) -> dict:
+                       max_edges: int = 12, max_sections: int = 6,
+                       max_primary: int | None = None, max_supporting: int | None = None,
+                       max_total: int | None = None, bundle_profile: str = "generic",
+                       focus_terms: tuple[str, ...] = ()) -> dict:
         started = time.perf_counter()
-        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections,
+                              max_primary, max_supporting, max_total)
         definition = self.get_definition(symbol)
         anchor = definition["data"]
         if not anchor:
@@ -479,7 +485,7 @@ class GraphQuery:
                 anchor=symbol, intent="explain_symbol", summary=f"Symbol not found: {symbol}",
                 primary_evidence=[], supporting_evidence=[], related_entities=[],
                 uncertainties=["unresolved symbol anchor"], generation=self.graph_generation,
-                budget=budget,
+                budget=budget, profile=bundle_profile, focus_terms=focus_terms,
             )
             return self._bundle_result(bundle, started)
         callers, callees = self.get_callers(anchor["id"]), self.get_callees(anchor["id"])
@@ -516,7 +522,7 @@ class GraphQuery:
             primary_evidence=[*self._evidence_from(definition), *document_node_evidence],
             supporting_evidence=[*relation_evidence, *shard_evidence, *document_link_evidence],
             related_entities=related, uncertainties=[], generation=self.graph_generation,
-            budget=budget,
+            budget=budget, profile=bundle_profile, focus_terms=focus_terms,
         )
         return self._bundle_result(bundle, started)
 
@@ -539,9 +545,12 @@ class GraphQuery:
 
     def find_related_code(self, document: str, *, max_evidence: int = 20,
                           max_symbols: int = 8, max_edges: int = 12,
-                          max_sections: int = 6) -> dict:
+                          max_sections: int = 6, bundle_profile: str = "generic",
+                          focus_terms: tuple[str, ...] = (), max_primary: int | None = None,
+                          max_supporting: int | None = None, max_total: int | None = None) -> dict:
         started = time.perf_counter()
-        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections,
+                              max_primary, max_supporting, max_total)
         source = self._resolve_document(document)
         if not source:
             bundle = EvidenceBundle.create(
@@ -549,6 +558,7 @@ class GraphQuery:
                 primary_evidence=[], supporting_evidence=[], related_entities=[],
                 uncertainties=["unresolved document or section anchor"],
                 generation=self.graph_generation, budget=budget,
+                profile=bundle_profile, focus_terms=focus_terms,
             )
             return self._bundle_result(bundle, started)
         relations = sorted(CROSS_RELATIONS)
@@ -581,21 +591,25 @@ class GraphQuery:
             primary_evidence=primary, supporting_evidence=candidates,
             related_entities=related, uncertainties=uncertainties,
             generation=self.graph_generation, budget=budget,
+            profile=bundle_profile, focus_terms=focus_terms,
         )
         return self._bundle_result(bundle, started)
 
     def find_related_documents(self, symbol: str, *, max_evidence: int = 20,
                                max_symbols: int = 8, max_edges: int = 12,
-                               max_sections: int = 6) -> dict:
+                               max_sections: int = 6, bundle_profile: str = "generic",
+                               focus_terms: tuple[str, ...] = (), max_primary: int | None = None,
+                               max_supporting: int | None = None, max_total: int | None = None) -> dict:
         started = time.perf_counter()
-        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections,
+                              max_primary, max_supporting, max_total)
         anchor = self._resolve(symbol)
         if not anchor:
             bundle = EvidenceBundle.create(
                 anchor=symbol, intent="find_related_documents", summary=f"Symbol not found: {symbol}",
                 primary_evidence=[], supporting_evidence=[], related_entities=[],
                 uncertainties=["unresolved symbol anchor"], generation=self.graph_generation,
-                budget=budget,
+                budget=budget, profile=bundle_profile, focus_terms=focus_terms,
             )
             return self._bundle_result(bundle, started)
         anchor = decode_row(anchor)
@@ -620,14 +634,18 @@ class GraphQuery:
             primary_evidence=primary, supporting_evidence=link_evidence[:budget.max_edges],
             related_entities=documents, uncertainties=uncertainties,
             generation=self.graph_generation, budget=budget,
+            profile=bundle_profile, focus_terms=focus_terms,
         )
         return self._bundle_result(bundle, started)
 
     def explain_module(self, module: str, *, max_evidence: int = 20,
                        max_symbols: int = 8, max_edges: int = 12,
-                       max_sections: int = 6) -> dict:
+                       max_sections: int = 6, bundle_profile: str = "generic",
+                       focus_terms: tuple[str, ...] = (), max_primary: int | None = None,
+                       max_supporting: int | None = None, max_total: int | None = None) -> dict:
         started = time.perf_counter()
-        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections)
+        budget = self._budget(max_evidence, max_symbols, max_edges, max_sections,
+                              max_primary, max_supporting, max_total)
         shard = self._shard(module)
         if not shard:
             node = self._resolve(module)
@@ -637,7 +655,7 @@ class GraphQuery:
                 anchor=module, intent="explain_module", summary=f"Module not found: {module}",
                 primary_evidence=[], supporting_evidence=[], related_entities=[],
                 uncertainties=["unresolved shard or symbol anchor"], generation=self.graph_generation,
-                budget=budget,
+                budget=budget, profile=bundle_profile, focus_terms=focus_terms,
             )
             return self._bundle_result(bundle, started)
         rows = self.view.query(
@@ -678,6 +696,7 @@ class GraphQuery:
             supporting_evidence=[*boundary, *document_links[:budget.max_sections]],
             related_entities=[*primary_nodes, *dependencies["data"], *dependents["data"], *documents],
             uncertainties=[], generation=self.graph_generation, budget=budget,
+            profile=bundle_profile, focus_terms=focus_terms,
         )
         return self._bundle_result(bundle, started)
 

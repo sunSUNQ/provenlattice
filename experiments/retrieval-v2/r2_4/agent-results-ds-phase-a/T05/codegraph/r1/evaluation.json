@@ -1,0 +1,47 @@
+{
+  "task_success": true,
+  "required_evidence_recall": 1.0,
+  "evidence_precision": 0.25,
+  "required_evidence_hits": [
+    "E-CODE-20376c6ce1b46be66b8a2d4a"
+  ],
+  "required_evidence_misses": [],
+  "returned_evidence_ids": [
+    "E-CODE-20376c6ce1b46be66b8a2d4a",
+    "E-DOC-3d047e723af4c7446012da31",
+    "E-DOC-9d9674320ddc2684f8d2773a",
+    "E-SHARD-26c1a7f4ef4488b736bb987f",
+    "E-XLINK-02e59d12b69fb54749eacbc0",
+    "E-XLINK-d0c193c0b2c38994b2ee0476"
+  ],
+  "viewed_evidence_ids": [
+    "E-CODE-20376c6ce1b46be66b8a2d4a",
+    "E-DOC-3d047e723af4c7446012da31",
+    "E-DOC-9d9674320ddc2684f8d2773a",
+    "E-SHARD-26c1a7f4ef4488b736bb987f",
+    "E-XLINK-02e59d12b69fb54749eacbc0",
+    "E-XLINK-d0c193c0b2c38994b2ee0476"
+  ],
+  "used_evidence_ids": [
+    "E-CODE-20376c6ce1b46be66b8a2d4a",
+    "E-DOC-9d9674320ddc2684f8d2773a",
+    "E-SHARD-26c1a7f4ef4488b736bb987f",
+    "E-XLINK-02e59d12b69fb54749eacbc0"
+  ],
+  "evidence_usage_rate": 0.6666666666666666,
+  "returned_but_unused_evidence": [
+    "E-DOC-3d047e723af4c7446012da31",
+    "E-XLINK-d0c193c0b2c38994b2ee0476"
+  ],
+  "returned_but_unused_count": 2,
+  "wrong_evidence_usage": [],
+  "wrong_evidence_count": 0,
+  "unsupported_claim_count": 0,
+  "semantic_required_evidence_recall": 1.0,
+  "semantic_required_evidence_misses": [],
+  "wrong_path_count": 0,
+  "wrong_paths": [],
+  "hallucinated_symbol_count": null,
+  "hallucinated_relation_count": null,
+  "evaluator_version": "r2-evidence-contract-v1"
+}

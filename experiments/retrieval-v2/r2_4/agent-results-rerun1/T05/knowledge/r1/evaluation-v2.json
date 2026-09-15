@@ -1,0 +1,35 @@
+{
+  "task_success": false,
+  "concept_recall": 0.0,
+  "concepts": [
+    {
+      "concept_id": "module-entry",
+      "satisfied": false
+    },
+    {
+      "concept_id": "document-section",
+      "satisfied": false
+    },
+    {
+      "concept_id": "cross-layer-grounding",
+      "satisfied": false
+    }
+  ],
+  "exact_evidence_recall": 0.0,
+  "exact_evidence_hits": [],
+  "exact_evidence_misses": [
+    "E-CODE-20376C6CE1B46BE66B8A2D4A",
+    "E-DOC-9D9674320DDC2684F8D2773A",
+    "E-XLINK-02E59D12B69FB54749EACBC0"
+  ],
+  "evidence_precision": null,
+  "returned_evidence_ids": [],
+  "exposed_evidence_ids": [],
+  "used_evidence_ids": [],
+  "citation_classifications": {},
+  "unsupported_citation_count": 0,
+  "invalid_evidence_count": 0,
+  "wrong_path_count": 0,
+  "wrong_paths": [],
+  "evaluator_version": "r2.2-groundtruth-v2"
+}

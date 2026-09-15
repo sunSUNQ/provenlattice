@@ -1,0 +1,33 @@
+{
+  "task_success": false,
+  "concept_recall": 0.0,
+  "concepts": [
+    {
+      "concept_id": "documented-bounded-load-behavior",
+      "satisfied": false
+    },
+    {
+      "concept_id": "bounded-load-core-implementation",
+      "satisfied": false
+    },
+    {
+      "concept_id": "implementation-location",
+      "satisfied": false
+    }
+  ],
+  "exact_evidence_recall": 0.0,
+  "exact_evidence_hits": [],
+  "exact_evidence_misses": [
+    "E-CODE-1726CDC7C9938223C1D04362"
+  ],
+  "evidence_precision": null,
+  "returned_evidence_ids": [],
+  "exposed_evidence_ids": [],
+  "used_evidence_ids": [],
+  "citation_classifications": {},
+  "unsupported_citation_count": 0,
+  "invalid_evidence_count": 0,
+  "wrong_path_count": 0,
+  "wrong_paths": [],
+  "evaluator_version": "r2.2-groundtruth-v2"
+}
