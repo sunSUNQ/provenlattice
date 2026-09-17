@@ -22,6 +22,14 @@ ProvenLattice 希望探索一种新的工程上下文组织方式：
 
 > 将软件工程中的多源信息组织成可查询、可追溯的分层证据结构，并为 Code Agent 提供任务相关的最小必要上下文。
 
+## Reproducibility Baseline
+
+当前资格结论（RQ1/RQ2/SQI-V1）与一键验证入口见 **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**：
+
+```bash
+python experiments/query_interface_v1/tools/verify_release.py
+```
+
 ## Research Direction
 
 当前主要关注以下方向：

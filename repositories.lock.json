@@ -1,0 +1,55 @@
+{
+  "lock": "PROVENLATTICE_REPOSITORIES_LOCK_V1",
+  "frozen_at": "2026-09-17",
+  "note": "Reproduces the frozen benchmark checkouts and the read-only graph/knowledge databases used by every qualification line (RQ2 systems_v1, retrieval, SQI-V1/V1.1). Databases were built from exactly these commits with the ProvenLattice V0.2 implementation; sha256 values pin the audited artifacts. graph_generation = 1 for all databases.",
+  "repositories": {
+    "B1-aria2": {
+      "url": "https://github.com/aria2/aria2.git",
+      "commit": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "role": "Small Regression",
+      "c_cpp_loc": 118926
+    },
+    "B2-brpc": {
+      "url": "https://github.com/apache/brpc.git",
+      "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "role": "Target-like Primary",
+      "c_cpp_loc": 227154
+    },
+    "B3-rocksdb": {
+      "url": "https://github.com/facebook/rocksdb.git",
+      "commit": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+      "role": "Scale",
+      "c_cpp_loc": 622772
+    }
+  },
+  "databases": {
+    "code/aria2": {
+      "path": "benchmark-analysis/v0.2-db/aria2.db",
+      "bytes": 133021696,
+      "sha256": "cbd56e3c4ca71104b4621cd4e112648e657c5729d310dcf9fb0aef80ee835abb",
+      "built_from": "B1-aria2",
+      "graph_generation": 1
+    },
+    "code/brpc": {
+      "path": "benchmark-analysis/v0.2-db/brpc.db",
+      "bytes": 240160768,
+      "sha256": "285dbb2efd8b88ceb4497aee396777812c2715871f2018ce6f94a6be3e2663ef",
+      "built_from": "B2-brpc",
+      "graph_generation": 1
+    },
+    "code/rocksdb": {
+      "path": "benchmark-analysis/v0.2-db/rocksdb.db",
+      "bytes": 884121600,
+      "sha256": "d30d61109aba16c92bb82037b7fd61ca643cefcdcebc577d6987ecfac89b58d0",
+      "built_from": "B3-rocksdb",
+      "graph_generation": 1
+    },
+    "knowledge/brpc": {
+      "path": "benchmark-analysis/v1.0-db/brpc-knowledge.db",
+      "bytes": 245264384,
+      "sha256": "02c191a6881d05c6a6f8b9c3094c958fe36f910f763fecfc7508cd3f1483e449",
+      "built_from": "B2-brpc",
+      "graph_generation": 1
+    }
+  }
+}
