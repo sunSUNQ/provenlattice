@@ -1,0 +1,90 @@
+{
+  "task_id": "SQI-T04",
+  "repository": "B3-rocksdb",
+  "commit": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+  "database": "benchmark-analysis/v0.2-db/rocksdb.db",
+  "category": "impact-frontier",
+  "difficulty": "Hard",
+  "sqi_chain": [
+    "impact.frontier"
+  ],
+  "allowed_queries": [
+    "impact.frontier"
+  ],
+  "budget": {
+    "max_evidence": 50,
+    "max_symbols": 20,
+    "max_edges": 50,
+    "max_sections": 4
+  },
+  "prompt": "A change modifies files under the shard paths 'db' and 'file' (an interface signature change in file/file_util.h and file/file_util.cc with a call-site update in db/builder.cc). Using the impact query, report the conservative 1-hop impact frontier: which shard paths are directly affected, how wide the impact is, and state explicitly what the frontier does and does not tell you. Then verify in source whether one affected shard of your choice is genuinely impacted.",
+  "ground_truth": {
+    "changed_shard_paths": [
+      "db",
+      "file"
+    ],
+    "directly_affected_shard_paths": [
+      "buckifier",
+      "build_tools",
+      "c_api_gen",
+      "cache",
+      "coverage",
+      "db/blob",
+      "db/compaction",
+      "db/db_impl",
+      "db/wide",
+      "db_stress_tool",
+      "env",
+      "fuzz",
+      "include/rocksdb",
+      "java/rocksjni",
+      "logging",
+      "memtable",
+      "monitoring",
+      "options",
+      "table",
+      "table/block_based",
+      "table/cuckoo",
+      "table/plain",
+      "test_util",
+      "tools",
+      "tools/advisor",
+      "tools/block_cache_analyzer",
+      "tools/c_api_gen",
+      "tools/cpu_corruption_injector",
+      "tools/dump",
+      "trace_replay",
+      "util",
+      "utilities",
+      "utilities/agg_merge",
+      "utilities/backup",
+      "utilities/blob_db",
+      "utilities/checkpoint",
+      "utilities/convenience",
+      "utilities/copy_engine",
+      "utilities/option_change_migration",
+      "utilities/options",
+      "utilities/persistent_cache",
+      "utilities/simulator_cache",
+      "utilities/sorted_run_builder",
+      "utilities/table_properties_collectors",
+      "utilities/trace",
+      "utilities/transactions",
+      "utilities/trie_index",
+      "utilities/ttl",
+      "utilities/write_batch_with_index"
+    ],
+    "directly_affected_count": 49,
+    "boundary_edge_count": 1031,
+    "wide_impact": true,
+    "threshold": 8
+  },
+  "expected_files": [],
+  "expected_symbols": [],
+  "success_criteria": [
+    "reports the frontier member set matching the recomputed expectation",
+    "reports wide_impact=true",
+    "does not make symbol-level semantic impact claims beyond the frontier",
+    "verifies one affected shard against source"
+  ]
+}

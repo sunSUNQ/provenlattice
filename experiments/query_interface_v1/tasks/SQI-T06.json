@@ -1,0 +1,50 @@
+{
+  "task_id": "SQI-T06",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "database": "benchmark-analysis/v0.2-db/brpc.db",
+  "category": "budgeted-bundle",
+  "difficulty": "Hard",
+  "sqi_chain": [
+    "bundle.explain"
+  ],
+  "allowed_queries": [
+    "bundle.explain",
+    "symbol.lookup"
+  ],
+  "budget": {
+    "max_evidence": 12,
+    "max_symbols": 6,
+    "max_edges": 10,
+    "max_sections": 4
+  },
+  "prompt": "Produce a budgeted explanation of the symbol brpc.IsAskedToQuit using the bundle query with max_evidence=12, max_symbols=6, max_edges=10. The symbol has many callers, so the bundle will be truncated. Report: the definition location, as many callers as the budget allowed, how many items were omitted, and one verified claim about what the function does based on source.",
+  "ground_truth": {
+    "symbol_query": "IsAskedToQuit",
+    "budget": {
+      "max_evidence": 12,
+      "max_symbols": 6,
+      "max_edges": 10,
+      "max_sections": 4
+    },
+    "expect_truncation": true,
+    "definition_anchors": [
+      {"file": "src/brpc/controller.h", "line": 1044},
+      {"file": "src/brpc/controller.cpp", "line": 1976}
+    ],
+    "definition_semantics": "returns whether a quit has been requested for the controller/process (global flag); callers poll it in long-running loops"
+  },
+  "expected_files": [
+    "src/brpc/controller.h",
+    "src/brpc/controller.cpp"
+  ],
+  "expected_symbols": [
+    "brpc.IsAskedToQuit"
+  ],
+  "success_criteria": [
+    "single bundle.explain call within declared budget",
+    "truncation flag and omitted counts are present and truthful",
+    "all cited facts carry evidence ids",
+    "reads source before asserting semantics"
+  ]
+}

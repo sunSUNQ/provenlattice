@@ -1,0 +1,65 @@
+{
+  "task_id": "SQI-T05",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "database": "benchmark-analysis/v1.0-db/brpc-knowledge.db",
+  "code_database": "benchmark-analysis/v0.2-db/brpc.db",
+  "category": "requirement-to-code-evidence",
+  "difficulty": "Medium",
+  "sqi_chain": [
+    "code.related"
+  ],
+  "allowed_queries": [
+    "code.related",
+    "symbol.lookup"
+  ],
+  "budget": {
+    "max_evidence": 20,
+    "max_symbols": 8,
+    "max_edges": 20,
+    "max_sections": 4
+  },
+  "prompt": "Read the documentation in docs/cn/client.md, section 负载均衡 / c_murmurhash_bl. Using the knowledge-enabled query, identify the core implementation of the described behavior, name the main code symbol and its file, and explain the document-to-code relationship with citations.",
+  "ground_truth": {
+    "required_evidence": [
+      {
+        "type": "document_section",
+        "value": "documentsection:2036840a5ff662a2e81cc0e599e2170f0a357e4498e11548fa8cf6b79444491a",
+        "heading_path": "此行会被忽略 / 负载均衡 / c_murmurhash_bl",
+        "file": "docs/cn/client.md"
+      },
+      {
+        "type": "symbol",
+        "value": "brpc.policy.AddServersInBatch.replicas"
+      },
+      {
+        "type": "file",
+        "value": "src/brpc/policy/consistent_hashing_load_balancer.cpp"
+      }
+    ],
+    "required_evidence_ids": [
+      "E-CODE-9cec5b84fb52b556c0c332c9",
+      "E-XLINK-3284c4dde04ede3b45992a17"
+    ],
+    "required_evidence_ids_by_database": {
+      "code_database": ["E-CODE-9cec5b84fb52b556c0c332c9"],
+      "knowledge_database": ["E-XLINK-3284c4dde04ede3b45992a17"]
+    },
+    "evidence_source_note": "V1.1 fixture repair: the two required ids are minted by two different frozen databases. E-CODE is the CODE_DEFINITION evidence of brpc.policy.AddServersInBatch.replicas in the code database (benchmark-analysis/v0.2-db/brpc.db, query symbol.lookup); E-XLINK is the CROSS_LAYER_LINK evidence of the frozen document section in the knowledge database (benchmark-analysis/v1.0-db/brpc-knowledge.db, query code.related). Both values verified against the frozen databases on 2026-09-17; the V1 fixture declared only the E-CODE id while the task's declared database was the knowledge database."
+  },
+  "expected_files": [
+    "src/brpc/policy/consistent_hashing_load_balancer.cpp"
+  ],
+  "expected_symbols": [
+    "brpc.policy.AddServersInBatch.replicas"
+  ],
+  "expected_documents": [
+    "docs/cn/client.md"
+  ],
+  "success_criteria": [
+    "identifies the required symbol and file",
+    "cites the documentation section evidence",
+    "cites the cross-layer/evidence id",
+    "verifies the equivalence against source"
+  ]
+}

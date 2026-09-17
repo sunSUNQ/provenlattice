@@ -1,0 +1,78 @@
+{
+  "task_id": "SQI-T02",
+  "repository": "B2-brpc",
+  "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+  "database": "benchmark-analysis/v0.2-db/brpc.db",
+  "category": "caller-traversal",
+  "difficulty": "Medium",
+  "sqi_chain": [
+    "symbol.lookup",
+    "symbol.callers"
+  ],
+  "allowed_queries": [
+    "symbol.lookup",
+    "symbol.callers"
+  ],
+  "budget": {
+    "max_evidence": 20,
+    "max_symbols": 8,
+    "max_edges": 20,
+    "max_sections": 4
+  },
+  "prompt": "Find the function butil::Status::error_cstr (qualified name butil.Status.error_cstr). Enumerate at least 4 distinct callers in production code (ignore TEST/anonymous if you wish, but say so), give for each the calling file, and explain what error_cstr appears to return based on reading its definition in source. Cite the evidence ids and verify at least two call sites against source.",
+  "ground_truth": {
+    "symbol_id": "symbol:89c0f47c9839819c5b220890ee445d2fef814d9c55c7ca80b10a81476aec5c2d",
+    "qualified_name": "butil.Status.error_cstr",
+    "expected_caller_count": 7,
+    "callers": [
+      {
+        "caller_qualified_name": "brpc.policy.ProcessThriftRequest",
+        "edge_id": "edge:6690dba6f1c36e566012c06cd5c5843f40d4dd7ce2f7874ba5bfcd7ab648289d"
+      },
+      {
+        "caller_qualified_name": "anonymous.TEST_F",
+        "edge_id": "edge:6c1e1c6c041adcd1a99d94d57f4034d66a13c7e7200936888d3f2dcffabd84c4"
+      },
+      {
+        "caller_qualified_name": "src.brpc.socket",
+        "edge_id": "edge:730288ad0d40fb0b64e16371b4e25fbbddadecbccf08b414bd1089581a476566"
+      },
+      {
+        "caller_qualified_name": "brpc.policy.ProcessThriftResponse",
+        "edge_id": "edge:9e080c69d3c94f74ef371507f0e1dbbb82a8ca68869cce0df88d107e405e8b58"
+      },
+      {
+        "caller_qualified_name": "brpc.policy.SerializeHttpRequest",
+        "edge_id": "edge:a750744c57ba9372eccdad2a16b25b0221e6f1f54ac3bd3a82140a1cf0ec1fed"
+      },
+      {
+        "caller_qualified_name": "src.brpc.policy.rtmp_protocol",
+        "edge_id": "edge:a7cf4225782bcdb6531738e4c1592bfa1b1415ad646ba7c890a7d82c24196ff4"
+      },
+      {
+        "caller_qualified_name": "TEST",
+        "edge_id": "edge:f9851e37302a74435f6db05826d790d2b575007841c079691966e26b6e612a9a"
+      }
+    ],
+    "required_production_callers": [
+      "brpc.policy.ProcessThriftRequest",
+      "src.brpc.socket",
+      "brpc.policy.ProcessThriftResponse",
+      "brpc.policy.SerializeHttpRequest",
+      "src.brpc.policy.rtmp_protocol"
+    ]
+  },
+  "expected_symbols": [
+    "butil.Status.error_cstr",
+    "brpc.policy.ProcessThriftRequest",
+    "src.brpc.socket",
+    "brpc.policy.ProcessThriftResponse",
+    "brpc.policy.SerializeHttpRequest"
+  ],
+  "success_criteria": [
+    "resolves the symbol",
+    "enumerates at least 4 production callers",
+    "each claimed caller is backed by a CALLS edge evidence id",
+    "reads the definition source before asserting semantics"
+  ]
+}

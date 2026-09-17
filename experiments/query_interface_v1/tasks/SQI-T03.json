@@ -1,0 +1,90 @@
+{
+  "task_id": "SQI-T03",
+  "repository": "B3-rocksdb",
+  "commit": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+  "database": "benchmark-analysis/v0.2-db/rocksdb.db",
+  "category": "reference-evidence",
+  "difficulty": "Medium",
+  "sqi_chain": [
+    "symbol.lookup",
+    "symbol.references"
+  ],
+  "allowed_queries": [
+    "symbol.lookup",
+    "symbol.references"
+  ],
+  "budget": {
+    "max_evidence": 20,
+    "max_symbols": 8,
+    "max_edges": 20,
+    "max_sections": 4
+  },
+  "prompt": "Resolve all references to the symbol ROCKSDB_NAMESPACE.NumUnsetBytes. List every reference location (file and line) the index knows about, state clearly how many references were resolved versus unresolved, and pick one reference to explain in source. Cite the REFERENCE evidence ids.",
+  "ground_truth": {
+    "symbol_id": "symbol:0458f52ec47c7926480c1b74dae2a8f914fb0d2d56b6dbcbaf3668ab36e96076",
+    "qualified_name": "ROCKSDB_NAMESPACE.NumUnsetBytes",
+    "definition": {
+      "file": "options/options_settable_test.cc",
+      "line": 63
+    },
+    "resolved_reference_count": 6,
+    "resolved_references": [
+      {
+        "raw_name": "NumUnsetBytes",
+        "file_id": "file:fc6cd669a41289ae68005df1bb3ebb60041a5367b69b8f85a24f75ec553e2266",
+        "line": 219,
+        "owner_symbol_id": "symbol:3d03ee2e6799eeded7fa53018327b9207ba4e3186c32dfd06eaef079a410e7e4"
+      },
+      {
+        "raw_name": "NumUnsetBytes",
+        "file_id": "file:fc6cd669a41289ae68005df1bb3ebb60041a5367b69b8f85a24f75ec553e2266",
+        "line": 265,
+        "owner_symbol_id": "symbol:3d03ee2e6799eeded7fa53018327b9207ba4e3186c32dfd06eaef079a410e7e4"
+      },
+      {
+        "raw_name": "NumUnsetBytes",
+        "file_id": "file:fc6cd669a41289ae68005df1bb3ebb60041a5367b69b8f85a24f75ec553e2266",
+        "line": 310,
+        "owner_symbol_id": "symbol:3d03ee2e6799eeded7fa53018327b9207ba4e3186c32dfd06eaef079a410e7e4"
+      },
+      {
+        "raw_name": "NumUnsetBytes",
+        "file_id": "file:fc6cd669a41289ae68005df1bb3ebb60041a5367b69b8f85a24f75ec553e2266",
+        "line": 388,
+        "owner_symbol_id": "symbol:3d03ee2e6799eeded7fa53018327b9207ba4e3186c32dfd06eaef079a410e7e4"
+      },
+      {
+        "raw_name": "NumUnsetBytes",
+        "file_id": "file:fc6cd669a41289ae68005df1bb3ebb60041a5367b69b8f85a24f75ec553e2266",
+        "line": 512,
+        "owner_symbol_id": "symbol:3d03ee2e6799eeded7fa53018327b9207ba4e3186c32dfd06eaef079a410e7e4"
+      },
+      {
+        "raw_name": "NumUnsetBytes",
+        "file_id": "file:fc6cd669a41289ae68005df1bb3ebb60041a5367b69b8f85a24f75ec553e2266",
+        "line": 744,
+        "owner_symbol_id": "symbol:3d03ee2e6799eeded7fa53018327b9207ba4e3186c32dfd06eaef079a410e7e4"
+      }
+    ],
+    "returned_evidence_ids": [
+      "E-REF-0486e0b8db7ddc965589e565",
+      "E-REF-320c02d873d6bc75b33f449f",
+      "E-REF-b4b68e320d37673a8cfa6b61",
+      "E-REF-ba14b47f4397f27bea42be84",
+      "E-REF-cf3a28b3ce80f5585dce46aa",
+      "E-REF-e7688a8ac44adebf7d591fc7"
+    ]
+  },
+  "expected_files": [
+    "options/options_settable_test.cc"
+  ],
+  "expected_symbols": [
+    "ROCKSDB_NAMESPACE.NumUnsetBytes"
+  ],
+  "success_criteria": [
+    "reports all 6 resolved reference locations",
+    "cites REFERENCE evidence ids for claimed references",
+    "does not claim more references than the index resolved",
+    "reads at least one reference site in source"
+  ]
+}

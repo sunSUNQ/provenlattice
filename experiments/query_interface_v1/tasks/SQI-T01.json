@@ -1,0 +1,40 @@
+{
+  "task_id": "SQI-T01",
+  "repository": "B1-aria2",
+  "commit": "9e7273583f83e881e3ec067b523ba88724088d2f",
+  "database": "benchmark-analysis/v0.2-db/aria2.db",
+  "category": "symbol-lookup-definition",
+  "difficulty": "Easy",
+  "sqi_chain": [
+    "symbol.lookup"
+  ],
+  "allowed_queries": [
+    "symbol.lookup"
+  ],
+  "budget": {
+    "max_evidence": 20,
+    "max_symbols": 8,
+    "max_edges": 20,
+    "max_sections": 4
+  },
+  "prompt": "In this repository, locate the class aria2.DownloadEngine declared in src/DownloadEngine.h. Report its file, the declaration line, and in 2-3 sentences what the class is responsible for. Cite the evidence ids you used.",
+  "ground_truth": {
+    "symbol_id": "symbol:e8a562a9609e023d094d454027aa64786850dcbde1ba5529742a2216b1d7a60e",
+    "qualified_name": "aria2.DownloadEngine",
+    "kind": "Class",
+    "file": "src/DownloadEngine.h",
+    "declaration_line": 84
+  },
+  "expected_files": [
+    "src/DownloadEngine.h"
+  ],
+  "expected_symbols": [
+    "aria2.DownloadEngine"
+  ],
+  "success_criteria": [
+    "identifies src/DownloadEngine.h",
+    "identifies the class declaration at line 84",
+    "cites at least one CODE_DEFINITION evidence id",
+    "verifies the class semantics against source before asserting them"
+  ]
+}

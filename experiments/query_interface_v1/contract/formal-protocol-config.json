@@ -1,0 +1,13 @@
+{
+  "protocol": "SQI_FORMAL_QUALIFICATION_PROTOCOL_V1",
+  "frozen_at": "2026-09-16",
+  "model_id": "claude-sonnet-4-5-20250929",
+  "claude_cli_version": "2.1.270",
+  "timeout_s": 900,
+  "repetitions_per_cell": 3,
+  "arms": ["native", "sqi"],
+  "tasks": ["SQI-T01", "SQI-T02", "SQI-T03", "SQI-T04", "SQI-T05", "SQI-T06"],
+  "task_order": "ascending, T01 first",
+  "cell_total": 36,
+  "note": "values recorded at protocol freeze; any change requires protocol version bump"
+}
