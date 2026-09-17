@@ -1,0 +1,108 @@
+{
+  "schema": "SQI_COST_OPTIMIZATION_TARGETS_V1",
+  "schema_version": 1,
+  "freeze_id": "SQI-C1-TARGET-FREEZE-2026-09-17",
+  "frozen_at": "2026-09-17",
+  "baseline": {
+    "cost_attribution": "results/formal/SQI-FORMAL-20260917-1/cost-attribution-v1.json",
+    "formal_batch": "SQI-FORMAL-20260917-1",
+    "sqi_totals": {
+      "cells": 18,
+      "sqi_calls": 59,
+      "envelope_bytes_total": 517226,
+      "evidence_used_ratio_pct": 80.2,
+      "evidence_duplicate_ratio_pct": 7.4,
+      "cache_amplification_total": 15.3,
+      "source_read_bytes": 1215437
+    }
+  },
+  "governing_rule": "Targets freeze WHAT may change and WHAT may not. No implementation changes in C1. C2 implements these targets; C4 re-runs the frozen V1.1 protocol (same 36 cells, same model/config) and judges against the non-regression floor before any cost number is claimed.",
+  "non_regression_floor": {
+    "frozen": true,
+    "conditions": [
+      {"id": "FLOOR-OVERALL", "rule": "SQI arm task success stays 18/18 across T01-T06"},
+      {"id": "FLOOR-T02", "rule": "T02 task success stays 3/3"},
+      {"id": "FLOOR-T04", "rule": "T04 task success stays 3/3"},
+      {"id": "FLOOR-CLOSURE", "rule": "citation closure stays 100% (0 unsupported claims)"},
+      {"id": "FLOOR-SRCVERIFY", "rule": "source-verification compliance does not decrease vs the V1.1 baseline cells"},
+      {"id": "FLOOR-BUDGET", "rule": "no new budget or truncation violations"},
+      {"id": "FLOOR-PRODUCTIVE-EVIDENCE", "rule": "the evidence sets T02/T04 success rests on are unchanged: T02 = 7 frozen CALLS edges (metadata.fact_id) + caller rows with file paths; T04 = result_meta aggregates (49/1031/wide_impact) + 49 SHARD_RELATION ids + budgeted boundary_edge_ids listing"},
+      {"id": "FLOOR-TESTS", "rule": "all implementation/wiring/isolation tests keep passing (48/48 baseline, may grow but not shrink)"},
+      {"id": "FLOOR-SEALS", "rule": "all seals re-verified after implementation; any amendment goes through a sealed V1.2 contract amendment before a formal run"}
+    ]
+  },
+  "targets": [
+    {
+      "target_id": "OPT-T01-PROJECTION",
+      "title": "T01-style lookup candidate projection",
+      "c0_evidence": {
+        "env_bytes": 46417,
+        "used_evidence_ratio_pct": 18.1,
+        "observation": "unfiltered lookup('DownloadEngine') returns up to 20 capped candidate rows (full metadata + per-row evidence); the task only consumes the single src/DownloadEngine.h declaration (18.1% productive ratio)"
+      },
+      "change": "introduce per-call projection profiles: symbol.lookup returns a compact candidate form (id, qualified_name, kind, file_path, start_line, shard path) without full metadata/signature blobs; per-row evidence entries collapse to the bound definition evidence of each kept row (already required by C1); no change to filters, caps, ordering, or evidence ids",
+      "in_scope": ["lookup row field projection", "deterministic ordering unchanged"],
+      "out_of_scope": ["filters/caps semantics", "evidence id derivation", "other calls"],
+      "expected_effect": {
+        "marked": "estimate (C0-derived, not measured)",
+        "row_bytes_reduction": "~40-50% of lookup data bytes",
+        "correctness_risk": "none if identity fields kept; T01 oracle needs exactly these fields"
+      },
+      "requires_contract_amendment": false,
+      "floor_risk": "low"
+    },
+    {
+      "target_id": "OPT-T05-COMPRESSION",
+      "title": "T05 cross-database call compression",
+      "c0_evidence": {
+        "sqi_calls_per_cell": [13, 10, 3],
+        "cache_amplification_median": 22.6,
+        "observation": "agents ping-pong between the knowledge database (code.related -> E-XLINK) and the code database (symbol.lookup -> E-CODE); T05 has the highest call count and the highest cache amplification of all tasks"
+      },
+      "change": "define one composite canonical behaviour inside code.related: when the task declares a code_database, code.related additionally resolves the target symbol's CODE_DEFINITION evidence from the declared code database in the SAME call and returns both evidence sets with per-database breakdown in result_meta; agents then issue ONE call instead of a cross-database round trip. Call count for T05 sessions drops to the frozen chain (1 code.related [+ optional budgeted extras]); repeated identical calls within a session are served from the deterministic call log without recomputation",
+      "in_scope": ["code.related composite resolution (knowledge + code definition)", "per-database evidence breakdown in result_meta", "session-level repeat-call short-circuit (same params -> same cached envelope bytes)"],
+      "out_of_scope": ["new canonical calls", "changing other calls' semantics", "evidence id derivation"],
+      "expected_effect": {
+        "marked": "estimate (C0-derived, not measured)",
+        "t05_call_count": "13/10/3 -> <= 4 per cell",
+        "cache_read_reduction": "directional target >= 30% for T05; exact number measured only in C4",
+        "correctness_risk": "none: the composite returns strictly the union of the two calls' facts with identical evidence ids"
+      },
+      "requires_contract_amendment": false,
+      "amendment_note": "composite stays within the frozen canonical call surface (no 7th call); parameters already frozen (document + budget); code_database is task metadata, not a new agent-facing parameter",
+      "floor_risk": "low"
+    },
+    {
+      "target_id": "OPT-IDENTITY-DEDUP",
+      "title": "Identity / policy dedup hoisted to session level",
+      "c0_evidence": {
+        "per_evidence_repository_commit": "105 B x 320 entries ~= 34 KB (13.7% of evidence bytes), byte-identical to the envelope header",
+        "per_call_source_verification_policy": "249 B x 59 calls ~= 15 KB, frozen constant",
+        "returned_evidence_ids_echo": "~16 KB derivable from the evidence list"
+      },
+      "change": "V1.2 contract amendment (required BEFORE any C4 formal run): (a) evidence entries reference session-level repository/commit instead of repeating them per entry (evaluator resolves from the envelope header); (b) source_verification_policy moves to a session-level declaration (bridge emits it once per session, e.g. in the first envelope or a session manifest); (c) returned_evidence_ids remains (harness extraction depends on it) but MAY be marked derivable - kept in V1.2 to avoid harness changes",
+      "in_scope": ["session-header hoisting of repository/commit", "session-level policy block", "evaluator resolution update"],
+      "out_of_scope": ["evidence_id derivation", "C1 binding semantics", "budget/truncation fields"],
+      "expected_effect": {
+        "marked": "estimate (C0-derived, not measured)",
+        "payload_reduction": "~49 KB (~9.5% of envelope bytes) with zero information loss"
+      },
+      "requires_contract_amendment": true,
+      "amendment_scope": "SQI Contract V1 -> V1.2: envelope schema (per-evidence repository/commit become optional-resolved; policy block session-level); evaluator + harness extraction updated and re-sealed before C4",
+      "floor_risk": "low (information-preserving rewrite; evaluator re-verified against all 36 baseline cells offline before C4)"
+    }
+  ],
+  "explicitly_rejected": [
+    {"idea": "stripping uncited-but-returned evidence", "reason": "F1: 80.2% of evidence bytes are productively cited; wholesale stripping risks the T02/T04 floor and weakens citation closure"},
+    {"idea": "hard %-reduction targets for C1", "reason": "C0 shows cost is dominated by cache amplification (15.3x), so achievable reduction depends on call-count changes (C3) which must be measured, not declared"},
+    {"idea": "adding a 7th canonical call for composite queries", "reason": "contract freezes the surface at 6; OPT-T05-COMPRESSION stays inside code.related"},
+    {"idea": "caching across sessions or serving envelopes without recomputation guarantees", "reason": "C2 determinism requires same-input-same-output per session; only same-session repeat short-circuit is in scope"}
+  ],
+  "measurement_plan_c4": {
+    "protocol": "SQI_FORMAL_QUALIFICATION_PROTOCOL_V1.1 (frozen; no oracle changes beyond the sealed V1.2 amendment)",
+    "cells": "same 36 cells, same order, same model/config",
+    "comparison": "C4 vs SQI-FORMAL-20260917-1 baseline per task: task success, citation closure, source-verification compliance, sqi_calls, envelope bytes, tokens (input/output/cache_read), duration",
+    "floor_check": "non_regression_floor above; any breach -> stop, attribute, no partial adoption"
+  },
+  "rollback_rule": "if C4 breaches any floor condition, C2 implementation is reverted to the sealed V1.1 secondary state; the V1.1 baseline batch remains the standing qualification evidence"
+}
