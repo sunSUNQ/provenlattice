@@ -81,7 +81,7 @@ ROW_FIELDS = ("id", "qualified_name", "name", "kind", "language", "file_id",
               "relation", "status", "raw_name", "owner_symbol_id",
               "resolved_symbol_id", "edge_metadata", "shard_path",
               "changed_shard_path", "boundary_edge_count", "boundary_edge_ids",
-              "boundary_edge_ids_omitted")
+              "boundary_edge_ids_omitted", "definition_of")
 METADATA_FIELDS = ("relative_path", "shard_path", "public", "bases",
                    "heading_path", "document_file")
 
@@ -99,20 +99,54 @@ def _project_row(row: dict) -> dict:
     return out
 
 
+def _dedupe_evidence_projection(items: list[dict], header_repository: str,
+                                header_commit: str) -> list[dict]:
+    """V1.2 identity dedup: drop per-entry repository/commit when they are
+    byte-identical to the envelope header (the header is authoritative);
+    retain entries whose repository differs (cross-database minting) or whose
+    commit is meaningful-and-different. 'unknown' (the frozen lib's
+    not-recorded marker) is dropped as information-neutral."""
+    out = []
+    for item in items:
+        item = dict(item)
+        if item.get("repository") == header_repository:
+            item.pop("repository", None)
+        if item.get("commit") in ("", "unknown", None):
+            item.pop("commit", None)
+        elif item.get("commit") == header_commit:
+            item.pop("commit", None)
+        out.append(item)
+    return out
+
+
 class SQIAdapter:
     """Read-only SQI-V1 interface over one frozen database."""
 
-    def __init__(self, database: str | Path, commit: str):
+    def __init__(self, database: str | Path, commit: str,
+                 code_database: str | Path | None = None):
         self.database = str(database)
         self.commit = commit
         self._file_paths_cache: dict[str, str] | None = None
         self._q = GraphQuery(self.database)
+        self._code_q: GraphQuery | None = None
+        self.code_database = str(code_database) if code_database else None
         repository, db_commit = self._q._context()
         self.repository = repository or "repo:" + "0" * 64
         self.db_commit = db_commit or "unknown"
 
+    def _code_graph(self) -> GraphQuery | None:
+        """Lazily opened GraphQuery over the declared code database (T05
+        composite: OPT-T05-COMPRESSION)."""
+        if self.code_database is None:
+            return None
+        if self._code_q is None:
+            self._code_q = GraphQuery(self.code_database)
+        return self._code_q
+
     def close(self) -> None:
         self._q.close()
+        if self._code_q is not None:
+            self._code_q.close()
 
     def __enter__(self) -> "SQIAdapter":
         return self
@@ -145,7 +179,9 @@ class SQIAdapter:
             if (item.get("target_id") in row_ids or item.get("source_id") in row_ids
                     or fact_id in row_ids):
                 bound.setdefault(item["evidence_id"], item)
-        kept_evidence = [bound[eid] for eid in sorted(bound)][:ev_cap]
+        kept_evidence = _dedupe_evidence_projection(
+            [bound[eid] for eid in sorted(bound)], self.repository, self.commit)
+        kept_evidence = kept_evidence[:ev_cap]
 
         omitted = {"symbols": 0, "edges": 0, "raw_refs": 0, "sections": 0}
         omitted[OMITTED_FIELD[query_type]] = omitted_rows
@@ -202,7 +238,7 @@ class SQIAdapter:
         return envelope
 
     # ------------------------------------------------------------------
-    # Q1 symbol.lookup
+    # Q1 symbol.lookup (OPT-T01-PROJECTION: compact candidate rows)
     # ------------------------------------------------------------------
     def symbol_lookup(self, name: str, kind: str | None = None,
                       path_prefix: str | None = None,
@@ -222,8 +258,19 @@ class SQIAdapter:
         rows = sorted(rows, key=lambda row: (
             str((row.get("metadata") or {}).get("relative_path", "")),
             int(row.get("start_line") or 0), row["id"]))
+        file_paths = self._file_paths()
+        compact = [{
+            "id": row["id"],
+            "qualified_name": row.get("qualified_name"),
+            "kind": row.get("kind"),
+            "file_path": file_paths.get(row.get("file_id"))
+            or (row.get("metadata") or {}).get("relative_path"),
+            "shard_path": (row.get("metadata") or {}).get("shard_path"),
+            "start_line": row.get("start_line"),
+            "end_line": row.get("end_line"),
+        } for row in rows]
         return self._envelope("symbol.lookup", name, params,
-                              {**raw, "data": rows}, budget)
+                              {**raw, "data": compact}, budget)
 
     # ------------------------------------------------------------------
     # Q2 symbol.callers / symbol.callees
@@ -427,7 +474,9 @@ class SQIAdapter:
         return "Q-" + hashlib.sha256(seed.encode()).hexdigest()[:20]
 
     # ------------------------------------------------------------------
-    # Q5 code.related (knowledge layer by anchor)
+    # Q5 code.related (knowledge layer by anchor; OPT-T05-COMPRESSION:
+    # optionally resolves the target symbols' code-database definition
+    # evidence in the SAME call, removing the cross-database round trip)
     # ------------------------------------------------------------------
     def code_related(self, document: str, budget: dict | None = None) -> dict:
         params = {"document": document}
@@ -435,7 +484,54 @@ class SQIAdapter:
             return self._error("code.related", document or "", params, budget,
                                "INVALID_INPUT", "document must be a non-empty string")
         raw = self._q.get_document_targets(document)
-        return self._envelope("code.related", document, params, raw, budget)
+        data_rows = list(raw.get("data") or [])
+        evidence = list(raw.get("evidence") or [])
+        knowledge_ids = [item["evidence_id"] for item in evidence]
+        code_db_ids: list[str] = []
+        unresolved: list[str] = []
+        if self.code_database:
+            code_q = self._code_graph()
+            # iterate a snapshot: composite rows are appended to data_rows and
+            # must NOT be re-processed (they resolve to themselves)
+            for row in list(data_rows):
+                qname = row.get("qualified_name")
+                if not qname or row.get("kind") in ("File", "Document",
+                                                    "Requirement"):
+                    continue
+                definition = code_q.get_definition(qname)
+                code_row = definition.get("data")
+                if not code_row:
+                    unresolved.append(qname)
+                    continue
+                code_evidence = list(definition.get("evidence") or [])
+                evidence.extend(code_evidence)
+                code_db_ids.extend(item["evidence_id"] for item in code_evidence)
+                data_rows.append({
+                    "id": code_row["id"],
+                    "qualified_name": code_row.get("qualified_name"),
+                    "kind": code_row.get("kind"),
+                    "file_path": (code_row.get("metadata") or {}).get("relative_path"),
+                    "start_line": code_row.get("start_line"),
+                    "end_line": code_row.get("end_line"),
+                    "definition_of": qname,
+                })
+        meta = {
+            "composite": bool(self.code_database),
+            "code_database": self.code_database,
+            "knowledge_db_evidence_ids": knowledge_ids,
+            "code_db_evidence_ids": code_db_ids,
+            "composite_unresolved": sorted(set(unresolved)),
+        }
+        combined_raw = {
+            "query_id": raw["query_id"],
+            "graph_generation": raw.get("graph_generation", 0),
+            "data": data_rows,
+            "evidence": evidence,
+            "bundle_size": raw.get("bundle_size", 0),
+            "query_time_ms": raw.get("query_time_ms", 0.0),
+        }
+        return self._envelope("code.related", document, params, combined_raw,
+                              budget, extra_meta=meta)
 
     # ------------------------------------------------------------------
     # Q6 bundle.explain (shared budget pool, verified post-hoc)
@@ -454,8 +550,10 @@ class SQIAdapter:
         bundle = raw.get("bundle") or {}
         bundle["related_entities"] = [_project_row(row)
                                       for row in bundle.get("related_entities", [])]
-        evidence = [*bundle.get("primary_evidence", []),
-                    *bundle.get("supporting_evidence", [])]
+        evidence = _dedupe_evidence_projection(
+            list(bundle.get("primary_evidence", [])
+                 + bundle.get("supporting_evidence", [])),
+            self.repository, self.commit)
         related = bundle.get("related_entities", [])
         # Honest omitted counts (contract C3/B2): the shared pool slices the
         # underlying candidate set, so the adapter deterministically recounts

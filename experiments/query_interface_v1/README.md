@@ -35,9 +35,14 @@ Agent 能否通过一组**有界、可引用、可验证**的结构化查询稳�
 | `results/formal/SQI-FORMAL-20260917-1/` | **正式 36-cell batch**：run/evaluation(V1+V1.1)/events/output/call-log per cell + formal-batch-summary.json + formal-synthesis-v1.json + manifest.sha256（200 entries） | COMPLETE |
 | `reviews/sqi-v1-final-qualification-review.md` | 最终资格 review（含 oracle V1.1 披露、成本诚实报告、scoped observations） | **QUALIFIED** |
 | `contract/sqi-formal-qualification-protocol-v1.1.md` | V1.1 amendment（sandbox isolation、T05 fixture repair、oracle normalization 前置冻结） | FROZEN（amendment seal 2/2，含修订版 SQI-T05.json） |
-| `tools/sqi_isolation.py` | checkout-leakage 确定性扫描（`CHECKOUT_LEAKAGE` → cell invalid） | FROZEN（secondary seal V1.1，10/10） |
+| `tools/sqi_isolation.py` | checkout-leakage 确定性扫描（`CHECKOUT_LEAKAGE` → cell invalid） | FROZEN（secondary seal V1.2，11/11） |
 | `reviews/v1.1-hardening-review.md` | V1.1 hardening review（sandbox 预防层 live 实证 + T05 一致性 + seal 终态） | PASS |
+| `contract/cost-optimization-targets-v1.json` | **C1 target freeze**（OPT-T01 投影 / OPT-T05 调用压缩 / OPT-IDENTITY-DEDUP + 9 条不可退化 floor） | FROZEN（seal 1/1） |
+| `contract/structured-query-interface-contract-v1.2-amendment.md` | V1.2 amendment（identity/policy session 级上提语义） | FROZEN（seal 1/1） |
 | `results/formal/SQI-FORMAL-20260917-1/cost-attribution-v1.json` | **C0 cost attribution baseline**（18 SQI cells 逐源拆解：productive 80.0% / dedup 7.4% / cache amplification 15.3×；SAFE_TO_REMOVE/DEDUP/ON_DEMAND/MUST_KEEP 分类） | PASS |
+| `results/formal/SQI-FORMAL-20260917-1/c2-replay-verification-v1.json` | **C2 离线信息保持性重放**（18 sqi cells legacy vs optimized：0 floor breach） | PASS |
+| `reviews/c0-cost-attribution-review.md` | C0 review（T02/T04 成功归因到图事实；C1–C3 杠杆与 correctness floor） | PASS |
+| `reviews/c2-implementation-review.md` | C2 review（三 target 实现、V1.2 先 seal、56/56 tests） | PASS |
 | `reviews/c0-cost-attribution-review.md` | C0 review（T02/T04 成功归因到图事实；C1–C3 杠杆与 correctness floor） | PASS |
 
 ## 3. V1 查询面（冻结，6 个 canonical calls）

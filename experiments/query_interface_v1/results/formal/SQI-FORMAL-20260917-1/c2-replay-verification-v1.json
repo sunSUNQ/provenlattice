@@ -1,0 +1,508 @@
+{
+ "schema": "SQI_C2_REPLAY_VERIFICATION_V1",
+ "baseline_batch": "SQI-FORMAL-20260917-1",
+ "method": "frozen chain steps replayed legacy-emulation (code_database=None) vs optimized C2 (composite + projection + dedup); no agents",
+ "cells_replayed": 18,
+ "information_preserved_all": true,
+ "floor_breaches": [],
+ "cells": [
+  {
+   "cell": "SQI-T01.sqi.r1",
+   "task_id": "SQI-T01",
+   "information_preserved": true,
+   "legacy_bytes": 1950,
+   "optimized_bytes": 1950,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1950,
+     "optimized_bytes": 1950
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T01.sqi.r2",
+   "task_id": "SQI-T01",
+   "information_preserved": true,
+   "legacy_bytes": 1951,
+   "optimized_bytes": 1951,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1951,
+     "optimized_bytes": 1951
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T01.sqi.r3",
+   "task_id": "SQI-T01",
+   "information_preserved": true,
+   "legacy_bytes": 1950,
+   "optimized_bytes": 1951,
+   "byte_delta_pct": 0.1,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1950,
+     "optimized_bytes": 1951
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T02.sqi.r1",
+   "task_id": "SQI-T02",
+   "information_preserved": true,
+   "legacy_bytes": 17040,
+   "optimized_bytes": 17040,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1945,
+     "optimized_bytes": 1945
+    },
+    {
+     "call": "symbol.callers",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 7,
+     "optimized_evidence_ids": 7,
+     "legacy_facts": 7,
+     "optimized_facts": 7,
+     "legacy_bytes": 15095,
+     "optimized_bytes": 15095
+    }
+   ],
+   "floor_artifacts": {
+    "frozen_call_edges_in_session": 7,
+    "frozen_call_edges_total": 7
+   }
+  },
+  {
+   "cell": "SQI-T02.sqi.r2",
+   "task_id": "SQI-T02",
+   "information_preserved": true,
+   "legacy_bytes": 17040,
+   "optimized_bytes": 17039,
+   "byte_delta_pct": -0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1945,
+     "optimized_bytes": 1945
+    },
+    {
+     "call": "symbol.callers",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 7,
+     "optimized_evidence_ids": 7,
+     "legacy_facts": 7,
+     "optimized_facts": 7,
+     "legacy_bytes": 15095,
+     "optimized_bytes": 15094
+    }
+   ],
+   "floor_artifacts": {
+    "frozen_call_edges_in_session": 7,
+    "frozen_call_edges_total": 7
+   }
+  },
+  {
+   "cell": "SQI-T02.sqi.r3",
+   "task_id": "SQI-T02",
+   "information_preserved": true,
+   "legacy_bytes": 17040,
+   "optimized_bytes": 17040,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1945,
+     "optimized_bytes": 1945
+    },
+    {
+     "call": "symbol.callers",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 7,
+     "optimized_evidence_ids": 7,
+     "legacy_facts": 7,
+     "optimized_facts": 7,
+     "legacy_bytes": 15095,
+     "optimized_bytes": 15095
+    }
+   ],
+   "floor_artifacts": {
+    "frozen_call_edges_in_session": 7,
+    "frozen_call_edges_total": 7
+   }
+  },
+  {
+   "cell": "SQI-T03.sqi.r1",
+   "task_id": "SQI-T03",
+   "information_preserved": true,
+   "legacy_bytes": 10944,
+   "optimized_bytes": 10945,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1970,
+     "optimized_bytes": 1971
+    },
+    {
+     "call": "symbol.references",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 6,
+     "optimized_evidence_ids": 6,
+     "legacy_facts": 6,
+     "optimized_facts": 6,
+     "legacy_bytes": 8974,
+     "optimized_bytes": 8974
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T03.sqi.r2",
+   "task_id": "SQI-T03",
+   "information_preserved": true,
+   "legacy_bytes": 10945,
+   "optimized_bytes": 10944,
+   "byte_delta_pct": -0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1971,
+     "optimized_bytes": 1970
+    },
+    {
+     "call": "symbol.references",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 6,
+     "optimized_evidence_ids": 6,
+     "legacy_facts": 6,
+     "optimized_facts": 6,
+     "legacy_bytes": 8974,
+     "optimized_bytes": 8974
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T03.sqi.r3",
+   "task_id": "SQI-T03",
+   "information_preserved": true,
+   "legacy_bytes": 10944,
+   "optimized_bytes": 10944,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "symbol.lookup",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 1,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 1970,
+     "optimized_bytes": 1970
+    },
+    {
+     "call": "symbol.references",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 6,
+     "optimized_evidence_ids": 6,
+     "legacy_facts": 6,
+     "optimized_facts": 6,
+     "legacy_bytes": 8974,
+     "optimized_bytes": 8974
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T04.sqi.r1",
+   "task_id": "SQI-T04",
+   "information_preserved": true,
+   "legacy_bytes": 43260,
+   "optimized_bytes": 43260,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "impact.frontier",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 49,
+     "optimized_evidence_ids": 49,
+     "legacy_facts": 49,
+     "optimized_facts": 49,
+     "legacy_bytes": 43260,
+     "optimized_bytes": 43260
+    }
+   ],
+   "floor_artifacts": {
+    "frontier_size": 49,
+    "boundary_edges_total": 1031,
+    "wide_impact": true
+   }
+  },
+  {
+   "cell": "SQI-T04.sqi.r2",
+   "task_id": "SQI-T04",
+   "information_preserved": true,
+   "legacy_bytes": 43260,
+   "optimized_bytes": 43260,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "impact.frontier",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 49,
+     "optimized_evidence_ids": 49,
+     "legacy_facts": 49,
+     "optimized_facts": 49,
+     "legacy_bytes": 43260,
+     "optimized_bytes": 43260
+    }
+   ],
+   "floor_artifacts": {
+    "frontier_size": 49,
+    "boundary_edges_total": 1031,
+    "wide_impact": true
+   }
+  },
+  {
+   "cell": "SQI-T04.sqi.r3",
+   "task_id": "SQI-T04",
+   "information_preserved": true,
+   "legacy_bytes": 43260,
+   "optimized_bytes": 43260,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "impact.frontier",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 49,
+     "optimized_evidence_ids": 49,
+     "legacy_facts": 49,
+     "optimized_facts": 49,
+     "legacy_bytes": 43260,
+     "optimized_bytes": 43260
+    }
+   ],
+   "floor_artifacts": {
+    "frontier_size": 49,
+    "boundary_edges_total": 1031,
+    "wide_impact": true
+   }
+  },
+  {
+   "cell": "SQI-T05.sqi.r1",
+   "task_id": "SQI-T05",
+   "information_preserved": true,
+   "legacy_bytes": 3017,
+   "optimized_bytes": 4070,
+   "byte_delta_pct": 34.9,
+   "steps": [
+    {
+     "call": "code.related",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 2,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 3017,
+     "optimized_bytes": 4070
+    }
+   ],
+   "floor_artifacts": {
+    "required_ids_returned": [
+     "E-CODE-9cec5b84fb52b556c0c332c9",
+     "E-XLINK-3284c4dde04ede3b45992a17"
+    ]
+   }
+  },
+  {
+   "cell": "SQI-T05.sqi.r2",
+   "task_id": "SQI-T05",
+   "information_preserved": true,
+   "legacy_bytes": 3017,
+   "optimized_bytes": 4070,
+   "byte_delta_pct": 34.9,
+   "steps": [
+    {
+     "call": "code.related",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 2,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 3017,
+     "optimized_bytes": 4070
+    }
+   ],
+   "floor_artifacts": {
+    "required_ids_returned": [
+     "E-CODE-9cec5b84fb52b556c0c332c9",
+     "E-XLINK-3284c4dde04ede3b45992a17"
+    ]
+   }
+  },
+  {
+   "cell": "SQI-T05.sqi.r3",
+   "task_id": "SQI-T05",
+   "information_preserved": true,
+   "legacy_bytes": 3016,
+   "optimized_bytes": 4070,
+   "byte_delta_pct": 34.9,
+   "steps": [
+    {
+     "call": "code.related",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 1,
+     "optimized_evidence_ids": 2,
+     "legacy_facts": 1,
+     "optimized_facts": 1,
+     "legacy_bytes": 3016,
+     "optimized_bytes": 4070
+    }
+   ],
+   "floor_artifacts": {
+    "required_ids_returned": [
+     "E-CODE-9cec5b84fb52b556c0c332c9",
+     "E-XLINK-3284c4dde04ede3b45992a17"
+    ]
+   }
+  },
+  {
+   "cell": "SQI-T06.sqi.r1",
+   "task_id": "SQI-T06",
+   "information_preserved": true,
+   "legacy_bytes": 32304,
+   "optimized_bytes": 32304,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "bundle.explain",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 12,
+     "optimized_evidence_ids": 12,
+     "legacy_facts": 0,
+     "optimized_facts": 0,
+     "legacy_bytes": 32304,
+     "optimized_bytes": 32304
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T06.sqi.r2",
+   "task_id": "SQI-T06",
+   "information_preserved": true,
+   "legacy_bytes": 32304,
+   "optimized_bytes": 32302,
+   "byte_delta_pct": -0.0,
+   "steps": [
+    {
+     "call": "bundle.explain",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 12,
+     "optimized_evidence_ids": 12,
+     "legacy_facts": 0,
+     "optimized_facts": 0,
+     "legacy_bytes": 32304,
+     "optimized_bytes": 32302
+    }
+   ],
+   "floor_artifacts": {}
+  },
+  {
+   "cell": "SQI-T06.sqi.r3",
+   "task_id": "SQI-T06",
+   "information_preserved": true,
+   "legacy_bytes": 32304,
+   "optimized_bytes": 32304,
+   "byte_delta_pct": 0.0,
+   "steps": [
+    {
+     "call": "bundle.explain",
+     "evidence_superset": true,
+     "fact_superset": true,
+     "legacy_evidence_ids": 12,
+     "optimized_evidence_ids": 12,
+     "legacy_facts": 0,
+     "optimized_facts": 0,
+     "legacy_bytes": 32304,
+     "optimized_bytes": 32304
+    }
+   ],
+   "floor_artifacts": {}
+  }
+ ]
+}

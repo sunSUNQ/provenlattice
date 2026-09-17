@@ -211,6 +211,9 @@ def run_cell(task: dict, arm: str, repetition: int, config: dict,
         # native).
         "PYTHONPATH": str(REPO_ROOT / "src") + os.pathsep + str(REPO_ROOT),
     }
+    if task.get("code_database"):
+        environment["PL_SQI_CODE_DATABASE"] = resolve_database(
+            task["code_database"])
     request = models.RunRequest(
         run_id=run_id, task_id=task["task_id"], repo_path=repo_path,
         repo_commit=task["commit"], arm=arm, prompt=task["prompt"],

@@ -169,8 +169,11 @@ def verify_anchors(task: dict, outputs: list[dict]) -> dict:
         hit = [row for row in lookup["data"] if row.get("id") == gt["symbol_id"]]
         checks["symbol_id_returned"] = bool(hit)
         checks["declaration_line"] = hit[0]["start_line"] if hit else None
-        checks["file_matches"] = bool(hit) and \
-            (hit[0].get("metadata") or {}).get("relative_path") == gt["file"]
+        row_file = (hit[0].get("file_path")
+                    if hit and hit[0].get("file_path")
+                    else (hit[0].get("metadata") or {}).get("relative_path")
+                    if hit else None)
+        checks["file_matches"] = row_file == gt["file"]
         checks["definition_evidence_kind"] = bool(lookup["evidence"]) and \
             lookup["evidence"][0]["kind"] == "CODE_DEFINITION"
     elif tid == "SQI-T02":
@@ -239,7 +242,10 @@ def run_task(task: dict, arm: str) -> dict:
     if arm == "native":
         record["status"] = "NOT_EXECUTED_IN_IMPLEMENTATION_SMOKE"
         return record
-    with SQIAdapter(resolve_database(task["database"]), task["commit"]) as adapter:
+    code_database = resolve_database(task["code_database"]) \
+        if task.get("code_database") else None
+    with SQIAdapter(resolve_database(task["database"]), task["commit"],
+                    code_database=code_database) as adapter:
         outputs: list[dict] = []
         for index, step in enumerate(build_steps(task)):
             params = resolve_param(step["params"], outputs)

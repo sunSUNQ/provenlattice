@@ -67,6 +67,41 @@ def _log_line(path: str | None, entry: dict) -> None:
         handle.write(json.dumps(entry, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+def _load_log_entries(path: str | None) -> list[dict]:
+    if not path or not os.path.exists(path):
+        return []
+    entries = []
+    for line in open(path, encoding="utf-8").read().splitlines():
+        if line.strip():
+            try:
+                entries.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    return entries
+
+
+def _session_has_policy(entries: list[dict]) -> bool:
+    return any((entry.get("envelope") or {}).get("source_verification_policy")
+               for entry in entries)
+
+
+def _find_cached(entries: list[dict], call: str, params: dict,
+                 database: str, commit: str) -> dict | None:
+    """V1.2/OPT-T05 session short-circuit: an identical (call, params,
+    database, commit) invocation earlier in the same session is served from
+    the deterministic call log without recomputation."""
+    wanted = json.dumps(params, ensure_ascii=False, sort_keys=True)
+    for entry in entries:
+        if entry.get("call") != call or entry.get("error"):
+            continue
+        same_params = json.dumps(entry.get("params") or {}, ensure_ascii=False,
+                                 sort_keys=True) == wanted
+        if (same_params and entry.get("database") == database
+                and entry.get("commit") == commit):
+            return entry.get("envelope")
+    return None
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="sqi_cli", add_help=True)
     parser.add_argument("--database", required=True)
@@ -74,6 +109,8 @@ def main() -> int:
     parser.add_argument("--call", required=True, choices=sorted(CANONICAL_CALLS))
     parser.add_argument("--params", default="{}")
     parser.add_argument("--arg", action="append", default=[], metavar="KEY=VALUE")
+    parser.add_argument("--code-database",
+                        default=os.environ.get("PL_SQI_CODE_DATABASE"))
     parser.add_argument("--call-log", default=os.environ.get("PL_SQI_CALL_LOG"))
     args = parser.parse_args()
 
@@ -117,8 +154,30 @@ def main() -> int:
             "message": f"params {illegal} not allowed for {args.call} "
                        f"(allowed: {sorted(CALL_PARAMS[args.call])})"}})
 
+    log_entries = _load_log_entries(args.call_log)
+
+    # session short-circuit (OPT-T05-COMPRESSION): identical earlier invocation
+    cached = _find_cached(log_entries, args.call, params, args.database,
+                          args.commit)
+    if cached is not None:
+        print(json.dumps(cached, ensure_ascii=False, sort_keys=True,
+                         separators=(",", ":")))
+        _log_line(args.call_log, {
+            "call": args.call,
+            "params": params,
+            "database": args.database,
+            "commit": args.commit,
+            "response_bytes": len(json.dumps(cached, ensure_ascii=False,
+                                             sort_keys=True,
+                                             separators=(",", ":"))),
+            "envelope": cached,
+            "served_from_cache": True,
+        })
+        return 0
+
     try:
-        with SQIAdapter(args.database, args.commit) as adapter:
+        with SQIAdapter(args.database, args.commit,
+                        code_database=args.code_database) as adapter:
             if args.call == "symbol.lookup":
                 envelope = adapter.symbol_lookup(
                     params.get("name"), kind=params.get("kind"),
@@ -150,10 +209,18 @@ def main() -> int:
 
     line = json.dumps(envelope, ensure_ascii=False, sort_keys=True,
                       separators=(",", ":"))
+    # V1.2 S8: the policy block is session-level — emitted with the session's
+    # first envelope only.
+    if _session_has_policy(log_entries):
+        envelope.pop("source_verification_policy", None)
+        line = json.dumps(envelope, ensure_ascii=False, sort_keys=True,
+                          separators=(",", ":"))
     print(line)
     _log_line(args.call_log, {
         "call": args.call,
         "params": params,
+        "database": args.database,
+        "commit": args.commit,
         "response_bytes": len(line),
         "envelope": envelope,
     })

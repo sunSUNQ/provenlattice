@@ -1,15 +1,15 @@
 {
   "schema": "SQI_ENVELOPE_SCHEMA_V1",
-  "schema_version": 1,
+  "schema_version": 2,
   "contract": "STRUCTURED_QUERY_INTERFACE_CONTRACT_V1",
-  "note": "Structural schema for SQI-V1 envelopes. Semantic rules C1-C4 (fact<->evidence binding, deterministic evidence ids, truncation honesty) and budget compliance are enforced by tools/sqi_validator.py on top of this schema. Budget hard caps: max_evidence<=50, max_symbols<=20, max_edges<=50, max_sections<=10.",
+  "note": "Structural schema for SQI-V1 envelopes (V1.2: per-evidence repository/commit and the session-level source_verification_policy are OPTIONAL - see structured-query-interface-contract-v1.2-amendment.md; when present they must match the envelope header / frozen constant, enforced by tools/sqi_validator.py together with the C1-C4 semantic rules and budget accounting. Budget hard caps: max_evidence<=50, max_symbols<=20, max_edges<=50, max_sections<=10).",
   "$defs": {
     "hex40": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
     "hex24": {"type": "string", "pattern": "^[0-9a-f]{24}$"},
     "evidence_id": {"type": "string", "pattern": "^E-(CODE|CALL|REF|DEP|SHARD|DOC|XLINK)-[0-9a-f]{24}$"},
     "evidence": {
       "type": "object",
-      "required": ["evidence_id", "kind", "source_id", "relation", "target_id", "repository", "commit", "generation", "provenance", "confidence", "summary"],
+      "required": ["evidence_id", "kind", "source_id", "relation", "target_id", "generation", "provenance", "confidence", "summary"],
       "properties": {
         "evidence_id": {"$ref": "#/$defs/evidence_id"},
         "kind": {"enum": ["CODE_DEFINITION", "CALL_RELATION", "REFERENCE", "DEPENDENCY", "SHARD_RELATION", "DOCUMENT_SECTION", "CROSS_LAYER_LINK"]},
@@ -80,7 +80,7 @@
     "repository", "commit", "graph_generation",
     "data", "evidence", "returned_evidence_ids", "returned_evidence_count",
     "bundle_size", "budget", "truncation",
-    "source_verification_policy", "query_time_ms"
+    "query_time_ms"
   ],
   "properties": {
     "sqi_version": {"const": "SQI-V1"},

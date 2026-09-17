@@ -22,6 +22,7 @@ from sqi_formal_runner import (  # noqa: E402
     NATIVE_ALLOWED_TOOLS, SQI_ALLOWED_TOOLS, build_command, load_config,
     load_tasks, preflight, resolve_database, verify_seal)
 from sqi_isolation import leakage_events  # noqa: E402
+from sqi_validator import validate_envelope  # noqa: E402
 
 DB = WORKSPACE / "benchmark-analysis" / "v0.2-db"
 COMMITS = {
@@ -307,6 +308,84 @@ class TestEvaluatorOracles(unittest.TestCase):
                                    str(DB / "aria2.db"))
         self.assertIn("SQI_ACCESS_IN_NATIVE",
                       evaluation["capability_failure_flags"])
+
+
+class TestSessionShortCircuitAndPolicy(unittest.TestCase):
+    """C2 / OPT-T05 session short-circuit + V1.2 session-level policy."""
+
+    def test_second_identical_call_served_from_cache(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            log_path = Path(tmp) / "calls.ndjson"
+            first = run_bridge("SQI-T04", "impact.frontier", None,
+                               call_log=log_path,
+                               extra_args=["--arg", "changed_shard_paths=db,file",
+                                           "--arg", "threshold=8",
+                                           "--arg", "budget=50,20,50,10"])
+            self.assertEqual(first.returncode, 0)
+            first_env = json.loads(first.stdout.strip())
+            second = run_bridge("SQI-T04", "impact.frontier", None,
+                                call_log=log_path,
+                                extra_args=["--arg", "changed_shard_paths=db,file",
+                                            "--arg", "threshold=8",
+                                            "--arg", "budget=50,20,50,10"])
+            self.assertEqual(second.returncode, 0)
+            second_env = json.loads(second.stdout.strip())
+            first_env.pop("query_time_ms", None)
+            second_env.pop("query_time_ms", None)
+            self.assertEqual(first_env, second_env)
+            entries = [json.loads(line) for line in
+                       log_path.read_text(encoding="utf-8").splitlines()]
+            self.assertEqual(len(entries), 2)
+            self.assertTrue(entries[1].get("served_from_cache"))
+
+    def test_policy_emitted_once_per_session(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            log_path = Path(tmp) / "calls.ndjson"
+            first = run_bridge("SQI-T01", "symbol.lookup",
+                               '{"name": "DownloadEngine", "kind": "Class", '
+                               '"path_prefix": "src/DownloadEngine.h"}',
+                               call_log=log_path)
+            second = run_bridge("SQI-T02", "symbol.lookup",
+                                '{"name": "butil.Status.error_cstr"}',
+                                call_log=log_path)
+            first_env = json.loads(first.stdout.strip())
+            second_env = json.loads(second.stdout.strip())
+            self.assertIn("source_verification_policy", first_env)
+            self.assertNotIn("source_verification_policy", second_env)
+            entries = [json.loads(line) for line in
+                       log_path.read_text(encoding="utf-8").splitlines()]
+            self.assertTrue(entries[0]["envelope"].get("source_verification_policy"))
+            self.assertNotIn("source_verification_policy",
+                             entries[1]["envelope"])
+
+    def test_v12_envelope_without_policy_or_evidence_commit_is_valid(self):
+        from sqi_evaluator import capability_flags  # local import keeps the top clean
+        task = next(t for t in load_tasks() if t["task_id"] == "SQI-T01")
+        envelope = {
+            "sqi_version": "SQI-V1", "query_id": "Q-" + "0" * 20,
+            "query_type": "symbol.lookup", "anchor": "X", "params": {},
+            "repository": "repo:" + "0" * 64, "commit": task["commit"],
+            "graph_generation": 1, "data": [], "evidence": [],
+            "returned_evidence_ids": [], "returned_evidence_count": 0,
+            "bundle_size": 0,
+            "budget": {"declared": {"max_evidence": 20, "max_symbols": 8,
+                                    "max_edges": 20, "max_sections": 4},
+                       "applied": {"max_evidence": 20, "max_symbols": 8,
+                                   "max_edges": 20, "max_sections": 4},
+                       "used": {"symbols": 0, "edges": 0, "raw_refs": 0,
+                                "sections": 0, "evidence": 0}},
+            "truncation": {"truncated": False,
+                           "omitted_counts": {"symbols": 0, "edges": 0,
+                                              "raw_refs": 0, "sections": 0}},
+            "query_time_ms": 0.0,
+        }
+        ok, errors = validate_envelope(envelope, expected_commit=task["commit"])
+        self.assertTrue(ok, errors)
+        self.assertEqual(capability_flags("sqi", task,
+                                          [{"call": "symbol.lookup",
+                                            "params": {}, "response_bytes": 1,
+                                            "envelope": envelope}], []),
+                         [])
 
 
 class TestArmParityAndPreflight(unittest.TestCase):

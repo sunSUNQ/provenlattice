@@ -115,7 +115,10 @@ def _clamp_budget(declared: dict) -> dict:
 
 
 def semantic_errors(envelope: dict, expected_commit: str | None = None) -> list[str]:
-    """C1-C4 + budget + provenance semantic checks on a structurally valid envelope."""
+    """C1-C4 + budget + provenance semantic checks on a structurally valid
+    envelope (V1.2: per-evidence repository/commit and the session-level
+    source_verification_policy are optional; when present they must be
+    consistent with the header / frozen constant)."""
     errors: list[str] = []
     if envelope.get("query_type") not in QUERY_TYPES:
         errors.append(f"C4: unknown query_type {envelope.get('query_type')!r}")
@@ -190,18 +193,52 @@ def semantic_errors(envelope: dict, expected_commit: str | None = None) -> list[
     if not re.match(r"^[0-9a-f]{40}$", str(envelope.get("commit", ""))):
         errors.append("provenance: commit is not a 40-hex frozen sha")
 
-    # C2 format on every evidence id
+    # C2 format on every evidence id + V1.2 header-consistency when present
     for item in evidence:
         if not EVIDENCE_ID_RE.match(item.get("evidence_id", "")):
             errors.append(f"C2: malformed evidence id {item.get('evidence_id')!r}")
             break
+        if "repository" in item and item["repository"] != envelope.get("repository"):
+            errors.append("V1.2: evidence repository differs from envelope header")
+            break
+        if "commit" in item and item["commit"] != envelope.get("commit"):
+            errors.append("V1.2: evidence commit differs from envelope header")
+            break
 
-    # source verification policy must be present and complete (contract S8)
-    policy = envelope.get("source_verification_policy") or {}
+    # S8: when a policy block is present it must be complete (V1.2 allows the
+    # session-level form: the bridge emits it once per session, so a non-first
+    # envelope may omit it; the session check lives in the evaluator)
+    policy = envelope.get("source_verification_policy")
+    if policy is not None:
+        required_classes = {"definition_semantics", "call_site_semantics",
+                            "reference_purpose", "downstream_impact",
+                            "document_equivalence"}
+        if not required_classes.issubset(set(policy.get("requires_source_verification") or [])):
+            errors.append("S8: source_verification_policy incomplete")
+    return errors
+
+
+def session_policy_errors(call_log: list[dict]) -> list[str]:
+    """V1.2 S8 session-level check: the FIRST envelope of a session must carry
+    the complete frozen source_verification_policy."""
+    errors: list[str] = []
+    first = None
+    for entry in call_log or []:
+        envelope = entry.get("envelope") or {}
+        if envelope.get("error") or not envelope.get("query_type"):
+            continue
+        first = envelope
+        break
+    if first is None:
+        return errors
+    policy = first.get("source_verification_policy")
     required_classes = {"definition_semantics", "call_site_semantics",
-                        "reference_purpose", "downstream_impact", "document_equivalence"}
-    if not required_classes.issubset(set(policy.get("requires_source_verification") or [])):
-        errors.append("S8: source_verification_policy incomplete")
+                        "reference_purpose", "downstream_impact",
+                        "document_equivalence"}
+    if not policy or not required_classes.issubset(
+            set(policy.get("requires_source_verification") or [])):
+        errors.append("S8: session first envelope missing incomplete "
+                      "source_verification_policy")
     return errors
 
 

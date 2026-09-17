@@ -23,6 +23,7 @@ sys.path.insert(0, str(TOOLS))
 from sqi_adapter import SQIAdapter, _clamp  # noqa: E402
 from sqi_validator import (  # noqa: E402
     HARD_CAPS, semantic_errors, validate_envelope)
+from sqi_formal_runner import load_tasks, resolve_database  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[3]
 WORKSPACE = REPO.parent
@@ -287,6 +288,87 @@ class TestImpactFrontierBoundaries(unittest.TestCase):
             self.assertFalse(str(item.get("target_id", "")).startswith("symbol:"))
         self.assertNotIn("qualified_name", json.dumps(self.envelope["data"]))
         self.assertNotIn("signature", json.dumps(self.envelope["data"]))
+
+
+class TestLookupProjection(unittest.TestCase):
+    """C2 / OPT-T01-PROJECTION: lookup rows are compact identity forms."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.adapter = SQIAdapter(DB / "aria2.db", COMMITS["aria2"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.adapter.close()
+
+    def test_rows_are_compact_identity_form(self):
+        envelope = self.adapter.symbol_lookup("DownloadEngine", kind="Class",
+                                              path_prefix="src/DownloadEngine.h")
+        row = envelope["data"][0]
+        self.assertEqual(set(row.keys()),
+                         {"id", "qualified_name", "kind", "file_path",
+                          "shard_path", "start_line", "end_line"})
+        self.assertEqual(row["file_path"], "src/DownloadEngine.h")
+        self.assertNotIn("signature", row)
+        self.assertNotIn("metadata", row)
+
+    def test_unfiltered_lookup_stays_compact_and_capped(self):
+        envelope = self.adapter.symbol_lookup(
+            "DownloadEngine", budget={"max_evidence": 50, "max_symbols": 20,
+                                      "max_edges": 50, "max_sections": 10})
+        self.assertLessEqual(len(envelope["data"]), 20)
+        for row in envelope["data"]:
+            self.assertNotIn("signature", row)
+            self.assertNotIn("metadata", row)
+
+    def test_chained_symbol_id_stable(self):
+        envelope = self.adapter.symbol_lookup("DownloadEngine", kind="Class",
+                                              path_prefix="src/DownloadEngine.h")
+        self.assertEqual(envelope["data"][0]["id"],
+                         "symbol:e8a562a9609e023d094d454027aa64786850dcbde1ba5529742a2216b1d7a60e")
+
+
+class TestCodeRelatedComposite(unittest.TestCase):
+    """C2 / OPT-T05-COMPRESSION: one code.related call returns both the
+    knowledge cross-layer evidence and the code-database definition evidence."""
+
+    @classmethod
+    def setUpClass(cls):
+        task = json.loads((REPO / "experiments" / "query_interface_v1" / "tasks"
+                           / "SQI-T05.json").read_text(encoding="utf-8"))
+        cls.task = task
+        cls.section = next(item for item in task["ground_truth"]["required_evidence"]
+                           if item["type"] == "document_section")
+        cls.adapter = SQIAdapter(resolve_database(task["database"]),
+                                 task["commit"],
+                                 code_database=resolve_database(task["code_database"]))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.adapter.close()
+
+    def test_single_call_returns_both_evidence_sets(self):
+        envelope = self.adapter.code_related(self.section["value"])
+        ids = set(envelope["returned_evidence_ids"])
+        gt_ids = set(self.task["ground_truth"]["required_evidence_ids"])
+        self.assertTrue(ids & gt_ids, gt_ids)
+        meta = envelope["result_meta"]
+        self.assertTrue(meta["composite"])
+        self.assertTrue(str(meta["code_database"]).replace("\\", "/")
+                        .endswith(self.task["code_database"]),
+                        meta["code_database"])
+        self.assertTrue(meta["knowledge_db_evidence_ids"])
+        self.assertTrue(meta["code_db_evidence_ids"])
+        # the code-database definition row is present so C1 coverage holds
+        code_rows = [row for row in envelope["data"] if row.get("definition_of")]
+        self.assertTrue(code_rows)
+        ok, errors = validate_envelope(envelope, expected_commit=self.task["commit"])
+        self.assertTrue(ok, errors)
+
+    def test_without_code_database_behaves_as_before(self):
+        with SQIAdapter(DB / "brpc.db", COMMITS["brpc"]) as plain:
+            envelope = plain.code_related("documentsection:x")
+        self.assertIs(envelope["result_meta"].get("composite"), False)
 
 
 class TestSourceVerificationPolicy(unittest.TestCase):
