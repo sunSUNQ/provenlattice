@@ -1,0 +1,2536 @@
+{
+ "schema": "SQI_COST_ATTRIBUTION_V1",
+ "schema_version": 1,
+ "baseline": "SQI-FORMAL-20260917-1 (18 sqi cells; analysis only - no new experiments, no frozen asset modified)",
+ "method": {
+  "byte_accounting": "deterministic compact JSON (sort_keys, separators) recomputed from sqi-call-log envelopes and events.ndjson",
+  "productive_payload": "evidence bytes whose evidence_id appears in the cell Evaluation Used closure (evaluation-v11.json)",
+  "duplicate_payload": "evidence bytes for an evidence_id already returned by an earlier call in the same session",
+  "cache_amplification": "cache_read_tokens / input_tokens per cell (mechanism: each tool turn re-reads the accumulated context prefix)",
+  "token_attribution_limitation": "claude reports usage per result event, not per cost source; byte-level accounting is exact, token-level split between system prompt / tool schema / history is measurement unavailable and flagged as such"
+ },
+ "totals": {
+  "sqi_cells": 18,
+  "sqi_calls": 59,
+  "envelope_bytes_total": 517226,
+  "envelope_decomposition": {
+   "data": 190120,
+   "evidence_total": 247745,
+   "evidence_identity": 128799,
+   "evidence_location": 23694,
+   "evidence_narrative": 22381,
+   "evidence_extras": 73433,
+   "overhead_incl_constant_blocks": 79361
+  },
+  "evidence_entries": 320,
+  "evidence_used_bytes": 198354,
+  "evidence_used_ratio_pct": 80.2,
+  "evidence_duplicate_bytes": 18453,
+  "evidence_duplicate_ratio_pct": 7.5,
+  "source_read_bytes": 1215437,
+  "source_read_events": 324,
+  "agent_output_bytes": 69360,
+  "tokens": {
+   "input": 962640,
+   "output": 230508,
+   "cache_read": 14738944,
+   "cache_creation": 0
+  },
+  "cache_amplification_total": 15.3,
+  "native_comparison": {
+   "input_tokens": 527160,
+   "cache_read_tokens": 3410816,
+   "cache_amplification_total": 6.5,
+   "source_read_events": 213
+  }
+ },
+ "findings": [
+  {
+   "id": "F1-productive-payload",
+   "finding": "80.0% of evidence bytes were actually cited by the agent (198,354 / 247,745 B); the payload is NOT mostly redundant. Aggressive evidence stripping would risk the T02/T04 correctness floor.",
+   "implication": "C1 dedup must not cut uncited-but-returned evidence wholesale; it may only cut structural duplication."
+  },
+  {
+   "id": "F2-cache-amplification-dominates",
+   "finding": "cache_read/input = 15.3x (native 6.5x). Every tool turn replays the accumulated context; sessions with more/leaner calls pay O(n^2)-style replay. T05 (13 calls) 22.6x, T02 18.6x.",
+   "implication": "the dominant cost lever is FEWER + LEANER tool turns (C2/C3), not byte-shaving alone: an X% envelope cut removes ~X% of every subsequent turn replay."
+  },
+  {
+   "id": "F3-identity-duplication",
+   "finding": "per-evidence repository+commit = 105 B x 320 entries ~= 34 KB (13.7% of evidence bytes), byte-identical to the envelope header; source_verification_policy 249 B x 59 calls ~= 15 KB; returned_evidence_ids duplicates the evidence id list (~16 KB).",
+   "implication": "contract-amendment-level dedup (session-header scoping) yields ~65 KB (~12.5%) with zero information loss."
+  },
+  {
+   "id": "F4-source-read-parity",
+   "finding": "SQI source-read bytes 1.2 MB / 324 events vs native 213 events; source verification is performed in both arms and is not an SQI-specific cost anomaly.",
+   "implication": "source verification stays untouched (correctness floor)."
+  },
+  {
+   "id": "F5-structural-duplication-small",
+   "finding": "cross-call duplicate evidence is only 7.4% (18.4 KB).",
+   "implication": "C1 pure dedup alone has a low ceiling; combine with C2 per-call projection and C3 fewer calls."
+  }
+ ],
+ "classification": {
+  "MUST_KEEP": [
+   {
+    "field": "data (all fact rows)",
+    "evidence": "task correctness is judged on facts; T04 aggregates and T02 caller rows are the success payload"
+   },
+   {
+    "field": "evidence identity (evidence_id, kind, source_id, relation, target_id)",
+    "evidence": "C1/C2 binding + citation closure + evaluator fact crosscheck"
+   },
+   {
+    "field": "evidence source_path / source_range",
+    "evidence": "contract-required provenance anchors; source-verification workflow depends on them"
+   },
+   {
+    "field": "returned_evidence_ids + returned_evidence_count",
+    "evidence": "harness structured-result extraction and citation-closure oracle (derivable, but removal requires contract amendment - see SAFE_TO_DEDUP note)"
+   },
+   {
+    "field": "budget (declared/applied/used) + truncation",
+    "evidence": "protocol budget accounting and truncation-honesty oracle"
+   },
+   {
+    "field": "repository / commit / graph_generation (envelope level)",
+    "evidence": "result-level provenance; commit binding is evaluator-checked"
+   },
+   {
+    "field": "result_meta (frontier aggregates etc.)",
+    "evidence": "T04 frozen ground truth is judged against these exact aggregates"
+   },
+   {
+    "field": "params echo + query_id + anchor",
+    "evidence": "audit trail; deterministic-identity fields"
+   },
+   {
+    "field": "evidence metadata.fact_id",
+    "evidence": "T02/T03 frozen edge/reference crosschecks rely on it"
+   }
+  ],
+  "SAFE_TO_DEDUP": [
+   {
+    "field": "per-evidence repository + commit (105 B x 320 entries ~= 34 KB, 13.7% of evidence bytes)",
+    "evidence": "byte-identical to the envelope header within a session; requires contract amendment (per-entry fields frozen in V1)",
+    "requires_contract_amendment": true
+   },
+   {
+    "field": "source_verification_policy per call (249 B x 59 calls ~= 15 KB)",
+    "evidence": "constant block; belongs at session level; requires contract amendment",
+    "requires_contract_amendment": true
+   },
+   {
+    "field": "cross-call duplicate evidence entries (18,453 B, 7.4% of evidence bytes)",
+    "evidence": "same evidence_id re-returned by later calls in the same session (T04 13 KB, T05 3.5 KB); bridge can skip re-emitting known ids",
+    "requires_contract_amendment": false
+   }
+  ],
+  "ON_DEMAND": [
+   {
+    "field": "evidence narrative summary (22,381 B, 9.0% of evidence)",
+    "evidence": "human-readable text never consumed by evaluator oracles; progressive-disclosure candidate (C3)",
+    "requires_contract_amendment": true
+   },
+   {
+    "field": "evidence extras (provenance, confidence, metadata minus fact_id) ~= 60 KB",
+    "evidence": "not consumed by evaluator or task success; metadata.bundle_role/bundle_profile/distance are ranking-internal",
+    "requires_contract_amendment": true
+   },
+   {
+    "field": "full evidence objects for non-cited ids",
+    "evidence": "evidence-on-demand: ids + compact facts first; detail fetch on demand (C3 mechanism itself)",
+    "requires_contract_amendment": true
+   }
+  ],
+  "SAFE_TO_REMOVE": [
+   {
+    "field": "none at field level in V1.1",
+    "evidence": "every envelope field is either consumed by an oracle, required by the frozen contract, or measured as productive payload; removals require contract amendments (listed above)"
+   }
+  ]
+ },
+ "per_task": {
+  "SQI-T01": {
+   "cells": 3,
+   "task_success": "0/3",
+   "envelope_bytes_total": 46417,
+   "evidence_total_bytes": 22122,
+   "evidence_used_bytes": 4008,
+   "evidence_duplicate_bytes": 0,
+   "source_read_bytes": 78531,
+   "input_tokens": 110972,
+   "cache_read_tokens": 1123200,
+   "sqi_calls": 6,
+   "cache_amplification_median": 9.4
+  },
+  "SQI-T02": {
+   "cells": 3,
+   "task_success": "3/3",
+   "envelope_bytes_total": 56583,
+   "evidence_total_bytes": 25914,
+   "evidence_used_bytes": 23670,
+   "evidence_duplicate_bytes": 0,
+   "source_read_bytes": 217342,
+   "input_tokens": 164612,
+   "cache_read_tokens": 3057920,
+   "sqi_calls": 8,
+   "cache_amplification_median": 19.8
+  },
+  "SQI-T03": {
+   "cells": 3,
+   "task_success": "3/3",
+   "envelope_bytes_total": 58823,
+   "evidence_total_bytes": 23662,
+   "evidence_used_bytes": 18725,
+   "evidence_duplicate_bytes": 1143,
+   "source_read_bytes": 61614,
+   "input_tokens": 113365,
+   "cache_read_tokens": 1108096,
+   "sqi_calls": 11,
+   "cache_amplification_median": 8.5
+  },
+  "SQI-T04": {
+   "cells": 3,
+   "task_success": "3/3",
+   "envelope_bytes_total": 170810,
+   "evidence_total_bytes": 110961,
+   "evidence_used_bytes": 97869,
+   "evidence_duplicate_bytes": 13092,
+   "source_read_bytes": 386420,
+   "input_tokens": 224923,
+   "cache_read_tokens": 2782208,
+   "sqi_calls": 4,
+   "cache_amplification_median": 12.5
+  },
+  "SQI-T05": {
+   "cells": 3,
+   "task_success": "0/3",
+   "envelope_bytes_total": 80409,
+   "evidence_total_bytes": 24424,
+   "evidence_used_bytes": 15186,
+   "evidence_duplicate_bytes": 3520,
+   "source_read_bytes": 201371,
+   "input_tokens": 173112,
+   "cache_read_tokens": 3918208,
+   "sqi_calls": 26,
+   "cache_amplification_median": 15.9
+  },
+  "SQI-T06": {
+   "cells": 3,
+   "task_success": "3/3",
+   "envelope_bytes_total": 104184,
+   "evidence_total_bytes": 40264,
+   "evidence_used_bytes": 38896,
+   "evidence_duplicate_bytes": 698,
+   "source_read_bytes": 270159,
+   "input_tokens": 175656,
+   "cache_read_tokens": 2749312,
+   "sqi_calls": 4,
+   "cache_amplification_median": 14.4
+  }
+ },
+ "cells": [
+  {
+   "cell": "SQI-T01.sqi.r1",
+   "task_id": "SQI-T01",
+   "repetition": 1,
+   "task_success": false,
+   "duration_ms": 33247.909,
+   "sqi_calls": 2,
+   "envelope_bytes_total": 15472,
+   "envelope_decomposition_total": {
+    "data": 5490,
+    "evidence": 7387,
+    "evidence_identity": 4224,
+    "evidence_location": 1004,
+    "evidence_narrative": 472,
+    "evidence_extras": 1707,
+    "overhead": 2595
+   },
+   "evidence_entries_total": 11,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 662,
+   "evidence_total_bytes": 7374,
+   "source_read_bytes": 24884,
+   "source_read_events": 8,
+   "prompt_bytes": 0,
+   "output_bytes": 952,
+   "tokens": {
+    "input": 36444,
+    "output": 4144,
+    "cache_read": 342656,
+    "cache_creation": 0
+   },
+   "cache_amplification": 9.4,
+   "used_ids_count": 1,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 10712,
+     "decomposition": {
+      "total": 10712,
+      "data": 3977,
+      "evidence": 5361,
+      "evidence_identity": 3072,
+      "evidence_location": 744,
+      "evidence_narrative": 320,
+      "evidence_extras": 1240,
+      "overhead": 1374,
+      "evidence_count": 8,
+      "unique_evidence_ids": 8,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 36
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 5352,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 4760,
+     "decomposition": {
+      "total": 4760,
+      "data": 1513,
+      "evidence": 2026,
+      "evidence_identity": 1152,
+      "evidence_location": 260,
+      "evidence_narrative": 152,
+      "evidence_extras": 467,
+      "overhead": 1221,
+      "evidence_count": 3,
+      "unique_evidence_ids": 3,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 2022,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T01.sqi.r2",
+   "task_id": "SQI-T01",
+   "repetition": 2,
+   "task_success": false,
+   "duration_ms": 22448.856,
+   "sqi_calls": 2,
+   "envelope_bytes_total": 15473,
+   "envelope_decomposition_total": {
+    "data": 5490,
+    "evidence": 7387,
+    "evidence_identity": 4224,
+    "evidence_location": 1004,
+    "evidence_narrative": 472,
+    "evidence_extras": 1707,
+    "overhead": 2596
+   },
+   "evidence_entries_total": 11,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 2684,
+   "evidence_total_bytes": 7374,
+   "source_read_bytes": 5461,
+   "source_read_events": 5,
+   "prompt_bytes": 0,
+   "output_bytes": 1402,
+   "tokens": {
+    "input": 30302,
+    "output": 3096,
+    "cache_read": 270336,
+    "cache_creation": 0
+   },
+   "cache_amplification": 8.9,
+   "used_ids_count": 4,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 10712,
+     "decomposition": {
+      "total": 10712,
+      "data": 3977,
+      "evidence": 5361,
+      "evidence_identity": 3072,
+      "evidence_location": 744,
+      "evidence_narrative": 320,
+      "evidence_extras": 1240,
+      "overhead": 1374,
+      "evidence_count": 8,
+      "unique_evidence_ids": 8,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 36
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 5352,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 4761,
+     "decomposition": {
+      "total": 4761,
+      "data": 1513,
+      "evidence": 2026,
+      "evidence_identity": 1152,
+      "evidence_location": 260,
+      "evidence_narrative": 152,
+      "evidence_extras": 467,
+      "overhead": 1222,
+      "evidence_count": 3,
+      "unique_evidence_ids": 3,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 2022,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T01.sqi.r3",
+   "task_id": "SQI-T01",
+   "repetition": 3,
+   "task_success": false,
+   "duration_ms": 31594.573,
+   "sqi_calls": 2,
+   "envelope_bytes_total": 15472,
+   "envelope_decomposition_total": {
+    "data": 5490,
+    "evidence": 7387,
+    "evidence_identity": 4224,
+    "evidence_location": 1004,
+    "evidence_narrative": 472,
+    "evidence_extras": 1707,
+    "overhead": 2595
+   },
+   "evidence_entries_total": 11,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 662,
+   "evidence_total_bytes": 7374,
+   "source_read_bytes": 48186,
+   "source_read_events": 13,
+   "prompt_bytes": 0,
+   "output_bytes": 1136,
+   "tokens": {
+    "input": 44226,
+    "output": 4021,
+    "cache_read": 510208,
+    "cache_creation": 0
+   },
+   "cache_amplification": 11.5,
+   "used_ids_count": 1,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 10712,
+     "decomposition": {
+      "total": 10712,
+      "data": 3977,
+      "evidence": 5361,
+      "evidence_identity": 3072,
+      "evidence_location": 744,
+      "evidence_narrative": 320,
+      "evidence_extras": 1240,
+      "overhead": 1374,
+      "evidence_count": 8,
+      "unique_evidence_ids": 8,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 36
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 5352,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 4760,
+     "decomposition": {
+      "total": 4760,
+      "data": 1513,
+      "evidence": 2026,
+      "evidence_identity": 1152,
+      "evidence_location": 260,
+      "evidence_narrative": 152,
+      "evidence_extras": 467,
+      "overhead": 1221,
+      "evidence_count": 3,
+      "unique_evidence_ids": 3,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 2022,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T02.sqi.r1",
+   "task_id": "SQI-T02",
+   "repetition": 1,
+   "task_success": true,
+   "duration_ms": 45863.586,
+   "sqi_calls": 3,
+   "envelope_bytes_total": 19252,
+   "envelope_decomposition_total": {
+    "data": 6906,
+    "evidence": 8650,
+    "evidence_identity": 3054,
+    "evidence_location": 760,
+    "evidence_narrative": 513,
+    "evidence_extras": 4335,
+    "overhead": 3696
+   },
+   "evidence_entries_total": 8,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 8638,
+   "evidence_total_bytes": 8638,
+   "source_read_bytes": 46107,
+   "source_read_events": 21,
+   "prompt_bytes": 0,
+   "output_bytes": 3470,
+   "tokens": {
+    "input": 46761,
+    "output": 7480,
+    "cache_read": 635648,
+    "cache_creation": 0
+   },
+   "cache_amplification": 13.6,
+   "used_ids_count": 8,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 1124,
+     "decomposition": {
+      "total": 1124,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1120,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 2305,
+     "decomposition": {
+      "total": 2305,
+      "data": 487,
+      "evidence": 667,
+      "evidence_identity": 384,
+      "evidence_location": 84,
+      "evidence_narrative": 44,
+      "evidence_extras": 156,
+      "overhead": 1151,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 665,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.callers",
+     "bytes": 15823,
+     "decomposition": {
+      "total": 15823,
+      "data": 6417,
+      "evidence": 7981,
+      "evidence_identity": 2670,
+      "evidence_location": 676,
+      "evidence_narrative": 469,
+      "evidence_extras": 4179,
+      "overhead": 1425,
+      "evidence_count": 7,
+      "unique_evidence_ids": 7,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 7973,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T02.sqi.r2",
+   "task_id": "SQI-T02",
+   "repetition": 2,
+   "task_success": true,
+   "duration_ms": 70358.832,
+   "sqi_calls": 3,
+   "envelope_bytes_total": 19229,
+   "envelope_decomposition_total": {
+    "data": 6906,
+    "evidence": 8650,
+    "evidence_identity": 3054,
+    "evidence_location": 760,
+    "evidence_narrative": 513,
+    "evidence_extras": 4335,
+    "overhead": 3673
+   },
+   "evidence_entries_total": 8,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 6394,
+   "evidence_total_bytes": 8638,
+   "source_read_bytes": 78212,
+   "source_read_events": 24,
+   "prompt_bytes": 0,
+   "output_bytes": 3851,
+   "tokens": {
+    "input": 55872,
+    "output": 11871,
+    "cache_read": 1105536,
+    "cache_creation": 0
+   },
+   "cache_amplification": 19.8,
+   "used_ids_count": 6,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 1125,
+     "decomposition": {
+      "total": 1125,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1121,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 2279,
+     "decomposition": {
+      "total": 2279,
+      "data": 487,
+      "evidence": 667,
+      "evidence_identity": 384,
+      "evidence_location": 84,
+      "evidence_narrative": 44,
+      "evidence_extras": 156,
+      "overhead": 1125,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 665,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.callers",
+     "bytes": 15825,
+     "decomposition": {
+      "total": 15825,
+      "data": 6417,
+      "evidence": 7981,
+      "evidence_identity": 2670,
+      "evidence_location": 676,
+      "evidence_narrative": 469,
+      "evidence_extras": 4179,
+      "overhead": 1427,
+      "evidence_count": 7,
+      "unique_evidence_ids": 7,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 7973,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T02.sqi.r3",
+   "task_id": "SQI-T02",
+   "repetition": 3,
+   "task_success": true,
+   "duration_ms": 98878.561,
+   "sqi_calls": 2,
+   "envelope_bytes_total": 18102,
+   "envelope_decomposition_total": {
+    "data": 6904,
+    "evidence": 8648,
+    "evidence_identity": 3054,
+    "evidence_location": 760,
+    "evidence_narrative": 513,
+    "evidence_extras": 4335,
+    "overhead": 2550
+   },
+   "evidence_entries_total": 8,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 8638,
+   "evidence_total_bytes": 8638,
+   "source_read_bytes": 93023,
+   "source_read_events": 31,
+   "prompt_bytes": 0,
+   "output_bytes": 4721,
+   "tokens": {
+    "input": 61979,
+    "output": 18492,
+    "cache_read": 1316736,
+    "cache_creation": 0
+   },
+   "cache_amplification": 21.2,
+   "used_ids_count": 8,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 2279,
+     "decomposition": {
+      "total": 2279,
+      "data": 487,
+      "evidence": 667,
+      "evidence_identity": 384,
+      "evidence_location": 84,
+      "evidence_narrative": 44,
+      "evidence_extras": 156,
+      "overhead": 1125,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 665,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.callers",
+     "bytes": 15823,
+     "decomposition": {
+      "total": 15823,
+      "data": 6417,
+      "evidence": 7981,
+      "evidence_identity": 2670,
+      "evidence_location": 676,
+      "evidence_narrative": 469,
+      "evidence_extras": 4179,
+      "overhead": 1425,
+      "evidence_count": 7,
+      "unique_evidence_ids": 7,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 7973,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T03.sqi.r1",
+   "task_id": "SQI-T03",
+   "repetition": 1,
+   "task_success": true,
+   "duration_ms": 34455.56,
+   "sqi_calls": 3,
+   "envelope_bytes_total": 13260,
+   "envelope_decomposition_total": {
+    "data": 3527,
+    "evidence": 5861,
+    "evidence_identity": 2646,
+    "evidence_location": 691,
+    "evidence_narrative": 276,
+    "evidence_extras": 2258,
+    "overhead": 3872
+   },
+   "evidence_entries_total": 7,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 5850,
+   "evidence_total_bytes": 5850,
+   "source_read_bytes": 7857,
+   "source_read_events": 8,
+   "prompt_bytes": 0,
+   "output_bytes": 3594,
+   "tokens": {
+    "input": 30379,
+    "output": 5437,
+    "cache_read": 258944,
+    "cache_creation": 0
+   },
+   "cache_amplification": 8.5,
+   "used_ids_count": 7,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 2390,
+     "decomposition": {
+      "total": 2390,
+      "data": 566,
+      "evidence": 692,
+      "evidence_identity": 384,
+      "evidence_location": 97,
+      "evidence_narrative": 54,
+      "evidence_extras": 158,
+      "overhead": 1132,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 690,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.references",
+     "bytes": 9598,
+     "decomposition": {
+      "total": 9598,
+      "data": 2959,
+      "evidence": 5167,
+      "evidence_identity": 2262,
+      "evidence_location": 594,
+      "evidence_narrative": 222,
+      "evidence_extras": 2100,
+      "overhead": 1472,
+      "evidence_count": 6,
+      "unique_evidence_ids": 6,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 5160,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.references",
+     "bytes": 1272,
+     "decomposition": {
+      "total": 1272,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1268,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T03.sqi.r2",
+   "task_id": "SQI-T03",
+   "repetition": 2,
+   "task_success": true,
+   "duration_ms": 28571.651,
+   "sqi_calls": 2,
+   "envelope_bytes_total": 11988,
+   "envelope_decomposition_total": {
+    "data": 3525,
+    "evidence": 5859,
+    "evidence_identity": 2646,
+    "evidence_location": 691,
+    "evidence_narrative": 276,
+    "evidence_extras": 2258,
+    "overhead": 2604
+   },
+   "evidence_entries_total": 7,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 5850,
+   "evidence_total_bytes": 5850,
+   "source_read_bytes": 6857,
+   "source_read_events": 9,
+   "prompt_bytes": 0,
+   "output_bytes": 3725,
+   "tokens": {
+    "input": 31277,
+    "output": 5423,
+    "cache_read": 233344,
+    "cache_creation": 0
+   },
+   "cache_amplification": 7.5,
+   "used_ids_count": 7,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 2390,
+     "decomposition": {
+      "total": 2390,
+      "data": 566,
+      "evidence": 692,
+      "evidence_identity": 384,
+      "evidence_location": 97,
+      "evidence_narrative": 54,
+      "evidence_extras": 158,
+      "overhead": 1132,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 690,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.references",
+     "bytes": 9598,
+     "decomposition": {
+      "total": 9598,
+      "data": 2959,
+      "evidence": 5167,
+      "evidence_identity": 2262,
+      "evidence_location": 594,
+      "evidence_narrative": 222,
+      "evidence_extras": 2100,
+      "overhead": 1472,
+      "evidence_count": 6,
+      "unique_evidence_ids": 6,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 5160,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T03.sqi.r3",
+   "task_id": "SQI-T03",
+   "repetition": 3,
+   "task_success": true,
+   "duration_ms": 70456.005,
+   "sqi_calls": 6,
+   "envelope_bytes_total": 33575,
+   "envelope_decomposition_total": {
+    "data": 13802,
+    "evidence": 11983,
+    "evidence_identity": 4945,
+    "evidence_location": 1285,
+    "evidence_narrative": 689,
+    "evidence_extras": 5082,
+    "overhead": 7790
+   },
+   "evidence_entries_total": 13,
+   "evidence_duplicate_bytes": 1143,
+   "evidence_used_bytes": 7025,
+   "evidence_total_bytes": 11962,
+   "source_read_bytes": 46900,
+   "source_read_events": 16,
+   "prompt_bytes": 0,
+   "output_bytes": 4876,
+   "tokens": {
+    "input": 51709,
+    "output": 13624,
+    "cache_read": 615808,
+    "cache_creation": 0
+   },
+   "cache_amplification": 11.9,
+   "used_ids_count": 8,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 2390,
+     "decomposition": {
+      "total": 2390,
+      "data": 566,
+      "evidence": 692,
+      "evidence_identity": 384,
+      "evidence_location": 97,
+      "evidence_narrative": 54,
+      "evidence_extras": 158,
+      "overhead": 1132,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 690,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.references",
+     "bytes": 9602,
+     "decomposition": {
+      "total": 9602,
+      "data": 2959,
+      "evidence": 5167,
+      "evidence_identity": 2262,
+      "evidence_location": 594,
+      "evidence_narrative": 222,
+      "evidence_extras": 2100,
+      "overhead": 1476,
+      "evidence_count": 6,
+      "unique_evidence_ids": 6,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 5160,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.references",
+     "bytes": 1276,
+     "decomposition": {
+      "total": 1276,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1272,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "bundle.explain",
+     "bytes": 15718,
+     "decomposition": {
+      "total": 15718,
+      "data": 9328,
+      "evidence": 4975,
+      "evidence_identity": 1917,
+      "evidence_location": 495,
+      "evidence_narrative": 337,
+      "evidence_extras": 2235,
+      "overhead": 1415,
+      "evidence_count": 5,
+      "unique_evidence_ids": 5,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 4969,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.references",
+     "bytes": 1275,
+     "decomposition": {
+      "total": 1275,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1271,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.callers",
+     "bytes": 3314,
+     "decomposition": {
+      "total": 3314,
+      "data": 945,
+      "evidence": 1145,
+      "evidence_identity": 382,
+      "evidence_location": 99,
+      "evidence_narrative": 76,
+      "evidence_extras": 589,
+      "overhead": 1224,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T04.sqi.r1",
+   "task_id": "SQI-T04",
+   "repetition": 1,
+   "task_success": true,
+   "duration_ms": 93638.484,
+   "sqi_calls": 1,
+   "envelope_bytes_total": 49973,
+   "envelope_decomposition_total": {
+    "data": 14135,
+    "evidence": 32673,
+    "evidence_identity": 20580,
+    "evidence_location": 2581,
+    "evidence_narrative": 4148,
+    "evidence_extras": 5461,
+    "overhead": 3165
+   },
+   "evidence_entries_total": 49,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 32623,
+   "evidence_total_bytes": 32623,
+   "source_read_bytes": 153190,
+   "source_read_events": 28,
+   "prompt_bytes": 0,
+   "output_bytes": 6138,
+   "tokens": {
+    "input": 78161,
+    "output": 18977,
+    "cache_read": 1073792,
+    "cache_creation": 0
+   },
+   "cache_amplification": 13.7,
+   "used_ids_count": 49,
+   "per_call": [
+    {
+     "call": "impact.frontier",
+     "bytes": 49973,
+     "decomposition": {
+      "total": 49973,
+      "data": 14135,
+      "evidence": 32673,
+      "evidence_identity": 20580,
+      "evidence_location": 2581,
+      "evidence_narrative": 4148,
+      "evidence_extras": 5461,
+      "overhead": 3165,
+      "evidence_count": 49,
+      "unique_evidence_ids": 49,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 981,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 32623,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T04.sqi.r2",
+   "task_id": "SQI-T04",
+   "repetition": 2,
+   "task_success": true,
+   "duration_ms": 76641.773,
+   "sqi_calls": 1,
+   "envelope_bytes_total": 49973,
+   "envelope_decomposition_total": {
+    "data": 14135,
+    "evidence": 32673,
+    "evidence_identity": 20580,
+    "evidence_location": 2581,
+    "evidence_narrative": 4148,
+    "evidence_extras": 5461,
+    "overhead": 3165
+   },
+   "evidence_entries_total": 49,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 32623,
+   "evidence_total_bytes": 32623,
+   "source_read_bytes": 102999,
+   "source_read_events": 23,
+   "prompt_bytes": 0,
+   "output_bytes": 6536,
+   "tokens": {
+    "input": 66187,
+    "output": 15284,
+    "cache_read": 700032,
+    "cache_creation": 0
+   },
+   "cache_amplification": 10.6,
+   "used_ids_count": 49,
+   "per_call": [
+    {
+     "call": "impact.frontier",
+     "bytes": 49973,
+     "decomposition": {
+      "total": 49973,
+      "data": 14135,
+      "evidence": 32673,
+      "evidence_identity": 20580,
+      "evidence_location": 2581,
+      "evidence_narrative": 4148,
+      "evidence_extras": 5461,
+      "overhead": 3165,
+      "evidence_count": 49,
+      "unique_evidence_ids": 49,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 981,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 32623,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T04.sqi.r3",
+   "task_id": "SQI-T04",
+   "repetition": 3,
+   "task_success": true,
+   "duration_ms": 89417.741,
+   "sqi_calls": 2,
+   "envelope_bytes_total": 70864,
+   "envelope_decomposition_total": {
+    "data": 19763,
+    "evidence": 45786,
+    "evidence_identity": 28980,
+    "evidence_location": 3523,
+    "evidence_narrative": 5726,
+    "evidence_extras": 7693,
+    "overhead": 5315
+   },
+   "evidence_entries_total": 69,
+   "evidence_duplicate_bytes": 13092,
+   "evidence_used_bytes": 32623,
+   "evidence_total_bytes": 45715,
+   "source_read_bytes": 130231,
+   "source_read_events": 19,
+   "prompt_bytes": 0,
+   "output_bytes": 6411,
+   "tokens": {
+    "input": 80575,
+    "output": 18421,
+    "cache_read": 1008384,
+    "cache_creation": 0
+   },
+   "cache_amplification": 12.5,
+   "used_ids_count": 49,
+   "per_call": [
+    {
+     "call": "impact.frontier",
+     "bytes": 20891,
+     "decomposition": {
+      "total": 20891,
+      "data": 5628,
+      "evidence": 13113,
+      "evidence_identity": 8400,
+      "evidence_location": 942,
+      "evidence_narrative": 1578,
+      "evidence_extras": 2232,
+      "overhead": 2150,
+      "evidence_count": 20,
+      "unique_evidence_ids": 20,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 1040,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 13092,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "impact.frontier",
+     "bytes": 49973,
+     "decomposition": {
+      "total": 49973,
+      "data": 14135,
+      "evidence": 32673,
+      "evidence_identity": 20580,
+      "evidence_location": 2581,
+      "evidence_narrative": 4148,
+      "evidence_extras": 5461,
+      "overhead": 3165,
+      "evidence_count": 49,
+      "unique_evidence_ids": 49,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 981,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 19531,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T05.sqi.r1",
+   "task_id": "SQI-T05",
+   "repetition": 1,
+   "task_success": false,
+   "duration_ms": 132844.117,
+   "sqi_calls": 13,
+   "envelope_bytes_total": 27521,
+   "envelope_decomposition_total": {
+    "data": 6531,
+    "evidence": 6255,
+    "evidence_identity": 3090,
+    "evidence_location": 906,
+    "evidence_narrative": 684,
+    "evidence_extras": 1569,
+    "overhead": 14735
+   },
+   "evidence_entries_total": 8,
+   "evidence_duplicate_bytes": 746,
+   "evidence_used_bytes": 5479,
+   "evidence_total_bytes": 6225,
+   "source_read_bytes": 66703,
+   "source_read_events": 23,
+   "prompt_bytes": 0,
+   "output_bytes": 3101,
+   "tokens": {
+    "input": 60257,
+    "output": 21230,
+    "cache_read": 2147584,
+    "cache_creation": 0
+   },
+   "cache_amplification": 35.6,
+   "used_ids_count": 7,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 1133,
+     "decomposition": {
+      "total": 1133,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1129,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 5349,
+     "decomposition": {
+      "total": 5349,
+      "data": 1856,
+      "evidence": 2246,
+      "evidence_identity": 1152,
+      "evidence_location": 352,
+      "evidence_narrative": 280,
+      "evidence_extras": 467,
+      "overhead": 1247,
+      "evidence_count": 3,
+      "unique_evidence_ids": 3,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 2242,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1080,
+     "decomposition": {
+      "total": 1080,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1076,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1064,
+     "decomposition": {
+      "total": 1064,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1060,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1081,
+     "decomposition": {
+      "total": 1081,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1077,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 2836,
+     "decomposition": {
+      "total": 2836,
+      "data": 726,
+      "evidence": 1000,
+      "evidence_identity": 399,
+      "evidence_location": 84,
+      "evidence_narrative": 97,
+      "evidence_extras": 421,
+      "overhead": 1110,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 998,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1091,
+     "decomposition": {
+      "total": 1091,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1087,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "bundle.explain",
+     "bytes": 5515,
+     "decomposition": {
+      "total": 5515,
+      "data": 2759,
+      "evidence": 1519,
+      "evidence_identity": 771,
+      "evidence_location": 232,
+      "evidence_narrative": 150,
+      "evidence_extras": 369,
+      "overhead": 1237,
+      "evidence_count": 2,
+      "unique_evidence_ids": 2,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 770,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 1104,
+     "decomposition": {
+      "total": 1104,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1100,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1119,
+     "decomposition": {
+      "total": 1119,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1115,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1071,
+     "decomposition": {
+      "total": 1071,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1067,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 3860,
+     "decomposition": {
+      "total": 3860,
+      "data": 1172,
+      "evidence": 1472,
+      "evidence_identity": 768,
+      "evidence_location": 238,
+      "evidence_narrative": 157,
+      "evidence_extras": 312,
+      "overhead": 1216,
+      "evidence_count": 2,
+      "unique_evidence_ids": 2,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 1469,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.references",
+     "bytes": 1218,
+     "decomposition": {
+      "total": 1218,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1214,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T05.sqi.r2",
+   "task_id": "SQI-T05",
+   "repetition": 2,
+   "task_success": false,
+   "duration_ms": 63458.532,
+   "sqi_calls": 10,
+   "envelope_bytes_total": 24362,
+   "envelope_decomposition_total": {
+    "data": 6570,
+    "evidence": 6454,
+    "evidence_identity": 3105,
+    "evidence_location": 838,
+    "evidence_narrative": 678,
+    "evidence_extras": 1834,
+    "overhead": 11338
+   },
+   "evidence_entries_total": 8,
+   "evidence_duplicate_bytes": 1744,
+   "evidence_used_bytes": 4687,
+   "evidence_total_bytes": 6431,
+   "source_read_bytes": 32287,
+   "source_read_events": 16,
+   "prompt_bytes": 0,
+   "output_bytes": 3749,
+   "tokens": {
+    "input": 42100,
+    "output": 10771,
+    "cache_read": 667648,
+    "cache_creation": 0
+   },
+   "cache_amplification": 15.9,
+   "used_ids_count": 6,
+   "per_call": [
+    {
+     "call": "code.related",
+     "bytes": 1081,
+     "decomposition": {
+      "total": 1081,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1077,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 5348,
+     "decomposition": {
+      "total": 5348,
+      "data": 1856,
+      "evidence": 2246,
+      "evidence_identity": 1152,
+      "evidence_location": 352,
+      "evidence_narrative": 280,
+      "evidence_extras": 467,
+      "overhead": 1246,
+      "evidence_count": 3,
+      "unique_evidence_ids": 3,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 2242,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1112,
+     "decomposition": {
+      "total": 1112,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1108,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "bundle.explain",
+     "bytes": 5516,
+     "decomposition": {
+      "total": 5516,
+      "data": 2759,
+      "evidence": 1519,
+      "evidence_identity": 771,
+      "evidence_location": 232,
+      "evidence_narrative": 150,
+      "evidence_extras": 369,
+      "overhead": 1238,
+      "evidence_count": 2,
+      "unique_evidence_ids": 2,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 770,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 2835,
+     "decomposition": {
+      "total": 2835,
+      "data": 726,
+      "evidence": 1000,
+      "evidence_identity": 399,
+      "evidence_location": 84,
+      "evidence_narrative": 97,
+      "evidence_extras": 421,
+      "overhead": 1109,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 998,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1105,
+     "decomposition": {
+      "total": 1105,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1101,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 1068,
+     "decomposition": {
+      "total": 1068,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1064,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "code.related",
+     "bytes": 2873,
+     "decomposition": {
+      "total": 2873,
+      "data": 726,
+      "evidence": 1000,
+      "evidence_identity": 399,
+      "evidence_location": 84,
+      "evidence_narrative": 97,
+      "evidence_extras": 421,
+      "overhead": 1147,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 2299,
+     "decomposition": {
+      "total": 2299,
+      "data": 493,
+      "evidence": 679,
+      "evidence_identity": 384,
+      "evidence_location": 86,
+      "evidence_narrative": 54,
+      "evidence_extras": 156,
+      "overhead": 1127,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 677,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 1125,
+     "decomposition": {
+      "total": 1125,
+      "data": 2,
+      "evidence": 2,
+      "evidence_identity": 0,
+      "evidence_location": 0,
+      "evidence_narrative": 0,
+      "evidence_extras": 0,
+      "overhead": 1121,
+      "evidence_count": 0,
+      "unique_evidence_ids": 0,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 0,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T05.sqi.r3",
+   "task_id": "SQI-T05",
+   "repetition": 3,
+   "task_success": false,
+   "duration_ms": 91732.447,
+   "sqi_calls": 3,
+   "envelope_bytes_total": 28526,
+   "envelope_decomposition_total": {
+    "data": 12874,
+    "evidence": 11786,
+    "evidence_identity": 5852,
+    "evidence_location": 1500,
+    "evidence_narrative": 1132,
+    "evidence_extras": 3329,
+    "overhead": 3866
+   },
+   "evidence_entries_total": 15,
+   "evidence_duplicate_bytes": 1030,
+   "evidence_used_bytes": 5020,
+   "evidence_total_bytes": 11768,
+   "source_read_bytes": 102381,
+   "source_read_events": 18,
+   "prompt_bytes": 0,
+   "output_bytes": 4106,
+   "tokens": {
+    "input": 70755,
+    "output": 16121,
+    "cache_read": 1102976,
+    "cache_creation": 0
+   },
+   "cache_amplification": 15.6,
+   "used_ids_count": 6,
+   "per_call": [
+    {
+     "call": "code.related",
+     "bytes": 2835,
+     "decomposition": {
+      "total": 2835,
+      "data": 726,
+      "evidence": 1000,
+      "evidence_identity": 399,
+      "evidence_location": 84,
+      "evidence_narrative": 97,
+      "evidence_extras": 421,
+      "overhead": 1109,
+      "evidence_count": 1,
+      "unique_evidence_ids": 1,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 998,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "symbol.lookup",
+     "bytes": 11693,
+     "decomposition": {
+      "total": 11693,
+      "data": 4587,
+      "evidence": 5727,
+      "evidence_identity": 3072,
+      "evidence_location": 842,
+      "evidence_narrative": 580,
+      "evidence_extras": 1248,
+      "overhead": 1379,
+      "evidence_count": 8,
+      "unique_evidence_ids": 8,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 14
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 5718,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "bundle.explain",
+     "bytes": 13998,
+     "decomposition": {
+      "total": 13998,
+      "data": 7561,
+      "evidence": 5059,
+      "evidence_identity": 2381,
+      "evidence_location": 574,
+      "evidence_narrative": 455,
+      "evidence_extras": 1660,
+      "overhead": 1378,
+      "evidence_count": 6,
+      "unique_evidence_ids": 6,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 4022,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T06.sqi.r1",
+   "task_id": "SQI-T06",
+   "repetition": 1,
+   "task_success": true,
+   "duration_ms": 78456.123,
+   "sqi_calls": 1,
+   "envelope_bytes_total": 33567,
+   "envelope_decomposition_total": {
+    "data": 19033,
+    "evidence": 12987,
+    "evidence_identity": 4591,
+    "evidence_location": 1208,
+    "evidence_narrative": 529,
+    "evidence_extras": 6682,
+    "overhead": 1547
+   },
+   "evidence_entries_total": 12,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 12974,
+   "evidence_total_bytes": 12974,
+   "source_read_bytes": 61040,
+   "source_read_events": 14,
+   "prompt_bytes": 0,
+   "output_bytes": 3847,
+   "tokens": {
+    "input": 48628,
+    "output": 11798,
+    "cache_read": 627456,
+    "cache_creation": 0
+   },
+   "cache_amplification": 12.9,
+   "used_ids_count": 12,
+   "per_call": [
+    {
+     "call": "bundle.explain",
+     "bytes": 33567,
+     "decomposition": {
+      "total": 33567,
+      "data": 19033,
+      "evidence": 12987,
+      "evidence_identity": 4591,
+      "evidence_location": 1208,
+      "evidence_narrative": 529,
+      "evidence_extras": 6682,
+      "overhead": 1547,
+      "evidence_count": 12,
+      "unique_evidence_ids": 12,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 39,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 43
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 12974,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T06.sqi.r2",
+   "task_id": "SQI-T06",
+   "repetition": 2,
+   "task_success": true,
+   "duration_ms": 144594.434,
+   "sqi_calls": 1,
+   "envelope_bytes_total": 33566,
+   "envelope_decomposition_total": {
+    "data": 19033,
+    "evidence": 12987,
+    "evidence_identity": 4591,
+    "evidence_location": 1208,
+    "evidence_narrative": 529,
+    "evidence_extras": 6682,
+    "overhead": 1546
+   },
+   "evidence_entries_total": 12,
+   "evidence_duplicate_bytes": 0,
+   "evidence_used_bytes": 12974,
+   "evidence_total_bytes": 12974,
+   "source_read_bytes": 78309,
+   "source_read_events": 24,
+   "prompt_bytes": 0,
+   "output_bytes": 3432,
+   "tokens": {
+    "input": 56518,
+    "output": 24896,
+    "cache_read": 1109376,
+    "cache_creation": 0
+   },
+   "cache_amplification": 19.6,
+   "used_ids_count": 12,
+   "per_call": [
+    {
+     "call": "bundle.explain",
+     "bytes": 33566,
+     "decomposition": {
+      "total": 33566,
+      "data": 19033,
+      "evidence": 12987,
+      "evidence_identity": 4591,
+      "evidence_location": 1208,
+      "evidence_narrative": 529,
+      "evidence_extras": 6682,
+      "overhead": 1546,
+      "evidence_count": 12,
+      "unique_evidence_ids": 12,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 39,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 43
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 12974,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  },
+  {
+   "cell": "SQI-T06.sqi.r3",
+   "task_id": "SQI-T06",
+   "repetition": 3,
+   "task_success": true,
+   "duration_ms": 112985.495,
+   "sqi_calls": 2,
+   "envelope_bytes_total": 37051,
+   "envelope_decomposition_total": {
+    "data": 20006,
+    "evidence": 14332,
+    "evidence_identity": 5359,
+    "evidence_location": 1390,
+    "evidence_narrative": 611,
+    "evidence_extras": 6998,
+    "overhead": 2713
+   },
+   "evidence_entries_total": 14,
+   "evidence_duplicate_bytes": 698,
+   "evidence_used_bytes": 12948,
+   "evidence_total_bytes": 14316,
+   "source_read_bytes": 130810,
+   "source_read_events": 24,
+   "prompt_bytes": 0,
+   "output_bytes": 4313,
+   "tokens": {
+    "input": 70510,
+    "output": 19422,
+    "cache_read": 1012480,
+    "cache_creation": 0
+   },
+   "cache_amplification": 14.4,
+   "used_ids_count": 12,
+   "per_call": [
+    {
+     "call": "symbol.lookup",
+     "bytes": 3484,
+     "decomposition": {
+      "total": 3484,
+      "data": 973,
+      "evidence": 1345,
+      "evidence_identity": 768,
+      "evidence_location": 182,
+      "evidence_narrative": 82,
+      "evidence_extras": 316,
+      "overhead": 1166,
+      "evidence_count": 2,
+      "unique_evidence_ids": 2,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 0,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 0
+       },
+       "truncated": false
+      }
+     },
+     "fresh_evidence_bytes": 1342,
+     "duplicate_evidence_bytes": 0
+    },
+    {
+     "call": "bundle.explain",
+     "bytes": 33567,
+     "decomposition": {
+      "total": 33567,
+      "data": 19033,
+      "evidence": 12987,
+      "evidence_identity": 4591,
+      "evidence_location": 1208,
+      "evidence_narrative": 529,
+      "evidence_extras": 6682,
+      "overhead": 1547,
+      "evidence_count": 12,
+      "unique_evidence_ids": 12,
+      "duplicate_evidence_entries": 0,
+      "truncation": {
+       "omitted_counts": {
+        "edges": 39,
+        "raw_refs": 0,
+        "sections": 0,
+        "symbols": 43
+       },
+       "truncated": true
+      }
+     },
+     "fresh_evidence_bytes": 12276,
+     "duplicate_evidence_bytes": 0
+    }
+   ]
+  }
+ ]
+}

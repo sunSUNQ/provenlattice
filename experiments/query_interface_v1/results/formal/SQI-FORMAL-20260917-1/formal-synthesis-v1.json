@@ -1,0 +1,247 @@
+{
+ "schema": "SQI_FORMAL_SYNTHESIS_V1",
+ "schema_version": 1,
+ "batch_id": "SQI-FORMAL-20260917-1",
+ "protocol": "SQI_FORMAL_QUALIFICATION_PROTOCOL_V1",
+ "oracle": "SQI_FORMAL_ORACLE_V1.1 (uniform review-pass normalization; V1 evaluation retained per cell)",
+ "cells_total": 36,
+ "cells_completed": 36,
+ "cells_failed": 0,
+ "blockers": [],
+ "arms": {
+  "native": {
+   "cells": 18,
+   "completed": 18,
+   "task_success": 13,
+   "citation_closure_ok": 18,
+   "unsupported_claim_total": 0,
+   "source_read_events_total": 213,
+   "tool_calls_total": 236,
+   "sqi_calls_total": 0,
+   "sqi_payload_bytes_total": 0,
+   "tokens": {
+    "input": 527160,
+    "output": 117639,
+    "cache_read": 3410816,
+    "cache_creation": 0
+   },
+   "median_duration_s": 22.7,
+   "capability_flags": [],
+   "policy_violations": [],
+   "cells_reading_provenlattice_sources": 2
+  },
+  "sqi": {
+   "cells": 18,
+   "completed": 18,
+   "task_success": 18,
+   "citation_closure_ok": 18,
+   "unsupported_claim_total": 0,
+   "source_read_events_total": 324,
+   "tool_calls_total": 542,
+   "sqi_calls_total": 59,
+   "sqi_payload_bytes_total": 517226,
+   "tokens": {
+    "input": 962640,
+    "output": 230508,
+    "cache_read": 14738944,
+    "cache_creation": 0
+   },
+   "median_duration_s": 73.5,
+   "capability_flags": [],
+   "policy_violations": [],
+   "cells_reading_provenlattice_sources": 15
+  }
+ },
+ "per_task": {
+  "SQI-T01": {
+   "native": {
+    "success": "3/3",
+    "median_duration_s": 6.9,
+    "median_sqi_calls": 0,
+    "median_source_reads": 2,
+    "median_tool_calls": 2
+   },
+   "sqi": {
+    "success": "3/3",
+    "median_duration_s": 31.6,
+    "median_sqi_calls": 2,
+    "median_source_reads": 8,
+    "median_tool_calls": 16
+   }
+  },
+  "SQI-T02": {
+   "native": {
+    "success": "1/3",
+    "median_duration_s": 23.4,
+    "median_sqi_calls": 0,
+    "median_source_reads": 17,
+    "median_tool_calls": 17
+   },
+   "sqi": {
+    "success": "3/3",
+    "median_duration_s": 70.4,
+    "median_sqi_calls": 3,
+    "median_source_reads": 24,
+    "median_tool_calls": 33
+   }
+  },
+  "SQI-T03": {
+   "native": {
+    "success": "3/3",
+    "median_duration_s": 20.2,
+    "median_sqi_calls": 0,
+    "median_source_reads": 8,
+    "median_tool_calls": 8
+   },
+   "sqi": {
+    "success": "3/3",
+    "median_duration_s": 34.5,
+    "median_sqi_calls": 3,
+    "median_source_reads": 9,
+    "median_tool_calls": 16
+   }
+  },
+  "SQI-T04": {
+   "native": {
+    "success": "0/3",
+    "median_duration_s": 68.8,
+    "median_sqi_calls": 0,
+    "median_source_reads": 22,
+    "median_tool_calls": 27
+   },
+   "sqi": {
+    "success": "3/3",
+    "median_duration_s": 89.4,
+    "median_sqi_calls": 1,
+    "median_source_reads": 23,
+    "median_tool_calls": 30
+   }
+  },
+  "SQI-T05": {
+   "native": {
+    "success": "3/3",
+    "median_duration_s": 17.2,
+    "median_sqi_calls": 0,
+    "median_source_reads": 11,
+    "median_tool_calls": 12
+   },
+   "sqi": {
+    "success": "3/3",
+    "median_duration_s": 91.7,
+    "median_sqi_calls": 10,
+    "median_source_reads": 18,
+    "median_tool_calls": 39
+   }
+  },
+  "SQI-T06": {
+   "native": {
+    "success": "3/3",
+    "median_duration_s": 58.5,
+    "median_sqi_calls": 0,
+    "median_source_reads": 10,
+    "median_tool_calls": 12
+   },
+   "sqi": {
+    "success": "3/3",
+    "median_duration_s": 113.0,
+    "median_sqi_calls": 1,
+    "median_source_reads": 24,
+    "median_tool_calls": 41
+   }
+  }
+ },
+ "task_success_matrix": {
+  "SQI-T01": {
+   "native": "3/3",
+   "sqi": "3/3"
+  },
+  "SQI-T02": {
+   "native": "1/3",
+   "sqi": "3/3"
+  },
+  "SQI-T03": {
+   "native": "3/3",
+   "sqi": "3/3"
+  },
+  "SQI-T04": {
+   "native": "0/3",
+   "sqi": "3/3"
+  },
+  "SQI-T05": {
+   "native": "3/3",
+   "sqi": "3/3"
+  },
+  "SQI-T06": {
+   "native": "3/3",
+   "sqi": "3/3"
+  }
+ },
+ "capability_failure_cells": [],
+ "evaluation_v1_to_v11_flips": {
+  "count": 16,
+  "cause": "symbol-spelling and path-separator normalization, T06 arm-gating, T05 fixture reclassification; no success criterion changed"
+ },
+ "scoped_observations": [
+  {
+   "id": "PROVENLATTICE_SOURCE_READS",
+   "observation": "agents in 16/36 cells read files under the provenlattice checkout (implementation/task artifacts), concentrated in T04 (both arms)",
+   "disposition": "agent retrieval path outside the benchmark repo; not arm contamination per frozen definition (no SQI tool/envelope in native arm); recorded for sandbox scoping in a future protocol version",
+   "gating": false
+  },
+  {
+   "id": "T05_ECODE_FIXTURE_MISMATCH",
+   "observation": "frozen T05 required_evidence_ids contains an E-CODE id minted by the R2 codegraph database while the task declares the knowledge database; V1.1 accepts the session-returned CROSS_LAYER_LINK id as the in-session equivalent",
+   "gating": false
+  },
+  {
+   "id": "SQI_CONTEXT_COST",
+   "observation": "SQI arm consumed more input/cache tokens than native (envelope payloads + more tool rounds); T04 SQI payload ~50-70 KiB per session",
+   "disposition": "reported per protocol §6; performance is not the sole verdict basis; no cost-based verdict is claimed either way",
+   "gating": false
+  }
+ ],
+ "verdict_rule_check": {
+  "infrastructure_failure_fraction_over_one_third_in_any_arm": false,
+  "confirmed_capability_failures": 0,
+  "oracle_unreliable": false,
+  "block": false
+ },
+ "cell_sha256_manifest": {
+  "SQI-T01.native.r1": "2f3d83d48df735f80edb2a0bd6bf69c4bea752e53fa9680682d04302e03df41f",
+  "SQI-T01.native.r2": "eccbb3be9d0ba9f37fc590f359f13394ac02e8bee46f7303b7a74478af1a7064",
+  "SQI-T01.native.r3": "956cec7802ec56b83487d91a8084f89e031190a39e85da60feafd6a975490313",
+  "SQI-T01.sqi.r1": "a5f2e8a024f62c43b25a176c13467d2576467cdb4afbd6fe0a9151cbc4aeb074",
+  "SQI-T01.sqi.r2": "04ae67be4efb5a612151028c0d3c6a473b340d710d36e11fc405121674af64d4",
+  "SQI-T01.sqi.r3": "df6c0496e303be04d8e4f21fe6e48fb8643f61f564e005394383738fcdf9a1f1",
+  "SQI-T02.native.r1": "22df2e03b89dfc6f611d34020f2fc8272dc90fcc2bc564ca7768a5e7959003a6",
+  "SQI-T02.native.r2": "285ca3e3d46c025ab8c833e22c5dfeabce40674db42bd8ef964dcd67663d6b32",
+  "SQI-T02.native.r3": "bb0ec08f6396b08d617d2c3ee26f2b2ea20537a3f60d5f7c897baa8035ad7368",
+  "SQI-T02.sqi.r1": "9c5ec871826221ff2167c62342a7e212d5a3beb816c8bcfc1a3717ad79395e84",
+  "SQI-T02.sqi.r2": "efc435ba6ac6e27eec4725d34ee196cca5cf626f7c66504f02a5383d750f67a0",
+  "SQI-T02.sqi.r3": "277528b923cdd33e86e5c100b74348a9f7898445fc36a1b7f70fae5d42ff94f5",
+  "SQI-T03.native.r1": "f16cf17091965b970cd13b1f0032d7065aee066e8f015cb9dca709eaa09a0971",
+  "SQI-T03.native.r2": "b66058a3befeb6ba14c939401d918f0b5dee8a98c51df4ea1e36a1919cd9ce12",
+  "SQI-T03.native.r3": "f39f2a3b82a406b251659ec22e6cdd3492b0fd98f2a50feb8caba349fe55ad8a",
+  "SQI-T03.sqi.r1": "f0ee6ab7ecc85c40fd7fc200493e5f3dd6b4c9b3a81fddcbff138fe207728709",
+  "SQI-T03.sqi.r2": "4f2202155e726f610b20e98aadce7fdaeaa5cfc539a50dad871fb87e4525230f",
+  "SQI-T03.sqi.r3": "284acb9065d9d861d7792483644e2194eb0b49ee1261f62f931105d305ef3d78",
+  "SQI-T04.native.r1": "d92b1c18cf9e988daa7369d7c1b0e48db764f60316d438df7d22572969242dd9",
+  "SQI-T04.native.r2": "2ccf063e37dfdde7b76015c0726a18ba7aa06c00cbf61020bd0845f27d5b75c5",
+  "SQI-T04.native.r3": "e686336caaa51c9d5fd4048b3413247bc8fd24660f2571ae7dcfca8b82b73b76",
+  "SQI-T04.sqi.r1": "b016a10de8340609511821a759836b22352c46eaa1aaba9d16f4101b8fab68a2",
+  "SQI-T04.sqi.r2": "8a1f061914953512ddcf6b82fc6a90eb2749cf12fd2d0855eb630d4b15663bd1",
+  "SQI-T04.sqi.r3": "6761f921f9d170de6c81a2a578ef00614eba4eb12f6f8aa6be0554975c44f9cb",
+  "SQI-T05.native.r1": "ebd23fec913540185ae988a006fd5cf0dc07a8a2ed0c13a9b599ab3fb3365a32",
+  "SQI-T05.native.r2": "53b42dc518657d387217c089d1c2d503c716ceba25707fa35ee89a7d0c4a79fb",
+  "SQI-T05.native.r3": "fabec3acae325b1be2eb383e87786faced92fddc9f23e46f0d6dd5e83c24aafd",
+  "SQI-T05.sqi.r1": "8c5f1c0b5beba8d38797722883921d429d27ff956f2cb8fa079813c48c6673d7",
+  "SQI-T05.sqi.r2": "8c069574acea10067473655a12402a7f47cd154c9b032ca789bd322699ba4838",
+  "SQI-T05.sqi.r3": "6564fa3545f91ff5f35ece29ffad5e36c0611bd7de0b76066db4a47b949db00e",
+  "SQI-T06.native.r1": "bd33ede2a159b3662f59915c91339cd0e448ce2218285c1337a3151d7f209e91",
+  "SQI-T06.native.r2": "a77237d6bfe6eb7555424aa30ce9d245cdafa52c1615fb5881cc24fa15ac5964",
+  "SQI-T06.native.r3": "78c53415d88e999519c65ba385000e9aa7c01eadb7c4a5ef3fe18a0b8185ef27",
+  "SQI-T06.sqi.r1": "16542fc0ef0a3a988ee79ff9ef9b2c9cde35c365733cfd4bebf0ba6707fcc8c2",
+  "SQI-T06.sqi.r2": "700f7307d7887295340c888925fedacc359266562e511b51c77b4af9ec6c5bb1",
+  "SQI-T06.sqi.r3": "3808527357812ca1db6a90476e2aae13593374a52659c2946fedf55aaa45a943"
+ }
+}

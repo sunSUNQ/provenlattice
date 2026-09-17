@@ -1,0 +1,72 @@
+{
+ "schema": "SQI_FORMAL_BATCH_SUMMARY_V1",
+ "schema_version": 1,
+ "batch_id": "SQI-FORMAL-20260917-1",
+ "protocol": "SQI_FORMAL_QUALIFICATION_PROTOCOL_V1",
+ "oracle": "SQI_FORMAL_ORACLE_V1.1 (uniform review pass; V1 retained per cell)",
+ "model_id": "claude-sonnet-4-5-20250929",
+ "claude_cli_version": "2.1.270",
+ "repetitions_per_cell": 3,
+ "arms": [
+  "native",
+  "sqi"
+ ],
+ "cells_total": 36,
+ "cells_completed": 36,
+ "cells_failed": 0,
+ "blockers": [],
+ "capability_failure_cells": [],
+ "task_success": {
+  "native": "13/18",
+  "sqi": "18/18"
+ },
+ "task_success_matrix": {
+  "SQI-T01": {
+   "native": "3/3",
+   "sqi": "3/3"
+  },
+  "SQI-T02": {
+   "native": "1/3",
+   "sqi": "3/3"
+  },
+  "SQI-T03": {
+   "native": "3/3",
+   "sqi": "3/3"
+  },
+  "SQI-T04": {
+   "native": "0/3",
+   "sqi": "3/3"
+  },
+  "SQI-T05": {
+   "native": "3/3",
+   "sqi": "3/3"
+  },
+  "SQI-T06": {
+   "native": "3/3",
+   "sqi": "3/3"
+  }
+ },
+ "cost": {
+  "native": {
+   "input_tokens": 527160,
+   "output_tokens": 117639,
+   "cache_read_tokens": 3410816,
+   "median_duration_s": 22.7
+  },
+  "sqi": {
+   "input_tokens": 962640,
+   "output_tokens": 230508,
+   "cache_read_tokens": 14738944,
+   "sqi_payload_bytes_total": 517226,
+   "sqi_calls_total": 59,
+   "median_duration_s": 73.5
+  }
+ },
+ "evidence_discipline": {
+  "sqi_citation_closure_ok": 18,
+  "unsupported_claims_total": 0,
+  "native_citation_required": false
+ },
+ "verdict": "QUALIFIED (limited to SQI_FORMAL_QUALIFICATION_PROTOCOL_V1 scope)",
+ "synthesis": "formal-synthesis-v1.json"
+}

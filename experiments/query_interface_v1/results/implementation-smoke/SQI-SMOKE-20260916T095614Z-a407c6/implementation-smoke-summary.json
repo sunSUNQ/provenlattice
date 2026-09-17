@@ -1,0 +1,54 @@
+{
+ "schema": "SQI_IMPLEMENTATION_SMOKE_SUMMARY_V1",
+ "schema_version": 1,
+ "run_id": "SQI-SMOKE-20260916T095614Z-a407c6",
+ "run_kind": "implementation-smoke",
+ "arm": "sqi",
+ "sqi_version": "SQI-V1",
+ "runner_version": "sqi-runner-v1-implementation-smoke",
+ "task_freeze_seal": "../tasks referenced via contract freeze seal",
+ "qualification_verdict": null,
+ "no_qualification_verdict_reason": "implementation-smoke validates interface machinery only (schema validity, determinism, budget compliance, evidence binding, truncation honesty); Native-vs-SQI task effectiveness is a later frozen phase",
+ "tasks_total": 6,
+ "tasks_passed": 6,
+ "tasks_failed": 0,
+ "status": "PASS",
+ "records": [
+  {
+   "task_id": "SQI-T01",
+   "status": "PASS",
+   "record": "SQI-T01.json",
+   "sha256": "dbb0aef2eec3a1f8b31e2fe9eba1d01c942483a831ab5dfb4964cce2e9725bbc"
+  },
+  {
+   "task_id": "SQI-T02",
+   "status": "PASS",
+   "record": "SQI-T02.json",
+   "sha256": "2e839390ec692529f0cdf588c143f737fd68a1466fae71961b9bc683f26df0d2"
+  },
+  {
+   "task_id": "SQI-T03",
+   "status": "PASS",
+   "record": "SQI-T03.json",
+   "sha256": "098933307a59e134f6b5100e55d4a76a5558ef26e9a3a7fdffad192bd34b0e76"
+  },
+  {
+   "task_id": "SQI-T04",
+   "status": "PASS",
+   "record": "SQI-T04.json",
+   "sha256": "28b6bfe095f625969c182317d7452ab59422cc28945ff3581d917a0f4ee9bbba"
+  },
+  {
+   "task_id": "SQI-T05",
+   "status": "PASS",
+   "record": "SQI-T05.json",
+   "sha256": "7448bf0d3323ebb3184293f27388679951d158daf55bee57026021fda0a5c4b9"
+  },
+  {
+   "task_id": "SQI-T06",
+   "status": "PASS",
+   "record": "SQI-T06.json",
+   "sha256": "39b1aa18684591d0dd6a58904cd18afc80223cf18595d4ae9a540b355cb0387a"
+  }
+ ]
+}
