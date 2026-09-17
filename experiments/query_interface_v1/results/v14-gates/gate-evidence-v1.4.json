@@ -1,0 +1,150 @@
+{
+ "schema": "SQI_V14_ISOLATION_QUALIFICATION_V1",
+ "contract": "sqi-v1.4-isolation-contract.md",
+ "gates": [
+  {
+   "gate": "I5-write-integrity",
+   "cases": [
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+     "write_blocked": true,
+     "stderr_head": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nPermissionError: [Errno 13"
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+     "write_blocked": true,
+     "stderr_head": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nPermissionError: [Errno 13"
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db",
+     "write_blocked": true,
+     "stderr_head": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nPermissionError: [Errno 13"
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db",
+     "write_blocked": true,
+     "stderr_head": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nPermissionError: [Errno 13"
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-repos\\aria2\\README.md",
+     "write_blocked": true,
+     "stderr_head": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nPermissionError: [Errno 13"
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc\\README.md",
+     "write_blocked": true,
+     "stderr_head": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nPermissionError: [Errno 13"
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb\\README.md",
+     "write_blocked": true,
+     "stderr_head": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nPermissionError: [Errno 13"
+    }
+   ],
+   "disposable_copy_writable": true,
+   "pass": true
+  },
+  {
+   "gate": "I5b-final-integrity",
+   "pass": true,
+   "fingerprints": {
+    "aria2": {
+     "head": "9e7273583f83e881e3ec067b523ba88724088d2f",
+     "dirty": false
+    },
+    "brpc": {
+     "head": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+     "dirty": false
+    },
+    "rocksdb": {
+     "head": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+     "dirty": false
+    }
+   }
+  },
+  {
+   "gate": "I1-visibility",
+   "ground_truth_denied": 0,
+   "ground_truth_total": 3,
+   "readable_outside_allowlist": [
+    "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\tasks\\SQI-T04.json",
+    "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\contract\\structured-query-interface-contract-v1.md",
+    "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\results\\formal\\SQI-FORMAL-20260917-1\\formal-batch-summary.json"
+   ],
+   "platform_boundary": true,
+   "pass": false,
+   "pass_doc": "I1 read-invisibility cannot PASS on this host (same-user process); deny-ACL subset verified in denied probes"
+  },
+  {
+   "gate": "I2-parent-escape",
+   "parent_listing_readable": false,
+   "ground_truth_artifact_denied": false,
+   "platform_boundary": true,
+   "pass": false,
+   "pass_doc": "parent visibility cannot PASS on this host (same-user process); documented"
+  },
+  {
+   "gate": "I3-transcript-escape",
+   "cli_alive_under_deny": true,
+   "probe": {
+    "path": "C:\\Users\\sunqinghw\\.claude\\projects",
+    "stdout": "ACCESS_DENIED",
+    "denied": true,
+    "readable": false
+   },
+   "platform_boundary": true,
+   "pass": false,
+   "pass_doc": "I3 read-invisibility cannot PASS on this host (same-user process); documented"
+  },
+  {
+   "gate": "I4-cross-repo",
+   "sibling_repos_readable": [
+    "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc\\README.md"
+   ],
+   "platform_boundary": true,
+   "pass": false,
+   "pass_doc": "sibling visibility cannot PASS on this host (same-user process); documented"
+  },
+  {
+   "gate": "I6-functional-usability",
+   "sessions": [
+    {
+     "cell": "SQI-T01.native",
+     "exit_reason": "completed",
+     "bridge_calls_ok": null,
+     "sqi_calls": 0,
+     "pass": true
+    },
+    {
+     "cell": "SQI-T01.sqi",
+     "exit_reason": "completed",
+     "bridge_calls_ok": true,
+     "sqi_calls": 2,
+     "pass": true
+    },
+    {
+     "cell": "SQI-T05.sqi",
+     "exit_reason": "completed",
+     "bridge_calls_ok": true,
+     "sqi_calls": 8,
+     "pass": true
+    }
+   ],
+   "pass": true
+  }
+ ],
+ "achieved_pass": {
+  "I4-write-integrity": true,
+  "I5-write-integrity": true,
+  "I6-functional-usability": true
+ },
+ "platform_boundary_gates": [
+  "I1-visibility",
+  "I2-parent-escape",
+  "I3-transcript-escape",
+  "I4-cross-repo"
+ ],
+ "verdict": "PARTIAL — write integrity + usability PASS on this host; read-invisibility (I1-I4) requires OS-level isolation (Docker/WSL/Windows Sandbox) which this host lacks (no docker, no wsl, non-admin shell)",
+ "c4_authorized": false,
+ "unblock_requirement": "user-level environment install: Docker Desktop or WSL2 or Windows Sandbox enablement (admin), then re-run the V1.4 gates for full I1-I4 verdicts"
+}

@@ -1,0 +1,12 @@
+**Location**
+
+- File: `src/DownloadEngine.h`
+- Declaration line: **84** (`class DownloadEngine {`), with the class body running to line 335.
+
+**Responsibility**
+
+`aria2.DownloadEngine` is aria2's central event-loop driver: its `run()` method polls the event poller (`EventPoll`) and dispatches work by executing the pending commands held in its `commands_` / `routineCommands_` queues. It owns and coordinates the major long-lived managers — `RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`, cookie storage, DNS cache, and the BitTorrent registry — and exposes the socket read/write and name-resolver registration plus the socket-pool API used by commands. It also carries halt/force-halt state, the session id, and token validation for the RPC layer.
+
+Evidence Used:
+- E-CODE-94acad33e16eceea6ea5d677
+- E-CODE-d69dc4724057c9eef06a45bd

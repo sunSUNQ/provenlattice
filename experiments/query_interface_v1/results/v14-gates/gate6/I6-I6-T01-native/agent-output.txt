@@ -1,0 +1,9 @@
+**File:** `src/DownloadEngine.h` **Line:** 84 (`class DownloadEngine {`)
+
+`aria2.DownloadEngine` is the core event-loop driver: `run()` (line 183) polls sockets/resolvers via `EventPoll` and dispatches the associated `Command` objects. It owns and coordinates the major subsystems — `RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`, `CookieStorage`, `DNSCache`, `BtRegistry`, and the socket pool — plus command queues for regular and routine commands. It also holds halt state (`isHaltRequested()`/`requestHalt()`, lines 234–240) and RPC token validation (`validateToken()`, line 334).
+
+Evidence ids used:
+- `src/DownloadEngine.h:84` — declaration
+- `src/DownloadEngine.h:183` — `int run(bool oneshot = false);`
+- `src/DownloadEngine.h:162-172` — owned subsystem members
+- `src/DownloadEngine.h:234-240`, `src/DownloadEngine.h:334` — halt control and token validation

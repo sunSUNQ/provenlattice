@@ -1,0 +1,29 @@
+## 文档定位
+
+`docs/cn/client.md:286-288`,小节 **### c_murmurhash_bl** 描述"带负载上限的一致性哈希"(Consistent Hashing with Bounded Loads, Mirrokni 等, CACM 2017):哈希环同 `c_murmurhash`,每台服务器容量上限为 `ceil(load_factor * 平均在途请求数)`,命中已达上限的服务器时请求沿环顺时针溢出到下一台有余量的服务器;`load_factor` 默认来自 `-chash_bounded_load_factor`(默认 1.25,必须 > 1),可按 channel 用 `c_murmurhash_bl:load_factor=1.5` 覆盖,`replicas` 同 `c_murmurhash`。
+
+## 主代码符号
+
+**`brpc::policy::ConsistentHashingBoundedLoadBalancer`** —— 类定义在 `src/brpc/policy/consistent_hashing_load_balancer.h:98-130`(基类 `ConsistentHashingLoadBalancer`),实现主体在 `src/brpc/policy/consistent_hashing_load_balancer.cpp`。核心选择逻辑是它的 **`SelectServer(const SelectIn&, SelectOut*)`**(声明 `consistent_hashing_load_balancer.h:107`,定义 `consistent_hashing_load_balancer.cpp:525-602`)。
+
+## 文档到代码的对应关系(逐条核对源码)
+
+1. **LB 名称注册** —— 字符串 `"c_murmurhash_bl"` 在 `src/brpc/global.cpp:416` 经 `LoadBalancerExtension()->RegisterOrDie(...)` 注册到 `g_ext->ch_mh_bl_lb`(`global.cpp:167`,类型即 `ConsistentHashingBoundedLoadBalancer`)。这是结构事实(符号/注册存在性),由查询返回的类定义证据支撑。
+2. **`ceil(load_factor × 平均在途请求数)`** —— `SelectServer` 在 `consistent_hashing_load_balancer.cpp:546-551` 计算 `capacity = ceil(_load_factor * (total + 1) / lm->size())`,其中 `_total_inflight` / `lm->size()` 即总在途与服务器数,对应文档公式。
+3. **顺时针溢出到下一台有余量的服务器** —— `consistent_hashing_load_balancer.cpp:552-556` 用 `std::lower_bound` 定位哈希命中节点,随后 `:565-588` 沿环顺时针回绕遍历,取第一台 `inflight < capacity` 的服务器(`:575`),否则退回首个可接受服务器作 fallback(`:580-583`、`:589-595`)。遍历起点与步进由环序确定,故溢出目标是环上确定的后继,与文档"落到环上固定的后继节点"一致。
+4. **`load_factor` 默认 1.25、必须 > 1** —— gflag `DEFINE_double(chash_bounded_load_factor, 1.25, ...)` 在 `consistent_hashing_load_balancer.cpp:41-45`,校验器 `ValidateLoadFactor` 要求 `factor > 1.0`,`:50` 用 `BRPC_VALIDATE_GFLAG` 绑定;构造函数 `:427-431` 以该 flag 初始化 `_load_factor`。
+5. **按 channel 覆盖 `load_factor=1.5`** —— `SetParameter` 在 `consistent_hashing_load_balancer.cpp:509-523` 解析 `"load_factor"`,并拒绝 `<= 1.0` 的值。
+6. **`replicas` 与 `c_murmurhash` 相同** —— `load_factor` 未命中时透传基类 `SetParameter`(`:522`),基类在 `:420-422` 处理 `"replicas"` 写入 `_num_replicas`,`SyncLoadMap` 在 `:453` 也用 `_num_replicas` 估算环上服务器数。
+
+文档引用的 CACM 2017 算法说明也直接写在头文件注释 `consistent_hashing_load_balancer.h:93-97`(说明"溢出到环上后继而非压垮单台服务器")。
+
+补充:`SelectServer` 在 `:527-534` 强制要求 `Controller.set_request_code()`,与 `c_murmurhash` 小节(`client.md:274`)的约束一致;这部分语义已通过阅读该函数源码核实。
+
+Evidence Used:
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-3f698369ec57552531b20d82
+- E-CODE-367d5b5a91beb9028d859ae9
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-SHARD-0bd4b5aa4d298e72de409251
+- E-SHARD-adfd8b0e2651c4e08ea3bf3c
