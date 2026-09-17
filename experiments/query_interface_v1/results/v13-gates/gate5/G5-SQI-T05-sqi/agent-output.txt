@@ -1,0 +1,27 @@
+## Answer
+
+### The documented behavior
+`docs/cn/client.md`, section `### c_murmurhash_bl` (lines 286–289): "带负载上限的一致性哈希" — Consistent Hashing with Bounded Loads (Mirrokni et al., CACM 2017). Same ring as `c_murmurhash`, but each server has capacity `ceil(load_factor * average_inflight)`; when the hashed-to server is full the request spills clockwise to the next server with spare capacity. `load_factor` defaults from `-chash_bounded_load_factor` (1.25, must be >1) and is overridable per channel via `c_murmurhash_bl:load_factor=1.5`; `replicas` behaves as in `c_murmurhash`.
+
+### Main code symbol and file
+- **Class:** `brpc.policy.ConsistentHashingBoundedLoadBalancer` — declared in `src/brpc/policy/consistent_hashing_load_balancer.h:98-130` (E-CODE-1726cdc7c9938223c1d04362).
+- **Core method:** `brpc.policy.ConsistentHashingBoundedLoadBalancer.SelectServer` — defined in `src/brpc/policy/consistent_hashing_load_balancer.cpp:525-602` (E-CODE-3f698369ec57552531b20d82). The class ctor is at `consistent_hashing_load_balancer.cpp:427-431` (E-CODE-6aa9c25c466cb73b19d2a6b4; declared at `.h:100-101`, E-CODE-cddcb1233eb5aa32cb587ed9).
+- **Registration:** the name string `c_murmurhash_bl` is registered in `src/brpc/global.cpp:416` against `g_ext->ch_mh_bl_lb`, whose type is `CONS_HASH_LB_MURMUR3` (`global.cpp:141`) — so the "c_murmurhash" ring plus the bounded-load behavior is exactly what the doc describes.
+
+### Document-to-code relationship
+The knowledge graph links the doc section to code via a cross-layer edge: the section at `docs/cn/client.md:286-289` `DOCUMENTS` the `replicas` symbol (E-XLINK-3284c4dde04ede3b45992a17), which resolves to the `brpc.policy.AddServersInBatch.replicas` helper defined at `consistent_hashing_load_balancer.cpp:265` (E-CODE-9cec5b84fb52b556c0c332c9). This is the explicit symbol reference the extractor found in the prose — it anchors the doc's statement that "`replicas` 参数与 `c_murmurhash` 相同". The behavioral core of the section (bounded loads, clockwise overflow) is carried by the class itself, which I confirmed by reading the source.
+
+Source verification (semantic claims):
+- `SelectServer` computes `capacity = ceil(_load_factor * (total_inflight + 1) / load_map.size())` (`consistent_hashing_load_balancer.cpp:546-551`), then `lower_bound`s the ring on `request_code` and walks **clockwise**, taking the first server with `inflight < capacity` (`:552-588`) — matching the doc's "沿哈希环顺时针溢出到下一台有余量的服务器". It keeps a fallback server, and increments `inflight`/`_total_inflight` when weights are changable (`:589-601`); `Feedback` decrements them (`:604-616`).
+- `_load_factor` is initialized from `FLAGS_chash_bounded_load_factor` (`:430`), whose default 1.25 and "must be > 1" rule are enforced at `:41-50` and re-checked by `SetParameter("load_factor")` requiring `factor > 1.0` (`:511-521`) — matching the doc's `-chash_bounded_load_factor` (1.25) and `c_murmurhash_bl:load_factor=1.5` override.
+- Parent-relationship: shard membership confirms the class sits in `src/brpc` (E-SHARD-0bd4b5aa4d298e72de409251) and `SelectServer` likewise (E-SHARD-adfd8b0e2651c4e08ea3bf3c), i.e. it inherits the `c_murmurhash` ring from `ConsistentHashingLoadBalancer` (`.h:46-91`).
+
+Evidence Used:
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-3f698369ec57552531b20d82
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-SHARD-0bd4b5aa4d298e72de409251
+- E-SHARD-adfd8b0e2651c4e08ea3bf3c

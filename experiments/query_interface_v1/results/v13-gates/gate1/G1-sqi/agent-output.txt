@@ -1,0 +1,13 @@
+## `aria2.DownloadEngine`
+
+- **File:** `src/DownloadEngine.h`
+- **Declaration line:** 84 (the class body spans lines 84–335)
+
+**Responsibility:** `DownloadEngine` is aria2's central event loop / command scheduler. Its `run()` method drives repeated polling of the `EventPoll` object and dispatches queued `Command` objects (routine and one-shot), which is how all downloads and services make progress (src/DownloadEngine.h:183; src/DownloadEngine.cc:158). It also owns the shared per-run state that commands reach through it: the `RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`, DNS cache, cookie storage, a pooled-socket cache, statistics, and halt-request flags.
+
+Evidence used for identity/line numbers came from the bridge; the responsibility description was verified against the header and `src/DownloadEngine.cc`.
+
+Evidence Used:
+- E-CODE-94acad33e16eceea6ea5d677
+- E-CODE-d69dc4724057c9eef06a45bd
+- E-CODE-5b90c0eeea70294a6db4fabe

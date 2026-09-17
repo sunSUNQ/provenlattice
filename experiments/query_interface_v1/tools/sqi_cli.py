@@ -154,6 +154,23 @@ def main() -> int:
             "message": f"params {illegal} not allowed for {args.call} "
                        f"(allowed: {sorted(CALL_PARAMS[args.call])})"}})
 
+    # V1.3 A3 fail-closed: never let sqlite create a database file. Every
+    # declared database path must already exist AND be a SQLite database.
+    for label, db_path in (("--database", args.database),
+                           ("--code-database", args.code_database)):
+        if db_path and not os.path.isfile(db_path):
+            return _fail({"error": {
+                "code": "DATABASE_NOT_FOUND",
+                "message": f"{label} does not exist (refusing to create): "
+                           f"{db_path}"}})
+        if db_path:
+            with open(db_path, "rb") as handle:
+                header = handle.read(16)
+            if header != b"SQLite format 3\x00":
+                return _fail({"error": {
+                    "code": "NOT_A_SQLITE_DATABASE",
+                    "message": f"{label} is not a SQLite database: {db_path}"}})
+
     log_entries = _load_log_entries(args.call_log)
 
     # session short-circuit (OPT-T05-COMPRESSION): identical earlier invocation
@@ -178,8 +195,7 @@ def main() -> int:
     try:
         with SQIAdapter(args.database, args.commit,
                         code_database=args.code_database) as adapter:
-            if args.call == "symbol.lookup":
-                envelope = adapter.symbol_lookup(
+            if args.call == "symbol.lookup":                envelope = adapter.symbol_lookup(
                     params.get("name"), kind=params.get("kind"),
                     path_prefix=params.get("path_prefix"),
                     budget=params.get("budget"))

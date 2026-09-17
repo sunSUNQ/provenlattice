@@ -1,0 +1,18 @@
+## Location
+
+**File:** `src/DownloadEngine.h`
+**Declaration line:** 84 — `class DownloadEngine {` (inside `namespace aria2`, opened at line 57)
+
+## Responsibility
+
+`DownloadEngine` is aria2's central event-loop driver: its `run()` method repeatedly waits for I/O readiness via an `EventPoll`, then dispatches registered `Command` objects from its `commands_` and `routineCommands_` queues until no work remains (`DownloadEngine.cc:158-185`). It owns and coordinates the shared download machinery — the `RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`, `DNSCache`, `CookieStorage`, the reusable socket pool, and statistics (`DownloadEngine.h:88-172`). It also exposes the socket registration/unregistration and socket-pooling APIs that individual commands use to hook into the poll loop (`DownloadEngine.h:185-277`).
+
+## Evidence
+
+- `src/DownloadEngine.h:57` — `namespace aria2 {`
+- `src/DownloadEngine.h:84` — `class DownloadEngine {`
+- `src/DownloadEngine.h:90` — `std::unique_ptr<EventPoll> eventPoll_;`
+- `src/DownloadEngine.h:162-169` — owned `RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`, `Option*`, and the two command queues
+- `src/DownloadEngine.h:183-192` — `run()` / socket read-write check registration API
+- `src/DownloadEngine.cc:158-185` — `run()` event loop executing commands until empty
+- `src/DownloadEngine.cc:187-200` — `waitData()` delegating to `eventPoll_->poll()`

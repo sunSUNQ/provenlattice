@@ -1,0 +1,9 @@
+**File:** `src/DownloadEngine.h`
+**Declaration line:** 84 (class body runs 84–335)
+
+**What it's responsible for:** `DownloadEngine` is the central event-driven driver of aria2's download loop. It owns the `EventPoll` object and a queue of `Command` objects (including "routine commands"), and its `run()` method polls for socket/name-resolver readiness, dispatches the corresponding commands, and repeats until no downloads remain. Alongside the loop it holds the shared manager objects the commands rely on — `RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`, `CookieStorage`, `DNSCache`, and the pooled-socket cache — and exposes halt/force-halt control and socket-pool lifetime management.
+
+**Evidence Used:**
+- E-CODE-94acad33e16eceea6ea5d677
+- E-CODE-d69dc4724057c9eef06a45bd
+- E-CODE-5b90c0eeea70294a6db4fabe

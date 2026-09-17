@@ -1,0 +1,10 @@
+{
+ "schema": "SQI_FORMAL_BATCH_MARKER_V1",
+ "batch_id": "SQI-FORMAL-C4-20260917-3",
+ "status": "INVALID_EXCLUDED",
+ "reason": "8/36 cells failed on genuine CHECKOUT_LEAKAGE (out-of-repo shell listing, .claude transcript reads). V1.3 prevention layer (permission-mode default + allowedTools + Read(./**) scoping) proven ineffective at CLI level: agents executed arbitrary shell (incl. cd&&-chained bridge calls bypassing the allowlist prefix) and read files outside the repo. Detection layer captured 100% (0 silent). Floor not certifiable; cost conclusion NOT ESTABLISHED. Full attribution: reviews/c4-attribution-review.md (attempt 3).",
+ "cells_total": 36,
+ "cells_invalid": 8,
+ "cells_completed_machinery_ok": 28,
+ "floor_certified": false
+}

@@ -1,8 +1,9 @@
-# C4 Batch Attribution Review — STOP / INVALID BATCH
+# C4 Batch Attribution Review — STOP / INVALID BATCH（三次尝试）
 
-Attribution date: 2026-09-17
-Batch: `SQI-FORMAL-C4-20260917-2`（36/36 cells **failed** — 全量无效）
-前次尝试: `SQI-FORMAL-C4-20260917-1`（启动即崩，0 cells，runner defect）
+Attribution date: 2026-09-17（两次更新）
+Batches: `SQI-FORMAL-C4-20260917-1`（-1 启动崩溃，0 cells）、
+`-2`（36/36 failed，V1.2 环境）、`-3`（V1.3 环境，28/36 machinery OK 但
+8/36 CHECKOUT_LEAKAGE → 全量 INVALID）。
 状态: **C4 停止。正式成本结论 NOT ESTABLISHED。** V1.1 baseline batch
 （`SQI-FORMAL-20260917-1`）仍是现行 SQI-V1 = QUALIFIED 的 standing evidence。
 
@@ -81,3 +82,42 @@ V1.3 应让 bridge 拒绝不存在的 database 路径。
 - `SQI-FORMAL-C4-20260917-1`：保留（0 cells，启动崩溃记录）；
 - 三仓新遗留空 DB/文件：已隔离至 `quarantine-v1.1-agent-artifacts/`（追加）；
 - V1.1 baseline batch：不动，仍为 standing evidence。
+
+## 6. 尝试 3（-3，V1.3 环境，四项修复已实现并 re-seal）—— 预防层被证伪，检测层 100%
+
+`SQI-FORMAL-C4-20260917-3`：V1.3 四项修复（A1 路径注入、A2 scanner 修正、
+A3 bridge fail-closed、A4 permission 收紧）全部实现并通过五道 gate
+（G1/G2/G3/G4/G5 各自首次通过）后启动。结果：36/36 cells 执行完成，
+28/36 machinery OK，**8/36 cells 因真实 CHECKOUT_LEAKAGE 判 failed**：
+
+- T04.native.r1/r3：native agent（allowedTools **无 Bash**）执行了
+  `ls -la "D:/ChatGPT/codegraph/benchmark-repos"`（**repo 父目录列举**）等
+  shell 命令，且有真实输出（result_size>0）→ **预防层失效实证**：
+  `--permission-mode default` + allowedTools 白名单**未能拒绝**未列入的
+  Bash 与越界读取；
+- T06.sqi.r1/r2/r3 + T04.sqi.r2：agent 通过 Read 工具读取
+  `.claude/projects/...` **会话 transcript 文件**（`Read(./**)` 作用域未阻止）；
+- T05.sqi.r1：agent 以 `cd "<abs repo>" && python -m ...sqi_cli ...` 的
+  `&&` 链式调用绕过 allowedTools 前缀（但使用了 V1.3 注入的绝对 DB 路径，
+  bridge 调用本身成功）。
+
+**检测层 100%**：全部 8 个越界/框架访问事件被 V1.3 scanner 捕获（0 静默），
+Gate 2 corpus 0 FP 在正式环境复现。三仓 integrity 复核：全部 clean @
+frozen commits（本轮未复发 330-file 类删除）。C4-3 batch 全量保留，
+标记 INVALID/EXCLUDED。floor 不可认证 → 成本结论 NOT ESTABLISHED。
+
+## 7. 结论与决策点（V1.4）
+
+三次尝试表明：**claude CLI 的 flags 层（allowedTools / permission-mode /
+Read 作用域）无法提供 formal read-only session 所需的读/写硬隔离**——这是
+平台能力边界，不是 ProvenLattice 实现缺陷。有效隔离需要以下之一
+（V1.4 设计决策，需裁决）：
+
+1. **OS/容器级隔离**：agent session 在受限用户/容器内运行，文件系统层只读；
+2. **副本隔离**：每个 session 使用 benchmark repo 的一次性副本 + 冻结 DB
+   （破坏不触及冻结基线；越界读取仍靠检测层）；
+3. **接受 detection-only 语义**：将 CHECKOUT_LEAKAGE 从 cell-invalid 降级为
+   记录性标记（削弱证据强度，不推荐）。
+
+在 V1.4 决策与实现 + re-seal 之前，C4 保持停止状态；
+SQI-V1 = QUALIFIED（V1.1 baseline）不变。

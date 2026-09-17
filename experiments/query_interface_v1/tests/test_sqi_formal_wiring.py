@@ -19,10 +19,12 @@ sys.path.insert(0, str(TOOLS))
 
 from sqi_evaluator import evaluate_cell  # noqa: E402  # noqa: E402
 from sqi_formal_runner import (  # noqa: E402
-    NATIVE_ALLOWED_TOOLS, SQI_ALLOWED_TOOLS, build_command, load_config,
-    load_tasks, preflight, resolve_database, verify_seal)
+    NATIVE_ALLOWED_TOOLS, build_arm_prompt, build_command, load_config,
+    load_tasks, preflight, resolve_database, sqi_allowed_tools, verify_seal)
 from sqi_isolation import leakage_events  # noqa: E402
 from sqi_validator import validate_envelope  # noqa: E402
+
+# isolated under tempdir via the fail-closed tests; no cleanup needed here
 
 DB = WORKSPACE / "benchmark-analysis" / "v0.2-db"
 COMMITS = {
@@ -442,15 +444,25 @@ class TestArmParityAndPreflight(unittest.TestCase):
 
     def test_base_command_identical(self):
         config = load_config()
-        native = build_command("native", config)
-        sqi = build_command("sqi", config)
+        task = next(t for t in load_tasks() if t["task_id"] == "SQI-T01")
+        native = build_command("native", config, task)
+        sqi = build_command("sqi", config, task)
         self.assertEqual(native[0], sqi[0])
         self.assertEqual(native[1], sqi[1])
         self.assertEqual(native[2], sqi[2])
         self.assertEqual(native[3], sqi[3])
         self.assertNotEqual(native, sqi)
-        self.assertIn("sqi_cli", SQI_ALLOWED_TOOLS)
+        sqi_tools = sqi_allowed_tools(task)
+        self.assertIn("sqi_cli.py", sqi_tools)
         self.assertNotIn("sqi_cli", NATIVE_ALLOWED_TOOLS)
+        # V1.3 A1: the sqi prompt injects absolute paths (no placeholders)
+        prompt = build_arm_prompt("sqi", task)
+        self.assertIn("--database", prompt)
+        self.assertIn("sqi_cli.py", prompt)
+        self.assertNotIn("--database DB", prompt)
+        # V1.3 A4: default permission mode denies non-allowlisted tools
+        self.assertIn("--permission-mode", sqi)
+        self.assertEqual(sqi[sqi.index("--permission-mode") + 1], "default")
 
     def test_preflight_passes(self):
         report = preflight()
@@ -515,9 +527,10 @@ class TestIsolationScoping(unittest.TestCase):
         self.assertEqual(len(leaks), 1)
 
     def test_both_arms_use_scoped_read_rules(self):
+        task = next(t for t in load_tasks() if t["task_id"] == "SQI-T01")
         self.assertIn("Read(./**)", NATIVE_ALLOWED_TOOLS)
-        self.assertIn("Read(./**)", SQI_ALLOWED_TOOLS)
-        self.assertNotIn("Read,Grep", SQI_ALLOWED_TOOLS)
+        self.assertIn("Read(./**)", sqi_allowed_tools(task))
+        self.assertNotIn("Read,Grep", sqi_allowed_tools(task))
         self.assertNotIn("Read,Grep", NATIVE_ALLOWED_TOOLS)
 
 
@@ -551,6 +564,101 @@ class TestT05FixtureConsistency(unittest.TestCase):
                     if e.get("target_id") == hit["id"]}
         self.assertIn(gt["required_evidence_ids_by_database"]["code_database"][0],
                       code_ids)
+
+
+class TestV13ScannerCorpus(unittest.TestCase):
+    """V1.3 Gate 2 corpus: legitimate patterns = 0 false positives;
+    frozen out-of-bounds corpus = 100% captured."""
+
+    LEGITIMATE_GREP_PATTERNS = [
+        "error_cstr", "class DownloadEngine", "NumUnsetBytes",
+        "IsAskedToQuit", "c_murmurhash_bl|chash_bounded_load_factor",
+        "^TEST_F\\(OptionsSettableTest", "DeleteDBFile|CopyFile",
+        "src/brpc/policy/thrift_protocol.cpp", "file/file_util.h",
+        "[A-Za-z]{6,}", "^int main",
+    ]
+    OUT_OF_BOUNDS_GREP = [
+        "D:\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\overlay.py",
+        "D:/ChatGPT/codegraph/provenlattice/experiments/query_interface_v1",
+        "provenlattice", "sqi_cli", "benchmark-analysis",
+    ]
+    OUT_OF_BOUNDS_GLOB = [
+        "D:/ChatGPT/codegraph/provenlattice/**",
+        "**/query_interface_v1/**",
+        "**/sqi_cli*",
+        "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+    ]
+    OUT_OF_BOUNDS_READ = [
+        r"D:\ChatGPT\codegraph\provenlattice\src\provenlattice\impact.py",
+        r"D:\ChatGPT\codegraph\provenlattice\experiments\query_interface_v1\tools\sqi_cli.py",
+        r"C:\Users\sunqinghw\.claude\projects\transcript",
+    ]
+
+    OUT_OF_BOUNDS_SHELL = [
+        'printenv 2>&1 | head -60',
+        'od -A d -c DB 2>&1 | head -80',
+        "strings -n 6 DB 2>&1 | head -80",
+        'sqlite3 DB "select name from sqlite_master" 2>&1',
+        'echo "SQI_DATABASE=$SQI_DATABASE | DB=$DB | DATABASE=$DATABASE | COMMIT=$COMMIT"',
+    ]
+
+    def test_legitimate_patterns_zero_false_positives(self):
+        events = [{"operation": "grep", "target": pattern}
+                  for pattern in self.LEGITIMATE_GREP_PATTERNS]
+        self.assertEqual(leakage_events(events,
+                                        r"D:\ChatGPT\codegraph\benchmark-repos\brpc"), [])
+
+    def test_out_of_bounds_corpus_fully_captured(self):
+        repo = r"D:\ChatGPT\codegraph\benchmark-repos\brpc"
+        corpus = ([{"operation": "grep", "target": t}
+                   for t in self.OUT_OF_BOUNDS_GREP]
+                  + [{"operation": "glob", "target": t}
+                     for t in self.OUT_OF_BOUNDS_GLOB]
+                  + [{"operation": "read", "target": t}
+                     for t in self.OUT_OF_BOUNDS_READ]
+                  + [{"operation": "shell", "target": t, "query": t}
+                     for t in self.OUT_OF_BOUNDS_SHELL])
+        leaks = leakage_events(corpus, repo)
+        self.assertEqual(len(leaks), len(corpus), leaks)
+
+
+class TestV13DBPathFailClosed(unittest.TestCase):
+    """V1.3 Gate 3: the bridge refuses nonexistent/invalid database paths and
+    never creates files."""
+
+    def test_nonexistent_database_rejected_without_file_creation(self):
+        task = next(t for t in load_tasks() if t["task_id"] == "SQI-T01")
+        missing = os.path.join(tempfile.gettempdir(), "sqi-nonexistent-"
+                               + next(tempfile._get_candidate_names()) + ".db")
+        completed = run_bridge_with_database(task, missing)
+        self.assertEqual(completed.returncode, 2)
+        error = json.loads(completed.stdout.strip())
+        self.assertEqual(error["error"]["code"], "DATABASE_NOT_FOUND")
+        self.assertFalse(os.path.exists(missing), "bridge created a file")
+
+    def test_non_sqlite_file_rejected(self):
+        task = next(t for t in load_tasks() if t["task_id"] == "SQI-T01")
+        with tempfile.TemporaryDirectory() as tmp:
+            fake = os.path.join(tmp, "fake.db")
+            with open(fake, "wb") as fh:
+                fh.write(b"not a database at all")
+            before = sorted(os.listdir(tmp))
+            completed = run_bridge_with_database(task, fake)
+            self.assertEqual(sorted(os.listdir(tmp)), before, "file created")
+        self.assertEqual(completed.returncode, 2)
+        error = json.loads(completed.stdout.strip())
+        self.assertEqual(error["error"]["code"], "NOT_A_SQLITE_DATABASE")
+
+
+def run_bridge_with_database(task, database):
+    command = [sys.executable, "-m", "experiments.query_interface_v1.tools.sqi_cli",
+               "--database", database, "--commit", task["commit"],
+               "--call", "symbol.lookup", "--params",
+               json.dumps({"name": task["ground_truth"].get("qualified_name", "X")})]
+    env = {"PYTHONPATH": str(REPO / "src") + os.pathsep + str(REPO)}
+    return subprocess.run(command, cwd=str(REPO), capture_output=True,
+                          text=True, encoding="utf-8",
+                          env={**os.environ, **env}, timeout=300)
 
 
 if __name__ == "__main__":

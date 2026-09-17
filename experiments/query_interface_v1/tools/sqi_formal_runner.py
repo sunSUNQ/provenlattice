@@ -63,32 +63,40 @@ REPOS = {
     "B3-rocksdb": WORKSPACE / "benchmark-repos" / "rocksdb",
 }
 
-SQI_ALLOWED_TOOLS = ("Read(./**),Grep(./**),Glob,"
-                     "Bash(python -m experiments.query_interface_v1.tools.sqi_cli *)")
+def sqi_allowed_tools(task: dict) -> str:
+    return ("Read(./**),Grep(./**),Glob,"
+            "Bash(python -m experiments.query_interface_v1.tools.sqi_cli *)")
+
+
 NATIVE_ALLOWED_TOOLS = "Read(./**),Grep(./**),Glob"
 
-SQI_ARM_PROMPT = (
+SQI_ARM_PROMPT_TEMPLATE = (
     "This is a read-only retrieval experiment. Never edit, create, delete, move, or commit files. "
     "Do not change git state. Answer the frozen user task using only permitted retrieval capabilities. "
-    "You have the Structured Query Interface V1: run exactly "
-    "`python -m experiments.query_interface_v1.tools.sqi_cli --database DB --commit COMMIT "
-    "--call <call> --arg key=value [--arg ...]` with call one of symbol.lookup, symbol.callers, "
-    "symbol.callees, symbol.references, impact.frontier, code.related, bundle.explain; use one "
-    "--arg per parameter (e.g. --arg name=DownloadEngine, --arg symbol=<qualified_name or id>, "
+    "You have the Structured Query Interface V1. Run exactly this bridge command (run it from any "
+    "directory; the PYTHONPATH is preconfigured): "
+    "python -m experiments.query_interface_v1.tools.sqi_cli --database \"{database}\" "
+    "{code_database_arg}--commit \"{commit}\" --call <call> --arg key=value [--arg ...] "
+    "with call one of symbol.lookup, symbol.callers, symbol.callees, symbol.references, "
+    "impact.frontier, code.related, bundle.explain; use one --arg per parameter "
+    "(e.g. --arg name=DownloadEngine, --arg symbol=<qualified_name or id>, "
     "--arg document=<document anchor>, --arg changed_shard_paths=db,file, "
     "--arg budget=max_evidence,max_symbols,max_edges,max_sections). "
     "Each invocation returns one JSON envelope; treat its data as structural facts, cite only "
     "evidence ids actually returned, and end the answer with 'Evidence Used:' followed by one "
-    "'- E-...' line per used Evidence ID. Structural facts (identity, existence, frontier "
-    "membership) may be cited directly; semantic claims (definition meaning, call-site meaning, "
-    "reference purpose, downstream impact, document-code equivalence) must be verified by "
-    "reading the source files before you assert them. Never bypass, chain, pipe, or truncate "
-    "the CLI's JSON output."
+    "'- E-...' line per used Evidence ID. You MUST perform at least one bridge invocation for "
+    "this task: answers based only on file reading are invalid for this arm. Structural facts "
+    "(identity, existence, frontier membership) may be cited directly; semantic claims "
+    "(definition meaning, call-site meaning, reference purpose, downstream impact, "
+    "document-code equivalence) must be verified by reading the source files before you assert "
+    "them. Never bypass, chain, pipe, or truncate the CLI's JSON output. Stay inside the "
+    "repository working directory; do not read or probe paths outside it."
 )
 NATIVE_ARM_PROMPT = (
     "This is a read-only retrieval experiment. Never edit, create, delete, move, or commit files. "
     "Do not change git state. Answer the frozen user task using only your file tools "
-    "(read/grep/glob). Do not invoke ProvenLattice, SQI, or access any ProvenLattice database."
+    "(read/grep/glob). Do not invoke ProvenLattice, SQI, or access any ProvenLattice database. "
+    "Stay inside the repository working directory; do not read or probe paths outside it."
 )
 
 
@@ -148,15 +156,37 @@ def resolve_database(path_value: str) -> str:
     raise RuntimeError(f"frozen database not found: {path_value}")
 
 
-def build_command(arm: str, config: dict) -> list[str]:
+def build_arm_prompt(arm: str, task: dict) -> str:
+    """V1.3 A1: per-session arm prompt with absolute bridge/database paths
+    injected for the sqi arm (no bootstrap discovery needed)."""
+    if arm != "sqi":
+        return NATIVE_ARM_PROMPT
+    database = resolve_database(task["database"])
+    bridge = str(REPO_ROOT / "experiments" / "query_interface_v1" / "tools" / "sqi_cli.py")
+    code_arg = ""
+    if task.get("code_database"):
+        code_arg = '--code-database "{}" '.format(resolve_database(task["code_database"]))
+    return SQI_ARM_PROMPT_TEMPLATE.format(
+        bridge=bridge.replace("\\", "/"), database=database.replace("\\", "/"),
+        code_database_arg=code_arg, commit=task["commit"])
+
+
+def build_command(arm: str, config: dict, task: dict | None = None) -> list[str]:
     """The two arms share the base command; they differ ONLY in the system
-    prompt and allowed tools (protocol §2 arm parity)."""
+    prompt and allowed tools (protocol §2 arm parity). V1.3 (A1): the SQI
+    prompt injects the absolute bridge/database paths per session."""
     claude = shutil.which("claude") or "claude"
     command = [claude, "-p", "--verbose", "--output-format", "stream-json"]
-    command.extend(["--append-system-prompt",
-                    SQI_ARM_PROMPT if arm == "sqi" else NATIVE_ARM_PROMPT])
-    command.extend(["--allowedTools",
-                    SQI_ALLOWED_TOOLS if arm == "sqi" else NATIVE_ALLOWED_TOOLS])
+    # V1.3 A4: `default` permission mode = tools outside allowedTools are
+    # denied BEFORE execution (dontAsk auto-approved everything, which let a
+    # T04.sqi session delete 330 tracked files in the V1.1 batch).
+    command.extend(["--permission-mode", "default"])
+    if arm == "sqi" and task is not None:
+        command.extend(["--append-system-prompt", build_arm_prompt(arm, task)])
+        command.extend(["--allowedTools", sqi_allowed_tools(task)])
+    else:
+        command.extend(["--append-system-prompt", NATIVE_ARM_PROMPT])
+        command.extend(["--allowedTools", NATIVE_ALLOWED_TOOLS])
     command.extend(["--model", config["model_id"]])
     return command
 
@@ -220,7 +250,7 @@ def run_cell(task: dict, arm: str, repetition: int, config: dict,
         allowed_tools=sorted({"read", "search", "grep", "glob", "shell"}
                              if arm == "sqi" else {"read", "grep", "glob"}),
         environment=environment, timeout=float(config["timeout_s"]))
-    adapter = agent_adapter.CommandAgentAdapter(build_command(arm, config))
+    adapter = agent_adapter.CommandAgentAdapter(build_command(arm, config, task))
     started = time.perf_counter()
     result = adapter.run(request)
     duration_ms = (time.perf_counter() - started) * 1000
@@ -260,9 +290,9 @@ def run_cell(task: dict, arm: str, repetition: int, config: dict,
         "checkout_leakage_events": len(leaks),
         "prompt_hash": hashlib.sha256(task["prompt"].encode("utf-8")).hexdigest(),
         "arm_prompt_sha256": hashlib.sha256(
-            (SQI_ARM_PROMPT if arm == "sqi" else NATIVE_ARM_PROMPT)
+            (build_arm_prompt(arm, task) if arm == "sqi" else NATIVE_ARM_PROMPT)
             .encode("utf-8")).hexdigest(),
-        "allowed_tools": SQI_ALLOWED_TOOLS if arm == "sqi" else NATIVE_ALLOWED_TOOLS,
+        "allowed_tools": sqi_allowed_tools(task) if arm == "sqi" else NATIVE_ALLOWED_TOOLS,
         "canonical_calls_available": list(CANONICAL_CALLS) if arm == "sqi" else [],
         "protocol": "SQI_FORMAL_QUALIFICATION_PROTOCOL_V1",
         "infrastructure_attribution": None if result.exit_reason in ("completed",)

@@ -1,0 +1,12 @@
+**File:** `src/DownloadEngine.h`
+**Declaration line:** 84 (`class DownloadEngine {`)
+
+**Responsibility:** `DownloadEngine` owns aria2's central event loop — `run()` repeatedly polls the `EventPoll` for ready sockets/name resolvers and executes queued `Command` objects (both per-request `commands_` and `routineCommands_`) until no commands remain, then performs shutdown via `onEndOfRun()` (`src/DownloadEngine.cc:158-185`). It aggregates the state the loop drives: `RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`, the socket pool, DNS cache, cookie storage, statistics (`StatCalc`), and halt-request flags (`src/DownloadEngine.h:88-172`). In short, it is the hub that schedules and dispatches all download work and coordinates global halt/shutdown.
+
+**Evidence used:**
+- `src/DownloadEngine.h:84` — class declaration
+- `src/DownloadEngine.h:90` — `eventPoll_`
+- `src/DownloadEngine.h:162-169` — owned managers (`requestGroupMan_`, `fileAllocationMan_`, `checkIntegrityMan_`, command queues)
+- `src/DownloadEngine.h:183` — `int run(bool oneshot = false)`
+- `src/DownloadEngine.cc:158-185` — `run()` event loop
+- `src/DownloadEngine.cc:237-264` — `onEndOfRun()` / `afterEachIteration()` shutdown handling
