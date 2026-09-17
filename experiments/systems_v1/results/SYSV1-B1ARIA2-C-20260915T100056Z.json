@@ -1,0 +1,54 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 1,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "61ffceac286278994483bc75d35fb8f6a49311b73320c2d76a977c78c3e00410",
+  "run_id": "SYSV1-B1ARIA2-C-20260915T100056Z",
+  "run_kind": "smoke",
+  "workload": "C",
+  "benchmark": "B1-aria2",
+  "started_at_utc": "2026-09-15T10:00:56Z",
+  "completed_at_utc": "2026-09-15T10:01:06Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "machine": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "load_note": ""
+  },
+  "inputs": {
+    "repo_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+    "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 118926,
+    "runner_sha256": "bc7d136f3888051fc13d05845b8b857b8e308a981fe217de263550d08417c471",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "mutation_manifest": "experiments/systems_v1/manifests/mutations-aria2-v1.json",
+    "mutation_manifest_sha256": "02e882dc0cd20aac0135dad56c943c92695c1beac0e84756af8b9977fa0c54c9",
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "warmup": 1,
+    "reps": 1,
+    "notes": [
+      "child-process isolation per measured unit",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B1ARIA2-C-20260915T100056Z-86ek6jln"
+    ]
+  },
+  "raw_reps": [],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "incremental": {},
+  "infrastructure_failure": {
+    "stage": "workload_execution",
+    "detail": "RuntimeError: child task incremental failed (rc=1): Traceback (most recent call last):\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 805, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 730, in main\n    result = run_child_task(json.loads(payload))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 331, in run_child_task\n    return run_incremental_child(Path(task[\"repo\"]), Path(task[\"database\"]))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 255, in run_incremental_child\n    \"files_changed_reported\": len(metrics.get(\"changed_files\") or []),\n                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: object of type 'int' has no len()"
+  }
+}

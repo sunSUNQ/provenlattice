@@ -1,0 +1,132 @@
+{
+  "manifest": "MUTATION_MANIFEST_V1",
+  "version": 2,
+  "benchmark": "B1-aria2",
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "note": "ops are byte-deterministic: every op pins the frozen source file by sha256 before mutating a throwaway repository copy. expect_sha256 values were computed from benchmark-repos/aria2 at frozen commit 9e7273583f83e881e3ec067b523ba88724088d2f. scope/interface_sensitive document mutation representativeness per review R6; DEFERRED families (rename/move, file addition, header high-fanout, branch/overlay merge) are not included.",
+  "representativeness": {
+    "covered": [
+      "local function-body edit (M1)",
+      "file-local symbol addition (M2)",
+      "file-level deletion / tombstone handling (M3)",
+      "cross-file public signature change plus call-site update (M4)"
+    ],
+    "deferred": [
+      "rename/move",
+      "file addition",
+      "header high-fanout change",
+      "branch/overlay merge"
+    ]
+  },
+  "families": [
+    {
+      "mutation_id": "M1",
+      "family": "function_body_edit",
+      "scope": "local",
+      "interface_sensitive": false,
+      "note": "wallclock.cc: function body edit inside aria2::global::wallclock(); API unchanged.",
+      "ops": [
+        {
+          "type": "replace_first",
+          "file": "src/wallclock.cc",
+          "expect_sha256": "2cac9d482a1726e3142cf9c2bfe5be203c271ca24971c10ea4601ea708a1460e",
+          "find": "  static auto t = new Timer();",
+          "replace": "  static auto* t = new Timer();"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": ["src/wallclock.cc"],
+        "expect_file_state_absent": [],
+        "expect_symbol_present": [],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": []
+      }
+    },
+    {
+      "mutation_id": "M2",
+      "family": "add_symbol",
+      "scope": "local",
+      "interface_sensitive": false,
+      "note": "URIResult.cc: append a new free function (new symbol, new nodes/references).",
+      "ops": [
+        {
+          "type": "append_text",
+          "file": "src/URIResult.cc",
+          "expect_sha256": "f135e172ecd766f53e7d5fb11c5525d74f969e74ceac9cff45ca43238e8878f3",
+          "text": "\nnamespace aria2 {\n\nint sysv1_mutation_marker()\n{\n  return 42;\n}\n\n} // namespace aria2\n"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": ["src/URIResult.cc"],
+        "expect_file_state_absent": [],
+        "expect_symbol_present": ["sysv1_mutation_marker"],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": []
+      }
+    },
+    {
+      "mutation_id": "M3",
+      "family": "delete_file",
+      "scope": "file_level",
+      "interface_sensitive": false,
+      "note": "delete src/NullSinkStreamFilter.cc: tombstone handling; references pointing into it must drop or become unresolved. The class declaration survives via NullSinkStreamFilter.h, so the probe asserts file_state absence only.",
+      "ops": [
+        {
+          "type": "delete_file",
+          "file": "src/NullSinkStreamFilter.cc",
+          "expect_sha256": "654d16b65936bfaa7dc50249c61364292cf6ca041cd79ae88f751a2226e5682d"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": [],
+        "expect_file_state_absent": ["src/NullSinkStreamFilter.cc"],
+        "expect_symbol_present": [],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": []
+      }
+    },
+    {
+      "mutation_id": "M4",
+      "family": "cross_file_signature_change",
+      "scope": "cross_file",
+      "interface_sensitive": true,
+      "note": "public method Time::setTimeFromEpoch gains a defaulted parameter in TimeA2.h (interface), definition updated in TimeA2.cc, and one call site in DHTRoutingTableDeserializer.cc passes the new argument. Tests invalidation propagation beyond file-local edits; node identity changes because symbol_id includes the signature.",
+      "ops": [
+        {
+          "type": "replace_first",
+          "file": "src/TimeA2.h",
+          "expect_sha256": "57af714967abe0bd3743bba8657830560c7f7b8457c768b3aec6a4974fa2259c",
+          "find": "  void setTimeFromEpoch(time_t sec);",
+          "replace": "  void setTimeFromEpoch(time_t sec, int sysv1_epoch_hint = 0);"
+        },
+        {
+          "type": "replace_first",
+          "file": "src/TimeA2.cc",
+          "expect_sha256": "5961d607010aa5b539c105b74826c5284bd21567a4fe18ab539991d7c4f5a032",
+          "find": "void Time::setTimeFromEpoch(time_t t)\n{",
+          "replace": "void Time::setTimeFromEpoch(time_t t, int sysv1_epoch_hint)\n{"
+        },
+        {
+          "type": "replace_first",
+          "file": "src/DHTRoutingTableDeserializer.cc",
+          "expect_sha256": "58ea4c5c384aab19c6a26dd7dde50dd768d51758871c5e9580c683bd11f0288f",
+          "find": "serializedTime_.setTimeFromEpoch(ntohl(temp32));",
+          "replace": "serializedTime_.setTimeFromEpoch(ntohl(temp32), 1);"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": [
+          "src/TimeA2.h",
+          "src/TimeA2.cc",
+          "src/DHTRoutingTableDeserializer.cc"
+        ],
+        "expect_file_state_absent": [],
+        "expect_symbol_present": ["setTimeFromEpoch"],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": [
+          {"symbol": "setTimeFromEpoch", "token": "sysv1_epoch_hint"}
+        ]
+      }
+    }
+  ]
+}

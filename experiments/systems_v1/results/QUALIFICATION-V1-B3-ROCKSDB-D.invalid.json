@@ -1,0 +1,129 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 2,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "9d7531d8840647e9fd10d3d7a650909ef307f10ffe8c6f634933734db1f18486",
+  "run_id": "SYSV1-B3ROCKSDB-D-20260916T084850Z",
+  "run_kind": "qualification",
+  "workload": "D",
+  "benchmark": "B3-rocksdb",
+  "started_at_utc": "2026-09-16T08:48:50Z",
+  "completed_at_utc": "2026-09-16T08:48:52Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "cpu_model": "Intel(R) Core(TM) i7-14700",
+    "cpu_logical_cores": 28,
+    "cpu_physical_cores": 20,
+    "ram_total_bytes": 34013245440,
+    "storage_type": "FIXED/NTFS",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "thread_configuration": "single_process_sequential",
+    "tool_versions": {
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4",
+      "tree_sitter_python": "0.25.0"
+    },
+    "load_note": "Formal B3 run launched by opencode after session takeover; host load was not independently measured."
+  },
+  "inputs": {
+    "repo_path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+    "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 622772,
+    "runner_sha256": "a7af529fba5cf4569a902ddaa973029a0ce37fffcc45e14d25735aefc5e8941c",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "schema_sha256": "5c32df5765292bb35f77add71ab2416612f7b3da6307be37cb65cbaf4bceed95",
+    "schedule_manifest": "manifests/schedule-v1.json",
+    "schedule_manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "effective_config_sha256": "42c514175f3f22bfc3788466208eee876fe294fdf9f38be6003d30cdd3ba31e3",
+    "mutation_manifest": null,
+    "mutation_manifest_sha256": null,
+    "query_manifest": "experiments/systems_v1/manifests/queries-rocksdb-v1.json",
+    "query_manifest_sha256": "51cf0408c8a26e3610b2303389804e76d2adf846e08d6c0d76bb67f54f4ec447"
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "effective_config": {
+      "parser_backend": "tree_sitter",
+      "languages": [
+        "c",
+        "cpp",
+        "python"
+      ],
+      "resolver": "provenlattice.resolver.SymbolResolver (V0.2 default)",
+      "shard_strategy_effective": "directory",
+      "threading": "single_process_sequential",
+      "persistence": "sqlite3"
+    },
+    "output_path_preexistence_asserted": true,
+    "warmup": 1,
+    "reps": 5,
+    "measured_rounds": 30,
+    "measurement_boundary": {
+      "rss_scope": "main_measured_child_only",
+      "cpu_scope": "main_measured_child_only",
+      "rss_semantics": "Windows: GetProcessMemoryInfo PeakWorkingSetSize of the main measured child process; POSIX: getrusage RUSAGE_SELF ru_maxrss. This is NOT process-tree memory and NOT total system memory consumption; parser descendants/grandchildren are not included.",
+      "cpu_semantics": "time.process_time() delta of the main measured child process only; NOT process-tree CPU time and NOT total system CPU time."
+    },
+    "notes": [
+      "child-process isolation per measured unit",
+      "warm-up reps labelled role=warmup and excluded from all aggregates",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B3ROCKSDB-D-20260916T084850Z-7dlob15b"
+    ]
+  },
+  "cache_policy": {
+    "os_page_cache_state": "uncontrolled",
+    "eviction_attempted": "not_attempted",
+    "platform_privilege_note": "no privileged page-cache eviction was attempted (Windows has no unprivileged eviction API; Linux drop_caches not used); OS page cache state is therefore uncontrolled, not 'cold'",
+    "application_cache_note": "cold phase: new query process, first round; warm phase: same process after three warm-up rounds - GraphQuery holds no result cache, warmth comes from the SQLite connection page cache; no cache is inherited from the preceding cold child process",
+    "terminology": [
+      "db-fresh: the output database path did not exist before the measured unit (asserted at runtime)",
+      "process-cold: the measured unit runs in a freshly spawned child process; no application-level cache is inherited",
+      "first-query: the first query round executed by a newly spawned query process",
+      "warm-repeat: measured query rounds executed by the same query process after three warm-up rounds (SQLite page cache warm within that connection; GraphQuery holds no result cache)",
+      "OS page cache uncontrolled: no privileged page-cache eviction was attempted (eviction_attempted=not_attempted)",
+      "prior-run OS-cache-eligible: measured units follow prior build reps over the same source tree; OS file cache may be warm; state unobserved",
+      "the terms 'cold filesystem cache' and 'true cold cache' are not valid V1 terms and are banned"
+    ]
+  },
+  "schedule": {
+    "manifest": "manifests/schedule-v1.json",
+    "manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "order_policy": "deterministic_fixed_order",
+    "schedule_seq": 21,
+    "frozen_before_formal_run": true
+  },
+  "statistical_policy": {
+    "primary_statistic": "median",
+    "retained": [
+      "min",
+      "max"
+    ],
+    "p95_interpretation": "DESCRIPTIVE_ONLY_FOR_SMALL_N",
+    "p99_interpretation": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT",
+    "tail_claim_allowed": false
+  },
+  "raw_reps": [],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "query": {},
+  "qualification_gates": {
+    "build_measured_reps_minimum_met": true,
+    "workload_c_reps_minimum_met": true,
+    "query_warm_rounds_minimum_met": true,
+    "schedule_frozen": true,
+    "load_note_present": true,
+    "passed": true
+  },
+  "infrastructure_failure": {
+    "stage": "workload_execution",
+    "detail": "RuntimeError: child task build failed (rc=1): Traceback (most recent call last):\n  File \"D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 1599, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 1473, in main\n    result = run_child_task(json.loads(payload))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 675, in run_child_task\n    return run_build_child(\n           ^^^^^^^^^^^^^^^^\n  File \"D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 522, in run_build_child\n    from provenlattice.graph import full_index\nModuleNotFoundError: No module named 'provenlattice'"
+  }
+}

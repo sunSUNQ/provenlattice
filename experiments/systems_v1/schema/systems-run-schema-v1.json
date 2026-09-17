@@ -1,0 +1,603 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "SYSTEMS_RUN_SCHEMA_V1",
+  "title": "ProvenLattice Systems Benchmark Run Record V1 (schema_version 2)",
+  "description": "One record per runner invocation. schema_version 2 is the pre-freeze amendment implementing review items R1-R13: cache-policy terminology, effective-configuration identity, measurement-boundary labels, workload-specific evidence requirements, qualification minima gates, expanded parity digest scope, freshness probe, clock separation, non-LOC normalization, and environment provenance. Amended pre-freeze (blocker WORKLOAD_C_MUTATION_ORDER): workload C now requires a workload_c_gate hard gate proving the frozen mutation happened after the incremental input DB was built from unmodified A, the incremental run reported changed=true with the expected anchor changed, and files_changed_reported >= 1 for file-touching mutations. Raw per-rep measurements are retained verbatim; derived aggregates live in a separate recomputable block. See contract/systems-benchmark-contract-v1.md.",
+  "type": "object",
+  "required": [
+    "schema", "schema_version", "contract", "contract_sha256", "run_id", "run_kind",
+    "workload", "benchmark", "started_at_utc", "completed_at_utc", "environment",
+    "inputs", "protocol", "cache_policy", "schedule", "statistical_policy",
+    "raw_reps", "governance"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "SYSTEMS_RUN_SCHEMA_V1" },
+    "schema_version": { "const": 2 },
+    "contract": { "const": "SYSTEMS_BENCHMARK_CONTRACT_V1" },
+    "contract_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "run_id": { "type": "string", "pattern": "^SYSV1-[A-Z0-9]+-[ABCD]-[0-9]{8}T[0-9]{6}Z$" },
+    "run_kind": { "enum": ["smoke", "qualification"] },
+    "workload": { "enum": ["A", "B", "C", "D"] },
+    "benchmark": { "enum": ["B1-aria2", "B2-brpc", "B3-rocksdb"] },
+    "started_at_utc": { "type": "string" },
+    "completed_at_utc": { "type": "string" },
+    "environment": {
+      "type": "object",
+      "required": [
+        "os", "os_version", "cpu_model", "cpu_logical_cores", "cpu_physical_cores",
+        "ram_total_bytes", "storage_type", "python", "provenlattice_git_head",
+        "sqlite_version", "thread_configuration", "tool_versions", "load_note"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "os": { "type": "string" },
+        "os_version": { "type": "string" },
+        "cpu_model": { "type": "string" },
+        "cpu_logical_cores": { "type": ["integer", "string"] },
+        "cpu_physical_cores": { "type": ["integer", "string"] },
+        "ram_total_bytes": { "type": ["integer", "string"] },
+        "storage_type": { "type": "string" },
+        "python": { "type": "string" },
+        "provenlattice_git_head": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "sqlite_version": { "type": "string" },
+        "thread_configuration": { "type": "string" },
+        "tool_versions": {
+          "type": "object",
+          "required": ["tree_sitter", "tree_sitter_cpp", "tree_sitter_python"],
+          "additionalProperties": false,
+          "properties": {
+            "tree_sitter": { "type": "string" },
+            "tree_sitter_cpp": { "type": "string" },
+            "tree_sitter_python": { "type": "string" }
+          }
+        },
+        "load_note": { "type": "string" }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "required": [
+        "repo_path", "commit_sha", "commit_matches_manifest", "c_cpp_loc",
+        "runner_sha256", "benchmark_manifest", "benchmark_manifest_sha256",
+        "schema_sha256", "schedule_manifest", "schedule_manifest_sha256",
+        "effective_config_sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "repo_path": { "type": "string" },
+        "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "commit_matches_manifest": { "const": true },
+        "c_cpp_loc": { "type": "integer", "minimum": 1 },
+        "runner_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "benchmark_manifest": { "type": "string" },
+        "benchmark_manifest_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "schema_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "schedule_manifest": { "type": "string" },
+        "schedule_manifest_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "effective_config_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "mutation_manifest": { "type": ["string", "null"] },
+        "mutation_manifest_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+        "query_manifest": { "type": ["string", "null"] },
+        "query_manifest_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "required": [
+        "shard_strategy", "effective_config", "output_path_preexistence_asserted",
+        "warmup", "reps", "measurement_boundary", "notes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "shard_strategy": { "enum": ["directory", "build-aware", "structural"] },
+        "effective_config": {
+          "type": "object",
+          "required": [
+            "parser_backend", "languages", "resolver", "shard_strategy_effective",
+            "threading", "persistence"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "parser_backend": { "type": "string" },
+            "languages": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "resolver": { "type": "string" },
+            "shard_strategy_effective": { "enum": ["directory", "build-aware", "structural"] },
+            "threading": { "type": "string" },
+            "persistence": { "type": "string" }
+          }
+        },
+        "output_path_preexistence_asserted": { "const": true },
+        "warmup": { "type": "integer", "minimum": 0 },
+        "reps": { "type": "integer", "minimum": 1 },
+        "measured_rounds": { "type": ["integer", "null"], "minimum": 0 },
+        "measurement_boundary": {
+          "type": "object",
+          "required": ["rss_scope", "cpu_scope", "rss_semantics", "cpu_semantics"],
+          "additionalProperties": false,
+          "properties": {
+            "rss_scope": { "const": "main_measured_child_only" },
+            "cpu_scope": { "const": "main_measured_child_only" },
+            "rss_semantics": { "type": "string" },
+            "cpu_semantics": { "type": "string" }
+          }
+        },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "cache_policy": {
+      "type": "object",
+      "required": [
+        "os_page_cache_state", "eviction_attempted", "platform_privilege_note",
+        "application_cache_note", "terminology"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "os_page_cache_state": { "enum": ["uncontrolled", "prior_run_cache_eligible", "observed", "unavailable"] },
+        "eviction_attempted": { "enum": ["not_attempted", "attempted", "unknown"] },
+        "platform_privilege_note": { "type": "string" },
+        "application_cache_note": { "type": "string" },
+        "terminology": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "required": [
+        "manifest", "manifest_sha256", "order_policy", "schedule_seq",
+        "frozen_before_formal_run"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "manifest": { "type": "string" },
+        "manifest_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "order_policy": { "const": "deterministic_fixed_order" },
+        "schedule_seq": { "type": "integer", "minimum": 1 },
+        "frozen_before_formal_run": { "const": true }
+      }
+    },
+    "statistical_policy": {
+      "type": "object",
+      "required": ["primary_statistic", "retained", "p95_interpretation", "p99_interpretation", "tail_claim_allowed"],
+      "additionalProperties": false,
+      "properties": {
+        "primary_statistic": { "const": "median" },
+        "retained": { "const": ["min", "max"] },
+        "p95_interpretation": { "const": "DESCRIPTIVE_ONLY_FOR_SMALL_N" },
+        "p99_interpretation": { "const": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT" },
+        "tail_claim_allowed": { "const": false }
+      }
+    },
+    "raw_reps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["rep", "role"],
+        "additionalProperties": true,
+        "properties": {
+          "rep": { "type": "integer", "minimum": 0 },
+          "role": { "enum": ["warmup", "measured", "initial_index", "incremental", "parity_full", "setup", "query_first", "query_warm_repeat"] }
+        }
+      }
+    },
+    "derived": {
+      "type": "object",
+      "required": ["wall_time_ms", "cpu_time_ms", "peak_rss_bytes", "db_size_bytes", "normalized_median"],
+      "additionalProperties": false,
+      "properties": {
+        "wall_time_ms": { "$ref": "#/definitions/aggregate" },
+        "cpu_time_ms": { "$ref": "#/definitions/aggregate" },
+        "peak_rss_bytes": { "$ref": "#/definitions/aggregate" },
+        "db_size_bytes": { "$ref": "#/definitions/aggregate" },
+        "normalized_median": { "$ref": "#/definitions/normalized" }
+      }
+    },
+    "incremental": {
+      "type": "object",
+      "required": [
+        "mutation_family", "mutation_id", "mutation_scope", "mutation_interface_sensitive",
+        "reps", "update_completion_latency_ms", "freshness_probe",
+        "full_vs_incremental_parity", "workload_c_gate", "parity_gate", "clocks"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mutation_family": { "type": "string" },
+        "mutation_id": { "type": "string" },
+        "mutation_scope": { "enum": ["local", "file_level", "cross_file"] },
+        "mutation_interface_sensitive": { "type": "boolean" },
+        "reps": { "type": "integer", "minimum": 1 },
+        "files_touched": { "type": "integer", "minimum": 0 },
+        "files_reparsed": { "type": "integer", "minimum": 0 },
+        "files_reused": { "type": "integer", "minimum": 0 },
+        "nodes_changed": { "type": "integer", "minimum": 0 },
+        "edges_changed": { "type": "integer", "minimum": 0 },
+        "references_reprocessed": { "type": "integer", "minimum": 0 },
+        "references_reused": { "type": "integer", "minimum": 0 },
+        "update_completion_latency_ms": {
+          "type": "number", "minimum": 0,
+          "description": "Update Completion Latency: mutation applied -> incremental_update() returns. System-under-test clock only."
+        },
+        "freshness_probe": {
+          "type": "object",
+          "required": ["probe_ok", "checks", "probe_latency_ms", "query_visible_time_to_freshness_ms", "note"],
+          "additionalProperties": false,
+          "properties": {
+            "probe_ok": { "type": "boolean" },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["check", "expected", "observed", "passed"],
+                "additionalProperties": false,
+                "properties": {
+                  "check": { "type": "string" },
+                  "expected": { "type": "string" },
+                  "observed": { "type": "string" },
+                  "passed": { "type": "boolean" }
+                }
+              }
+            },
+            "probe_latency_ms": { "type": "number", "minimum": 0 },
+            "query_visible_time_to_freshness_ms": {
+              "type": "number", "minimum": 0,
+              "description": "Mutation applied -> frozen validation probe observes expected changed graph state (measured, same-process sequential bound; includes probe latency; excludes harness spawn overhead)."
+            },
+            "note": { "type": "string" }
+          }
+        },
+        "full_vs_incremental_parity": { "type": "boolean" },
+        "workload_c_gate": {
+          "type": "object",
+          "description": "Hard gate (blocker WORKLOAD_C_MUTATION_ORDER). A Workload C record is valid only if the frozen mutation verifiably changed the frozen inputs (pre-hash != post-hash, expected anchor changed), the incremental input DB was built before the mutation, the incremental run reported changed=true, and file-touching mutations reported files_changed_reported >= 1. All conditions are frozen as const true: a failed gate cannot produce a schema-valid run artifact.",
+          "required": [
+            "execution_order", "expected_files_touched_min",
+            "mutation_pre_hash_differs_from_post_hash", "incremental_changed_true",
+            "mutation_anchor_changed", "incremental_input_db_built_before_mutation",
+            "files_changed_reported_min_met", "per_rep", "passed"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "execution_order": {
+              "const": "build_frozen_A_then_mutation_then_incremental_then_full_B"
+            },
+            "expected_files_touched_min": { "type": "integer", "minimum": 0 },
+            "mutation_pre_hash_differs_from_post_hash": { "const": true },
+            "incremental_changed_true": { "const": true },
+            "mutation_anchor_changed": { "const": true },
+            "incremental_input_db_built_before_mutation": { "const": true },
+            "files_changed_reported_min_met": { "const": true },
+            "per_rep": {
+              "type": "array",
+              "items": { "type": "object", "additionalProperties": true }
+            },
+            "passed": { "const": true }
+          }
+        },
+        "parity_gate": {
+          "type": "object",
+          "required": [
+            "covered_states", "digest_fields", "not_covered_states",
+            "strict_digest_match", "strict_mismatch_disposition"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "covered_states": {
+              "type": "array", "minItems": 1,
+              "items": { "type": "string" }
+            },
+            "digest_fields": {
+              "type": "array", "minItems": 1,
+              "items": { "type": "string" }
+            },
+            "not_covered_states": { "type": "array", "items": { "type": "string" } },
+            "strict_digest_match": { "type": "boolean" },
+            "strict_mismatch_disposition": {
+              "const": "RECORDED_NON_GATING_PROVENANCE_DIVERGENCE"
+            }
+          }
+        },
+        "clocks": {
+          "type": "object",
+          "required": [
+            "system_under_test_latency_ms", "benchmark_setup_time_ms",
+            "validation_time_ms", "parity_verification_time_ms",
+            "end_to_end_benchmark_wall_time_ms", "boundary_note"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "system_under_test_latency_ms": { "type": "number", "minimum": 0 },
+            "benchmark_setup_time_ms": { "type": "number", "minimum": 0 },
+            "validation_time_ms": { "type": "number", "minimum": 0 },
+            "parity_verification_time_ms": { "type": "number", "minimum": 0 },
+            "end_to_end_benchmark_wall_time_ms": { "type": "number", "minimum": 0 },
+            "boundary_note": { "type": "string" }
+          }
+        }
+      }
+    },
+    "query": {
+      "type": "object",
+      "required": [
+        "query_set_sha256", "execution_order", "order_frozen",
+        "anchor_validation", "phases"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "query_set_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "execution_order": { "const": "manifest_file_order" },
+        "order_frozen": { "const": true },
+        "anchor_validation": { "const": "qualified_name_exact_match" },
+        "phases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "cache_state", "process_cold", "warmup_rounds", "measured_rounds",
+              "per_query_type", "raw_samples_ms", "throughput_qps"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "cache_state": { "enum": ["first_query", "warm_repeat"] },
+              "process_cold": { "type": "boolean" },
+              "warmup_rounds": { "type": "integer", "minimum": 0 },
+              "measured_rounds": { "type": "integer", "minimum": 1 },
+              "per_query_type": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "symbol": { "$ref": "#/definitions/aggregate" },
+                  "callers": { "$ref": "#/definitions/aggregate" },
+                  "callees": { "$ref": "#/definitions/aggregate" },
+                  "subgraph": { "$ref": "#/definitions/aggregate" }
+                }
+              },
+              "raw_samples_ms": {
+                "type": "object",
+                "additionalProperties": { "type": "array", "items": { "type": "number", "minimum": 0 } }
+              },
+              "throughput_qps": { "type": "number", "minimum": 0 }
+            }
+          }
+        }
+      }
+    },
+    "baseline_crosscheck": {
+      "type": "object",
+      "required": [
+        "v0_2_full_index_time_ms", "median_wall_time_ms", "wall_time_ratio",
+        "counts_within_band", "count_checks", "interpretation"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "v0_2_full_index_time_ms": { "type": "number" },
+        "median_wall_time_ms": { "type": "number" },
+        "wall_time_ratio": { "type": "number" },
+        "counts_within_band": { "type": "boolean" },
+        "count_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "baseline", "observed", "within_band"],
+            "additionalProperties": false,
+            "properties": {
+              "field": { "type": "string" },
+              "baseline": { "type": "integer" },
+              "observed": { "type": "integer" },
+              "within_band": { "type": "boolean" }
+            }
+          }
+        },
+        "interpretation": { "const": "ANOMALY_DETECTOR_NOT_PARITY_SUBSTITUTE" }
+      }
+    },
+    "infrastructure_failure": {
+      "type": ["object", "null"],
+      "required": ["stage", "detail"],
+      "additionalProperties": false,
+      "properties": {
+        "stage": { "type": "string" },
+        "detail": { "type": "string" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": ["evidence_level", "claim_scope"],
+      "additionalProperties": false,
+      "properties": {
+        "evidence_level": { "const": "OBSERVED" },
+        "claim_scope": { "type": "string" }
+      }
+    },
+    "qualification_gates": {
+      "type": "object",
+      "required": [
+        "build_measured_reps_minimum_met", "workload_c_reps_minimum_met",
+        "query_warm_rounds_minimum_met", "schedule_frozen", "load_note_present",
+        "passed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "build_measured_reps_minimum_met": { "const": true },
+        "workload_c_reps_minimum_met": { "const": true },
+        "query_warm_rounds_minimum_met": { "const": true },
+        "schedule_frozen": { "const": true },
+        "load_note_present": { "const": true },
+        "passed": { "const": true }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "workload": { "const": "A" } }, "required": ["workload"] },
+      "then": { "$ref": "#/definitions/build_workload_requirements" }
+    },
+    {
+      "if": { "properties": { "workload": { "const": "B" } }, "required": ["workload"] },
+      "then": { "$ref": "#/definitions/build_workload_requirements" }
+    },
+    {
+      "if": { "properties": { "workload": { "const": "C" } }, "required": ["workload"] },
+      "then": { "$ref": "#/definitions/incremental_workload_requirements" }
+    },
+    {
+      "if": { "properties": { "workload": { "const": "D" } }, "required": ["workload"] },
+      "then": { "$ref": "#/definitions/query_workload_requirements" }
+    },
+    {
+      "if": { "properties": { "run_kind": { "const": "qualification" } }, "required": ["run_kind"] },
+      "then": { "required": ["qualification_gates"] }
+    }
+  ],
+  "definitions": {
+    "aggregate": {
+      "type": "object",
+      "required": ["median", "p95", "p99", "min", "max", "n"],
+      "additionalProperties": false,
+      "properties": {
+        "median": { "type": "number" },
+        "p95": { "type": "number" },
+        "p99": { "type": "number" },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "n": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "normalized": {
+      "type": "object",
+      "required": [
+        "sec_per_kloc", "sec_per_1k_symbols", "mib_per_kloc", "mib_per_1k_symbols",
+        "db_bytes_per_kloc", "db_bytes_per_node", "db_bytes_per_rawref",
+        "nodes_per_kloc", "edges_per_kloc", "rawrefs_per_kloc", "edges_per_node",
+        "cost_denominators"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sec_per_kloc": { "type": ["number", "null"] },
+        "sec_per_1k_symbols": { "type": ["number", "null"] },
+        "mib_per_kloc": { "type": ["number", "null"] },
+        "mib_per_1k_symbols": { "type": ["number", "null"] },
+        "db_bytes_per_kloc": { "type": ["number", "null"] },
+        "db_bytes_per_node": { "type": ["number", "null"] },
+        "db_bytes_per_rawref": { "type": ["number", "null"] },
+        "nodes_per_kloc": { "type": ["number", "null"] },
+        "edges_per_kloc": { "type": ["number", "null"] },
+        "rawrefs_per_kloc": { "type": ["number", "null"] },
+        "edges_per_node": { "type": ["number", "null"] },
+        "cost_denominators": {
+          "type": "object",
+          "required": ["c_cpp_loc", "files", "nodes", "symbols", "raw_references", "edges"],
+          "additionalProperties": false,
+          "properties": {
+            "c_cpp_loc": { "type": "integer" },
+            "files": { "type": "integer" },
+            "nodes": { "type": "integer" },
+            "symbols": { "type": "integer" },
+            "raw_references": { "type": "integer" },
+            "edges": { "type": "integer" }
+          }
+        }
+      }
+    },
+    "build_workload_requirements": {
+      "required": ["derived", "baseline_crosscheck"],
+      "properties": {
+        "raw_reps": {
+          "contains": {
+            "type": "object",
+            "required": [
+              "rep", "role", "wall_time_ms", "cpu_time_ms", "peak_rss_bytes",
+              "db_size_bytes", "counts"
+            ],
+            "properties": {
+              "role": { "const": "measured" },
+              "wall_time_ms": { "type": "number" },
+              "cpu_time_ms": { "type": "number" },
+              "peak_rss_bytes": { "type": ["number", "null"] },
+              "db_size_bytes": { "type": "integer" },
+              "counts": { "type": "object" }
+            }
+          }
+        },
+        "derived": {
+          "required": ["wall_time_ms", "cpu_time_ms", "peak_rss_bytes", "db_size_bytes", "normalized_median"]
+        }
+      }
+    },
+    "incremental_workload_requirements": {
+      "required": ["incremental"],
+      "properties": {
+        "raw_reps": {
+          "contains": {
+            "type": "object",
+            "required": [
+              "rep", "role", "wall_time_ms", "cpu_time_ms", "peak_rss_bytes",
+              "db_size_bytes", "changed", "files_reparsed", "files_reused",
+              "nodes_changed", "edges_changed", "references_reprocessed",
+              "references_reused", "digests", "full_vs_incremental_parity",
+              "strict_digest_match", "freshness_probe"
+            ],
+            "properties": {
+              "role": { "const": "incremental" },
+              "wall_time_ms": { "type": "number" },
+              "cpu_time_ms": { "type": "number" },
+              "peak_rss_bytes": { "type": ["number", "null"] },
+              "db_size_bytes": { "type": "integer" },
+              "changed": { "type": "boolean" },
+              "files_reparsed": { "type": "integer" },
+              "files_reused": { "type": "integer" },
+              "nodes_changed": { "type": "integer" },
+              "edges_changed": { "type": "integer" },
+              "references_reprocessed": { "type": "integer" },
+              "references_reused": { "type": "integer" },
+              "digests": { "type": "object" },
+              "full_vs_incremental_parity": { "type": "boolean" },
+              "strict_digest_match": { "type": "boolean" },
+              "freshness_probe": { "type": "object" }
+            }
+          }
+        },
+        "incremental": {
+          "required": [
+            "mutation_family", "mutation_id", "mutation_scope", "mutation_interface_sensitive",
+            "reps", "update_completion_latency_ms", "freshness_probe",
+            "full_vs_incremental_parity", "workload_c_gate", "parity_gate", "clocks"
+          ]
+        }
+      }
+    },
+    "query_workload_requirements": {
+      "required": ["query"],
+      "properties": {
+        "raw_reps": {
+          "contains": {
+            "type": "object",
+            "required": [
+              "rep", "role", "cache_state", "process_cold", "warmup_rounds",
+              "measured_rounds", "per_query_type", "raw_samples_ms"
+            ],
+            "properties": {
+              "role": { "enum": ["query_first", "query_warm_repeat"] },
+              "cache_state": { "enum": ["first_query", "warm_repeat"] },
+              "process_cold": { "type": "boolean" },
+              "warmup_rounds": { "type": "integer" },
+              "measured_rounds": { "type": "integer", "minimum": 1 },
+              "per_query_type": { "type": "object" },
+              "raw_samples_ms": { "type": "object" }
+            }
+          }
+        },
+        "query": {
+          "required": [
+            "query_set_sha256", "execution_order", "order_frozen",
+            "anchor_validation", "phases"
+          ]
+        }
+      }
+    }
+  }
+}

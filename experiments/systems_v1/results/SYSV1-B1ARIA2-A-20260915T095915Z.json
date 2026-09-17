@@ -1,0 +1,166 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 1,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "61ffceac286278994483bc75d35fb8f6a49311b73320c2d76a977c78c3e00410",
+  "run_id": "SYSV1-B1ARIA2-A-20260915T095915Z",
+  "run_kind": "smoke",
+  "workload": "A",
+  "benchmark": "B1-aria2",
+  "started_at_utc": "2026-09-15T09:59:15Z",
+  "completed_at_utc": "2026-09-15T09:59:24Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "machine": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "load_note": ""
+  },
+  "inputs": {
+    "repo_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+    "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 118926,
+    "runner_sha256": "bc7d136f3888051fc13d05845b8b857b8e308a981fe217de263550d08417c471",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "mutation_manifest": null,
+    "mutation_manifest_sha256": null,
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "warmup": 0,
+    "reps": 2,
+    "notes": [
+      "child-process isolation per measured unit",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B1ARIA2-A-20260915T095915Z-52vvdle9"
+    ]
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 4132.079,
+      "cpu_time_ms": 4031.25,
+      "peak_rss_bytes": 198270976,
+      "db_size_bytes": 133021696,
+      "counts": {
+        "nodes": 29117,
+        "raw_references": 49109,
+        "edges": 37074,
+        "shards": 8,
+        "boundary_edges": 1356,
+        "resolved_references": 10804,
+        "ambiguous_references": 13966,
+        "unresolved_references": 24339,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 388
+      },
+      "rep": 0,
+      "role": "measured"
+    },
+    {
+      "wall_time_ms": 4051.883,
+      "cpu_time_ms": 3921.875,
+      "peak_rss_bytes": 198348800,
+      "db_size_bytes": 133021696,
+      "counts": {
+        "nodes": 29117,
+        "raw_references": 49109,
+        "edges": 37074,
+        "shards": 8,
+        "boundary_edges": 1356,
+        "resolved_references": 10804,
+        "ambiguous_references": 13966,
+        "unresolved_references": 24339,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 388
+      },
+      "rep": 1,
+      "role": "measured"
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "derived": {
+    "wall_time_ms": {
+      "median": 4091.981,
+      "p95": 4132.079,
+      "min": 4051.883,
+      "max": 4132.079,
+      "n": 2
+    },
+    "cpu_time_ms": {
+      "median": 3976.5625,
+      "p95": 4031.25,
+      "min": 3921.875,
+      "max": 4031.25,
+      "n": 2
+    },
+    "peak_rss_bytes": {
+      "median": 198309888.0,
+      "p95": 198348800.0,
+      "min": 198270976.0,
+      "max": 198348800.0,
+      "n": 2
+    },
+    "db_size_bytes": {
+      "median": 133021696.0,
+      "p95": 133021696.0,
+      "min": 133021696.0,
+      "max": 133021696.0,
+      "n": 2
+    },
+    "normalized_median": {
+      "sec_per_kloc": 0.034408,
+      "mib_per_kloc": 1.590258,
+      "db_bytes_per_kloc": 1118524.931,
+      "nodes_per_kloc": 244.833,
+      "edges_per_kloc": 311.74,
+      "rawrefs_per_kloc": 412.937,
+      "edges_per_node": 1.273277,
+      "cost_denominators": {
+        "c_cpp_loc": 118926,
+        "files": 1168,
+        "nodes": 29117,
+        "raw_references": 49109,
+        "edges": 37074
+      }
+    }
+  },
+  "baseline_crosscheck": {
+    "v0_2_full_index_time_ms": 3953.631,
+    "median_wall_time_ms": 4091.981,
+    "wall_time_ratio": 1.035,
+    "counts_within_band": true,
+    "count_checks": [
+      {
+        "field": "nodes",
+        "baseline": 29117,
+        "observed": 29117,
+        "within_band": true
+      },
+      {
+        "field": "edges",
+        "baseline": 37074,
+        "observed": 37074,
+        "within_band": true
+      },
+      {
+        "field": "raw_references",
+        "baseline": 49109,
+        "observed": 49109,
+        "within_band": true
+      }
+    ]
+  }
+}

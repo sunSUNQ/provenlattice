@@ -1,0 +1,424 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 2,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "9d7531d8840647e9fd10d3d7a650909ef307f10ffe8c6f634933734db1f18486",
+  "run_id": "SYSV1-B1ARIA2-C-20260915T121622Z",
+  "run_kind": "smoke",
+  "workload": "C",
+  "benchmark": "B1-aria2",
+  "started_at_utc": "2026-09-15T12:16:22Z",
+  "completed_at_utc": "2026-09-15T12:17:01Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "cpu_model": "Intel(R) Core(TM) i7-14700",
+    "cpu_logical_cores": 28,
+    "cpu_physical_cores": 20,
+    "ram_total_bytes": 34013245440,
+    "storage_type": "FIXED/NTFS",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "thread_configuration": "single_process_sequential",
+    "tool_versions": {
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4",
+      "tree_sitter_python": "0.25.0"
+    },
+    "load_note": ""
+  },
+  "inputs": {
+    "repo_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+    "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 118926,
+    "runner_sha256": "113db5afe75e124966929c37d592881a6d05081b63ae8662bace1c12e0522c1d",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "schema_sha256": "5c32df5765292bb35f77add71ab2416612f7b3da6307be37cb65cbaf4bceed95",
+    "schedule_manifest": "manifests/schedule-v1.json",
+    "schedule_manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "effective_config_sha256": "42c514175f3f22bfc3788466208eee876fe294fdf9f38be6003d30cdd3ba31e3",
+    "mutation_manifest": "manifests/mutations-aria2-v1.json",
+    "mutation_manifest_sha256": "8968e681630df051e106a01e702cf053002a03f3f92c72e1455aa7a690947a47",
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "effective_config": {
+      "parser_backend": "tree_sitter",
+      "languages": [
+        "c",
+        "cpp",
+        "python"
+      ],
+      "resolver": "provenlattice.resolver.SymbolResolver (V0.2 default)",
+      "shard_strategy_effective": "directory",
+      "threading": "single_process_sequential",
+      "persistence": "sqlite3"
+    },
+    "output_path_preexistence_asserted": true,
+    "warmup": 1,
+    "reps": 1,
+    "measured_rounds": null,
+    "measurement_boundary": {
+      "rss_scope": "main_measured_child_only",
+      "cpu_scope": "main_measured_child_only",
+      "rss_semantics": "Windows: GetProcessMemoryInfo PeakWorkingSetSize of the main measured child process; POSIX: getrusage RUSAGE_SELF ru_maxrss. This is NOT process-tree memory and NOT total system memory consumption; parser descendants/grandchildren are not included.",
+      "cpu_semantics": "time.process_time() delta of the main measured child process only; NOT process-tree CPU time and NOT total system CPU time."
+    },
+    "notes": [
+      "child-process isolation per measured unit",
+      "warm-up reps labelled role=warmup and excluded from all aggregates",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B1ARIA2-C-20260915T121622Z-2yy9evc8"
+    ]
+  },
+  "cache_policy": {
+    "os_page_cache_state": "prior_run_cache_eligible",
+    "eviction_attempted": "not_attempted",
+    "platform_privilege_note": "no privileged page-cache eviction was attempted (Windows has no unprivileged eviction API; Linux drop_caches not used); OS page cache state is therefore uncontrolled, not 'cold'",
+    "application_cache_note": "each rep reopens the SQLite DB in a new child process; the initial index within the rep may have warmed the OS file cache; unobserved",
+    "terminology": [
+      "db-fresh: the output database path did not exist before the measured unit (asserted at runtime)",
+      "process-cold: the measured unit runs in a freshly spawned child process; no application-level cache is inherited",
+      "first-query: the first query round executed by a newly spawned query process",
+      "warm-repeat: measured query rounds executed by the same query process after three warm-up rounds (SQLite page cache warm within that connection; GraphQuery holds no result cache)",
+      "OS page cache uncontrolled: no privileged page-cache eviction was attempted (eviction_attempted=not_attempted)",
+      "prior-run OS-cache-eligible: measured units follow prior build reps over the same source tree; OS file cache may be warm; state unobserved",
+      "the terms 'cold filesystem cache' and 'true cold cache' are not valid V1 terms and are banned"
+    ]
+  },
+  "schedule": {
+    "manifest": "manifests/schedule-v1.json",
+    "manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "order_policy": "deterministic_fixed_order",
+    "schedule_seq": 6,
+    "frozen_before_formal_run": true
+  },
+  "statistical_policy": {
+    "primary_statistic": "median",
+    "retained": [
+      "min",
+      "max"
+    ],
+    "p95_interpretation": "DESCRIPTIVE_ONLY_FOR_SMALL_N",
+    "p99_interpretation": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT",
+    "tail_claim_allowed": false
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 4248.717,
+      "cpu_time_ms": 4125.0,
+      "peak_rss_bytes": 200171520,
+      "db_size_bytes": 133132288,
+      "counts": {
+        "nodes": 29117,
+        "symbols": 27936,
+        "raw_references": 49109,
+        "edges": 37074,
+        "shards": 8,
+        "boundary_edges": 1356,
+        "resolved_references": 10804,
+        "ambiguous_references": 13966,
+        "unresolved_references": 24339,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 388
+      },
+      "rep": 0,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-15T12:16:27Z",
+      "baseline_digests": {
+        "nodes_facts": "1153fe2a6ec1db1df68d67edaeb84d1e9c2389727c2202333397f277b3407127",
+        "nodes_strict": "be707e188e349f8d33fd950d2db640b8a488fb43cbc2d2e83a51869e2fb46979",
+        "edges_facts": "d6f6ad02b8e2c540ec009b3f230c3e20b8eeab3099d16b2b6e7fc2ada1bc29b8",
+        "edges_strict": "25df9da2085497cbdbb4f4b4a0ac520d014559263dd04dd3a2b80200a0987b77",
+        "raw_references_facts": "28d2c11e539285429c4243af32e87fc24f8407ea0eeb1147a33100e017015dce",
+        "raw_references_strict": "50d075e8c3c9a9ee74e693707044adbda44db576925196430fe509c054a24806",
+        "shards_facts": "47de9174792fbe833c8a8fe58c79d489bdb4ebd77a2f6cdd4bf29e07f04a4652",
+        "files_facts": "de65d562aa100e3831a36868ffbe1a7dc40791c9a6c13ebce1efa5771dc4d9fd",
+        "shard_edges_facts": "f51705a4b68f72b7a57b562e3ae877d9cc27f1e6af446c99410a3a136f77fb7e"
+      },
+      "baseline_file_state_hashes": {
+        "src/TimeA2.h": "57af714967abe0bd3743bba8657830560c7f7b8457c768b3aec6a4974fa2259c",
+        "src/TimeA2.cc": "5961d607010aa5b539c105b74826c5284bd21567a4fe18ab539991d7c4f5a032",
+        "src/DHTRoutingTableDeserializer.cc": "58ea4c5c384aab19c6a26dd7dde50dd768d51758871c5e9580c683bd11f0288f"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 8642.829,
+      "cpu_time_ms": 8203.125,
+      "peak_rss_bytes": 464039936,
+      "db_size_bytes": 133279744,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "src/DHTRoutingTableDeserializer.cc",
+          "src/TimeA2.cc",
+          "src/TimeA2.h"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 3,
+      "files_reused": 1165,
+      "files_changed_reported": 3,
+      "nodes_changed": 85,
+      "edges_changed": 4,
+      "references_reprocessed": 102,
+      "references_reused": 49007,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "989b5cf2586b472a3e534dbb663ce18bac7cafd20c8bd8ac19eb8d828aef76d2",
+        "nodes_strict": "f997d67e55c775ec69a321ae57d950042221a4acaa3368816628c787860a189b",
+        "edges_facts": "276cbcf7a9361795e4fd289e786f2b38dcaf8922bcbdf75d39a4d15b427349a7",
+        "edges_strict": "dd94432d9d076707783f5e34ca7f7ed367f85a5bfdfbf378138421a3c01de547",
+        "raw_references_facts": "b0cc6b9c2bf612a5a2628c303edde445acfcf60de7d35a7bc8ccffa589e8ed69",
+        "raw_references_strict": "8198d21c34693a2cfab64b6aee1a95f5e7c8c07a4167fc40d6dc5fec0a674a83",
+        "shards_facts": "ed5f80167609befd401280bd92b66de50c05572e48a6891bf241f4940e2a2744",
+        "files_facts": "19c849640676c981dcc17e52b820e8cfd1ab2411af3dbfdc3825f90fe29abc1f",
+        "shard_edges_facts": "f51705a4b68f72b7a57b562e3ae877d9cc27f1e6af446c99410a3a136f77fb7e"
+      },
+      "digest_ms": 5985.669,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated src/TimeA2.h)",
+            "observed": "db=7ab073c6ba5e disk=7ab073c6ba5e",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated src/TimeA2.cc)",
+            "observed": "db=4512b7687222 disk=4512b7687222",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated src/DHTRoutingTableDeserializer.cc)",
+            "observed": "db=4a8ea7b1040d disk=4a8ea7b1040d",
+            "passed": true
+          },
+          {
+            "check": "symbol_present",
+            "expected": "find_symbol('setTimeFromEpoch') returns >= 1 row",
+            "observed": "rows=2",
+            "passed": true
+          },
+          {
+            "check": "signature_contains",
+            "expected": "signature of 'setTimeFromEpoch' contains 'sysv1_epoch_hint'",
+            "observed": "rows=2 signature_hits=2",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 110.736,
+        "query_visible_time_to_freshness_ms": 8753.564,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 0,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "src/TimeA2.h",
+          "type": "replace_first",
+          "pre_sha256": "57af714967abe0bd3743bba8657830560c7f7b8457c768b3aec6a4974fa2259c",
+          "post_sha256": "7ab073c6ba5eb852c921ac5f717e2ec534c1b5135eb3f34cf5183229835d0b4e",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "src/TimeA2.cc",
+          "type": "replace_first",
+          "pre_sha256": "5961d607010aa5b539c105b74826c5284bd21567a4fe18ab539991d7c4f5a032",
+          "post_sha256": "4512b76872224c6ae4d3869dcba9030a92389b18c26e696d50ddc5e2e38a38fe",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "src/DHTRoutingTableDeserializer.cc",
+          "type": "replace_first",
+          "pre_sha256": "58ea4c5c384aab19c6a26dd7dde50dd768d51758871c5e9580c683bd11f0288f",
+          "post_sha256": "4a8ea7b1040dadeb7b715473363c823db7af561528ee82226e69e48717772ed6",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-15T12:16:27Z",
+      "mutation_applied_at_utc": "2026-09-15T12:16:33Z",
+      "mutation_applied_after_initial_build_s": 6.054245,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 3,
+        "files_reparsed_observed": 3,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "src/DHTRoutingTableDeserializer.cc",
+            "src/TimeA2.cc",
+            "src/TimeA2.h"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 0,
+      "role": "parity_full",
+      "digest_ms": 5694.909,
+      "digests": {
+        "nodes_facts": "989b5cf2586b472a3e534dbb663ce18bac7cafd20c8bd8ac19eb8d828aef76d2",
+        "nodes_strict": "f997d67e55c775ec69a321ae57d950042221a4acaa3368816628c787860a189b",
+        "edges_facts": "276cbcf7a9361795e4fd289e786f2b38dcaf8922bcbdf75d39a4d15b427349a7",
+        "edges_strict": "dd94432d9d076707783f5e34ca7f7ed367f85a5bfdfbf378138421a3c01de547",
+        "raw_references_facts": "b0cc6b9c2bf612a5a2628c303edde445acfcf60de7d35a7bc8ccffa589e8ed69",
+        "raw_references_strict": "8198d21c34693a2cfab64b6aee1a95f5e7c8c07a4167fc40d6dc5fec0a674a83",
+        "shards_facts": "ed5f80167609befd401280bd92b66de50c05572e48a6891bf241f4940e2a2744",
+        "files_facts": "19c849640676c981dcc17e52b820e8cfd1ab2411af3dbfdc3825f90fe29abc1f",
+        "shard_edges_facts": "f51705a4b68f72b7a57b562e3ae877d9cc27f1e6af446c99410a3a136f77fb7e"
+      }
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "incremental": {
+    "mutation_family": "cross_file_signature_change",
+    "mutation_id": "M4",
+    "mutation_scope": "cross_file",
+    "mutation_interface_sensitive": true,
+    "reps": 1,
+    "files_touched": 3,
+    "files_reparsed": 3,
+    "files_reused": 1165,
+    "nodes_changed": 85,
+    "edges_changed": 4,
+    "references_reprocessed": 102,
+    "references_reused": 49007,
+    "update_completion_latency_ms": 8642.829,
+    "freshness_probe": {
+      "probe_ok": true,
+      "checks": [
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated src/TimeA2.h)",
+          "observed": "db=7ab073c6ba5e disk=7ab073c6ba5e",
+          "passed": true
+        },
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated src/TimeA2.cc)",
+          "observed": "db=4512b7687222 disk=4512b7687222",
+          "passed": true
+        },
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated src/DHTRoutingTableDeserializer.cc)",
+          "observed": "db=4a8ea7b1040d disk=4a8ea7b1040d",
+          "passed": true
+        },
+        {
+          "check": "symbol_present",
+          "expected": "find_symbol('setTimeFromEpoch') returns >= 1 row",
+          "observed": "rows=2",
+          "passed": true
+        },
+        {
+          "check": "signature_contains",
+          "expected": "signature of 'setTimeFromEpoch' contains 'sysv1_epoch_hint'",
+          "observed": "rows=2 signature_hits=2",
+          "passed": true
+        }
+      ],
+      "probe_latency_ms": 110.736,
+      "query_visible_time_to_freshness_ms": 8753.564,
+      "note": "checks shown for rep 0; per-rep probe results are retained in raw_reps. Query-Visible Time-to-Freshness is measured as mutation applied -> incremental_update returns -> frozen probe observes expected changed graph state (same sequential child process; harness spawn overhead is reported separately in clocks.benchmark_setup_time_ms)."
+    },
+    "full_vs_incremental_parity": true,
+    "workload_c_gate": {
+      "execution_order": "build_frozen_A_then_mutation_then_incremental_then_full_B",
+      "expected_files_touched_min": 1,
+      "mutation_pre_hash_differs_from_post_hash": true,
+      "incremental_changed_true": true,
+      "mutation_anchor_changed": true,
+      "incremental_input_db_built_before_mutation": true,
+      "files_changed_reported_min_met": true,
+      "per_rep": [
+        {
+          "rep": 0,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 3,
+          "files_reparsed_observed": 3,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "src/DHTRoutingTableDeserializer.cc",
+              "src/TimeA2.cc",
+              "src/TimeA2.h"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "parity_gate": {
+      "covered_states": [
+        "node identities (nodes_facts)",
+        "edge identities (edges_facts)",
+        "raw-reference identity/location/resolution state incl. candidates (raw_references_facts)",
+        "shard state incl. api_fingerprint and public symbols (shards_facts)",
+        "file identities incl. source hashes (files_facts)",
+        "boundary shard-edge index (shard_edges_facts)"
+      ],
+      "digest_fields": [
+        "nodes_facts",
+        "edges_facts",
+        "raw_references_facts",
+        "shards_facts",
+        "files_facts",
+        "shard_edges_facts"
+      ],
+      "not_covered_states": [
+        "generation counters (build-history artifacts, not query-visible state)",
+        "graph_generation metrics rows",
+        "nodes/edges/shards metadata JSON beyond identity columns (strict digests, diagnostic only)",
+        "document_state (redundant with file_state/files for code-index workloads)",
+        "raw_evidence_links (knowledge layer; not produced by A/B/C/D code-index workloads)",
+        "OS-level database file byte layout"
+      ],
+      "strict_digest_match": true,
+      "strict_mismatch_disposition": "RECORDED_NON_GATING_PROVENANCE_DIVERGENCE"
+    },
+    "clocks": {
+      "system_under_test_latency_ms": 8642.829,
+      "benchmark_setup_time_ms": 471.9119,
+      "validation_time_ms": 12144.2561,
+      "parity_verification_time_ms": 11680.5776,
+      "end_to_end_benchmark_wall_time_ms": 38136.3072,
+      "boundary_note": "system_under_test_latency_ms = median incremental_update child wall time only; benchmark_setup = repository copy plus frozen mutation application (initial A index and baseline verification are excluded from setup); validation = baseline A verification plus freshness probe plus snapshot digest computation; parity_verification = digest computation for both DBs; end_to_end includes all harness orchestration and is NOT a system latency. C-vs-A comparisons must use system_under_test_latency_ms only."
+    }
+  }
+}

@@ -1,0 +1,842 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 2,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "9d7531d8840647e9fd10d3d7a650909ef307f10ffe8c6f634933734db1f18486",
+  "run_id": "SYSV1-B3ROCKSDB-C-20260916T083130Z",
+  "run_kind": "qualification",
+  "workload": "C",
+  "benchmark": "B3-rocksdb",
+  "started_at_utc": "2026-09-16T08:31:30Z",
+  "completed_at_utc": "2026-09-16T08:41:53Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "cpu_model": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_logical_cores": 28,
+    "cpu_physical_cores": "UNKNOWN",
+    "ram_total_bytes": 34013245440,
+    "storage_type": "FIXED/NTFS",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "thread_configuration": "single_process_sequential",
+    "tool_versions": {
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4",
+      "tree_sitter_python": "0.25.0"
+    },
+    "load_note": "Formal B3 run launched by Codex desktop; host load was not independently measured."
+  },
+  "inputs": {
+    "repo_path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+    "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 622772,
+    "runner_sha256": "a7af529fba5cf4569a902ddaa973029a0ce37fffcc45e14d25735aefc5e8941c",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "schema_sha256": "5c32df5765292bb35f77add71ab2416612f7b3da6307be37cb65cbaf4bceed95",
+    "schedule_manifest": "manifests/schedule-v1.json",
+    "schedule_manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "effective_config_sha256": "42c514175f3f22bfc3788466208eee876fe294fdf9f38be6003d30cdd3ba31e3",
+    "mutation_manifest": "experiments/systems_v1/manifests/mutations-rocksdb-v1.json",
+    "mutation_manifest_sha256": "d46fd1461953624450a4716deae3c48867922f7bc05545fbf8b34010bcf34435",
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "effective_config": {
+      "parser_backend": "tree_sitter",
+      "languages": [
+        "c",
+        "cpp",
+        "python"
+      ],
+      "resolver": "provenlattice.resolver.SymbolResolver (V0.2 default)",
+      "shard_strategy_effective": "directory",
+      "threading": "single_process_sequential",
+      "persistence": "sqlite3"
+    },
+    "output_path_preexistence_asserted": true,
+    "warmup": 1,
+    "reps": 3,
+    "measured_rounds": null,
+    "measurement_boundary": {
+      "rss_scope": "main_measured_child_only",
+      "cpu_scope": "main_measured_child_only",
+      "rss_semantics": "Windows: GetProcessMemoryInfo PeakWorkingSetSize of the main measured child process; POSIX: getrusage RUSAGE_SELF ru_maxrss. This is NOT process-tree memory and NOT total system memory consumption; parser descendants/grandchildren are not included.",
+      "cpu_semantics": "time.process_time() delta of the main measured child process only; NOT process-tree CPU time and NOT total system CPU time."
+    },
+    "notes": [
+      "child-process isolation per measured unit",
+      "warm-up reps labelled role=warmup and excluded from all aggregates",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B3ROCKSDB-C-20260916T083130Z-b61l14ir"
+    ]
+  },
+  "cache_policy": {
+    "os_page_cache_state": "prior_run_cache_eligible",
+    "eviction_attempted": "not_attempted",
+    "platform_privilege_note": "no privileged page-cache eviction was attempted (Windows has no unprivileged eviction API; Linux drop_caches not used); OS page cache state is therefore uncontrolled, not 'cold'",
+    "application_cache_note": "each rep reopens the SQLite DB in a new child process; the initial index within the rep may have warmed the OS file cache; unobserved",
+    "terminology": [
+      "db-fresh: the output database path did not exist before the measured unit (asserted at runtime)",
+      "process-cold: the measured unit runs in a freshly spawned child process; no application-level cache is inherited",
+      "first-query: the first query round executed by a newly spawned query process",
+      "warm-repeat: measured query rounds executed by the same query process after three warm-up rounds (SQLite page cache warm within that connection; GraphQuery holds no result cache)",
+      "OS page cache uncontrolled: no privileged page-cache eviction was attempted (eviction_attempted=not_attempted)",
+      "prior-run OS-cache-eligible: measured units follow prior build reps over the same source tree; OS file cache may be warm; state unobserved",
+      "the terms 'cold filesystem cache' and 'true cold cache' are not valid V1 terms and are banned"
+    ]
+  },
+  "schedule": {
+    "manifest": "manifests/schedule-v1.json",
+    "manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "order_policy": "deterministic_fixed_order",
+    "schedule_seq": 20,
+    "frozen_before_formal_run": true
+  },
+  "statistical_policy": {
+    "primary_statistic": "median",
+    "retained": [
+      "min",
+      "max"
+    ],
+    "p95_interpretation": "DESCRIPTIVE_ONLY_FOR_SMALL_N",
+    "p99_interpretation": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT",
+    "tail_claim_allowed": false
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 40433.657,
+      "cpu_time_ms": 36187.5,
+      "peak_rss_bytes": 1127120896,
+      "db_size_bytes": 884121600,
+      "counts": {
+        "nodes": 118655,
+        "symbols": 117097,
+        "raw_references": 311111,
+        "edges": 143585,
+        "shards": 64,
+        "boundary_edges": 11692,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "files_scanned": 1478,
+        "files_parsed": 1478,
+        "parse_failures": 0,
+        "syntax_error_files": 248
+      },
+      "rep": 0,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T08:32:12Z",
+      "baseline_digests": {
+        "nodes_facts": "ab8d0ddf384793596c770f913e1f8959a40f25a074c8f7b57f57c4fefba409e9",
+        "nodes_strict": "f6ef59f31687c1fea3f14ed6fa77e20ca01ade680afb5561112b3a604a4d06a0",
+        "edges_facts": "f09fdaec177cd6b1d3b826f887e03762692661dda9b6c1580f91470dba3ecbf9",
+        "edges_strict": "7e863066dbec03aa471821adb2093b68aa30f3299456a4f8b74278558f462665",
+        "raw_references_facts": "7487d7431ca45c1f67a8e930e61e141177a389d428392374eb2fa6b38102f2b3",
+        "raw_references_strict": "eddbba203daf7c2d53a27f64bbdb5bf5cedf7598454fed9332e14544a2e33f5e",
+        "shards_facts": "6ce83d54159dd82f56668088bb39cc7d1ec3a606d6db8b639a837d43ceb307c5",
+        "files_facts": "0f4510f966005f87d8da32e5a9bff2a24ca79176f509d8390717f44021ec431f",
+        "shard_edges_facts": "922fd308ba308d9554366f87e61648b193c02c7d7ebf7c4b99dc6b06e6477788"
+      },
+      "baseline_file_state_hashes": {
+        "file/file_util.h": "be8d9c0a4c01fa1f8f7d927d38b017b0bad5cdca272b5e118300efd68d522428",
+        "file/file_util.cc": "336af7127417c97701b59bbc3c80ef54dae16239136f32b933fb8d36fc953d1f",
+        "db/builder.cc": "9969e1f179ffd4ca4c525a36f6d21d92824e57ed87bb0681cef7ffb401a9a649"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 46522.437,
+      "cpu_time_ms": 45109.375,
+      "peak_rss_bytes": 2950053888,
+      "db_size_bytes": 884985856,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "db/builder.cc",
+          "file/file_util.cc",
+          "file/file_util.h"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 3,
+      "files_reused": 1475,
+      "files_changed_reported": 3,
+      "nodes_changed": 143,
+      "edges_changed": 4,
+      "references_reprocessed": 340,
+      "references_reused": 310771,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "18bd75241fa80604096bb8733c9d91cc5bfd3b1f19d159967475fd3e675e430b",
+        "nodes_strict": "654ad29875e4f552a1d48d6c1c53e7c7d4a2eb1a8425eb1dab20b1ad70e934c5",
+        "edges_facts": "64a19c65e5e8a5fb115181e311845db98195b3c49c5b787900f6ad664c7c0706",
+        "edges_strict": "7586f02641bcfc8a3d6f75f8599e82355d3b9acb6bff1dcb3f923d89d4195dcc",
+        "raw_references_facts": "e7f4fc80783c58ae8a997cfa9f380753f40593e402fa7782759a45b2f2e9379b",
+        "raw_references_strict": "12cfa105bb092d8e534510d7c0363a63a60bbe3a62d9054578410db06b111377",
+        "shards_facts": "a338f3a061f9dd7c2f09ccce4d83cf3977315cda39a0631b2fbc4ea26c785eac",
+        "files_facts": "01fb6714c43ca76abcaf6f960b78d404e758acc0ddf2178325d8106163d5fe94",
+        "shard_edges_facts": "922fd308ba308d9554366f87e61648b193c02c7d7ebf7c4b99dc6b06e6477788"
+      },
+      "digest_ms": 37706.025,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated file/file_util.h)",
+            "observed": "db=b6893ccfc7bd disk=b6893ccfc7bd",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated file/file_util.cc)",
+            "observed": "db=b74db4a48fa6 disk=b74db4a48fa6",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated db/builder.cc)",
+            "observed": "db=29d9738731cc disk=29d9738731cc",
+            "passed": true
+          },
+          {
+            "check": "symbol_present",
+            "expected": "find_symbol('DeleteDBFile') returns >= 1 row",
+            "observed": "rows=2",
+            "passed": true
+          },
+          {
+            "check": "signature_contains",
+            "expected": "signature of 'DeleteDBFile' contains 'sysv1_flag'",
+            "observed": "rows=2 signature_hits=2",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 341.332,
+        "query_visible_time_to_freshness_ms": 46863.769,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 0,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "file/file_util.h",
+          "type": "replace_first",
+          "pre_sha256": "be8d9c0a4c01fa1f8f7d927d38b017b0bad5cdca272b5e118300efd68d522428",
+          "post_sha256": "b6893ccfc7bd089d9c234d3166e724537791760d3e16bffb24408e565d6c539f",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "file/file_util.cc",
+          "type": "replace_first",
+          "pre_sha256": "336af7127417c97701b59bbc3c80ef54dae16239136f32b933fb8d36fc953d1f",
+          "post_sha256": "b74db4a48fa637396ea4152bf5f0b2b9a9711c9e4db02e4a4d44075ff4c7735a",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "db/builder.cc",
+          "type": "replace_first",
+          "pre_sha256": "9969e1f179ffd4ca4c525a36f6d21d92824e57ed87bb0681cef7ffb401a9a649",
+          "post_sha256": "29d9738731cc4d63f09ce3196f369c27c30e3da55f160c742cd76faa7c0e0953",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T08:32:12Z",
+      "mutation_applied_at_utc": "2026-09-16T08:32:50Z",
+      "mutation_applied_after_initial_build_s": 37.492791,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 3,
+        "files_reparsed_observed": 3,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "db/builder.cc",
+            "file/file_util.cc",
+            "file/file_util.h"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 0,
+      "role": "parity_full",
+      "digest_ms": 32711.376,
+      "digests": {
+        "nodes_facts": "18bd75241fa80604096bb8733c9d91cc5bfd3b1f19d159967475fd3e675e430b",
+        "nodes_strict": "654ad29875e4f552a1d48d6c1c53e7c7d4a2eb1a8425eb1dab20b1ad70e934c5",
+        "edges_facts": "64a19c65e5e8a5fb115181e311845db98195b3c49c5b787900f6ad664c7c0706",
+        "edges_strict": "7586f02641bcfc8a3d6f75f8599e82355d3b9acb6bff1dcb3f923d89d4195dcc",
+        "raw_references_facts": "e7f4fc80783c58ae8a997cfa9f380753f40593e402fa7782759a45b2f2e9379b",
+        "raw_references_strict": "12cfa105bb092d8e534510d7c0363a63a60bbe3a62d9054578410db06b111377",
+        "shards_facts": "a338f3a061f9dd7c2f09ccce4d83cf3977315cda39a0631b2fbc4ea26c785eac",
+        "files_facts": "01fb6714c43ca76abcaf6f960b78d404e758acc0ddf2178325d8106163d5fe94",
+        "shard_edges_facts": "922fd308ba308d9554366f87e61648b193c02c7d7ebf7c4b99dc6b06e6477788"
+      }
+    },
+    {
+      "wall_time_ms": 30969.975,
+      "cpu_time_ms": 26406.25,
+      "peak_rss_bytes": 1127731200,
+      "db_size_bytes": 884088832,
+      "counts": {
+        "nodes": 118655,
+        "symbols": 117097,
+        "raw_references": 311111,
+        "edges": 143585,
+        "shards": 64,
+        "boundary_edges": 11692,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "files_scanned": 1478,
+        "files_parsed": 1478,
+        "parse_failures": 0,
+        "syntax_error_files": 248
+      },
+      "rep": 1,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T08:35:56Z",
+      "baseline_digests": {
+        "nodes_facts": "be67f0c85b486135e0394ccc5f0dac830a54c0a774bb69acf7089eed40317ec8",
+        "nodes_strict": "f056cb312c2de5bfda9da6a462e3defcc7e881893f94abb38bcb82688c474dba",
+        "edges_facts": "255853e0614e3a22739ee74cb4e35219033d6a0df1fb32f7b548856233312162",
+        "edges_strict": "e48ad63faf925238ef25fe5d234828bb8ec171278d9fcef772698a8a21400802",
+        "raw_references_facts": "c7a679d9319d6609459cf8d1e2ac353f1a60d6d17b340842108fcdf71e3246ef",
+        "raw_references_strict": "4fd46d2165dad3ae22cb83119cae6ac6efa2f142c4138e0b9a31b77e222fa32c",
+        "shards_facts": "72c26247e1b408f497a9cf9b9db1a6eca86cb86177ebb4e6d6b1bb4b213386e9",
+        "files_facts": "1a0eaa0bfcf6671a59b5b6d5e5f4f4a43f314328579adf833730fc96df436b4b",
+        "shard_edges_facts": "7ee8df0ebfd3a720a9960a2201dbc3cd5b2af69807624c4e14dd43baa5dd211b"
+      },
+      "baseline_file_state_hashes": {
+        "file/file_util.h": "be8d9c0a4c01fa1f8f7d927d38b017b0bad5cdca272b5e118300efd68d522428",
+        "file/file_util.cc": "336af7127417c97701b59bbc3c80ef54dae16239136f32b933fb8d36fc953d1f",
+        "db/builder.cc": "9969e1f179ffd4ca4c525a36f6d21d92824e57ed87bb0681cef7ffb401a9a649"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 36440.362,
+      "cpu_time_ms": 34921.875,
+      "peak_rss_bytes": 2949627904,
+      "db_size_bytes": 885112832,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "db/builder.cc",
+          "file/file_util.cc",
+          "file/file_util.h"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 3,
+      "files_reused": 1475,
+      "files_changed_reported": 3,
+      "nodes_changed": 143,
+      "edges_changed": 4,
+      "references_reprocessed": 340,
+      "references_reused": 310771,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "0c5a8ce4d3abd803876c37dfd50170c02e288c4175b6d7ad7164ca917f1a36f0",
+        "nodes_strict": "33663f1037078deb46b67d47b2af02bae6f42b4a3c1539872cbe7c83858b9402",
+        "edges_facts": "ea4a6f399d8a50d39c201decb3f0afdb17b38a1ab9528e956f110895dd0ab341",
+        "edges_strict": "c8e6f6786a68f0f629e2e76b5aa8eebb5a942718b4843b113e40b4670667180b",
+        "raw_references_facts": "ffa821f96c20c87ffdf4c5e02edb8c54176e5e898ce5392044916a8c5faf4ed0",
+        "raw_references_strict": "aa26d45b7a6474f48d7758a14b5362ce90d948a22a0fc05ece54ba2a3fd61cc6",
+        "shards_facts": "357a8eb720996e6b01b0f5e23be0332c5e00c23398383c5f7fe2339bcf6bbd6d",
+        "files_facts": "1dc06151e5bfce5c4cb57a523b4a7aba9aa40ca632a80f0640abfbd3f1120200",
+        "shard_edges_facts": "7ee8df0ebfd3a720a9960a2201dbc3cd5b2af69807624c4e14dd43baa5dd211b"
+      },
+      "digest_ms": 27520.989,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated file/file_util.h)",
+            "observed": "db=b6893ccfc7bd disk=b6893ccfc7bd",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated file/file_util.cc)",
+            "observed": "db=b74db4a48fa6 disk=b74db4a48fa6",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated db/builder.cc)",
+            "observed": "db=29d9738731cc disk=29d9738731cc",
+            "passed": true
+          },
+          {
+            "check": "symbol_present",
+            "expected": "find_symbol('DeleteDBFile') returns >= 1 row",
+            "observed": "rows=2",
+            "passed": true
+          },
+          {
+            "check": "signature_contains",
+            "expected": "signature of 'DeleteDBFile' contains 'sysv1_flag'",
+            "observed": "rows=2 signature_hits=2",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 272.914,
+        "query_visible_time_to_freshness_ms": 36713.277,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 1,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "file/file_util.h",
+          "type": "replace_first",
+          "pre_sha256": "be8d9c0a4c01fa1f8f7d927d38b017b0bad5cdca272b5e118300efd68d522428",
+          "post_sha256": "b6893ccfc7bd089d9c234d3166e724537791760d3e16bffb24408e565d6c539f",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "file/file_util.cc",
+          "type": "replace_first",
+          "pre_sha256": "336af7127417c97701b59bbc3c80ef54dae16239136f32b933fb8d36fc953d1f",
+          "post_sha256": "b74db4a48fa637396ea4152bf5f0b2b9a9711c9e4db02e4a4d44075ff4c7735a",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "db/builder.cc",
+          "type": "replace_first",
+          "pre_sha256": "9969e1f179ffd4ca4c525a36f6d21d92824e57ed87bb0681cef7ffb401a9a649",
+          "post_sha256": "29d9738731cc4d63f09ce3196f369c27c30e3da55f160c742cd76faa7c0e0953",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T08:35:56Z",
+      "mutation_applied_at_utc": "2026-09-16T08:36:23Z",
+      "mutation_applied_after_initial_build_s": 26.708686,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 3,
+        "files_reparsed_observed": 3,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "db/builder.cc",
+            "file/file_util.cc",
+            "file/file_util.h"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 1,
+      "role": "parity_full",
+      "digest_ms": 32976.49,
+      "digests": {
+        "nodes_facts": "0c5a8ce4d3abd803876c37dfd50170c02e288c4175b6d7ad7164ca917f1a36f0",
+        "nodes_strict": "33663f1037078deb46b67d47b2af02bae6f42b4a3c1539872cbe7c83858b9402",
+        "edges_facts": "ea4a6f399d8a50d39c201decb3f0afdb17b38a1ab9528e956f110895dd0ab341",
+        "edges_strict": "c8e6f6786a68f0f629e2e76b5aa8eebb5a942718b4843b113e40b4670667180b",
+        "raw_references_facts": "ffa821f96c20c87ffdf4c5e02edb8c54176e5e898ce5392044916a8c5faf4ed0",
+        "raw_references_strict": "aa26d45b7a6474f48d7758a14b5362ce90d948a22a0fc05ece54ba2a3fd61cc6",
+        "shards_facts": "357a8eb720996e6b01b0f5e23be0332c5e00c23398383c5f7fe2339bcf6bbd6d",
+        "files_facts": "1dc06151e5bfce5c4cb57a523b4a7aba9aa40ca632a80f0640abfbd3f1120200",
+        "shard_edges_facts": "7ee8df0ebfd3a720a9960a2201dbc3cd5b2af69807624c4e14dd43baa5dd211b"
+      }
+    },
+    {
+      "wall_time_ms": 35139.821,
+      "cpu_time_ms": 29343.75,
+      "peak_rss_bytes": 1128480768,
+      "db_size_bytes": 884150272,
+      "counts": {
+        "nodes": 118655,
+        "symbols": 117097,
+        "raw_references": 311111,
+        "edges": 143585,
+        "shards": 64,
+        "boundary_edges": 11692,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "files_scanned": 1478,
+        "files_parsed": 1478,
+        "parse_failures": 0,
+        "syntax_error_files": 248
+      },
+      "rep": 2,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T08:39:05Z",
+      "baseline_digests": {
+        "nodes_facts": "d14c8c0e30c6c40a49a31a49d849f0bb7c0da41cbd3dbd96cebc9d2a6b657710",
+        "nodes_strict": "d72485daf8316476bb04d0b39649d489867bf98fe2a41815ce941f99ade4ec83",
+        "edges_facts": "a20988b80b02efe44bc6dfee10ae1a6b40474f218c0826772d9b44a89822b902",
+        "edges_strict": "e3c9e4400e72de8e8cc5f68f563f62269682965847339417bbf399a26ca39dd2",
+        "raw_references_facts": "1edb5fa053583b6cd456425ac9f7fa4689f3e0bccbed3b2e1aae3a562bdae762",
+        "raw_references_strict": "09948a23ada0901c665a809a80039fb6fdd7cbcbf46ddeafa409cdc35d4ff73a",
+        "shards_facts": "79a9302b35fcf54a631b9b7dfad6d04b8c3eb5c92bd83ea81f12841a1bea9b99",
+        "files_facts": "b3f728ed3283a38b68c8fcb10aebd6462df9ba09faa7c0ed6350230af712b875",
+        "shard_edges_facts": "7c162d86cb90d78cd65095cadd967be3016e3252f505ec1c0f63f0913a1564fe"
+      },
+      "baseline_file_state_hashes": {
+        "file/file_util.h": "be8d9c0a4c01fa1f8f7d927d38b017b0bad5cdca272b5e118300efd68d522428",
+        "file/file_util.cc": "336af7127417c97701b59bbc3c80ef54dae16239136f32b933fb8d36fc953d1f",
+        "db/builder.cc": "9969e1f179ffd4ca4c525a36f6d21d92824e57ed87bb0681cef7ffb401a9a649"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 41946.501,
+      "cpu_time_ms": 39187.5,
+      "peak_rss_bytes": 2950025216,
+      "db_size_bytes": 884924416,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "db/builder.cc",
+          "file/file_util.cc",
+          "file/file_util.h"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 3,
+      "files_reused": 1475,
+      "files_changed_reported": 3,
+      "nodes_changed": 143,
+      "edges_changed": 4,
+      "references_reprocessed": 340,
+      "references_reused": 310771,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "b41575b5c965de4da6c9a9b99575041a48d2926ec71a948631bfd31070ad6542",
+        "nodes_strict": "0f2cfae94800b16ff7929dc9d643ec541fd7f803016ee353ff0715739332dee7",
+        "edges_facts": "ee57472702525c3a1d44a70880fcd793457149a5a4d1d7eeceb86e4bfc856af8",
+        "edges_strict": "a34b69f3f3cc19aa2ad64d6df935f8768a0f25021a3ca7f20fc641bea9764560",
+        "raw_references_facts": "9a00a1f8d435bf1be09786ffc9d5c9a134ef90f5362fc5bd377eeaf534887812",
+        "raw_references_strict": "d36b2dd3333a0f800ad9300ddf5c844bdbfea468ef86c5efb36bcd09bbf7fe04",
+        "shards_facts": "914891b90a60300e423252feb1dbe458b2f17bd4eef02803156df3acdc8ca369",
+        "files_facts": "cf0d5be985b56c422226ed0485979d9caf0f69d40bae4f21fc29e6e2cc8da5b2",
+        "shard_edges_facts": "7c162d86cb90d78cd65095cadd967be3016e3252f505ec1c0f63f0913a1564fe"
+      },
+      "digest_ms": 32975.48,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated file/file_util.h)",
+            "observed": "db=b6893ccfc7bd disk=b6893ccfc7bd",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated file/file_util.cc)",
+            "observed": "db=b74db4a48fa6 disk=b74db4a48fa6",
+            "passed": true
+          },
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated db/builder.cc)",
+            "observed": "db=29d9738731cc disk=29d9738731cc",
+            "passed": true
+          },
+          {
+            "check": "symbol_present",
+            "expected": "find_symbol('DeleteDBFile') returns >= 1 row",
+            "observed": "rows=2",
+            "passed": true
+          },
+          {
+            "check": "signature_contains",
+            "expected": "signature of 'DeleteDBFile' contains 'sysv1_flag'",
+            "observed": "rows=2 signature_hits=2",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 297.954,
+        "query_visible_time_to_freshness_ms": 42244.455,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 2,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "file/file_util.h",
+          "type": "replace_first",
+          "pre_sha256": "be8d9c0a4c01fa1f8f7d927d38b017b0bad5cdca272b5e118300efd68d522428",
+          "post_sha256": "b6893ccfc7bd089d9c234d3166e724537791760d3e16bffb24408e565d6c539f",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "file/file_util.cc",
+          "type": "replace_first",
+          "pre_sha256": "336af7127417c97701b59bbc3c80ef54dae16239136f32b933fb8d36fc953d1f",
+          "post_sha256": "b74db4a48fa637396ea4152bf5f0b2b9a9711c9e4db02e4a4d44075ff4c7735a",
+          "content_changed": true,
+          "anchor_changed": true
+        },
+        {
+          "file": "db/builder.cc",
+          "type": "replace_first",
+          "pre_sha256": "9969e1f179ffd4ca4c525a36f6d21d92824e57ed87bb0681cef7ffb401a9a649",
+          "post_sha256": "29d9738731cc4d63f09ce3196f369c27c30e3da55f160c742cd76faa7c0e0953",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T08:39:05Z",
+      "mutation_applied_at_utc": "2026-09-16T08:39:36Z",
+      "mutation_applied_after_initial_build_s": 30.586314,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 3,
+        "files_reparsed_observed": 3,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "db/builder.cc",
+            "file/file_util.cc",
+            "file/file_util.h"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 2,
+      "role": "parity_full",
+      "digest_ms": 28834.122,
+      "digests": {
+        "nodes_facts": "b41575b5c965de4da6c9a9b99575041a48d2926ec71a948631bfd31070ad6542",
+        "nodes_strict": "0f2cfae94800b16ff7929dc9d643ec541fd7f803016ee353ff0715739332dee7",
+        "edges_facts": "ee57472702525c3a1d44a70880fcd793457149a5a4d1d7eeceb86e4bfc856af8",
+        "edges_strict": "a34b69f3f3cc19aa2ad64d6df935f8768a0f25021a3ca7f20fc641bea9764560",
+        "raw_references_facts": "9a00a1f8d435bf1be09786ffc9d5c9a134ef90f5362fc5bd377eeaf534887812",
+        "raw_references_strict": "d36b2dd3333a0f800ad9300ddf5c844bdbfea468ef86c5efb36bcd09bbf7fe04",
+        "shards_facts": "914891b90a60300e423252feb1dbe458b2f17bd4eef02803156df3acdc8ca369",
+        "files_facts": "cf0d5be985b56c422226ed0485979d9caf0f69d40bae4f21fc29e6e2cc8da5b2",
+        "shard_edges_facts": "7c162d86cb90d78cd65095cadd967be3016e3252f505ec1c0f63f0913a1564fe"
+      }
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "incremental": {
+    "mutation_family": "cross_file_signature_change",
+    "mutation_id": "M4",
+    "mutation_scope": "cross_file",
+    "mutation_interface_sensitive": true,
+    "reps": 3,
+    "files_touched": 9,
+    "files_reparsed": 9,
+    "files_reused": 4425,
+    "nodes_changed": 429,
+    "edges_changed": 12,
+    "references_reprocessed": 1020,
+    "references_reused": 932313,
+    "update_completion_latency_ms": 41946.501,
+    "freshness_probe": {
+      "probe_ok": true,
+      "checks": [
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated file/file_util.h)",
+          "observed": "db=b6893ccfc7bd disk=b6893ccfc7bd",
+          "passed": true
+        },
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated file/file_util.cc)",
+          "observed": "db=b74db4a48fa6 disk=b74db4a48fa6",
+          "passed": true
+        },
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated db/builder.cc)",
+          "observed": "db=29d9738731cc disk=29d9738731cc",
+          "passed": true
+        },
+        {
+          "check": "symbol_present",
+          "expected": "find_symbol('DeleteDBFile') returns >= 1 row",
+          "observed": "rows=2",
+          "passed": true
+        },
+        {
+          "check": "signature_contains",
+          "expected": "signature of 'DeleteDBFile' contains 'sysv1_flag'",
+          "observed": "rows=2 signature_hits=2",
+          "passed": true
+        }
+      ],
+      "probe_latency_ms": 297.954,
+      "query_visible_time_to_freshness_ms": 42244.455,
+      "note": "checks shown for rep 0; per-rep probe results are retained in raw_reps. Query-Visible Time-to-Freshness is measured as mutation applied -> incremental_update returns -> frozen probe observes expected changed graph state (same sequential child process; harness spawn overhead is reported separately in clocks.benchmark_setup_time_ms)."
+    },
+    "full_vs_incremental_parity": true,
+    "workload_c_gate": {
+      "execution_order": "build_frozen_A_then_mutation_then_incremental_then_full_B",
+      "expected_files_touched_min": 1,
+      "mutation_pre_hash_differs_from_post_hash": true,
+      "incremental_changed_true": true,
+      "mutation_anchor_changed": true,
+      "incremental_input_db_built_before_mutation": true,
+      "files_changed_reported_min_met": true,
+      "per_rep": [
+        {
+          "rep": 0,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 3,
+          "files_reparsed_observed": 3,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "db/builder.cc",
+              "file/file_util.cc",
+              "file/file_util.h"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        },
+        {
+          "rep": 1,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 3,
+          "files_reparsed_observed": 3,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "db/builder.cc",
+              "file/file_util.cc",
+              "file/file_util.h"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        },
+        {
+          "rep": 2,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 3,
+          "files_reparsed_observed": 3,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "db/builder.cc",
+              "file/file_util.cc",
+              "file/file_util.h"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "parity_gate": {
+      "covered_states": [
+        "node identities (nodes_facts)",
+        "edge identities (edges_facts)",
+        "raw-reference identity/location/resolution state incl. candidates (raw_references_facts)",
+        "shard state incl. api_fingerprint and public symbols (shards_facts)",
+        "file identities incl. source hashes (files_facts)",
+        "boundary shard-edge index (shard_edges_facts)"
+      ],
+      "digest_fields": [
+        "nodes_facts",
+        "edges_facts",
+        "raw_references_facts",
+        "shards_facts",
+        "files_facts",
+        "shard_edges_facts"
+      ],
+      "not_covered_states": [
+        "generation counters (build-history artifacts, not query-visible state)",
+        "graph_generation metrics rows",
+        "nodes/edges/shards metadata JSON beyond identity columns (strict digests, diagnostic only)",
+        "document_state (redundant with file_state/files for code-index workloads)",
+        "raw_evidence_links (knowledge layer; not produced by A/B/C/D code-index workloads)",
+        "OS-level database file byte layout"
+      ],
+      "strict_digest_match": true,
+      "strict_mismatch_disposition": "RECORDED_NON_GATING_PROVENANCE_DIVERGENCE"
+    },
+    "clocks": {
+      "system_under_test_latency_ms": 41946.501,
+      "benchmark_setup_time_ms": 910.168,
+      "validation_time_ms": 63840.0777,
+      "parity_verification_time_ms": 61809.6023,
+      "end_to_end_benchmark_wall_time_ms": 622862.7144,
+      "boundary_note": "system_under_test_latency_ms = median incremental_update child wall time only; benchmark_setup = repository copy plus frozen mutation application (initial A index and baseline verification are excluded from setup); validation = baseline A verification plus freshness probe plus snapshot digest computation; parity_verification = digest computation for both DBs; end_to_end includes all harness orchestration and is NOT a system latency. C-vs-A comparisons must use system_under_test_latency_ms only."
+    }
+  },
+  "qualification_gates": {
+    "build_measured_reps_minimum_met": true,
+    "workload_c_reps_minimum_met": true,
+    "query_warm_rounds_minimum_met": true,
+    "schedule_frozen": true,
+    "load_note_present": true,
+    "passed": true
+  }
+}

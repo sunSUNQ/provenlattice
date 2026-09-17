@@ -1,0 +1,132 @@
+{
+  "manifest": "MUTATION_MANIFEST_V1",
+  "version": 2,
+  "benchmark": "B3-rocksdb",
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "note": "ops are byte-deterministic: every op pins the frozen source file by sha256 before mutating a throwaway repository copy. expect_sha256 values were computed from benchmark-repos/rocksdb at frozen commit 37234200b57d8d0a6a5c41f2d9811bbd2e293544. scope/interface_sensitive document mutation representativeness per review R6; DEFERRED families (rename/move, file addition, header high-fanout, branch/overlay merge) are not included.",
+  "representativeness": {
+    "covered": [
+      "local function-body edit (M1)",
+      "file-local symbol addition (M2)",
+      "file-level deletion / tombstone handling (M3)",
+      "cross-file public signature change plus call-site update (M4)"
+    ],
+    "deferred": [
+      "rename/move",
+      "file addition",
+      "header high-fanout change",
+      "branch/overlay merge"
+    ]
+  },
+  "families": [
+    {
+      "mutation_id": "M1",
+      "family": "function_body_edit",
+      "scope": "local",
+      "interface_sensitive": false,
+      "note": "db/dbformat.cc: local character-literal edit inside AppendKeyWithMinTimestamp(); API unchanged.",
+      "ops": [
+        {
+          "type": "replace_first",
+          "file": "db/dbformat.cc",
+          "expect_sha256": "ae2617bf4ef83291cd070ac2210691497ed158eb0a8118036f7b2a57ce323cdb",
+          "find": "  const std::string kTsMin(ts_sz, static_cast<unsigned char>(0));",
+          "replace": "  const std::string kTsMin(ts_sz, static_cast<unsigned char>('\\0'));"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": ["db/dbformat.cc"],
+        "expect_file_state_absent": [],
+        "expect_symbol_present": [],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": []
+      }
+    },
+    {
+      "mutation_id": "M2",
+      "family": "add_symbol",
+      "scope": "local",
+      "interface_sensitive": false,
+      "note": "db/dbformat.cc: append a new free function in namespace ROCKSDB_NAMESPACE (new symbol, new nodes/references).",
+      "ops": [
+        {
+          "type": "append_text",
+          "file": "db/dbformat.cc",
+          "expect_sha256": "ae2617bf4ef83291cd070ac2210691497ed158eb0a8118036f7b2a57ce323cdb",
+          "text": "\nnamespace ROCKSDB_NAMESPACE {\n\nint Sysv1MutationMarker()\n{\n  return 42;\n}\n\n}  // namespace ROCKSDB_NAMESPACE\n"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": ["db/dbformat.cc"],
+        "expect_file_state_absent": [],
+        "expect_symbol_present": ["Sysv1MutationMarker"],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": []
+      }
+    },
+    {
+      "mutation_id": "M3",
+      "family": "delete_file",
+      "scope": "file_level",
+      "interface_sensitive": false,
+      "note": "delete db/db_info_dumper.cc: tombstone handling; references pointing into it must drop or become unresolved. The declaration survives via db/db_info_dumper.h, so the probe asserts file_state absence only.",
+      "ops": [
+        {
+          "type": "delete_file",
+          "file": "db/db_info_dumper.cc",
+          "expect_sha256": "df6b200b65f57016c0877cb5874dac67bb186b2bfb29e1e67758ce1af8a6f2c8"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": [],
+        "expect_file_state_absent": ["db/db_info_dumper.cc"],
+        "expect_symbol_present": [],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": []
+      }
+    },
+    {
+      "mutation_id": "M4",
+      "family": "cross_file_signature_change",
+      "scope": "cross_file",
+      "interface_sensitive": true,
+      "note": "public free function rocksdb::DeleteDBFile gains a defaulted parameter in file/file_util.h (interface), definition updated in file/file_util.cc, and one call site in db/builder.cc passes the new argument. Tests invalidation propagation beyond file-local edits; node identity changes because symbol_id includes the signature.",
+      "ops": [
+        {
+          "type": "replace_first",
+          "file": "file/file_util.h",
+          "expect_sha256": "be8d9c0a4c01fa1f8f7d927d38b017b0bad5cdca272b5e118300efd68d522428",
+          "find": "Status DeleteDBFile(const ImmutableDBOptions* db_options,\n                    const std::string& fname, const std::string& path_to_sync,\n                    const bool force_bg, const bool force_fg);",
+          "replace": "Status DeleteDBFile(const ImmutableDBOptions* db_options,\n                    const std::string& fname, const std::string& path_to_sync,\n                    const bool force_bg, const bool force_fg,\n                    int sysv1_flag = 0);"
+        },
+        {
+          "type": "replace_first",
+          "file": "file/file_util.cc",
+          "expect_sha256": "336af7127417c97701b59bbc3c80ef54dae16239136f32b933fb8d36fc953d1f",
+          "find": "Status DeleteDBFile(const ImmutableDBOptions* db_options,\n                    const std::string& fname, const std::string& dir_to_sync,\n                    const bool force_bg, const bool force_fg) {",
+          "replace": "Status DeleteDBFile(const ImmutableDBOptions* db_options,\n                    const std::string& fname, const std::string& dir_to_sync,\n                    const bool force_bg, const bool force_fg, int sysv1_flag) {"
+        },
+        {
+          "type": "replace_first",
+          "file": "db/builder.cc",
+          "expect_sha256": "9969e1f179ffd4ca4c525a36f6d21d92824e57ed87bb0681cef7ffb401a9a649",
+          "find": "        Status ignored = DeleteDBFile(&db_options, blob_file_path, dbname,\n                                      /*force_bg=*/false, /*force_fg=*/false);",
+          "replace": "        Status ignored = DeleteDBFile(&db_options, blob_file_path, dbname,\n                                      /*force_bg=*/false, /*force_fg=*/false,\n                                      /*sysv1_flag=*/1);"
+        }
+      ],
+      "freshness_probe": {
+        "expect_file_state_hash_changed": [
+          "file/file_util.h",
+          "file/file_util.cc",
+          "db/builder.cc"
+        ],
+        "expect_file_state_absent": [],
+        "expect_symbol_present": ["DeleteDBFile"],
+        "expect_symbol_absent": [],
+        "expect_signature_contains": [
+          {"symbol": "DeleteDBFile", "token": "sysv1_flag"}
+        ]
+      }
+    }
+  ]
+}

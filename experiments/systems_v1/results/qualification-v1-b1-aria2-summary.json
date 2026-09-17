@@ -1,0 +1,64 @@
+{
+  "schema": "RQ2_FORMAL_QUALIFICATION_SUMMARY_V1",
+  "schema_version": 1,
+  "qualification_id": "RQ2-FORMAL-B1-ARIA2-2026-09-16",
+  "benchmark": "B1-aria2",
+  "scope": "B1-only; no RQ2 cross-system verdict",
+  "status": "PASS",
+  "contract": {
+    "id": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+    "status": "FROZEN",
+    "freeze_review": "../reviews/contract-v1-freeze-review-2026-09-16.md",
+    "freeze_seal": "../reviews/contract-v1-freeze-2026-09-16.sha256"
+  },
+  "record_classification": {
+    "VALID": 7,
+    "INVALID_EXECUTION": 0,
+    "INFRASTRUCTURE_OR_ENVIRONMENT_ATTRIBUTION": 0,
+    "silently_dropped": 0
+  },
+  "workloads": {
+    "A": {
+      "record": "QUALIFICATION-V1-B1-ARIA2-A.json",
+      "run_id": "SYSV1-B1ARIA2-A-20260916T070743Z",
+      "sha256": "f42bc84011c08ff5ce6459e1c57e40f969ebf42498e315ff564658d85d753921",
+      "measured_reps": 5,
+      "median_wall_time_ms": 4494.126,
+      "counts_within_v0_2_anomaly_band": true
+    },
+    "B": {
+      "record": "QUALIFICATION-V1-B1-ARIA2-B.json",
+      "run_id": "SYSV1-B1ARIA2-B-20260916T070819Z",
+      "sha256": "ae247f44e9c10136963bb22a846a676013974f6af43efe313ba0da8203fa17ef",
+      "measured_reps": 5,
+      "median_wall_time_ms": 4561.364,
+      "counts_within_v0_2_anomaly_band": true
+    },
+    "C": {
+      "families": [
+        {"mutation_id": "M1", "record": "QUALIFICATION-V1-B1-ARIA2-C-M1.json", "run_id": "SYSV1-B1ARIA2-C-20260916T070901Z", "sha256": "cbd5d8df0d3358485d6462dba7ccd35cc120f4b37eaf26bd58d13ad49845fe14", "reps": 3, "hard_gate": true, "freshness": true, "facts_parity": true, "strict_digest_parity": true},
+        {"mutation_id": "M2", "record": "QUALIFICATION-V1-B1-ARIA2-C-M2.json", "run_id": "SYSV1-B1ARIA2-C-20260916T071044Z", "sha256": "c1f99626bb247fa8369fc1e0b086cc75e847ac36d1a8e143c88357fd06f2066c", "reps": 3, "hard_gate": true, "freshness": true, "facts_parity": true, "strict_digest_parity": true},
+        {"mutation_id": "M3", "record": "QUALIFICATION-V1-B1-ARIA2-C-M3.json", "run_id": "SYSV1-B1ARIA2-C-20260916T071226Z", "sha256": "25f03f3ade2d38958faec1e0eb7114669ba2d264bf7c87adc099a746d0c9213a", "reps": 3, "hard_gate": true, "freshness": true, "facts_parity": true, "strict_digest_parity": true},
+        {"mutation_id": "M4", "record": "QUALIFICATION-V1-B1-ARIA2-C-M4.json", "run_id": "SYSV1-B1ARIA2-C-20260916T071407Z", "sha256": "c2476115cd8fc58df18661bd4d05eceea07d361d2fa50dc027cc3afebc66a836", "reps": 3, "hard_gate": true, "freshness": true, "facts_parity": true, "strict_digest_parity": true}
+      ],
+      "incremental_reps_total": 12,
+      "all_state_layers_parity": true
+    },
+    "D": {
+      "record": "QUALIFICATION-V1-B1-ARIA2-D.json",
+      "run_id": "SYSV1-B1ARIA2-D-20260916T071923Z",
+      "sha256": "d55822571c21ba87456d951ae5be07495ce4b129eeeaf856d9d84572d71a38e2",
+      "query_manifest_sha256": "8716bb535dfc7c00b0165fbcfc2a9bdf9b5ba2e4fe3617e9ee84f0c74294fe09",
+      "execution_order": "manifest_file_order",
+      "anchor_validation": "qualified_name_exact_match",
+      "warm_measured_rounds": 30,
+      "warm_samples_per_query_type": 150
+    }
+  },
+  "conclusion": {
+    "b1_formal_evidence_review": "PASS",
+    "contract_level_blocker": false,
+    "capability_failure": false,
+    "next_authorized_phase": "RQ2 Formal B2 Qualification — brpc"
+  }
+}

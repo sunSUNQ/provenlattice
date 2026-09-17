@@ -1,0 +1,128 @@
+{
+  "manifest": "QUERY_MANIFEST_V1",
+  "version": 2,
+  "benchmark": "B2-brpc",
+  "note": "anchors are frozen qualified names; the runner must resolve each name to a candidate whose qualified_name equals the anchor string, else the run fails. No machine-local paths are recorded (review R11).",
+  "selection_policy": {
+    "top_degree_by_calls": 3,
+    "name_ascending": 2,
+    "tie_break": "qualified_name ASC",
+    "kinds": [
+      "Function",
+      "Method"
+    ],
+    "query_types": [
+      "symbol",
+      "callers",
+      "callees",
+      "subgraph"
+    ]
+  },
+  "source_provenance": {
+    "benchmark": "B2-brpc",
+    "selection": "deterministic top-degree + name-ascending policy above, computed from a full index of the frozen commit",
+    "database": "temporary selection DB (discarded; portable provenance only)"
+  },
+  "queries": [
+    {
+      "type": "symbol",
+      "name": " instance_",
+      "anchor": "Singleton<Type, Traits, DifferentiatingType>. instance_"
+    },
+    {
+      "type": "callers",
+      "name": " instance_",
+      "anchor": "Singleton<Type, Traits, DifferentiatingType>. instance_"
+    },
+    {
+      "type": "callees",
+      "name": " instance_",
+      "anchor": "Singleton<Type, Traits, DifferentiatingType>. instance_"
+    },
+    {
+      "type": "subgraph",
+      "name": " instance_",
+      "anchor": "Singleton<Type, Traits, DifferentiatingType>. instance_"
+    },
+    {
+      "type": "symbol",
+      "name": "bthread_usleep",
+      "anchor": "bthread_usleep"
+    },
+    {
+      "type": "callers",
+      "name": "bthread_usleep",
+      "anchor": "bthread_usleep"
+    },
+    {
+      "type": "callees",
+      "name": "bthread_usleep",
+      "anchor": "bthread_usleep"
+    },
+    {
+      "type": "subgraph",
+      "name": "bthread_usleep",
+      "anchor": "bthread_usleep"
+    },
+    {
+      "type": "symbol",
+      "name": "snprintf",
+      "anchor": "butil.snprintf"
+    },
+    {
+      "type": "callers",
+      "name": "snprintf",
+      "anchor": "butil.snprintf"
+    },
+    {
+      "type": "callees",
+      "name": "snprintf",
+      "anchor": "butil.snprintf"
+    },
+    {
+      "type": "subgraph",
+      "name": "snprintf",
+      "anchor": "butil.snprintf"
+    },
+    {
+      "type": "symbol",
+      "name": "fetch_add",
+      "anchor": "butil.static_atomic.fetch_add"
+    },
+    {
+      "type": "callers",
+      "name": "fetch_add",
+      "anchor": "butil.static_atomic.fetch_add"
+    },
+    {
+      "type": "callees",
+      "name": "fetch_add",
+      "anchor": "butil.static_atomic.fetch_add"
+    },
+    {
+      "type": "subgraph",
+      "name": "fetch_add",
+      "anchor": "butil.static_atomic.fetch_add"
+    },
+    {
+      "type": "symbol",
+      "name": "*",
+      "anchor": "std.unique_ptr.operator int nat.*"
+    },
+    {
+      "type": "callers",
+      "name": "*",
+      "anchor": "std.unique_ptr.operator int nat.*"
+    },
+    {
+      "type": "callees",
+      "name": "*",
+      "anchor": "std.unique_ptr.operator int nat.*"
+    },
+    {
+      "type": "subgraph",
+      "name": "*",
+      "anchor": "std.unique_ptr.operator int nat.*"
+    }
+  ]
+}

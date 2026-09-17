@@ -1,0 +1,125 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 1,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "61ffceac286278994483bc75d35fb8f6a49311b73320c2d76a977c78c3e00410",
+  "run_id": "SYSV1-B1ARIA2-C-20260915T100123Z",
+  "run_kind": "smoke",
+  "workload": "C",
+  "benchmark": "B1-aria2",
+  "started_at_utc": "2026-09-15T10:01:23Z",
+  "completed_at_utc": "2026-09-15T10:01:39Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "machine": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "load_note": ""
+  },
+  "inputs": {
+    "repo_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+    "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 118926,
+    "runner_sha256": "1e6a67ca10938cf15539831c118182f5c9e96340533ed0669246436ec7caa3b9",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "mutation_manifest": "experiments/systems_v1/manifests/mutations-aria2-v1.json",
+    "mutation_manifest_sha256": "02e882dc0cd20aac0135dad56c943c92695c1beac0e84756af8b9977fa0c54c9",
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "warmup": 1,
+    "reps": 1,
+    "notes": [
+      "child-process isolation per measured unit",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B1ARIA2-C-20260915T100123Z-g1i7x_ib"
+    ]
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 3994.793,
+      "cpu_time_ms": 3937.5,
+      "peak_rss_bytes": 198549504,
+      "db_size_bytes": 133152768,
+      "counts": {
+        "nodes": 29117,
+        "raw_references": 49109,
+        "edges": 37074,
+        "shards": 8,
+        "boundary_edges": 1356,
+        "resolved_references": 10804,
+        "ambiguous_references": 13966,
+        "unresolved_references": 24339,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 388
+      },
+      "rep": 0,
+      "role": "initial_index"
+    },
+    {
+      "wall_time_ms": 5245.527,
+      "cpu_time_ms": 5062.5,
+      "peak_rss_bytes": 461611008,
+      "db_size_bytes": 133332992,
+      "changed": true,
+      "files_reparsed": 1,
+      "files_reused": 1167,
+      "files_changed_reported": 1,
+      "nodes_changed": 5,
+      "edges_changed": 0,
+      "references_reprocessed": 1,
+      "references_reused": 49108,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "17b2d2a8f3f2487d86ddefa927e84f3c99f5188546297eecb61fe6a713d57ce9",
+        "nodes_strict": "87b982fc6a007883449a51f928d34ca59ccc8703dc96db95f5b0235dcbc0c895",
+        "edges_facts": "949654fcb5fd74b5180bf846608042a402dd70c2809a7efcd3946e74a6cec57b",
+        "edges_strict": "4fbddb70d8017881582d016107c60151eed9aaeb4bd1cd8b537ed1827f87b19c",
+        "raw_references_facts": "f63e6fe1863486591f8fb1c63f09657d6e4086480f4db5f6faf997c60c1d331c",
+        "raw_references_strict": "0565e86ec38018d39afc2607ccc8d052ec0ef949dff87d46a8019f89274edb48"
+      },
+      "rep": 0,
+      "role": "incremental",
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 0,
+      "role": "parity_full",
+      "digests": {
+        "nodes_facts": "17b2d2a8f3f2487d86ddefa927e84f3c99f5188546297eecb61fe6a713d57ce9",
+        "nodes_strict": "87b982fc6a007883449a51f928d34ca59ccc8703dc96db95f5b0235dcbc0c895",
+        "edges_facts": "949654fcb5fd74b5180bf846608042a402dd70c2809a7efcd3946e74a6cec57b",
+        "edges_strict": "4fbddb70d8017881582d016107c60151eed9aaeb4bd1cd8b537ed1827f87b19c",
+        "raw_references_facts": "f63e6fe1863486591f8fb1c63f09657d6e4086480f4db5f6faf997c60c1d331c",
+        "raw_references_strict": "0565e86ec38018d39afc2607ccc8d052ec0ef949dff87d46a8019f89274edb48"
+      }
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "incremental": {
+    "mutation_family": "function_body_edit",
+    "mutation_id": "M1",
+    "files_touched": 1,
+    "files_reparsed": 1,
+    "files_reused": 1167,
+    "nodes_changed": 5,
+    "edges_changed": 0,
+    "references_reprocessed": 1,
+    "references_reused": 49108,
+    "update_latency_ms": 5245.527,
+    "time_to_freshness_ms": 5245.527,
+    "full_vs_incremental_parity": true
+  }
+}

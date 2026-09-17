@@ -1,0 +1,173 @@
+{
+  "artifact": "systems-benchmark-contract-v1-review",
+  "role": "independent benchmark methodology reviewer",
+  "decision": "APPROVE_WITH_REQUIRED_CHANGES",
+  "classification_summary": {
+    "BLOCKING": [],
+    "REQUIRED_BEFORE_FORMAL_RUN": ["R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13"],
+    "NON_BLOCKING": ["N1"],
+    "FUTURE": ["F1", "F2"]
+  },
+  "freeze_recommendation": {
+    "contract_v1_ready_to_freeze": "NO",
+    "formal_b1_b2_b3_qualification_ready": "NO",
+    "reason": "The draft design is sound, but cache semantics, qualification enforcement, exact parity scope, workload-manifest completeness, and provenance/normalization instrumentation are not yet aligned between contract, schema, and runner."
+  },
+  "strengths": [
+    "Frozen B1-B3 repository matrix and commit pins",
+    "Fresh output paths and child-process execution for measured build/query units",
+    "Raw repetition retention with recomputable derived aggregates",
+    "Incremental result compared with a fresh full rebuild rather than approximate counts",
+    "Graph-size facts beyond LOC",
+    "Frozen query and mutation input concept",
+    "Explicit no-scale-extrapolation boundary",
+    "Concurrent queries and external baselines appropriately deferred"
+  ],
+  "findings": [
+    {
+      "id": "R1",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "cold_warm_cache_semantics",
+      "finding": "New process and fresh DB/output are reproducible; OS filesystem/page-cache state is not cleared or measured. A/B do not retain application or database cache across child processes.",
+      "minimum_change": "Use explicit fresh-output/new-process and OS-page-cache-uncontrolled labels; record cache policy, platform, privilege, and whether eviction was attempted. Do not call a new process filesystem-cold."
+    },
+    {
+      "id": "R2",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "full_build_isolation_and_config",
+      "finding": "Unique temporary DB paths are used, but effective parser/resolver/thread configuration and preexisting-output assertions are not captured as frozen input identity.",
+      "minimum_change": "Record canonical effective configuration or hashes and assert output/DB absence before each full-build rep."
+    },
+    {
+      "id": "R3",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "resource_measurement_scope",
+      "finding": "PeakWorkingSetSize/RUSAGE_SELF and process_time measure the main child only, not parser descendants or total system consumption.",
+      "minimum_change": "Either add process-tree accounting or label CPU/RSS explicitly as main-measured-child-only on each platform."
+    },
+    {
+      "id": "R4",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "schema_enforcement",
+      "finding": "The runner uses limited custom validation instead of the stated JSON Schema, and the schema permits raw reps without workload-specific measurement fields.",
+      "minimum_change": "Validate against the frozen schema and enforce workload-specific raw/derived, incremental, parity, and query evidence fields."
+    },
+    {
+      "id": "R5",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "repetition_statistics_order",
+      "finding": "A warm-up is currently labelled measured; CLI permits reps below the contract minima; repository/workload/cache/mutation ordering is not frozen; n=5 P95 and small-n P99 lack descriptive-only limits.",
+      "minimum_change": "Exclude A warm-up, reject undersized qualification runs, freeze schedule/order, retain all samples, and label percentile tails descriptive with their sample counts."
+    },
+    {
+      "id": "R6",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "incremental_mutation_representativeness",
+      "finding": "M1/M2/M3 cover local body edit, symbol addition in an existing file, and file deletion, but omit cross-file interface invalidation and are biased toward easy/local cases.",
+      "minimum_change": "Add one frozen public declaration/signature plus required call-site update family. Keep rename/move, overlay, and high-fanout stress deferred rather than expanding V1 broadly."
+    },
+    {
+      "id": "R7",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "incremental_manifest_completeness",
+      "finding": "Only aria2 has a mutation manifest, while C is required for B1-B3.",
+      "minimum_change": "Freeze B2 and B3 mutation manifests before formal three-repository qualification."
+    },
+    {
+      "id": "R8",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "incremental_exact_parity",
+      "finding": "The gated digests cover useful node/edge facts but raw-reference facts omit source identity/candidates, shard state is omitted, API/query-visible state is omitted, and strict mismatch is diagnostic only.",
+      "minimum_change": "Expand canonical parity digests to the documented state or narrow the documented parity claim; define strict-mismatch disposition. Keep exact incremental-versus-fresh-full parity, with ±10% drift only as anomaly detection."
+    },
+    {
+      "id": "R9",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "time_to_freshness",
+      "finding": "The current field equals incremental command wall time and does not verify that a query observes the mutation.",
+      "minimum_change": "Rename to incremental_command_latency_ms or add a measured post-update query-visibility probe before using time_to_freshness_ms."
+    },
+    {
+      "id": "R10",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "incremental_anomaly_clock_boundary",
+      "finding": "Child timing excludes copy/mutation/parity overhead, but the contract does not separately record harness/validation overhead or provide component timing sufficient for causal claims about incremental > full.",
+      "minimum_change": "Record system-under-test latency separately from harness/validation overhead; prohibit causal attribution from smoke data."
+    },
+    {
+      "id": "R11",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "query_workload_completeness",
+      "finding": "The aria2 20-query set covers symbol/caller/callee/subgraph, but B2/B3 manifests are absent, source_database is machine-local, manifest anchor identity is not verified, and query order is not frozen beyond file order.",
+      "minimum_change": "Freeze B2/B3 manifests, make provenance portable, validate qualified anchors, freeze/record ordering, and report descriptive percentiles with per-type sample counts."
+    },
+    {
+      "id": "R12",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "scale_normalization",
+      "finding": "The contract requires non-LOC cost denominators, but the runner outputs only per-KLOC costs plus edges/node; sec/1K symbols, MiB/1K symbols, DB bytes/node or reference, and a defined symbol denominator are absent.",
+      "minimum_change": "Add the promised per-symbol/per-node and DB-per-node/reference fields and preserve their raw denominators. Do not infer a single LOC slope."
+    },
+    {
+      "id": "R13",
+      "classification": "REQUIRED_BEFORE_FORMAL_RUN",
+      "topic": "environment_provenance",
+      "finding": "The runner omits cores, RAM, filesystem/storage, thread configuration, compiler/tool versions, effective configuration hashes, and an operator-supplied load note required by the contract.",
+      "minimum_change": "Capture these fields or use explicit unknown; require a formal-run load note and do not guess unavailable values."
+    },
+    {
+      "id": "N1",
+      "classification": "NON_BLOCKING",
+      "topic": "amortization",
+      "finding": "The raw-system-cost framework is appropriate and external baseline comparison is deferred.",
+      "minimum_change": "Retain raw distributions; do not claim agent-token or comparative total-cost savings in V1."
+    },
+    {
+      "id": "F1",
+      "classification": "FUTURE",
+      "topic": "concurrent_query",
+      "finding": "Concurrency level, worker model, shared-cache semantics, errors/timeouts, and latency/throughput instrumentation are not frozen.",
+      "minimum_change": "Keep Concurrent Query = DEFERRED."
+    },
+    {
+      "id": "F2",
+      "classification": "FUTURE",
+      "topic": "scale_and_comparisons",
+      "finding": "V1 ends at RocksDB's 622,772 C/C++ LOC and has no same-machine external baseline.",
+      "minimum_change": "Keep B4/B5, million/10M claims, and cross-system claims deferred."
+    }
+  ],
+  "formal_reporting_boundaries": {
+    "aria2_incremental_greater_than_full_smoke": "OBSERVED_ONLY_NO_CAUSAL_ATTRIBUTION",
+    "p95_build_n5": "DESCRIPTIVE_ONLY",
+    "p99_query": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT",
+    "count_drift_gate": "ANOMALY_DETECTOR_NOT_PARITY_SUBSTITUTE",
+    "system_cost_vs_agent_cost": "SYSTEM_COST_ONLY_IN_V1"
+  },
+  "deferred_scope": [
+    "Concurrent query",
+    "External same-machine baselines",
+    "B4 >=1M LOC, B5 multi-million, and ~11M LOC claims",
+    "Runtime optimization before Before measurement",
+    "Causal explanation of aria2 incremental smoke anomaly",
+    "RQ1 graph-fidelity repair"
+  ],
+  "minimum_freeze_bundle": [
+    "amended contract",
+    "amended schema",
+    "amended runner",
+    "benchmark manifest",
+    "B1/B2/B3 mutation manifests",
+    "B1/B2/B3 query manifests",
+    "frozen execution schedule",
+    "SHA256 records for all above"
+  ],
+  "review_discipline": {
+    "formal_qualification_run": false,
+    "runtime_modified": false,
+    "incremental_performance_optimized": false,
+    "aria2_anomaly_explained": false,
+    "b4_b5_added": false,
+    "graph_fidelity_modified": false
+  }
+}

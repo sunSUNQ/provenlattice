@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
+import json
 
 from .identity import edge_id, raw_reference_id
 from .models import Edge, Node, ParsedFile, ParsedReference, RawReference
@@ -98,6 +99,7 @@ class ReferenceResolver:
                     generation=generation, cached_references=cached_references,
                     changed_file_ids=changed_file_ids,
                     affected_reference_ids=affected_reference_ids,
+                    valid_node_ids=valid_node_ids,
                 )
                 raw_references.append(record)
                 reused += int(was_reused)
@@ -139,6 +141,7 @@ class ReferenceResolver:
                     generation=generation, cached_references=cached_references,
                     changed_file_ids=changed_file_ids,
                     affected_reference_ids=affected_reference_ids,
+                    valid_node_ids=valid_node_ids,
                 )
                 raw_references.append(record)
                 reused += int(was_reused)
@@ -161,6 +164,9 @@ class ReferenceResolver:
             repo_id, file_node.id, source.id, reference_type, raw_name, ordinal
         )
         cached = cached_references.get(reference_id)
+        cached_candidate_ids = (
+            set(json.loads(cached["candidate_symbols"])) if cached is not None else set()
+        )
         if (
             cached is None
             or file_node.id in changed_file_ids
@@ -169,15 +175,19 @@ class ReferenceResolver:
                 cached.get("resolved_symbol_id") is not None
                 and cached.get("resolved_symbol_id") not in valid_node_ids
             )
+            # A raw-reference cache entry is valid only while every candidate
+            # it records still exists.  Reusing a partial candidate set after a
+            # symbol deletion would preserve stale ambiguous/unresolved facts.
+            or not cached_candidate_ids.issubset(valid_node_ids)
         ):
             return None
         return RawReference(
             reference_id, repo_id, file_node.id, source.id, raw_name, reference_type,
             target_module, start_line, end_line, cached["status"],
-            __import__("json").loads(cached["candidate_symbols"]),
+            json.loads(cached["candidate_symbols"]),
             cached["resolved_symbol_id"], cached["resolution_strategy"],
             cached["provenance"], float(cached["confidence"]), generation,
-            __import__("json").loads(cached["metadata"]),
+            json.loads(cached["metadata"]),
         )
 
     def _resolve_reference(
@@ -240,29 +250,34 @@ class ReferenceResolver:
         end_line: int | None, ordinal: int, candidates: list[Node], strategy: str,
         confidence: float, generation: int, cached_references: dict[str, dict],
         changed_file_ids: set[str], affected_reference_ids: set[str],
+        valid_node_ids: set[str],
         selected: Node | None = None,
     ) -> tuple[RawReference, bool]:
         reference_id = raw_reference_id(
             repo_id, file_node.id, source.id, reference_type, raw_name, ordinal
         )
         cached = cached_references.get(reference_id)
+        cached_candidate_ids = (
+            set(json.loads(cached["candidate_symbols"])) if cached is not None else set()
+        )
         can_reuse = (
             cached is not None
             and file_node.id not in changed_file_ids
             and reference_id not in affected_reference_ids
+            and cached_candidate_ids.issubset(valid_node_ids)
             and (
                 cached.get("resolved_symbol_id") is None
                 or cached.get("resolved_symbol_id") in {node.id for node in candidates}
             )
         )
         if can_reuse:
-            candidate_ids = __import__("json").loads(cached["candidate_symbols"])
+            candidate_ids = json.loads(cached["candidate_symbols"])
             return RawReference(
                 reference_id, repo_id, file_node.id, source.id, raw_name, reference_type,
                 target_module, start_line, end_line, cached["status"], candidate_ids,
                 cached["resolved_symbol_id"], cached["resolution_strategy"],
                 cached["provenance"], float(cached["confidence"]), generation,
-                __import__("json").loads(cached["metadata"]),
+                json.loads(cached["metadata"]),
             ), True
         candidate_ids = sorted(node.id for node in candidates if node.id != source.id)
         if selected is not None and selected.id == source.id:

@@ -1,0 +1,128 @@
+{
+  "manifest": "QUERY_MANIFEST_V1",
+  "version": 2,
+  "benchmark": "B3-rocksdb",
+  "note": "anchors are frozen qualified names; the runner must resolve each name to a candidate whose qualified_name equals the anchor string, else the run fails. No machine-local paths are recorded (review R11).",
+  "selection_policy": {
+    "top_degree_by_calls": 3,
+    "name_ascending": 2,
+    "tie_break": "qualified_name ASC",
+    "kinds": [
+      "Function",
+      "Method"
+    ],
+    "query_types": [
+      "symbol",
+      "callers",
+      "callees",
+      "subgraph"
+    ]
+  },
+  "source_provenance": {
+    "benchmark": "B3-rocksdb",
+    "selection": "deterministic top-degree + name-ascending policy above, computed from a full index of the frozen commit",
+    "database": "temporary selection DB (discarded; portable provenance only)"
+  },
+  "queries": [
+    {
+      "type": "symbol",
+      "name": "IsNotFound",
+      "anchor": "ROCKSDB_NAMESPACE.Status.IsNotFound"
+    },
+    {
+      "type": "callers",
+      "name": "IsNotFound",
+      "anchor": "ROCKSDB_NAMESPACE.Status.IsNotFound"
+    },
+    {
+      "type": "callees",
+      "name": "IsNotFound",
+      "anchor": "ROCKSDB_NAMESPACE.Status.IsNotFound"
+    },
+    {
+      "type": "subgraph",
+      "name": "IsNotFound",
+      "anchor": "ROCKSDB_NAMESPACE.Status.IsNotFound"
+    },
+    {
+      "type": "symbol",
+      "name": "c_str",
+      "anchor": "ROCKSDB_NAMESPACE.TEST_F.c_str"
+    },
+    {
+      "type": "callers",
+      "name": "c_str",
+      "anchor": "ROCKSDB_NAMESPACE.TEST_F.c_str"
+    },
+    {
+      "type": "callees",
+      "name": "c_str",
+      "anchor": "ROCKSDB_NAMESPACE.TEST_F.c_str"
+    },
+    {
+      "type": "subgraph",
+      "name": "c_str",
+      "anchor": "ROCKSDB_NAMESPACE.TEST_F.c_str"
+    },
+    {
+      "type": "symbol",
+      "name": "emplace_back",
+      "anchor": "ROCKSDB_NAMESPACE.autovector.emplace_back"
+    },
+    {
+      "type": "callers",
+      "name": "emplace_back",
+      "anchor": "ROCKSDB_NAMESPACE.autovector.emplace_back"
+    },
+    {
+      "type": "callees",
+      "name": "emplace_back",
+      "anchor": "ROCKSDB_NAMESPACE.autovector.emplace_back"
+    },
+    {
+      "type": "subgraph",
+      "name": "emplace_back",
+      "anchor": "ROCKSDB_NAMESPACE.autovector.emplace_back"
+    },
+    {
+      "type": "symbol",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret"
+    },
+    {
+      "type": "callers",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret"
+    },
+    {
+      "type": "callees",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret"
+    },
+    {
+      "type": "subgraph",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_defaultSecret"
+    },
+    {
+      "type": "symbol",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret"
+    },
+    {
+      "type": "callers",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret"
+    },
+    {
+      "type": "callees",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret"
+    },
+    {
+      "type": "subgraph",
+      "name": " Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret",
+      "anchor": "XXPH64_hash_t /* It's important for performance that XXPH3_hashLong is not inlined. Not sure why (uop cache maybe ?), but difference is large and easily measurable */ XXPH3_hashLong_64b_withSecret"
+    }
+  ]
+}

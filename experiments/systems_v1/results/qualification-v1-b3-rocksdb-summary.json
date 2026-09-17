@@ -1,0 +1,119 @@
+{
+  "schema": "RQ2_FORMAL_QUALIFICATION_SUMMARY_V1",
+  "schema_version": 1,
+  "qualification_id": "RQ2-FORMAL-B3-ROCKSDB-2026-09-16",
+  "benchmark": "B3-rocksdb",
+  "scope": "B3-only; no RQ2 cross-system verdict",
+  "status": "PASS",
+  "benchmark_identity": {
+    "role": "Scale",
+    "repo_path": "benchmark-repos/rocksdb",
+    "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+    "c_cpp_loc": 622772,
+    "commit_matches_manifest": true
+  },
+  "contract": {
+    "id": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+    "status": "FROZEN",
+    "freeze_review": "../reviews/contract-v1-freeze-review-2026-09-16.md",
+    "freeze_seal": "../reviews/contract-v1-freeze-2026-09-16.sha256"
+  },
+  "record_classification": {
+    "VALID": 7,
+    "INVALID_EXECUTION": 0,
+    "INFRASTRUCTURE_OR_ENVIRONMENT_ATTRIBUTION": 1,
+    "silently_dropped": 0,
+    "infrastructure_attribution_note": "QUALIFICATION-V1-B3-ROCKSDB-D.invalid.json (run SYSV1-B3ROCKSDB-D-20260916T084850Z): first D launch by the taking-over operator used a shell without PYTHONPATH; the child build task failed with ModuleNotFoundError before any measurement, and the frozen runner recorded the run as an infrastructure_failure artifact with suffix .invalid per its own design. Attributed to operator launch environment; not a Contract V1, runner, schema, or manifest defect. Workload D was then re-executed in full from scratch (same frozen parameters and manifest) and produced the valid formal record below. The .invalid artifact is retained verbatim for provenance and is excluded from formal evidence.",
+    "invalid_artifact": {
+      "record": "QUALIFICATION-V1-B3-ROCKSDB-D.invalid.json",
+      "run_id": "SYSV1-B3ROCKSDB-D-20260916T084850Z",
+      "stage": "workload_execution",
+      "detail_headline": "child build task failed: ModuleNotFoundError: No module named 'provenlattice'",
+      "excluded_from_formal_evidence": true
+    }
+  },
+  "workloads": {
+    "A": {
+      "record": "QUALIFICATION-V1-B3-ROCKSDB-A.json",
+      "run_id": "SYSV1-B3ROCKSDB-A-20260916T074937Z",
+      "sha256": "014c3f73106998ee3b0c14b7f80aee1edd571b2a62b7c26354705b415e8b011e",
+      "measured_reps": 5,
+      "median_wall_time_ms": 28238.675,
+      "counts_within_v0_2_anomaly_band": true
+    },
+    "B": {
+      "record": "QUALIFICATION-V1-B3-ROCKSDB-B.json",
+      "run_id": "SYSV1-B3ROCKSDB-B-20260916T075253Z",
+      "sha256": "d122066b26e9de71036d0c2a21751b1110efbf940362b3d168c12f3dd0f027d3",
+      "measured_reps": 5,
+      "median_wall_time_ms": 29669.906,
+      "counts_within_v0_2_anomaly_band": true
+    },
+    "C": {
+      "families": [
+        {
+          "mutation_id": "M1",
+          "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M1.json",
+          "run_id": "SYSV1-B3ROCKSDB-C-20260916T075605Z",
+          "sha256": "da295cd5bbde3ed46af547b0f90295c527aa18e7ee8011eef14a60dd5588846a",
+          "reps": 3,
+          "hard_gate": true,
+          "freshness": true,
+          "facts_parity": true,
+          "strict_digest_parity": true
+        },
+        {
+          "mutation_id": "M2",
+          "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M2.json",
+          "run_id": "SYSV1-B3ROCKSDB-C-20260916T080719Z",
+          "sha256": "fd496c82297757078fd5c9327b358973259b866d513c8451ccfb0e7b9c8cca52",
+          "reps": 3,
+          "hard_gate": true,
+          "freshness": true,
+          "facts_parity": true,
+          "strict_digest_parity": true
+        },
+        {
+          "mutation_id": "M3",
+          "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M3.json",
+          "run_id": "SYSV1-B3ROCKSDB-C-20260916T081928Z",
+          "sha256": "18348838b1916fb26a970cf7160412513e3cce3d6184605c23a8e63a5b7446bf",
+          "reps": 3,
+          "hard_gate": true,
+          "freshness": true,
+          "facts_parity": true,
+          "strict_digest_parity": true
+        },
+        {
+          "mutation_id": "M4",
+          "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M4.json",
+          "run_id": "SYSV1-B3ROCKSDB-C-20260916T083130Z",
+          "sha256": "6fdcb4a1c1c15daa910067a3ea2ee7b8c69e93836bd7342d3df69d4bd5cb0a43",
+          "reps": 3,
+          "hard_gate": true,
+          "freshness": true,
+          "facts_parity": true,
+          "strict_digest_parity": true
+        }
+      ],
+      "incremental_reps_total": 12,
+      "all_state_layers_parity": true
+    },
+    "D": {
+      "record": "QUALIFICATION-V1-B3-ROCKSDB-D.json",
+      "run_id": "SYSV1-B3ROCKSDB-D-20260916T085043Z",
+      "sha256": "7d533f988ba45c7eef55b1afc7d8b32ddbb330f7b27983acedf69340ab268dbf",
+      "query_manifest_sha256": "51cf0408c8a26e3610b2303389804e76d2adf846e08d6c0d76bb67f54f4ec447",
+      "execution_order": "manifest_file_order",
+      "anchor_validation": "qualified_name_exact_match",
+      "warm_measured_rounds": 30,
+      "warm_samples_per_query_type": 150
+    }
+  },
+  "conclusion": {
+    "b3_formal_evidence_review": "PASS",
+    "contract_level_blocker": false,
+    "capability_failure": false,
+    "next_authorized_phase": "RQ2 Cross-System Evidence Synthesis + Final Qualification Review"
+  }
+}

@@ -1,0 +1,674 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 2,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "9d7531d8840647e9fd10d3d7a650909ef307f10ffe8c6f634933734db1f18486",
+  "run_id": "SYSV1-B3ROCKSDB-C-20260916T081928Z",
+  "run_kind": "qualification",
+  "workload": "C",
+  "benchmark": "B3-rocksdb",
+  "started_at_utc": "2026-09-16T08:19:28Z",
+  "completed_at_utc": "2026-09-16T08:31:29Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "cpu_model": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_logical_cores": 28,
+    "cpu_physical_cores": "UNKNOWN",
+    "ram_total_bytes": 34013245440,
+    "storage_type": "FIXED/NTFS",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "thread_configuration": "single_process_sequential",
+    "tool_versions": {
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4",
+      "tree_sitter_python": "0.25.0"
+    },
+    "load_note": "Formal B3 run launched by Codex desktop; host load was not independently measured."
+  },
+  "inputs": {
+    "repo_path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+    "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 622772,
+    "runner_sha256": "a7af529fba5cf4569a902ddaa973029a0ce37fffcc45e14d25735aefc5e8941c",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "schema_sha256": "5c32df5765292bb35f77add71ab2416612f7b3da6307be37cb65cbaf4bceed95",
+    "schedule_manifest": "manifests/schedule-v1.json",
+    "schedule_manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "effective_config_sha256": "42c514175f3f22bfc3788466208eee876fe294fdf9f38be6003d30cdd3ba31e3",
+    "mutation_manifest": "experiments/systems_v1/manifests/mutations-rocksdb-v1.json",
+    "mutation_manifest_sha256": "d46fd1461953624450a4716deae3c48867922f7bc05545fbf8b34010bcf34435",
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "effective_config": {
+      "parser_backend": "tree_sitter",
+      "languages": [
+        "c",
+        "cpp",
+        "python"
+      ],
+      "resolver": "provenlattice.resolver.SymbolResolver (V0.2 default)",
+      "shard_strategy_effective": "directory",
+      "threading": "single_process_sequential",
+      "persistence": "sqlite3"
+    },
+    "output_path_preexistence_asserted": true,
+    "warmup": 1,
+    "reps": 3,
+    "measured_rounds": null,
+    "measurement_boundary": {
+      "rss_scope": "main_measured_child_only",
+      "cpu_scope": "main_measured_child_only",
+      "rss_semantics": "Windows: GetProcessMemoryInfo PeakWorkingSetSize of the main measured child process; POSIX: getrusage RUSAGE_SELF ru_maxrss. This is NOT process-tree memory and NOT total system memory consumption; parser descendants/grandchildren are not included.",
+      "cpu_semantics": "time.process_time() delta of the main measured child process only; NOT process-tree CPU time and NOT total system CPU time."
+    },
+    "notes": [
+      "child-process isolation per measured unit",
+      "warm-up reps labelled role=warmup and excluded from all aggregates",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B3ROCKSDB-C-20260916T081928Z-r2fi3zfs"
+    ]
+  },
+  "cache_policy": {
+    "os_page_cache_state": "prior_run_cache_eligible",
+    "eviction_attempted": "not_attempted",
+    "platform_privilege_note": "no privileged page-cache eviction was attempted (Windows has no unprivileged eviction API; Linux drop_caches not used); OS page cache state is therefore uncontrolled, not 'cold'",
+    "application_cache_note": "each rep reopens the SQLite DB in a new child process; the initial index within the rep may have warmed the OS file cache; unobserved",
+    "terminology": [
+      "db-fresh: the output database path did not exist before the measured unit (asserted at runtime)",
+      "process-cold: the measured unit runs in a freshly spawned child process; no application-level cache is inherited",
+      "first-query: the first query round executed by a newly spawned query process",
+      "warm-repeat: measured query rounds executed by the same query process after three warm-up rounds (SQLite page cache warm within that connection; GraphQuery holds no result cache)",
+      "OS page cache uncontrolled: no privileged page-cache eviction was attempted (eviction_attempted=not_attempted)",
+      "prior-run OS-cache-eligible: measured units follow prior build reps over the same source tree; OS file cache may be warm; state unobserved",
+      "the terms 'cold filesystem cache' and 'true cold cache' are not valid V1 terms and are banned"
+    ]
+  },
+  "schedule": {
+    "manifest": "manifests/schedule-v1.json",
+    "manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "order_policy": "deterministic_fixed_order",
+    "schedule_seq": 19,
+    "frozen_before_formal_run": true
+  },
+  "statistical_policy": {
+    "primary_statistic": "median",
+    "retained": [
+      "min",
+      "max"
+    ],
+    "p95_interpretation": "DESCRIPTIVE_ONLY_FOR_SMALL_N",
+    "p99_interpretation": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT",
+    "tail_claim_allowed": false
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 40095.044,
+      "cpu_time_ms": 35843.75,
+      "peak_rss_bytes": 1127800832,
+      "db_size_bytes": 884125696,
+      "counts": {
+        "nodes": 118655,
+        "symbols": 117097,
+        "raw_references": 311111,
+        "edges": 143585,
+        "shards": 64,
+        "boundary_edges": 11692,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "files_scanned": 1478,
+        "files_parsed": 1478,
+        "parse_failures": 0,
+        "syntax_error_files": 248
+      },
+      "rep": 0,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T08:20:10Z",
+      "baseline_digests": {
+        "nodes_facts": "e44f71941e1e82e3b65d94ef95931bb281d656b1fb13bc085d716d4ac7b43cfd",
+        "nodes_strict": "21e878c2ca06c4b670070fa2789cab24d26560d9158708f93b9073997ecaf754",
+        "edges_facts": "adf0b7fd1fc796a2ace1a40603d7910528feb9fa5fa053bac6a02e28f4925b9a",
+        "edges_strict": "b6b96649e8c96ed6e84092c91076093e835714ef7ace68673895c7790874ecd3",
+        "raw_references_facts": "99ebb2233ad6b1a6abffee5fcee4167b1a0172fc2ef91c6083188a497dc3d7e8",
+        "raw_references_strict": "dc6f78c23d4d34d0bc5e89e52eae849422e58b1e53fbe7a9e253c7e6c4074580",
+        "shards_facts": "2f222aac1d1d7e89ed34e2591319519e94b88f021989d0f94ee0c6fa9a5aef9d",
+        "files_facts": "d71a3ea6cbb5217ee262d1fb2aa2f7235e6916cf37f97e16b3c4bfb10ead1783",
+        "shard_edges_facts": "6da2d7109793c48dfc46d785f47a3e16626475de9c24a18f5dbc923b3910a6b1"
+      },
+      "baseline_file_state_hashes": {
+        "db/db_info_dumper.cc": "df6b200b65f57016c0877cb5874dac67bb186b2bfb29e1e67758ce1af8a6f2c8"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 47469.315,
+      "cpu_time_ms": 45968.75,
+      "peak_rss_bytes": 2948034560,
+      "db_size_bytes": 884391936,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [],
+        "deleted": [
+          "db/db_info_dumper.cc"
+        ]
+      },
+      "files_reparsed": 0,
+      "files_reused": 1477,
+      "files_changed_reported": 1,
+      "nodes_changed": 14,
+      "edges_changed": 21,
+      "references_reprocessed": 80,
+      "references_reused": 310947,
+      "impact_frontier_size": 1,
+      "digests": {
+        "nodes_facts": "5529e8ad36a6c547533527020786fa24d9e991f22c0446033a1220fa046fc263",
+        "nodes_strict": "14648bce147fd4f12fd5c012d617414108d1777adf843921c46fff33082b282b",
+        "edges_facts": "dfee14787d5861c76e9c3b733c39e1ac848aa598372c341d306b38203743a035",
+        "edges_strict": "7b3a990c63f96ba58c4d75e8dbacfbff373fcbe30b3f86cfa2b05c882e00da24",
+        "raw_references_facts": "6c4451b27a0e06c2a647ffb84a227d9d1ae98fc8710df2eb4718e2e0ec51cf32",
+        "raw_references_strict": "9e3fd0cca7f79662a2e16cbc97d818d44b5882e9badcfd45487698e8a1006580",
+        "shards_facts": "7087885c17fa4223e4d59b044a5d7026c807ffa6e10c30fa873a4dc422c02b82",
+        "files_facts": "356be85c2cdd0768b8ca12242335b0c761934afa1cbe2f305a2475c35b279078",
+        "shard_edges_facts": "5e0b539fd259d31fb4004167da7a48f1a62a741cb6abd983ee3ce97606b6853e"
+      },
+      "digest_ms": 38564.383,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_absent",
+            "expected": "no file_state row for db/db_info_dumper.cc",
+            "observed": "rows=0",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 0.709,
+        "query_visible_time_to_freshness_ms": 47470.024,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 0,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "db/db_info_dumper.cc",
+          "type": "delete_file",
+          "pre_sha256": "df6b200b65f57016c0877cb5874dac67bb186b2bfb29e1e67758ce1af8a6f2c8",
+          "post_sha256": null,
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T08:20:10Z",
+      "mutation_applied_at_utc": "2026-09-16T08:20:48Z",
+      "mutation_applied_after_initial_build_s": 37.704465,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 1,
+        "files_reparsed_observed": 0,
+        "changed_paths": {
+          "added": [],
+          "modified": [],
+          "deleted": [
+            "db/db_info_dumper.cc"
+          ]
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 0,
+      "role": "parity_full",
+      "digest_ms": 37383.961,
+      "digests": {
+        "nodes_facts": "5529e8ad36a6c547533527020786fa24d9e991f22c0446033a1220fa046fc263",
+        "nodes_strict": "14648bce147fd4f12fd5c012d617414108d1777adf843921c46fff33082b282b",
+        "edges_facts": "dfee14787d5861c76e9c3b733c39e1ac848aa598372c341d306b38203743a035",
+        "edges_strict": "7b3a990c63f96ba58c4d75e8dbacfbff373fcbe30b3f86cfa2b05c882e00da24",
+        "raw_references_facts": "6c4451b27a0e06c2a647ffb84a227d9d1ae98fc8710df2eb4718e2e0ec51cf32",
+        "raw_references_strict": "9e3fd0cca7f79662a2e16cbc97d818d44b5882e9badcfd45487698e8a1006580",
+        "shards_facts": "7087885c17fa4223e4d59b044a5d7026c807ffa6e10c30fa873a4dc422c02b82",
+        "files_facts": "356be85c2cdd0768b8ca12242335b0c761934afa1cbe2f305a2475c35b279078",
+        "shard_edges_facts": "5e0b539fd259d31fb4004167da7a48f1a62a741cb6abd983ee3ce97606b6853e"
+      }
+    },
+    {
+      "wall_time_ms": 40526.148,
+      "cpu_time_ms": 36390.625,
+      "peak_rss_bytes": 1127772160,
+      "db_size_bytes": 884129792,
+      "counts": {
+        "nodes": 118655,
+        "symbols": 117097,
+        "raw_references": 311111,
+        "edges": 143585,
+        "shards": 64,
+        "boundary_edges": 11692,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "files_scanned": 1478,
+        "files_parsed": 1478,
+        "parse_failures": 0,
+        "syntax_error_files": 248
+      },
+      "rep": 1,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T08:24:11Z",
+      "baseline_digests": {
+        "nodes_facts": "c7d58b8d76b64c00f9864e2ade29082c0fd90182e1b56f07c299ab196179953b",
+        "nodes_strict": "9469a8cad4f73b5a7d8a26e13a7b344e26e4b9dbeb1df0aed409fe69c68a9d12",
+        "edges_facts": "4a4796f5da2dbd9b39ef54dc44c6143f41f932060bcaaeced1f7c4996c507796",
+        "edges_strict": "eed4fd2eb1d35ebcf84a923b0d8e49db9c51eee346d7c3c7b1e423f53620a405",
+        "raw_references_facts": "66bc3c9b3d9d725f348040d80e445280189baaa3b3070de722a0ea98344ac22a",
+        "raw_references_strict": "13c5b07bf63f8ced42b2d54f596e7428e28c5817608b9cc34722879dfab295de",
+        "shards_facts": "bb571fbeabcb3b539971419a47547b79360f7925dbe8b9003c2b460728890360",
+        "files_facts": "449e688c589ddd46a9feddf5541d711c145700ec178e1d770aaea45132212fbc",
+        "shard_edges_facts": "c48fc75a3f96c6f94374d0e00df375fa85173b7e3d3ae58d80722f80db81fc0e"
+      },
+      "baseline_file_state_hashes": {
+        "db/db_info_dumper.cc": "df6b200b65f57016c0877cb5874dac67bb186b2bfb29e1e67758ce1af8a6f2c8"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 47493.39,
+      "cpu_time_ms": 45718.75,
+      "peak_rss_bytes": 2947977216,
+      "db_size_bytes": 884715520,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [],
+        "deleted": [
+          "db/db_info_dumper.cc"
+        ]
+      },
+      "files_reparsed": 0,
+      "files_reused": 1477,
+      "files_changed_reported": 1,
+      "nodes_changed": 14,
+      "edges_changed": 21,
+      "references_reprocessed": 80,
+      "references_reused": 310947,
+      "impact_frontier_size": 1,
+      "digests": {
+        "nodes_facts": "92813c04b754be79ff11c1084c15e6671928b5ff65b0e3991f4c63006ef35cc2",
+        "nodes_strict": "aa3bcbc8614f748a8d6144b30fc482d0673cde88b055e658c170bf4a13f3ea49",
+        "edges_facts": "4d272a288c2969330f750c639f3ccb8f40b8dd060f068acce5dee921a67607ce",
+        "edges_strict": "b56c93260d1bad77fd22aee547ba0e80d5f8bf72bae93ff83d7b1ba9a84afa40",
+        "raw_references_facts": "328cf86a5b5bcfe6a8579df220cf9fe03a63d2b6578ecc0c0904fbb306335685",
+        "raw_references_strict": "6876f076969febea06586ab5fdc4418a6dbf20c70fa6e5bce8af9f6d5ac2e5f0",
+        "shards_facts": "8582afa317151880f4759ca02b21303957bf1ce21b38d5a7a2e05c6e30da660f",
+        "files_facts": "98271557c28d1f9b97201c02b4371de086ca1fb1a85c6c82adaee53a90460919",
+        "shard_edges_facts": "d388532a23796758b9563517a44e189662480e10419ccad1e79a1aa6a71005f1"
+      },
+      "digest_ms": 38454.121,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_absent",
+            "expected": "no file_state row for db/db_info_dumper.cc",
+            "observed": "rows=0",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 0.739,
+        "query_visible_time_to_freshness_ms": 47494.13,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 1,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "db/db_info_dumper.cc",
+          "type": "delete_file",
+          "pre_sha256": "df6b200b65f57016c0877cb5874dac67bb186b2bfb29e1e67758ce1af8a6f2c8",
+          "post_sha256": null,
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T08:24:11Z",
+      "mutation_applied_at_utc": "2026-09-16T08:24:48Z",
+      "mutation_applied_after_initial_build_s": 37.180781,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 1,
+        "files_reparsed_observed": 0,
+        "changed_paths": {
+          "added": [],
+          "modified": [],
+          "deleted": [
+            "db/db_info_dumper.cc"
+          ]
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 1,
+      "role": "parity_full",
+      "digest_ms": 36825.762,
+      "digests": {
+        "nodes_facts": "92813c04b754be79ff11c1084c15e6671928b5ff65b0e3991f4c63006ef35cc2",
+        "nodes_strict": "aa3bcbc8614f748a8d6144b30fc482d0673cde88b055e658c170bf4a13f3ea49",
+        "edges_facts": "4d272a288c2969330f750c639f3ccb8f40b8dd060f068acce5dee921a67607ce",
+        "edges_strict": "b56c93260d1bad77fd22aee547ba0e80d5f8bf72bae93ff83d7b1ba9a84afa40",
+        "raw_references_facts": "328cf86a5b5bcfe6a8579df220cf9fe03a63d2b6578ecc0c0904fbb306335685",
+        "raw_references_strict": "6876f076969febea06586ab5fdc4418a6dbf20c70fa6e5bce8af9f6d5ac2e5f0",
+        "shards_facts": "8582afa317151880f4759ca02b21303957bf1ce21b38d5a7a2e05c6e30da660f",
+        "files_facts": "98271557c28d1f9b97201c02b4371de086ca1fb1a85c6c82adaee53a90460919",
+        "shard_edges_facts": "d388532a23796758b9563517a44e189662480e10419ccad1e79a1aa6a71005f1"
+      }
+    },
+    {
+      "wall_time_ms": 40860.795,
+      "cpu_time_ms": 36312.5,
+      "peak_rss_bytes": 1128304640,
+      "db_size_bytes": 884068352,
+      "counts": {
+        "nodes": 118655,
+        "symbols": 117097,
+        "raw_references": 311111,
+        "edges": 143585,
+        "shards": 64,
+        "boundary_edges": 11692,
+        "resolved_references": 54481,
+        "ambiguous_references": 101090,
+        "unresolved_references": 155540,
+        "files_scanned": 1478,
+        "files_parsed": 1478,
+        "parse_failures": 0,
+        "syntax_error_files": 248
+      },
+      "rep": 2,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T08:28:11Z",
+      "baseline_digests": {
+        "nodes_facts": "cf118e6c14e09f3e8c7f16a9105c2e792c77af3cfddb916eb668afc332f3e9e0",
+        "nodes_strict": "a24e02159984e7fb6b6178d612898d0a9d512c18d1c922f81c283ac36e2beef8",
+        "edges_facts": "e46a9e4db4c9fa77bddf87874401b6e0ba3f75929d3fba2fd85a095197073bec",
+        "edges_strict": "7a4928aef5e0656161bbd0b5f7934d6b3d808c2b60c162d871da77c5dbfa59b4",
+        "raw_references_facts": "edeea232a3b184d567cd3c8cd9971a012f34a238fd04105afe7305b0446bcdab",
+        "raw_references_strict": "0a3d4415f5cf3a0e4f168fbd56c6c61a5e1bc4794da5bf6256689a3965ccfb6a",
+        "shards_facts": "030c3695d3dbf22e07026f3406c1730c84587eea258bd4a6954f6db48235a00d",
+        "files_facts": "adb4e7abf5375dd355c41b3cf83b32321605794b15ce6fc97868b9cea53b203e",
+        "shard_edges_facts": "a2ecbd416a8b599ed1a42f535facc56937421fd615bec272ab5a7c9d08f2d240"
+      },
+      "baseline_file_state_hashes": {
+        "db/db_info_dumper.cc": "df6b200b65f57016c0877cb5874dac67bb186b2bfb29e1e67758ce1af8a6f2c8"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 46953.135,
+      "cpu_time_ms": 45562.5,
+      "peak_rss_bytes": 2947788800,
+      "db_size_bytes": 884572160,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [],
+        "deleted": [
+          "db/db_info_dumper.cc"
+        ]
+      },
+      "files_reparsed": 0,
+      "files_reused": 1477,
+      "files_changed_reported": 1,
+      "nodes_changed": 14,
+      "edges_changed": 21,
+      "references_reprocessed": 80,
+      "references_reused": 310947,
+      "impact_frontier_size": 1,
+      "digests": {
+        "nodes_facts": "e39fb09462561dc569bc5176d4c17984506eaff4bd9316fc22a1966ceb99d5f2",
+        "nodes_strict": "3d11394caa21d2e114c8e4774d219f6a3d676fd73c1cc954e3ac190018e91603",
+        "edges_facts": "0687eeddba69772099f3e5fa6dba233759ce264ac51b68e4a9f2e4368ec6ca6e",
+        "edges_strict": "94d1bdc5daed86adaa56397bf6c2da04f13ddf9a65874940dd90aaed3594ba34",
+        "raw_references_facts": "7aa96d27950e87c276ff9de5a164b27090e3e27793a825b1fb576672c20b4e03",
+        "raw_references_strict": "7317a8dc23dbdad06081b72f87e6d6a5c5f3c00ed2aa31a9a67fad374f73f628",
+        "shards_facts": "9a84582370926b2f2d66f77bf8f5fbbd2665fe945e73112f7aa05a73f037addf",
+        "files_facts": "2842eb4dd14e15c788df16c62b8255fad2651db5d26fa25481dbe2ebc1a1a08b",
+        "shard_edges_facts": "e0b98ff11dfc89e6df77335bae1a52f262115f2a4ca4a86a29ec19138836ae18"
+      },
+      "digest_ms": 37737.421,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_absent",
+            "expected": "no file_state row for db/db_info_dumper.cc",
+            "observed": "rows=0",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 0.96,
+        "query_visible_time_to_freshness_ms": 46954.095,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 2,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "db/db_info_dumper.cc",
+          "type": "delete_file",
+          "pre_sha256": "df6b200b65f57016c0877cb5874dac67bb186b2bfb29e1e67758ce1af8a6f2c8",
+          "post_sha256": null,
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T08:28:11Z",
+      "mutation_applied_at_utc": "2026-09-16T08:28:48Z",
+      "mutation_applied_after_initial_build_s": 37.30902,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 1,
+        "files_reparsed_observed": 0,
+        "changed_paths": {
+          "added": [],
+          "modified": [],
+          "deleted": [
+            "db/db_info_dumper.cc"
+          ]
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 2,
+      "role": "parity_full",
+      "digest_ms": 38035.308,
+      "digests": {
+        "nodes_facts": "e39fb09462561dc569bc5176d4c17984506eaff4bd9316fc22a1966ceb99d5f2",
+        "nodes_strict": "3d11394caa21d2e114c8e4774d219f6a3d676fd73c1cc954e3ac190018e91603",
+        "edges_facts": "0687eeddba69772099f3e5fa6dba233759ce264ac51b68e4a9f2e4368ec6ca6e",
+        "edges_strict": "94d1bdc5daed86adaa56397bf6c2da04f13ddf9a65874940dd90aaed3594ba34",
+        "raw_references_facts": "7aa96d27950e87c276ff9de5a164b27090e3e27793a825b1fb576672c20b4e03",
+        "raw_references_strict": "7317a8dc23dbdad06081b72f87e6d6a5c5f3c00ed2aa31a9a67fad374f73f628",
+        "shards_facts": "9a84582370926b2f2d66f77bf8f5fbbd2665fe945e73112f7aa05a73f037addf",
+        "files_facts": "2842eb4dd14e15c788df16c62b8255fad2651db5d26fa25481dbe2ebc1a1a08b",
+        "shard_edges_facts": "e0b98ff11dfc89e6df77335bae1a52f262115f2a4ca4a86a29ec19138836ae18"
+      }
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "incremental": {
+    "mutation_family": "delete_file",
+    "mutation_id": "M3",
+    "mutation_scope": "file_level",
+    "mutation_interface_sensitive": false,
+    "reps": 3,
+    "files_touched": 3,
+    "files_reparsed": 0,
+    "files_reused": 4431,
+    "nodes_changed": 42,
+    "edges_changed": 63,
+    "references_reprocessed": 240,
+    "references_reused": 932841,
+    "update_completion_latency_ms": 47469.315,
+    "freshness_probe": {
+      "probe_ok": true,
+      "checks": [
+        {
+          "check": "file_state_absent",
+          "expected": "no file_state row for db/db_info_dumper.cc",
+          "observed": "rows=0",
+          "passed": true
+        }
+      ],
+      "probe_latency_ms": 0.739,
+      "query_visible_time_to_freshness_ms": 47470.024,
+      "note": "checks shown for rep 0; per-rep probe results are retained in raw_reps. Query-Visible Time-to-Freshness is measured as mutation applied -> incremental_update returns -> frozen probe observes expected changed graph state (same sequential child process; harness spawn overhead is reported separately in clocks.benchmark_setup_time_ms)."
+    },
+    "full_vs_incremental_parity": true,
+    "workload_c_gate": {
+      "execution_order": "build_frozen_A_then_mutation_then_incremental_then_full_B",
+      "expected_files_touched_min": 1,
+      "mutation_pre_hash_differs_from_post_hash": true,
+      "incremental_changed_true": true,
+      "mutation_anchor_changed": true,
+      "incremental_input_db_built_before_mutation": true,
+      "files_changed_reported_min_met": true,
+      "per_rep": [
+        {
+          "rep": 0,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 1,
+          "files_reparsed_observed": 0,
+          "changed_paths": {
+            "added": [],
+            "modified": [],
+            "deleted": [
+              "db/db_info_dumper.cc"
+            ]
+          },
+          "passed": true
+        },
+        {
+          "rep": 1,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 1,
+          "files_reparsed_observed": 0,
+          "changed_paths": {
+            "added": [],
+            "modified": [],
+            "deleted": [
+              "db/db_info_dumper.cc"
+            ]
+          },
+          "passed": true
+        },
+        {
+          "rep": 2,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 1,
+          "files_reparsed_observed": 0,
+          "changed_paths": {
+            "added": [],
+            "modified": [],
+            "deleted": [
+              "db/db_info_dumper.cc"
+            ]
+          },
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "parity_gate": {
+      "covered_states": [
+        "node identities (nodes_facts)",
+        "edge identities (edges_facts)",
+        "raw-reference identity/location/resolution state incl. candidates (raw_references_facts)",
+        "shard state incl. api_fingerprint and public symbols (shards_facts)",
+        "file identities incl. source hashes (files_facts)",
+        "boundary shard-edge index (shard_edges_facts)"
+      ],
+      "digest_fields": [
+        "nodes_facts",
+        "edges_facts",
+        "raw_references_facts",
+        "shards_facts",
+        "files_facts",
+        "shard_edges_facts"
+      ],
+      "not_covered_states": [
+        "generation counters (build-history artifacts, not query-visible state)",
+        "graph_generation metrics rows",
+        "nodes/edges/shards metadata JSON beyond identity columns (strict digests, diagnostic only)",
+        "document_state (redundant with file_state/files for code-index workloads)",
+        "raw_evidence_links (knowledge layer; not produced by A/B/C/D code-index workloads)",
+        "OS-level database file byte layout"
+      ],
+      "strict_digest_match": true,
+      "strict_mismatch_disposition": "RECORDED_NON_GATING_PROVENANCE_DIVERGENCE"
+    },
+    "clocks": {
+      "system_under_test_latency_ms": 47469.315,
+      "benchmark_setup_time_ms": 916.7462,
+      "validation_time_ms": 75633.4664,
+      "parity_verification_time_ms": 75772.729,
+      "end_to_end_benchmark_wall_time_ms": 719951.1896,
+      "boundary_note": "system_under_test_latency_ms = median incremental_update child wall time only; benchmark_setup = repository copy plus frozen mutation application (initial A index and baseline verification are excluded from setup); validation = baseline A verification plus freshness probe plus snapshot digest computation; parity_verification = digest computation for both DBs; end_to_end includes all harness orchestration and is NOT a system latency. C-vs-A comparisons must use system_under_test_latency_ms only."
+    }
+  },
+  "qualification_gates": {
+    "build_measured_reps_minimum_met": true,
+    "workload_c_reps_minimum_met": true,
+    "query_warm_rounds_minimum_met": true,
+    "schedule_frozen": true,
+    "load_note_present": true,
+    "passed": true
+  }
+}

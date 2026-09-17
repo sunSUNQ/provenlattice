@@ -2,7 +2,7 @@
 
 > V0–R2.4 现有实验成果的总账：它们回答了哪些 Research Question、证据强度到什么程度、还缺什么，以及下一条实验线的优先级。
 
-**状态：Evidence Inventory V1 — READY FOR FREEZE**
+**状态：Evidence Inventory V1.1 — 2026-09-15 更新（RQ1 行随 P0 冻结从 PARTIAL 提升为 QUALIFIED，RQ2 进入 P1）**
 **Framework 依据：**[ProvenLattice Research & Validation Framework V1](provenlattice-research-validation-framework-v1.md)
 **数据原则：**本文件只盘点既有冻结报告、可复现产物和明确标注的观察性结果；不把未来计划或不同协议的外部数字写成当前能力。
 
@@ -55,8 +55,8 @@ P0 / P1 / P2 backlog
 
 | RQ / Track | 已有证据 | 当前等级 | 现阶段可陈述的结论 | 明确缺口 | 下一实验 | 优先级 |
 |---|---|---|---|---|---|---|
-| **RQ1 图保真度 / A** | V0.1 Resolver contract；V0.2 三个真实 C/C++ 仓 Hard Parse Coverage=100%，Syntax-clean Rate=66.78%/73.89%/83.22%，并保留 recovery error；V0.3/V0.4/V1.0 parity | `PARTIAL` | 目标文件均可产出解析结果；语法恢复状态与硬解析失败独立报告；保守解析和 parity 已在定义范围内成立 | Known Representation Gap：C/C++ REFERENCES 当前未被 extractor 表达（`GRAPH_REPRESENTATION_GAP` / `CXX_REFERENCE_RELATION_NOT_MODELED`），Fidelity V1 仅可评 CALLS/IMPORTS；仍无关系级 P/R/F1、False Resolution Rate、选择性风险及 Build Context Gold 评分 | Graph Fidelity Gold Set（执行中：Protocol/CALLS_V1/Evidence Scope/Decl-Def Equivalence 冻结，Calibration QUALIFIED，Batch 02 B 完成 → A02 → Agreement Audit → Drift Gate）+ Build Context metadata | **P0** |
-| **RQ2 可扩展性 / B** | aria2、brpc、RocksDB（11.9 万/22.7 万/62.3 万 LOC）的构图、DB、内存、查询；V0.4 Overlay 成本 | `PARTIAL` | 62.3 万 LOC C/C++ 已实测跑通；可观察 RawReference、存储和 Symbol Query 压力 | 无 S3/S4/S5（1M/5M/10M+ band）；无并发 QPS、TTF、稳定 P95/P99 更新、图规模归一化 | Current Implementation Scale Baseline（先不优化） | **P0** |
+| **RQ1 图保真度 / A** | P0 Graph Fidelity Qualification V1 **CLOSED**（2026-09-15 冻结）：174 例冻结 C/C++ Gold（CALLS 86 / IMPORTS 88）、双盲标注+裁定、Gold LEFT JOIN 系统预测、确定性评分与 28 例失败归因、RQ1 evidence synthesis；Resolved Precision 93.10% sample / 89.92% weighted；此前 V0.1–V1.0 的 Resolver contract、三仓 Hard Parse Coverage 与 parity 证据继续有效 | `QUALIFIED`（限 V0.2、C/C++、CALLS/IMPORTS、aria2/brpc/RocksDB、冻结 V1 sampling frame） | 在该冻结 benchmark 内：resolved 的 evaluable C/C++ CALLS/IMPORTS 关系语义目标通常正确；覆盖（尤其 CALLS）是主要限制；IMPORTS 在评测范围内表现强；C/C++ REFERENCES 未被 extractor 表达，不可评 | 4 项 deferred 工程缺口（CALLS candidate coverage、resolver abstention、receiver/owner over-resolution、C++ REFERENCES 表示缺口）——`deferred != fixed`、`deferred != failed`；仍无外部系统对照、无 post-repair 复测、无 1M+ 规模保真度 | 无（RQ1 关闭；CALLS 修复线延后，修复时必须先对同一冻结 Gold Set 重跑 `GRAPH_FIDELITY_SCORING_V1` 取得 After） | **CLOSED** |
+| **RQ2 可扩展性 / B** | aria2、brpc、RocksDB（11.9 万/22.7 万/62.3 万 LOC）的构图、DB、内存、查询；V0.4 Overlay 成本；以上均为 `OBSERVED` V0.2 baseline，尚不是正式 RQ2 qualification | `PARTIAL` | 62.3 万 LOC C/C++ 已实测跑通；可观察 RawReference、存储和 Symbol Query 压力 | 无 S3/S4/S5（1M/5M/10M+ band）；无并发 QPS、TTF、稳定 P95/P99 更新、图规模归一化；A（Cold Full Build）/B（Warm）/C（Incremental）/D（Online Query）四类 workload 无冻结 contract 与 deterministic instrumentation；系统成本未按 f(Files, Symbols, RawReferences, Edges) 归一化报告；无 Index Amortization | P1 / RQ2 Graph Systems & Scale Qualification V1：Systems Benchmark Contract V1 + run schema + deterministic runner（`experiments/systems_v1/`），先在 B1/B2/B3 三仓跑出正式可复现 qualification，再谈 B4/B5 | **P0→P1（当前活跃）** |
 | **RQ3 检索质量 / C** | Symbol/Caller/Callee/Subgraph 查询基线；R2/R2.1 接口观察；R2.4 Offline bundle | `PARTIAL` | 冻结任务上可离线验证 required evidence retention 与 bundle 策略 | 无 Graph Oracle Coverage / Conditional Recall；无 File/Function/Line Recall@k、MRR、NDCG、文本检索（BM25）对照；任务族不足 | Retrieval Benchmark Suite | **P0** |
 | **RQ4 证据效率 / D** | V1.0 跨层证据；R2.3 bundle 干扰与 returned-unused；R2.4 Loose 在 T01/T03/T05 保留全部必需证据 | `QUALIFIED`（仅 R2.4 三任务、单查询） | 在该冻结候选集与协议下，Loose 是唯一三任务均保留 required evidence 的策略 | 无多查询 Session Exposure、预算曲线、饱和点、重复暴露或 Marginal Evidence Utility | Session Evidence Metrics + Aggregation benchmark | **P1** |
 | **RQ5 Agent 采用 / E** | R1 的能力隔离和调用记录；R2/R2.1 接口归因；R2.3 27/27 valid；R2.4-DS Phase A 产物 | `PARTIAL` | Agent 使用图服务与引用契约可以被观测；“工具可用 ≠ Agent 正确采用”已被实验证明是实际问题 | 缺统一 Adoption/FCTC/首相关证据/饱和后查询 telemetry；DS 尚未稳定复验 | Agent telemetry replay / schema upgrade | **P1** |
@@ -70,7 +70,7 @@ P0 / P1 / P2 backlog
 
 | RQ | 当前 Claim Scope |
 |---|---|
-| RQ1 | C/C++；aria2、brpc、RocksDB；V0.1–V1.0 的 Resolver / parity 协议；无 compiler-aware build context 资格结论；REFERENCES 关系当前未被 extractor 表达（Fidelity V1 仅评 CALLS/IMPORTS，Python REFERENCES 仅审计不计分） |
+| RQ1 | C/C++；aria2、brpc、RocksDB（冻结 commit）；V0.2 Graph Fabric；CALLS/IMPORTS；冻结 `cpp-structural-relation-gold-v1`（174 例）与 `GRAPH_FIDELITY_SCORING_V1` 协议；REFERENCES 关系未被 extractor 表达（`GRAPH_REPRESENTATION_GAP`，不可评）；不含其他语言、其他仓库、其他图 schema 版本，不含任何修复后状态 |
 | RQ2 | Windows 11、冻结 benchmark commit、单机；11.9 万–62.3 万 C/C++ LOC；V0.2/V0.4 协议；不含并发与 S3+ Scale band |
 | RQ3 | 当前 Query API 与 T01/T03/T05 任务证据；R2–R2.4 协议；非文件/函数/行级通用 retrieval claim |
 | RQ4 | R2.4 冻结候选池、T01/T03/T05、单查询、Loose 策略；不含会话级聚合 |
@@ -83,12 +83,12 @@ P0 / P1 / P2 backlog
 
 ```text
 已形成受限资格验证：
+  - RQ1 Graph Fidelity（P0 Graph Fidelity Qualification V1，QUALIFIED，2026-09-15 CLOSED）
   - V0.3/V0.4/V1.0 的 parity 与 Overlay contract
   - R2.4 三任务单查询 bundle 策略
 
 已有真实仓基础但仍属 Partial：
-  - C/C++ 图构建与规模
-  - 图保真度
+  - 图系统与规模（RQ2，当前活跃主线）
   - Retrieval
   - Agent Adoption / End-task Effectiveness
 
@@ -96,13 +96,13 @@ P0 / P1 / P2 backlog
   - 跨模型、跨语言和跨仓 Agent 泛化
 ```
 
-因此，当前最高优先级不是扩大 Agent 任务数量，而是先补齐 RQ1、RQ2、RQ3 的下层证据：**图是否正确、能否规模化运行、图服务是否独立有效。**
+RQ1 已关闭：当前最高优先级是按主线推进 RQ2（图系统能否以可接受成本构建、维护与查询），随后 RQ3；**CALLS/Resolver 修复线保持 deferred，不得在 RQ2/RQ3 期间顺手开工**。
 
 ## 5. P0 / P1 / P2 实验 Backlog
 
 | 优先级 | 实验线 | 服务 RQ / Track | 最小交付物 | 完成门槛 |
 |---|---|---|---|---|
-| **P0** | Fidelity Gold Set | RQ1 / A | 分层样本、双人标注协议、冻结 Gold Set、边类型 P/R/F1、Resolution Precision/Coverage/Abstention/Selective Risk | 至少覆盖 CALL、REFERENCE、IMPORT、DEFINE、CONTAIN、DOC→CODE 与难例分层；所有标注和争议可追溯 |
+| **P0** | Fidelity Gold Set ✅ **CLOSED 2026-09-15**（QUALIFIED） | RQ1 / A | 分层样本、双人标注协议、冻结 Gold Set、边类型 P/R/F1、Resolution Precision/Coverage/Abstention/Selective Risk | 至少覆盖 CALL、REFERENCE、IMPORT、DEFINE、CONTAIN、DOC→CODE 与难例分层；所有标注和争议可追溯 |
 | **P0** | Current Scale Baseline | RQ2 / B | 在当前实现上执行 100K→500K→1M→5M→10M+ 分档协议；Cold Build、单查询、并发查询、磁盘/内存/TTF | 先输出 Before baseline 与瓶颈归因；不得先优化后首次测量 |
 | **P0** | Retrieval Benchmark Suite | RQ3 / C | 任务族、Graph/Retrieval Oracle、文本检索基线、File/Function/Line 指标 | 冻结任务、替代答案与干扰项；可复现比较文本/图/图+知识 |
 | **P0/P1** | Incremental Mutation Suite | RQ8 / A、B | 固定 Mutation Family、parity runner、影响范围和 TTF 报告 | 覆盖 body/signature/add/delete/rename/move/cross-module/header/overlay/rebase |
@@ -155,9 +155,9 @@ freeze_date: <ISO-8601 date>
 ```text
 Evidence Inventory
       ↓
-Graph Fidelity
+Graph Fidelity        ✓ CLOSED (P0 Graph Fidelity Qualification V1, QUALIFIED, 2026-09-15)
       ↓
-Systems / Scale
+Systems / Scale       ← 当前活跃（P1 / RQ2）
       ↓
 Retrieval
       ↓
@@ -170,6 +170,9 @@ Generalization
 
 ## 9. 盘点来源
 
+- [P0 Graph Fidelity Qualification V1 Final Freeze](../experiments/fidelity_v1/results/p0-graph-fidelity-qualification-v1-freeze.md)
+- [RQ1 Graph Fidelity Evidence Synthesis V1](../experiments/fidelity_v1/results/rq1-graph-fidelity-evidence-synthesis-v1.md)
+- [Graph Fidelity Failure Attribution V1](../experiments/fidelity_v1/results/graph-fidelity-failure-attribution-v1.md)
 - [V0.2 C/C++ baseline](benchmarks/provenlattice-v0.2-baseline.md)
 - [V0.3 Shard qualification](benchmarks/provenlattice-v0.3-shard.md)
 - [V0.4 Branch & Session Overlay](benchmarks/provenlattice-v0.4-overlay.md)

@@ -1,0 +1,385 @@
+{
+  "schema": "RQ2_CROSS_SYSTEM_SYNTHESIS_V1",
+  "schema_version": 1,
+  "synthesis_id": "RQ2-CROSS-SYSTEM-SYNTHESIS-2026-09-16",
+  "title": "RQ2 Cross-System Evidence Synthesis + Final Qualification Review",
+  "status": "QUALIFIED",
+  "scope": "RQ2 / Track B (Graph Systems & Scale), limited to SYSTEMS_BENCHMARK_CONTRACT_V1 scope",
+  "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 three bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1 protocol; excludes concurrency, S3+ scale bands, and any scale extrapolation",
+  "contract": {
+    "id": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+    "status": "FROZEN",
+    "freeze_seal": "../reviews/contract-v1-freeze-2026-09-16.sha256",
+    "freeze_review": "../reviews/contract-v1-freeze-review-2026-09-16.md",
+    "seal_entries_reverified": 25,
+    "seal_mismatches": 0
+  },
+  "systems": {
+    "B1-aria2": {
+      "role": "Small Regression",
+      "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "c_cpp_loc": 118926,
+      "qualification_id": "RQ2-FORMAL-B1-ARIA2-2026-09-16",
+      "qualification_summary": "qualification-v1-b1-aria2-summary.json",
+      "qualification_summary_sha256": "7e892fae35b37c2dbc9fbb7a04cf134476144d879e196eb48100cb0d7c0864ee",
+      "workload_a": {
+        "record": "QUALIFICATION-V1-B1-ARIA2-A.json",
+        "run_id": "SYSV1-B1ARIA2-A-20260916T070743Z",
+        "sha256": "f42bc84011c08ff5ce6459e1c57e40f969ebf42498e315ff564658d85d753921",
+        "measured_reps": 5,
+        "median_wall_time_ms": 4494.126,
+        "counts": {
+          "nodes": 29117,
+          "raw_references": 49109,
+          "edges": 37074
+        },
+        "counts_within_v0_2_anomaly_band": true
+      },
+      "workload_b": {
+        "record": "QUALIFICATION-V1-B1-ARIA2-B.json",
+        "run_id": "SYSV1-B1ARIA2-B-20260916T070819Z",
+        "sha256": "ae247f44e9c10136963bb22a846a676013974f6af43efe313ba0da8203fa17ef",
+        "measured_reps": 5,
+        "median_wall_time_ms": 4561.364,
+        "counts": {
+          "nodes": 29117,
+          "raw_references": 49109,
+          "edges": 37074
+        },
+        "counts_within_v0_2_anomaly_band": true
+      },
+      "workload_c": {
+        "incremental_reps": 12,
+        "hard_gate_pass": true,
+        "families": [
+          {
+            "mutation_id": "M1",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 5843.13,
+            "record": "QUALIFICATION-V1-B1-ARIA2-C-M1.json",
+            "run_id": "SYSV1-B1ARIA2-C-20260916T070901Z",
+            "sha256": "cbd5d8df0d3358485d6462dba7ccd35cc120f4b37eaf26bd58d13ad49845fe14"
+          },
+          {
+            "mutation_id": "M2",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 6045.816,
+            "record": "QUALIFICATION-V1-B1-ARIA2-C-M2.json",
+            "run_id": "SYSV1-B1ARIA2-C-20260916T071044Z",
+            "sha256": "c1f99626bb247fa8369fc1e0b086cc75e847ac36d1a8e143c88357fd06f2066c"
+          },
+          {
+            "mutation_id": "M3",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 5742.237,
+            "record": "QUALIFICATION-V1-B1-ARIA2-C-M3.json",
+            "run_id": "SYSV1-B1ARIA2-C-20260916T071226Z",
+            "sha256": "25f03f3ade2d38958faec1e0eb7114669ba2d264bf7c87adc099a746d0c9213a"
+          },
+          {
+            "mutation_id": "M4",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 5590.888,
+            "record": "QUALIFICATION-V1-B1-ARIA2-C-M4.json",
+            "run_id": "SYSV1-B1ARIA2-C-20260916T071407Z",
+            "sha256": "c2476115cd8fc58df18661bd4d05eceea07d361d2fa50dc027cc3afebc66a836"
+          }
+        ]
+      },
+      "workload_d": {
+        "record": "QUALIFICATION-V1-B1-ARIA2-D.json",
+        "run_id": "SYSV1-B1ARIA2-D-20260916T071923Z",
+        "sha256": "d55822571c21ba87456d951ae5be07495ce4b129eeeaf856d9d84572d71a38e2",
+        "query_manifest_sha256": "8716bb535dfc7c00b0165fbcfc2a9bdf9b5ba2e4fe3617e9ee84f0c74294fe09",
+        "execution_order": "manifest_file_order",
+        "order_frozen": true,
+        "anchor_validation": "qualified_name_exact_match",
+        "warm_measured_rounds": 30,
+        "warm_samples_per_query_type": {
+          "callees": 150,
+          "callers": 150,
+          "subgraph": 150,
+          "symbol": 150
+        },
+        "warm_median_latency_ms": {
+          "callees": 20.7824,
+          "callers": 47.8588,
+          "subgraph": 44.3564,
+          "symbol": 19.8154
+        }
+      }
+    },
+    "B2-brpc": {
+      "role": "Target-like Primary",
+      "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "c_cpp_loc": 227154,
+      "qualification_id": "RQ2-FORMAL-B2-BRPC-2026-09-16",
+      "qualification_summary": "qualification-v1-b2-brpc-summary.json",
+      "qualification_summary_sha256": "21464d8bb89c2b613cdfd2aec1c016b8c9751afc628a7ba1d5cebcca086d88f4",
+      "workload_a": {
+        "record": "QUALIFICATION-V1-B2-BRPC-A.json",
+        "run_id": "SYSV1-B2BRPC-A-20260916T072807Z",
+        "sha256": "87103440907af26cd022f1ab826c571e749a7d23c6b917324a9cf340b284099b",
+        "measured_reps": 5,
+        "median_wall_time_ms": 8337.305,
+        "counts": {
+          "nodes": 48929,
+          "raw_references": 84941,
+          "edges": 59614
+        },
+        "counts_within_v0_2_anomaly_band": true
+      },
+      "workload_b": {
+        "record": "QUALIFICATION-V1-B2-BRPC-B.json",
+        "run_id": "SYSV1-B2BRPC-B-20260916T072921Z",
+        "sha256": "46f9823a30ba037ae22c4171bb8f4386f135ef38d318c8cd7bd83e4ff9200107",
+        "measured_reps": 5,
+        "median_wall_time_ms": 9819.849,
+        "counts": {
+          "nodes": 48929,
+          "raw_references": 84941,
+          "edges": 59614
+        },
+        "counts_within_v0_2_anomaly_band": true
+      },
+      "workload_c": {
+        "incremental_reps": 12,
+        "hard_gate_pass": true,
+        "families": [
+          {
+            "mutation_id": "M1",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 14271.066,
+            "record": "QUALIFICATION-V1-B2-BRPC-C-M1.json",
+            "run_id": "SYSV1-B2BRPC-C-20260916T073106Z",
+            "sha256": "23481555bcdac5bf67eb10d460f9271b886b5417fa62deb7363aa75e581802e3"
+          },
+          {
+            "mutation_id": "M2",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 11412.992,
+            "record": "QUALIFICATION-V1-B2-BRPC-C-M2.json",
+            "run_id": "SYSV1-B2BRPC-C-20260916T073522Z",
+            "sha256": "59aa0f0e4d1b796a36d23bad1aa6769662b9e9b9a7b21d242649c506afb64391"
+          },
+          {
+            "mutation_id": "M3",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 11250.951,
+            "record": "QUALIFICATION-V1-B2-BRPC-C-M3.json",
+            "run_id": "SYSV1-B2BRPC-C-20260916T073903Z",
+            "sha256": "913a68827a096078b45f145ce6276feb048dec8adc24d17f58276f43c9afc4ac"
+          },
+          {
+            "mutation_id": "M4",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 10852.147,
+            "record": "QUALIFICATION-V1-B2-BRPC-C-M4.json",
+            "run_id": "SYSV1-B2BRPC-C-20260916T074209Z",
+            "sha256": "27e39ab078cf7e7bc68591cbc2745c40deba8bbeed7e06778ad78ecd10f87051"
+          }
+        ]
+      },
+      "workload_d": {
+        "record": "QUALIFICATION-V1-B2-BRPC-D.json",
+        "run_id": "SYSV1-B2BRPC-D-20260916T074515Z",
+        "sha256": "4d91c430e4100a139f75408e356045fc6837c024e6c9d76e0ea5ca8700320bd1",
+        "query_manifest_sha256": "5cad7df53ef39e8734a007797f1284cc503c9e2b17782d4272b5d5cd20cb9a8c",
+        "execution_order": "manifest_file_order",
+        "order_frozen": true,
+        "anchor_validation": "qualified_name_exact_match",
+        "warm_measured_rounds": 30,
+        "warm_samples_per_query_type": {
+          "callees": 150,
+          "callers": 150,
+          "subgraph": 150,
+          "symbol": 150
+        },
+        "warm_median_latency_ms": {
+          "callees": 32.1713,
+          "callers": 33.6416,
+          "subgraph": 39.1647,
+          "symbol": 26.7781
+        }
+      }
+    },
+    "B3-rocksdb": {
+      "role": "Scale",
+      "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+      "c_cpp_loc": 622772,
+      "qualification_id": "RQ2-FORMAL-B3-ROCKSDB-2026-09-16",
+      "qualification_summary": "qualification-v1-b3-rocksdb-summary.json",
+      "qualification_summary_sha256": "6b4d02aaf4a33cee26893f1e774211adea1a952c0089c07e90e279de176b7387",
+      "workload_a": {
+        "record": "QUALIFICATION-V1-B3-ROCKSDB-A.json",
+        "run_id": "SYSV1-B3ROCKSDB-A-20260916T074937Z",
+        "sha256": "014c3f73106998ee3b0c14b7f80aee1edd571b2a62b7c26354705b415e8b011e",
+        "measured_reps": 5,
+        "median_wall_time_ms": 28238.675,
+        "counts": {
+          "nodes": 118655,
+          "raw_references": 311111,
+          "edges": 143585
+        },
+        "counts_within_v0_2_anomaly_band": true
+      },
+      "workload_b": {
+        "record": "QUALIFICATION-V1-B3-ROCKSDB-B.json",
+        "run_id": "SYSV1-B3ROCKSDB-B-20260916T075253Z",
+        "sha256": "d122066b26e9de71036d0c2a21751b1110efbf940362b3d168c12f3dd0f027d3",
+        "measured_reps": 5,
+        "median_wall_time_ms": 29669.906,
+        "counts": {
+          "nodes": 118655,
+          "raw_references": 311111,
+          "edges": 143585
+        },
+        "counts_within_v0_2_anomaly_band": true
+      },
+      "workload_c": {
+        "incremental_reps": 12,
+        "hard_gate_pass": true,
+        "families": [
+          {
+            "mutation_id": "M1",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 37750.157,
+            "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M1.json",
+            "run_id": "SYSV1-B3ROCKSDB-C-20260916T075605Z",
+            "sha256": "da295cd5bbde3ed46af547b0f90295c527aa18e7ee8011eef14a60dd5588846a"
+          },
+          {
+            "mutation_id": "M2",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 46905.126,
+            "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M2.json",
+            "run_id": "SYSV1-B3ROCKSDB-C-20260916T080719Z",
+            "sha256": "fd496c82297757078fd5c9327b358973259b866d513c8451ccfb0e7b9c8cca52"
+          },
+          {
+            "mutation_id": "M3",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 47469.315,
+            "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M3.json",
+            "run_id": "SYSV1-B3ROCKSDB-C-20260916T081928Z",
+            "sha256": "18348838b1916fb26a970cf7160412513e3cce3d6184605c23a8e63a5b7446bf"
+          },
+          {
+            "mutation_id": "M4",
+            "reps": 3,
+            "aggregate_parity": true,
+            "strict_digest_match": true,
+            "system_under_test_latency_ms": 41946.501,
+            "record": "QUALIFICATION-V1-B3-ROCKSDB-C-M4.json",
+            "run_id": "SYSV1-B3ROCKSDB-C-20260916T083130Z",
+            "sha256": "6fdcb4a1c1c15daa910067a3ea2ee7b8c69e93836bd7342d3df69d4bd5cb0a43"
+          }
+        ]
+      },
+      "workload_d": {
+        "record": "QUALIFICATION-V1-B3-ROCKSDB-D.json",
+        "run_id": "SYSV1-B3ROCKSDB-D-20260916T085043Z",
+        "sha256": "7d533f988ba45c7eef55b1afc7d8b32ddbb330f7b27983acedf69340ab268dbf",
+        "query_manifest_sha256": "51cf0408c8a26e3610b2303389804e76d2adf846e08d6c0d76bb67f54f4ec447",
+        "execution_order": "manifest_file_order",
+        "order_frozen": true,
+        "anchor_validation": "qualified_name_exact_match",
+        "warm_measured_rounds": 30,
+        "warm_samples_per_query_type": {
+          "callees": 150,
+          "callers": 150,
+          "subgraph": 150,
+          "symbol": 150
+        },
+        "warm_median_latency_ms": {
+          "callees": 74.0976,
+          "callers": 166.3123,
+          "subgraph": 70.0327,
+          "symbol": 62.2958
+        }
+      }
+    }
+  },
+  "cross_system_totals": {
+    "formal_records_total": 21,
+    "per_system": 7,
+    "workload_a_measured_reps_total": 15,
+    "workload_b_measured_reps_total": 15,
+    "workload_c_incremental_reps_total": 36,
+    "workload_c_hard_gate_pass": 36,
+    "workload_c_freshness_pass": 36,
+    "workload_c_strict_digest_parity_pass": 36,
+    "workload_d_warm_query_samples_total": 1800,
+    "valid_records": 21,
+    "INVALID_EXECUTION_records": 0,
+    "infrastructure_attributed_artifacts": 1,
+    "infrastructure_attributed_detail": "QUALIFICATION-V1-B3-ROCKSDB-D.invalid.json: operator launch-environment defect (missing PYTHONPATH) during session takeover; failed before any measurement; excluded from formal evidence; full D re-executed and valid",
+    "silently_dropped_runs": 0
+  },
+  "generality_findings": {
+    "incremental_freshness": "PASS across all 3 systems x 4 mutation families (36/36 frozen freshness probes observed changed state B within the same sequential child process)",
+    "exact_parity": "PASS across all 36 incremental reps: incremental A->B state digests equal clean Full(B) rebuild digests over nodes_facts, edges_facts, raw_references_facts, shards_facts, files_facts, shard_edges_facts",
+    "raw_reference_correctness": "PASS: raw_references_facts digest parity 36/36; scale counts raw_references exactly on frozen v0.2 anchors (49109 / 84941 / 311111)",
+    "shard_file_edge_state_consistency": "PASS: shards_facts, files_facts, shard_edges_facts digests equal 36/36; edges_facts 36/36",
+    "query_ordering_anchor_correctness": "PASS: execution_order=manifest_file_order, order_frozen=true, anchor_validation=qualified_name_exact_match in all three D records over per-system frozen query manifests",
+    "scale_measurement_stability": "PASS: A/B counts exactly on frozen v0.2 anchors in all 6 build records (nodes 29117/48929/118655; edges 37074/59614/143585); D warm medians scale monotonically with repo size for callees (20.8/32.2/74.1 ms) and symbol (19.8/26.8/62.3 ms)"
+  },
+  "evidence_integrity": {
+    "contract_seal_reverified": "25/25 entries match",
+    "summary_record_sha_reverified": "21/21 record digests recomputed from bytes and matching all three qualification summaries",
+    "contamination_check": "formal evidence references exactly the 21 QUALIFICATION-V1-* formal records; 12 RESMOKE-* smoke records, 34 superseded SYSV1-* pre-freeze records, 1 pre-formal B1 .invalid artifact, and the B3 D .invalid artifact are all excluded; the B3 .invalid appears only as an attributed-exclusion entry",
+    "no_new_experiments_in_synthesis": true,
+    "synthesis_only_verifies_existing_records": true
+  },
+  "scoped_observations_non_gating": [
+    {
+      "id": "ARIA2-INCREMENTAL-LATENCY-INVERSION",
+      "observation": "aria2 incremental system_under_test latency (~5.6-6.0 s) exceeds its full build median (~4.5 s); same pattern in B2 (10.9-14.3 s vs 8.3 s) and B3 (37.7-47.5 s vs 28.2 s): incremental update latency exceeds cold full-build latency at all three scales",
+      "disposition": "OBSERVED_ONLY per Contract V1 anomaly guard; architecture/attribution question deferred to the Before/After optimization line; does not affect qualification gates, parity, freshness, or query correctness",
+      "gating": false
+    },
+    {
+      "id": "B3-D-LAUNCH-ENVIRONMENT-INVALID",
+      "observation": "first B3 workload D launch failed with ModuleNotFoundError before any measurement due to operator shell missing PYTHONPATH",
+      "disposition": "attributed to operator launch environment; frozen runner recorded .invalid artifact per design; full D re-executed with identical frozen parameters; no contract/runner/schema change",
+      "gating": false
+    }
+  ],
+  "blockers": [],
+  "qualification_per_contract": {
+    "criterion": "three repos x A/B/C/D all valid runs, repetition minimums met (gates PASS), gates passed",
+    "three_repos_valid": true,
+    "repetition_minimums_met": true,
+    "gates_passed": true,
+    "result": "QUALIFIED (limited to this contract scope)"
+  },
+  "conclusion": {
+    "rq2_verdict": "QUALIFIED",
+    "previous_status": "HOLD",
+    "cross_system_contradictions": "none found",
+    "contract_level_rollback_required": false,
+    "records_after_synthesis": "RQ2 evidence chain closed; next mainline decision is out of scope of this synthesis (Agent task qualification vs structured query interface vs other capabilities)"
+  }
+}

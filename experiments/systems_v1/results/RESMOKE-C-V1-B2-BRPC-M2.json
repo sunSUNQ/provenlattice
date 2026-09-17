@@ -1,0 +1,364 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 2,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "9d7531d8840647e9fd10d3d7a650909ef307f10ffe8c6f634933734db1f18486",
+  "run_id": "SYSV1-B2BRPC-C-20260916T064355Z",
+  "run_kind": "smoke",
+  "workload": "C",
+  "benchmark": "B2-brpc",
+  "started_at_utc": "2026-09-16T06:43:55Z",
+  "completed_at_utc": "2026-09-16T06:44:53Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "cpu_model": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_logical_cores": 28,
+    "cpu_physical_cores": "UNKNOWN",
+    "ram_total_bytes": 34013245440,
+    "storage_type": "FIXED/NTFS",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "thread_configuration": "single_process_sequential",
+    "tool_versions": {
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4",
+      "tree_sitter_python": "0.25.0"
+    },
+    "load_note": ""
+  },
+  "inputs": {
+    "repo_path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+    "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 227154,
+    "runner_sha256": "a7af529fba5cf4569a902ddaa973029a0ce37fffcc45e14d25735aefc5e8941c",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "schema_sha256": "5c32df5765292bb35f77add71ab2416612f7b3da6307be37cb65cbaf4bceed95",
+    "schedule_manifest": "manifests/schedule-v1.json",
+    "schedule_manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "effective_config_sha256": "42c514175f3f22bfc3788466208eee876fe294fdf9f38be6003d30cdd3ba31e3",
+    "mutation_manifest": "experiments/systems_v1/manifests/mutations-brpc-v1.json",
+    "mutation_manifest_sha256": "527052c4bbb7c536fe62897f3c072d07d4abc9ad5a1e9a43e4c4bd240c49a72e",
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "effective_config": {
+      "parser_backend": "tree_sitter",
+      "languages": [
+        "c",
+        "cpp",
+        "python"
+      ],
+      "resolver": "provenlattice.resolver.SymbolResolver (V0.2 default)",
+      "shard_strategy_effective": "directory",
+      "threading": "single_process_sequential",
+      "persistence": "sqlite3"
+    },
+    "output_path_preexistence_asserted": true,
+    "warmup": 1,
+    "reps": 1,
+    "measured_rounds": null,
+    "measurement_boundary": {
+      "rss_scope": "main_measured_child_only",
+      "cpu_scope": "main_measured_child_only",
+      "rss_semantics": "Windows: GetProcessMemoryInfo PeakWorkingSetSize of the main measured child process; POSIX: getrusage RUSAGE_SELF ru_maxrss. This is NOT process-tree memory and NOT total system memory consumption; parser descendants/grandchildren are not included.",
+      "cpu_semantics": "time.process_time() delta of the main measured child process only; NOT process-tree CPU time and NOT total system CPU time."
+    },
+    "notes": [
+      "child-process isolation per measured unit",
+      "warm-up reps labelled role=warmup and excluded from all aggregates",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B2BRPC-C-20260916T064355Z-vsmrj7k8"
+    ]
+  },
+  "cache_policy": {
+    "os_page_cache_state": "prior_run_cache_eligible",
+    "eviction_attempted": "not_attempted",
+    "platform_privilege_note": "no privileged page-cache eviction was attempted (Windows has no unprivileged eviction API; Linux drop_caches not used); OS page cache state is therefore uncontrolled, not 'cold'",
+    "application_cache_note": "each rep reopens the SQLite DB in a new child process; the initial index within the rep may have warmed the OS file cache; unobserved",
+    "terminology": [
+      "db-fresh: the output database path did not exist before the measured unit (asserted at runtime)",
+      "process-cold: the measured unit runs in a freshly spawned child process; no application-level cache is inherited",
+      "first-query: the first query round executed by a newly spawned query process",
+      "warm-repeat: measured query rounds executed by the same query process after three warm-up rounds (SQLite page cache warm within that connection; GraphQuery holds no result cache)",
+      "OS page cache uncontrolled: no privileged page-cache eviction was attempted (eviction_attempted=not_attempted)",
+      "prior-run OS-cache-eligible: measured units follow prior build reps over the same source tree; OS file cache may be warm; state unobserved",
+      "the terms 'cold filesystem cache' and 'true cold cache' are not valid V1 terms and are banned"
+    ]
+  },
+  "schedule": {
+    "manifest": "manifests/schedule-v1.json",
+    "manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "order_policy": "deterministic_fixed_order",
+    "schedule_seq": 11,
+    "frozen_before_formal_run": true
+  },
+  "statistical_policy": {
+    "primary_statistic": "median",
+    "retained": [
+      "min",
+      "max"
+    ],
+    "p95_interpretation": "DESCRIPTIVE_ONLY_FOR_SMALL_N",
+    "p99_interpretation": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT",
+    "tail_claim_allowed": false
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 12449.176,
+      "cpu_time_ms": 8609.375,
+      "peak_rss_bytes": 329650176,
+      "db_size_bytes": 240078848,
+      "counts": {
+        "nodes": 48929,
+        "symbols": 47688,
+        "raw_references": 84941,
+        "edges": 59614,
+        "shards": 46,
+        "boundary_edges": 4291,
+        "resolved_references": 17210,
+        "ambiguous_references": 28421,
+        "unresolved_references": 39310,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 305
+      },
+      "rep": 0,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T06:44:08Z",
+      "baseline_digests": {
+        "nodes_facts": "f09a110ba81e4b3a35affacd8bf7bd0706c55c8b1c69b4651225a493a09c7088",
+        "nodes_strict": "32da9e108dcc8439b63d20a8643738482d699c1611fca02fc82ecb8cefb15805",
+        "edges_facts": "6fb0388f55daa83854476db99ecde7cc0982ad797e3f8dcb204ea84dfb41f178",
+        "edges_strict": "02c876377d1d6fafc49a999acffd337e6f76e626e5d1c327dd3c16a0bff0218a",
+        "raw_references_facts": "1333c2151dc5626c6fd974e6ec772fc4d11e15d43c3277aec0427b7fee8a81f4",
+        "raw_references_strict": "a3ad66a1535ee8800cfaf7f13bc9614d703708e1bfaf5ff98af3d5559c2b1daa",
+        "shards_facts": "9b43f622dd72e1710d6c3fc47610e7b83de4b06a818f20441e15986ee7ec763a",
+        "files_facts": "f9135818627feac5618d3ad8df2326f2bae53863ed20d4df7a1540b810fd60a6",
+        "shard_edges_facts": "164bc69760d4680e1f8b18eb65f67e2e0c9986185348563c8e3c86500d3b004e"
+      },
+      "baseline_file_state_hashes": {
+        "src/brpc/protocol.cpp": "240d72636c214dbc48b22f38fc3be62a999a6e1275ff69bafb83c652fa4ad52a"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 10795.349,
+      "cpu_time_ms": 10125.0,
+      "peak_rss_bytes": 812761088,
+      "db_size_bytes": 240599040,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "src/brpc/protocol.cpp"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 1,
+      "files_reused": 1167,
+      "files_changed_reported": 1,
+      "nodes_changed": 45,
+      "edges_changed": 1,
+      "references_reprocessed": 73,
+      "references_reused": 84868,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "c5be0ead20a4ed1e0405de544c7c719cd5f01cff3c7bed34fd4ccc0c69eb1c42",
+        "nodes_strict": "31ee4a879bb6f48e7178b02119ee1bcd43de712a457794993e1b77b5bddfb170",
+        "edges_facts": "abca33dbc89961913480ebd0275210032827c2cf9477e07fdc1607bd40ebdda4",
+        "edges_strict": "a48052d96afcf4a80d0696e21c1301727088f1ee652e36a6da033f93e82023c6",
+        "raw_references_facts": "1333c2151dc5626c6fd974e6ec772fc4d11e15d43c3277aec0427b7fee8a81f4",
+        "raw_references_strict": "a3ad66a1535ee8800cfaf7f13bc9614d703708e1bfaf5ff98af3d5559c2b1daa",
+        "shards_facts": "a41bd89aa4f76809354ad7c112db3ef3c9aeb69d4fc8f2e540c0a952f602a949",
+        "files_facts": "84d66a06d79ae9589cf7c10e1fd88d07129ce23036bedb4e49759c4c28ff5a6b",
+        "shard_edges_facts": "164bc69760d4680e1f8b18eb65f67e2e0c9986185348563c8e3c86500d3b004e"
+      },
+      "digest_ms": 8271.723,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated src/brpc/protocol.cpp)",
+            "observed": "db=ea09e33047ee disk=ea09e33047ee",
+            "passed": true
+          },
+          {
+            "check": "symbol_present",
+            "expected": "find_symbol('sysv1_mutation_marker') returns >= 1 row",
+            "observed": "rows=1",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 98.232,
+        "query_visible_time_to_freshness_ms": 10893.581,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 0,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "src/brpc/protocol.cpp",
+          "type": "append_text",
+          "pre_sha256": "240d72636c214dbc48b22f38fc3be62a999a6e1275ff69bafb83c652fa4ad52a",
+          "post_sha256": "ea09e33047eed07477eba9e04c8a2ba2a86e79322305b58218caaacd73c5f04a",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T06:44:08Z",
+      "mutation_applied_at_utc": "2026-09-16T06:44:16Z",
+      "mutation_applied_after_initial_build_s": 8.225836,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 1,
+        "files_reparsed_observed": 1,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "src/brpc/protocol.cpp"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 0,
+      "role": "parity_full",
+      "digest_ms": 8005.737,
+      "digests": {
+        "nodes_facts": "c5be0ead20a4ed1e0405de544c7c719cd5f01cff3c7bed34fd4ccc0c69eb1c42",
+        "nodes_strict": "31ee4a879bb6f48e7178b02119ee1bcd43de712a457794993e1b77b5bddfb170",
+        "edges_facts": "abca33dbc89961913480ebd0275210032827c2cf9477e07fdc1607bd40ebdda4",
+        "edges_strict": "a48052d96afcf4a80d0696e21c1301727088f1ee652e36a6da033f93e82023c6",
+        "raw_references_facts": "1333c2151dc5626c6fd974e6ec772fc4d11e15d43c3277aec0427b7fee8a81f4",
+        "raw_references_strict": "a3ad66a1535ee8800cfaf7f13bc9614d703708e1bfaf5ff98af3d5559c2b1daa",
+        "shards_facts": "a41bd89aa4f76809354ad7c112db3ef3c9aeb69d4fc8f2e540c0a952f602a949",
+        "files_facts": "84d66a06d79ae9589cf7c10e1fd88d07129ce23036bedb4e49759c4c28ff5a6b",
+        "shard_edges_facts": "164bc69760d4680e1f8b18eb65f67e2e0c9986185348563c8e3c86500d3b004e"
+      }
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "incremental": {
+    "mutation_family": "add_symbol",
+    "mutation_id": "M2",
+    "mutation_scope": "local",
+    "mutation_interface_sensitive": false,
+    "reps": 1,
+    "files_touched": 1,
+    "files_reparsed": 1,
+    "files_reused": 1167,
+    "nodes_changed": 45,
+    "edges_changed": 1,
+    "references_reprocessed": 73,
+    "references_reused": 84868,
+    "update_completion_latency_ms": 10795.349,
+    "freshness_probe": {
+      "probe_ok": true,
+      "checks": [
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated src/brpc/protocol.cpp)",
+          "observed": "db=ea09e33047ee disk=ea09e33047ee",
+          "passed": true
+        },
+        {
+          "check": "symbol_present",
+          "expected": "find_symbol('sysv1_mutation_marker') returns >= 1 row",
+          "observed": "rows=1",
+          "passed": true
+        }
+      ],
+      "probe_latency_ms": 98.232,
+      "query_visible_time_to_freshness_ms": 10893.581,
+      "note": "checks shown for rep 0; per-rep probe results are retained in raw_reps. Query-Visible Time-to-Freshness is measured as mutation applied -> incremental_update returns -> frozen probe observes expected changed graph state (same sequential child process; harness spawn overhead is reported separately in clocks.benchmark_setup_time_ms)."
+    },
+    "full_vs_incremental_parity": true,
+    "workload_c_gate": {
+      "execution_order": "build_frozen_A_then_mutation_then_incremental_then_full_B",
+      "expected_files_touched_min": 1,
+      "mutation_pre_hash_differs_from_post_hash": true,
+      "incremental_changed_true": true,
+      "mutation_anchor_changed": true,
+      "incremental_input_db_built_before_mutation": true,
+      "files_changed_reported_min_met": true,
+      "per_rep": [
+        {
+          "rep": 0,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 1,
+          "files_reparsed_observed": 1,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "src/brpc/protocol.cpp"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "parity_gate": {
+      "covered_states": [
+        "node identities (nodes_facts)",
+        "edge identities (edges_facts)",
+        "raw-reference identity/location/resolution state incl. candidates (raw_references_facts)",
+        "shard state incl. api_fingerprint and public symbols (shards_facts)",
+        "file identities incl. source hashes (files_facts)",
+        "boundary shard-edge index (shard_edges_facts)"
+      ],
+      "digest_fields": [
+        "nodes_facts",
+        "edges_facts",
+        "raw_references_facts",
+        "shards_facts",
+        "files_facts",
+        "shard_edges_facts"
+      ],
+      "not_covered_states": [
+        "generation counters (build-history artifacts, not query-visible state)",
+        "graph_generation metrics rows",
+        "nodes/edges/shards metadata JSON beyond identity columns (strict digests, diagnostic only)",
+        "document_state (redundant with file_state/files for code-index workloads)",
+        "raw_evidence_links (knowledge layer; not produced by A/B/C/D code-index workloads)",
+        "OS-level database file byte layout"
+      ],
+      "strict_digest_match": true,
+      "strict_mismatch_disposition": "RECORDED_NON_GATING_PROVENANCE_DIVERGENCE"
+    },
+    "clocks": {
+      "system_under_test_latency_ms": 10795.349,
+      "benchmark_setup_time_ms": 863.4918,
+      "validation_time_ms": 16587.7619,
+      "parity_verification_time_ms": 16277.4596,
+      "end_to_end_benchmark_wall_time_ms": 57820.8414,
+      "boundary_note": "system_under_test_latency_ms = median incremental_update child wall time only; benchmark_setup = repository copy plus frozen mutation application (initial A index and baseline verification are excluded from setup); validation = baseline A verification plus freshness probe plus snapshot digest computation; parity_verification = digest computation for both DBs; end_to_end includes all harness orchestration and is NOT a system latency. C-vs-A comparisons must use system_under_test_latency_ms only."
+    }
+  }
+}

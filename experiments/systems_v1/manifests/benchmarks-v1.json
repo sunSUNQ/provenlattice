@@ -1,0 +1,54 @@
+{
+  "manifest": "BENCHMARK_MANIFEST_V1",
+  "version": 1,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "note": "repo_path is resolved relative to experiments/systems_v1/. v0_2_observed values are the single-run OBSERVED baselines from benchmark-analysis/v0.2-*.json; they anchor the run-record crosscheck (counts +-10% band) and are NOT qualification results.",
+  "benchmarks": [
+    {
+      "benchmark": "B1-aria2",
+      "role": "Small Regression",
+      "repo_path": "../../../benchmark-repos/aria2",
+      "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+      "c_cpp_loc": 118926,
+      "v0_2_observed": {
+        "full_index_time_ms": 3953.631,
+        "peak_memory_bytes": 195563520,
+        "database_size_bytes": 132034560,
+        "nodes": 29117,
+        "raw_references": 49109,
+        "edges": 37074
+      }
+    },
+    {
+      "benchmark": "B2-brpc",
+      "role": "Target-like Primary",
+      "repo_path": "../../../benchmark-repos/brpc",
+      "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+      "c_cpp_loc": 227154,
+      "v0_2_observed": {
+        "full_index_time_ms": 7590.77,
+        "peak_memory_bytes": 323907584,
+        "database_size_bytes": 237162496,
+        "nodes": 48929,
+        "raw_references": 84941,
+        "edges": 59614
+      }
+    },
+    {
+      "benchmark": "B3-rocksdb",
+      "role": "Scale",
+      "repo_path": "../../../benchmark-repos/rocksdb",
+      "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+      "c_cpp_loc": 622772,
+      "v0_2_observed": {
+        "full_index_time_ms": 26190.219,
+        "peak_memory_bytes": 1121484800,
+        "database_size_bytes": 876105728,
+        "nodes": 118655,
+        "raw_references": 311111,
+        "edges": 143585
+      }
+    }
+  ]
+}
+

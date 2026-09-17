@@ -1,0 +1,128 @@
+{
+  "manifest": "QUERY_MANIFEST_V1",
+  "version": 2,
+  "benchmark": "B1-aria2",
+  "selection_policy": {
+    "top_degree_by_calls": 3,
+    "name_ascending": 2,
+    "tie_break": "qualified_name ASC",
+    "kinds": [
+      "Function",
+      "Method"
+    ],
+    "query_types": [
+      "symbol",
+      "callers",
+      "callees",
+      "subgraph"
+    ]
+  },
+  "queries": [
+    {
+      "type": "symbol",
+      "name": " testCheckRequestSlotAndDoNecessaryThing_completeBlock",
+      "anchor": "aria2.DefaultBtMessageDispatcherTest. testCheckRequestSlotAndDoNecessaryThing_completeBlock"
+    },
+    {
+      "type": "callers",
+      "name": " testCheckRequestSlotAndDoNecessaryThing_completeBlock",
+      "anchor": "aria2.DefaultBtMessageDispatcherTest. testCheckRequestSlotAndDoNecessaryThing_completeBlock"
+    },
+    {
+      "type": "callees",
+      "name": " testCheckRequestSlotAndDoNecessaryThing_completeBlock",
+      "anchor": "aria2.DefaultBtMessageDispatcherTest. testCheckRequestSlotAndDoNecessaryThing_completeBlock"
+    },
+    {
+      "type": "subgraph",
+      "name": " testCheckRequestSlotAndDoNecessaryThing_completeBlock",
+      "anchor": "aria2.DefaultBtMessageDispatcherTest. testCheckRequestSlotAndDoNecessaryThing_completeBlock"
+    },
+    {
+      "type": "symbol",
+      "name": "erase",
+      "anchor": "aria2.IndexedList.erase"
+    },
+    {
+      "type": "callers",
+      "name": "erase",
+      "anchor": "aria2.IndexedList.erase"
+    },
+    {
+      "type": "callees",
+      "name": "erase",
+      "anchor": "aria2.IndexedList.erase"
+    },
+    {
+      "type": "subgraph",
+      "name": "erase",
+      "anchor": "aria2.IndexedList.erase"
+    },
+    {
+      "type": "symbol",
+      "name": "move",
+      "anchor": "aria2.IndexedList.move"
+    },
+    {
+      "type": "callers",
+      "name": "move",
+      "anchor": "aria2.IndexedList.move"
+    },
+    {
+      "type": "callees",
+      "name": "move",
+      "anchor": "aria2.IndexedList.move"
+    },
+    {
+      "type": "subgraph",
+      "name": "move",
+      "anchor": "aria2.IndexedList.move"
+    },
+    {
+      "type": "symbol",
+      "name": "push_back",
+      "anchor": "aria2.IndexedList.push_back"
+    },
+    {
+      "type": "callers",
+      "name": "push_back",
+      "anchor": "aria2.IndexedList.push_back"
+    },
+    {
+      "type": "callees",
+      "name": "push_back",
+      "anchor": "aria2.IndexedList.push_back"
+    },
+    {
+      "type": "subgraph",
+      "name": "push_back",
+      "anchor": "aria2.IndexedList.push_back"
+    },
+    {
+      "type": "symbol",
+      "name": " OptimizeConcurrentDownloadsOptionHandler",
+      "anchor": "aria2.OptimizeConcurrentDownloadsOptionHandler. OptimizeConcurrentDownloadsOptionHandler"
+    },
+    {
+      "type": "callers",
+      "name": " OptimizeConcurrentDownloadsOptionHandler",
+      "anchor": "aria2.OptimizeConcurrentDownloadsOptionHandler. OptimizeConcurrentDownloadsOptionHandler"
+    },
+    {
+      "type": "callees",
+      "name": " OptimizeConcurrentDownloadsOptionHandler",
+      "anchor": "aria2.OptimizeConcurrentDownloadsOptionHandler. OptimizeConcurrentDownloadsOptionHandler"
+    },
+    {
+      "type": "subgraph",
+      "name": " OptimizeConcurrentDownloadsOptionHandler",
+      "anchor": "aria2.OptimizeConcurrentDownloadsOptionHandler. OptimizeConcurrentDownloadsOptionHandler"
+    }
+  ],
+  "note": "anchors are frozen qualified names; the runner must resolve each name to a candidate whose qualified_name equals the anchor string, else the run fails. No machine-local paths are recorded (review R11).",
+  "source_provenance": {
+    "benchmark": "B1-aria2",
+    "selection": "deterministic top-degree + name-ascending policy above, computed from a full index of the frozen commit",
+    "database": "temporary selection DB (discarded; portable provenance only)"
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "artifact": "systems-benchmark-contract-v1-delta-review",
+  "role": "independent methodology reviewer",
+  "decision": "HOLD",
+  "answers": {
+    "all_original_required_changes_closed": false,
+    "new_blocking_defect_found": true,
+    "new_required_defect_found": false,
+    "contract_v1_ready_to_freeze": "NO",
+    "formal_b1_b2_b3_qualification_ready": "NO"
+  },
+  "new_defects": [
+    {
+      "id": "C1",
+      "classification": "NEW_BLOCKING_DEFECT",
+      "title": "Workload C applies mutation before initial A index",
+      "contract_required_order": ["Full(A)", "Mutation", "Incremental(A->B)", "Full(B) parity"],
+      "implemented_order": ["copy repository", "apply mutation", "initial full build(B)", "incremental update(B->B)", "fresh full build(B)", "parity"],
+      "source_evidence": "tools/run-systems-workload-v1.py:908-925 applies mutation at lines 909-910 before the initial build at lines 914-920.",
+      "smoke_evidence": {
+        "record": "results/SYSV1-B1ARIA2-C-20260915T114924Z.json",
+        "mutation_id": "M4",
+        "incremental_changed": false,
+        "files_changed_reported": 0,
+        "files_reparsed": 0,
+        "full_vs_incremental_parity": true
+      },
+      "impact": [
+        "does not measure A-to-B incremental maintenance",
+        "parity is B-versus-B, not Incremental(A-to-B)-versus-Full(B)",
+        "freshness probe observes pre-indexed B rather than a change made query-visible by incremental processing",
+        "C system-under-test clock is a no-change invocation and is not interpretable as incremental update cost"
+      ],
+      "minimum_correction": "Build incremental.db from unmodified A; apply mutation after initial build; then run incremental_update and compare it with a fresh B full rebuild. Re-run affected C smoke regressions.",
+      "benchmark_redesign_required": false
+    }
+  ],
+  "closure_matrix": [
+    {"id":"R1","status":"CLOSED","finding":"Operational cache terms and not-attempted page-cache eviction policy are implemented; controlled filesystem coldness is not claimed."},
+    {"id":"R2","status":"CLOSED","finding":"Fresh DB assertion, canonical effective configuration hash, and child shard-strategy wiring are implemented."},
+    {"id":"R3","status":"CLOSED","finding":"RSS/CPU are explicitly scoped to main measured child with platform-specific semantics."},
+    {"id":"R4","status":"CLOSED","finding":"Schema V2 validation occurs before standard artifact write; final smoke A/B/C/D artifacts validate."},
+    {"id":"R5","status":"CLOSED","finding":"Warmup exclusion, qualification minima, frozen schedule, and descriptive-only percentile policy are implemented."},
+    {"id":"R6","status":"NOT_CLOSED_OPERATIONALLY","finding":"M1-M4 bytes/hashes and scope labels exist in all three manifests, but C1 means cross-file invalidation is not exercised after an A baseline."},
+    {"id":"R7","status":"CLOSED","finding":"B2/B3 mutation manifests are present with the V1 family set and frozen hashes."},
+    {"id":"R8","status":"NOT_CLOSED_OPERATIONALLY","finding":"Nine digest outputs accurately declare six gating fact states and three strict diagnostics, but C1 makes their parity comparison B-versus-B."},
+    {"id":"R9","status":"NOT_CLOSED_OPERATIONALLY","finding":"Separate update and query-visible freshness fields/probe exist, but C1 means probe success does not establish incremental propagation."},
+    {"id":"R10","status":"CLOSED_INSTRUMENTALLY","finding":"SUT, setup, validation, parity, and end-to-end clocks are separate; C1 invalidates interpretation of C SUT latency, not clock separation."},
+    {"id":"R11","status":"CLOSED","finding":"Each repository has a portable frozen 20-query, four-type manifest and successful smoke anchor validation."},
+    {"id":"R12","status":"CLOSED","finding":"Runner produces promised KLOC/symbol/node/raw-reference normalizations with null for zero denominators."},
+    {"id":"R13","status":"CLOSED","finding":"Expanded provenance and qualification load-note rejection are implemented."}
+  ],
+  "verification": {
+    "validated_final_smoke_records": [
+      "SYSV1-B1ARIA2-A-20260915T114901Z.json",
+      "SYSV1-B1ARIA2-B-20260915T114910Z.json",
+      "SYSV1-B1ARIA2-C-20260915T114924Z.json",
+      "SYSV1-B1ARIA2-D-20260915T114949Z.json",
+      "SYSV1-B2BRPC-D-20260915T115026Z.json",
+      "SYSV1-B3ROCKSDB-D-20260915T115052Z.json"
+    ],
+    "all_validated": true,
+    "stored_result_run_kind_counts": {"smoke": 20, "qualification": 0},
+    "schedule_entries": 21,
+    "schedule_unique_sequences": 21,
+    "query_manifest_summary": {"B1-aria2":20,"B2-brpc":20,"B3-rocksdb":20},
+    "mutation_manifest_families": {"B1-aria2":["M1","M2","M3","M4"],"B2-brpc":["M1","M2","M3","M4"],"B3-rocksdb":["M1","M2","M3","M4"]}
+  },
+  "remaining_deferred_not_blocking": [
+    "Concurrent query",
+    "External same-machine baselines",
+    "B4/B5 and 11M scale qualification",
+    "Performance optimization",
+    "Causal explanation of aria2 incremental smoke anomaly",
+    "Agent/token amortization claims"
+  ],
+  "freeze_condition": "Correct C1 and re-run the affected Workload C smoke path with demonstrable A-to-B change detection, Incremental(A-to-B)-versus-Full(B) exact parity, and post-incremental freshness observation. Then perform a focused delta recheck before freezing the bundle.",
+  "review_discipline": {
+    "formal_qualification_started": false,
+    "runtime_modified": false,
+    "performance_optimized": false,
+    "aria2_anomaly_explained": false,
+    "deferred_scope_promoted": false
+  }
+}

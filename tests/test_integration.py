@@ -152,6 +152,31 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(update["changes"]["deleted"], ["module_b/util.py"])
         self.assertEqual(update["changes"]["modified"], ["module_c/api.py"])
 
+    def test_candidate_disappearance_rebuilds_ambiguous_reference(self) -> None:
+        incremental_db = Path(self.temp.name) / "candidate-incremental.db"
+        full_db = Path(self.temp.name) / "candidate-full.db"
+        write(
+            self.root / "module_a" / "caller.py",
+            "def caller(item):\n    return item.duplicate()\n",
+        )
+        duplicate_b = self.root / "module_b" / "duplicate.py"
+        duplicate_c = self.root / "module_c" / "duplicate.py"
+        write(duplicate_b, "def duplicate():\n    return 1\n")
+        write(duplicate_c, "def duplicate():\n    return 2\n")
+        full_index(self.root, incremental_db)
+
+        duplicate_c.unlink()
+        update = incremental_update(self.root, incremental_db)
+        full_index(self.root, full_db)
+
+        self.assertTrue(update["changed"])
+        self.assertEqual(snapshot(incremental_db), snapshot(full_db))
+        with GraphQuery(incremental_db) as query:
+            references = query.get_raw_references(raw_name="duplicate")["data"]
+        self.assertEqual(len(references), 1)
+        self.assertEqual(references[0]["status"], "resolved")
+        self.assertEqual(len(references[0]["candidate_symbols"]), 1)
+
     def test_resolution_contract_and_raw_reference_indexes(self) -> None:
         database = Path(self.temp.name) / "resolution.db"
         write(

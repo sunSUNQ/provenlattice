@@ -1,0 +1,521 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 1,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "61ffceac286278994483bc75d35fb8f6a49311b73320c2d76a977c78c3e00410",
+  "run_id": "SYSV1-B1ARIA2-D-20260915T100330Z",
+  "run_kind": "smoke",
+  "workload": "D",
+  "benchmark": "B1-aria2",
+  "started_at_utc": "2026-09-15T10:03:30Z",
+  "completed_at_utc": "2026-09-15T10:03:40Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "machine": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "load_note": ""
+  },
+  "inputs": {
+    "repo_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+    "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 118926,
+    "runner_sha256": "2d76f12a72207bafa5a0bce184ffd8d154e875fed9efaf3c7f58ccd065b7b563",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "mutation_manifest": null,
+    "mutation_manifest_sha256": null,
+    "query_manifest": "experiments/systems_v1/manifests/queries-aria2-v1.json",
+    "query_manifest_sha256": "0a1ae439f9818e84f5856da06a8907fc1d850256f925f01f0723e1968f9dd512"
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "warmup": 1,
+    "reps": 5,
+    "notes": [
+      "child-process isolation per measured unit",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B1ARIA2-D-20260915T100330Z-sjyd3r9m"
+    ]
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 3999.133,
+      "cpu_time_ms": 3953.125,
+      "peak_rss_bytes": 198594560,
+      "db_size_bytes": 133021696,
+      "counts": {
+        "nodes": 29117,
+        "raw_references": 49109,
+        "edges": 37074,
+        "shards": 8,
+        "boundary_edges": 1356,
+        "resolved_references": 10804,
+        "ambiguous_references": 13966,
+        "unresolved_references": 24339,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 388
+      },
+      "rep": 0,
+      "role": "setup"
+    },
+    {
+      "rep": 0,
+      "role": "query_cold",
+      "cache_state": "cold",
+      "warmup_rounds": 0,
+      "measured_rounds": 1,
+      "per_query_type": {
+        "callees": {
+          "median": 16.1873,
+          "p95": 16.4566,
+          "p99": 16.4566,
+          "min": 15.3571,
+          "max": 16.4566,
+          "n": 5
+        },
+        "callers": {
+          "median": 33.4356,
+          "p95": 83.4714,
+          "p99": 83.4714,
+          "min": 15.6403,
+          "max": 83.4714,
+          "n": 5
+        },
+        "subgraph": {
+          "median": 31.3591,
+          "p95": 47.2859,
+          "p99": 47.2859,
+          "min": 22.331,
+          "max": 47.2859,
+          "n": 5
+        },
+        "symbol": {
+          "median": 14.9598,
+          "p95": 15.2565,
+          "p99": 15.2565,
+          "min": 14.583,
+          "max": 15.2565,
+          "n": 5
+        }
+      },
+      "raw_samples_ms": {
+        "callees": [
+          15.5863,
+          16.4566,
+          16.1888,
+          16.1873,
+          15.3571
+        ],
+        "callers": [
+          15.9627,
+          33.4356,
+          83.4714,
+          71.6804,
+          15.6403
+        ],
+        "subgraph": [
+          23.0351,
+          47.2859,
+          31.3591,
+          31.4817,
+          22.331
+        ],
+        "symbol": [
+          14.8175,
+          14.583,
+          14.9598,
+          15.2565,
+          15.1997
+        ]
+      },
+      "throughput_qps": 37.7162
+    },
+    {
+      "rep": 1,
+      "role": "query_warm",
+      "cache_state": "warm",
+      "warmup_rounds": 3,
+      "measured_rounds": 5,
+      "per_query_type": {
+        "callees": {
+          "median": 15.9694,
+          "p95": 16.3367,
+          "p99": 16.3522,
+          "min": 15.1702,
+          "max": 16.3522,
+          "n": 25
+        },
+        "callers": {
+          "median": 33.631,
+          "p95": 77.4725,
+          "p99": 80.6287,
+          "min": 15.2091,
+          "max": 80.6287,
+          "n": 25
+        },
+        "subgraph": {
+          "median": 31.3828,
+          "p95": 47.5571,
+          "p99": 48.9455,
+          "min": 21.3112,
+          "max": 48.9455,
+          "n": 25
+        },
+        "symbol": {
+          "median": 14.8609,
+          "p95": 15.884,
+          "p99": 16.9517,
+          "min": 14.2522,
+          "max": 16.9517,
+          "n": 25
+        }
+      },
+      "raw_samples_ms": {
+        "callees": [
+          15.4603,
+          16.3522,
+          16.0733,
+          16.3141,
+          16.0201,
+          15.5425,
+          16.2568,
+          16.2364,
+          16.3367,
+          15.6652,
+          15.6428,
+          16.0516,
+          16.0239,
+          15.6558,
+          15.671,
+          15.845,
+          15.7876,
+          16.0729,
+          16.104,
+          15.1702,
+          16.1601,
+          15.918,
+          15.9694,
+          15.4966,
+          15.2416
+        ],
+        "callers": [
+          15.6822,
+          32.2708,
+          80.6287,
+          65.9931,
+          16.747,
+          16.0413,
+          33.631,
+          76.9726,
+          66.4799,
+          15.2091,
+          15.9567,
+          32.6992,
+          77.4725,
+          65.1546,
+          16.7334,
+          15.4359,
+          34.9735,
+          76.3056,
+          61.382,
+          15.342,
+          15.4268,
+          34.7909,
+          73.5077,
+          62.6363,
+          15.5145
+        ],
+        "subgraph": [
+          21.959,
+          44.3531,
+          30.611,
+          31.4864,
+          22.3105,
+          21.3112,
+          47.5571,
+          31.3828,
+          31.1474,
+          21.9442,
+          21.6553,
+          48.9455,
+          32.0547,
+          31.5202,
+          22.0376,
+          22.1869,
+          45.2602,
+          34.5273,
+          31.5161,
+          21.8377,
+          21.7847,
+          45.9164,
+          33.5764,
+          31.7182,
+          21.8818
+        ],
+        "symbol": [
+          14.6313,
+          15.0255,
+          15.4342,
+          15.4899,
+          14.7309,
+          14.8027,
+          15.5115,
+          14.9471,
+          16.9517,
+          15.6372,
+          15.2418,
+          14.6354,
+          14.8492,
+          14.8609,
+          15.476,
+          14.6151,
+          14.2522,
+          15.884,
+          14.818,
+          14.5761,
+          14.5837,
+          14.8017,
+          15.3065,
+          15.4697,
+          14.7875
+        ]
+      },
+      "throughput_qps": 38.7919
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "query": {
+    "query_set_sha256": "0a1ae439f9818e84f5856da06a8907fc1d850256f925f01f0723e1968f9dd512",
+    "phases": [
+      {
+        "cache_state": "cold",
+        "warmup_rounds": 0,
+        "measured_rounds": 1,
+        "per_query_type": {
+          "callees": {
+            "median": 16.1873,
+            "p95": 16.4566,
+            "p99": 16.4566,
+            "min": 15.3571,
+            "max": 16.4566,
+            "n": 5
+          },
+          "callers": {
+            "median": 33.4356,
+            "p95": 83.4714,
+            "p99": 83.4714,
+            "min": 15.6403,
+            "max": 83.4714,
+            "n": 5
+          },
+          "subgraph": {
+            "median": 31.3591,
+            "p95": 47.2859,
+            "p99": 47.2859,
+            "min": 22.331,
+            "max": 47.2859,
+            "n": 5
+          },
+          "symbol": {
+            "median": 14.9598,
+            "p95": 15.2565,
+            "p99": 15.2565,
+            "min": 14.583,
+            "max": 15.2565,
+            "n": 5
+          }
+        },
+        "raw_samples_ms": {
+          "callees": [
+            15.5863,
+            16.4566,
+            16.1888,
+            16.1873,
+            15.3571
+          ],
+          "callers": [
+            15.9627,
+            33.4356,
+            83.4714,
+            71.6804,
+            15.6403
+          ],
+          "subgraph": [
+            23.0351,
+            47.2859,
+            31.3591,
+            31.4817,
+            22.331
+          ],
+          "symbol": [
+            14.8175,
+            14.583,
+            14.9598,
+            15.2565,
+            15.1997
+          ]
+        },
+        "throughput_qps": 37.7162
+      },
+      {
+        "cache_state": "warm",
+        "warmup_rounds": 3,
+        "measured_rounds": 5,
+        "per_query_type": {
+          "callees": {
+            "median": 15.9694,
+            "p95": 16.3367,
+            "p99": 16.3522,
+            "min": 15.1702,
+            "max": 16.3522,
+            "n": 25
+          },
+          "callers": {
+            "median": 33.631,
+            "p95": 77.4725,
+            "p99": 80.6287,
+            "min": 15.2091,
+            "max": 80.6287,
+            "n": 25
+          },
+          "subgraph": {
+            "median": 31.3828,
+            "p95": 47.5571,
+            "p99": 48.9455,
+            "min": 21.3112,
+            "max": 48.9455,
+            "n": 25
+          },
+          "symbol": {
+            "median": 14.8609,
+            "p95": 15.884,
+            "p99": 16.9517,
+            "min": 14.2522,
+            "max": 16.9517,
+            "n": 25
+          }
+        },
+        "raw_samples_ms": {
+          "callees": [
+            15.4603,
+            16.3522,
+            16.0733,
+            16.3141,
+            16.0201,
+            15.5425,
+            16.2568,
+            16.2364,
+            16.3367,
+            15.6652,
+            15.6428,
+            16.0516,
+            16.0239,
+            15.6558,
+            15.671,
+            15.845,
+            15.7876,
+            16.0729,
+            16.104,
+            15.1702,
+            16.1601,
+            15.918,
+            15.9694,
+            15.4966,
+            15.2416
+          ],
+          "callers": [
+            15.6822,
+            32.2708,
+            80.6287,
+            65.9931,
+            16.747,
+            16.0413,
+            33.631,
+            76.9726,
+            66.4799,
+            15.2091,
+            15.9567,
+            32.6992,
+            77.4725,
+            65.1546,
+            16.7334,
+            15.4359,
+            34.9735,
+            76.3056,
+            61.382,
+            15.342,
+            15.4268,
+            34.7909,
+            73.5077,
+            62.6363,
+            15.5145
+          ],
+          "subgraph": [
+            21.959,
+            44.3531,
+            30.611,
+            31.4864,
+            22.3105,
+            21.3112,
+            47.5571,
+            31.3828,
+            31.1474,
+            21.9442,
+            21.6553,
+            48.9455,
+            32.0547,
+            31.5202,
+            22.0376,
+            22.1869,
+            45.2602,
+            34.5273,
+            31.5161,
+            21.8377,
+            21.7847,
+            45.9164,
+            33.5764,
+            31.7182,
+            21.8818
+          ],
+          "symbol": [
+            14.6313,
+            15.0255,
+            15.4342,
+            15.4899,
+            14.7309,
+            14.8027,
+            15.5115,
+            14.9471,
+            16.9517,
+            15.6372,
+            15.2418,
+            14.6354,
+            14.8492,
+            14.8609,
+            15.476,
+            14.6151,
+            14.2522,
+            15.884,
+            14.818,
+            14.5761,
+            14.5837,
+            14.8017,
+            15.3065,
+            15.4697,
+            14.7875
+          ]
+        },
+        "throughput_qps": 38.7919
+      }
+    ]
+  }
+}

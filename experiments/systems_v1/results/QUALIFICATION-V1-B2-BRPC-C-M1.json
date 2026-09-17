@@ -1,0 +1,674 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 2,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "9d7531d8840647e9fd10d3d7a650909ef307f10ffe8c6f634933734db1f18486",
+  "run_id": "SYSV1-B2BRPC-C-20260916T073106Z",
+  "run_kind": "qualification",
+  "workload": "C",
+  "benchmark": "B2-brpc",
+  "started_at_utc": "2026-09-16T07:31:06Z",
+  "completed_at_utc": "2026-09-16T07:35:22Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "cpu_model": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "cpu_logical_cores": 28,
+    "cpu_physical_cores": "UNKNOWN",
+    "ram_total_bytes": 34013245440,
+    "storage_type": "FIXED/NTFS",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "thread_configuration": "single_process_sequential",
+    "tool_versions": {
+      "tree_sitter": "0.26.0",
+      "tree_sitter_cpp": "0.23.4",
+      "tree_sitter_python": "0.25.0"
+    },
+    "load_note": "Formal B2 run launched by Codex desktop; host load was not independently measured."
+  },
+  "inputs": {
+    "repo_path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+    "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 227154,
+    "runner_sha256": "a7af529fba5cf4569a902ddaa973029a0ce37fffcc45e14d25735aefc5e8941c",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "schema_sha256": "5c32df5765292bb35f77add71ab2416612f7b3da6307be37cb65cbaf4bceed95",
+    "schedule_manifest": "manifests/schedule-v1.json",
+    "schedule_manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "effective_config_sha256": "42c514175f3f22bfc3788466208eee876fe294fdf9f38be6003d30cdd3ba31e3",
+    "mutation_manifest": "experiments/systems_v1/manifests/mutations-brpc-v1.json",
+    "mutation_manifest_sha256": "527052c4bbb7c536fe62897f3c072d07d4abc9ad5a1e9a43e4c4bd240c49a72e",
+    "query_manifest": null,
+    "query_manifest_sha256": null
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "effective_config": {
+      "parser_backend": "tree_sitter",
+      "languages": [
+        "c",
+        "cpp",
+        "python"
+      ],
+      "resolver": "provenlattice.resolver.SymbolResolver (V0.2 default)",
+      "shard_strategy_effective": "directory",
+      "threading": "single_process_sequential",
+      "persistence": "sqlite3"
+    },
+    "output_path_preexistence_asserted": true,
+    "warmup": 1,
+    "reps": 3,
+    "measured_rounds": null,
+    "measurement_boundary": {
+      "rss_scope": "main_measured_child_only",
+      "cpu_scope": "main_measured_child_only",
+      "rss_semantics": "Windows: GetProcessMemoryInfo PeakWorkingSetSize of the main measured child process; POSIX: getrusage RUSAGE_SELF ru_maxrss. This is NOT process-tree memory and NOT total system memory consumption; parser descendants/grandchildren are not included.",
+      "cpu_semantics": "time.process_time() delta of the main measured child process only; NOT process-tree CPU time and NOT total system CPU time."
+    },
+    "notes": [
+      "child-process isolation per measured unit",
+      "warm-up reps labelled role=warmup and excluded from all aggregates",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B2BRPC-C-20260916T073106Z-cnr7wrda"
+    ]
+  },
+  "cache_policy": {
+    "os_page_cache_state": "prior_run_cache_eligible",
+    "eviction_attempted": "not_attempted",
+    "platform_privilege_note": "no privileged page-cache eviction was attempted (Windows has no unprivileged eviction API; Linux drop_caches not used); OS page cache state is therefore uncontrolled, not 'cold'",
+    "application_cache_note": "each rep reopens the SQLite DB in a new child process; the initial index within the rep may have warmed the OS file cache; unobserved",
+    "terminology": [
+      "db-fresh: the output database path did not exist before the measured unit (asserted at runtime)",
+      "process-cold: the measured unit runs in a freshly spawned child process; no application-level cache is inherited",
+      "first-query: the first query round executed by a newly spawned query process",
+      "warm-repeat: measured query rounds executed by the same query process after three warm-up rounds (SQLite page cache warm within that connection; GraphQuery holds no result cache)",
+      "OS page cache uncontrolled: no privileged page-cache eviction was attempted (eviction_attempted=not_attempted)",
+      "prior-run OS-cache-eligible: measured units follow prior build reps over the same source tree; OS file cache may be warm; state unobserved",
+      "the terms 'cold filesystem cache' and 'true cold cache' are not valid V1 terms and are banned"
+    ]
+  },
+  "schedule": {
+    "manifest": "manifests/schedule-v1.json",
+    "manifest_sha256": "9266c12de862e77bf7890fd5f6639ff81c74d94ad04fc530974200db833956b4",
+    "order_policy": "deterministic_fixed_order",
+    "schedule_seq": 10,
+    "frozen_before_formal_run": true
+  },
+  "statistical_policy": {
+    "primary_statistic": "median",
+    "retained": [
+      "min",
+      "max"
+    ],
+    "p95_interpretation": "DESCRIPTIVE_ONLY_FOR_SMALL_N",
+    "p99_interpretation": "DESCRIPTIVE_ONLY_WITH_SAMPLE_COUNT",
+    "tail_claim_allowed": false
+  },
+  "raw_reps": [
+    {
+      "wall_time_ms": 16121.867,
+      "cpu_time_ms": 9343.75,
+      "peak_rss_bytes": 330248192,
+      "db_size_bytes": 240009216,
+      "counts": {
+        "nodes": 48929,
+        "symbols": 47688,
+        "raw_references": 84941,
+        "edges": 59614,
+        "shards": 46,
+        "boundary_edges": 4291,
+        "resolved_references": 17210,
+        "ambiguous_references": 28421,
+        "unresolved_references": 39310,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 305
+      },
+      "rep": 0,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T07:31:23Z",
+      "baseline_digests": {
+        "nodes_facts": "0284d1efad2981bd12b02ba345c142d96c1fcbbed06aefcd2da1d70859077fdb",
+        "nodes_strict": "479cbc615dfa5721b5274a974f597637fae6682dfe4a6a51fa056c0ec2dbf5f1",
+        "edges_facts": "328014f61752de4c09bbe3417e6476de0b98dfe73e78ba0df3abf3e5f66c7157",
+        "edges_strict": "bc2e0b0d030db73056fd8a5f7a03326a888813230b07095b770072c0c86a9e4f",
+        "raw_references_facts": "d54b22fdf001a8b07858e8f36e947629f90812c6f59f66b9f1b22c46cfa12d9f",
+        "raw_references_strict": "3f429993087a8f1b9c6dbaad6cc3ca5bd9f82a8b24d8feec6bf8b7d8a8ed1649",
+        "shards_facts": "dbfad80ee52604b2d2be70c0fa7dab411b9ba435b4d2807ad7c10dc3176dbc62",
+        "files_facts": "425498ba84639c0a0033d5cf81407c154116d218bdd84a692819f55fe0fb0b2d",
+        "shard_edges_facts": "ebded3daba5dc81521be92082893f7f869a4d3a29b432e094e2ec604f8cf259a"
+      },
+      "baseline_file_state_hashes": {
+        "src/butil/time.cpp": "8538d9ad83495c0d96b4e1e4786bc4a9b34197d513d35d91c94bfb54fec2164c"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 10459.693,
+      "cpu_time_ms": 10062.5,
+      "peak_rss_bytes": 812281856,
+      "db_size_bytes": 240381952,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "src/butil/time.cpp"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 1,
+      "files_reused": 1167,
+      "files_changed_reported": 1,
+      "nodes_changed": 28,
+      "edges_changed": 0,
+      "references_reprocessed": 22,
+      "references_reused": 84919,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "0284d1efad2981bd12b02ba345c142d96c1fcbbed06aefcd2da1d70859077fdb",
+        "nodes_strict": "479cbc615dfa5721b5274a974f597637fae6682dfe4a6a51fa056c0ec2dbf5f1",
+        "edges_facts": "328014f61752de4c09bbe3417e6476de0b98dfe73e78ba0df3abf3e5f66c7157",
+        "edges_strict": "bc2e0b0d030db73056fd8a5f7a03326a888813230b07095b770072c0c86a9e4f",
+        "raw_references_facts": "d54b22fdf001a8b07858e8f36e947629f90812c6f59f66b9f1b22c46cfa12d9f",
+        "raw_references_strict": "3f429993087a8f1b9c6dbaad6cc3ca5bd9f82a8b24d8feec6bf8b7d8a8ed1649",
+        "shards_facts": "dbfad80ee52604b2d2be70c0fa7dab411b9ba435b4d2807ad7c10dc3176dbc62",
+        "files_facts": "3237d76473a1d60c4efa6404149660849d9717f28faefdafc10b006d47058428",
+        "shard_edges_facts": "ebded3daba5dc81521be92082893f7f869a4d3a29b432e094e2ec604f8cf259a"
+      },
+      "digest_ms": 9686.661,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated src/butil/time.cpp)",
+            "observed": "db=661b8b96c04b disk=661b8b96c04b",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 1.289,
+        "query_visible_time_to_freshness_ms": 10460.982,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 0,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "src/butil/time.cpp",
+          "type": "replace_first",
+          "pre_sha256": "8538d9ad83495c0d96b4e1e4786bc4a9b34197d513d35d91c94bfb54fec2164c",
+          "post_sha256": "661b8b96c04b55f47919dcec36d1329d116bd68233e69f894c5e3fadca807e09",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T07:31:23Z",
+      "mutation_applied_at_utc": "2026-09-16T07:31:32Z",
+      "mutation_applied_after_initial_build_s": 9.157786,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 1,
+        "files_reparsed_observed": 1,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "src/butil/time.cpp"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 0,
+      "role": "parity_full",
+      "digest_ms": 8491.623,
+      "digests": {
+        "nodes_facts": "0284d1efad2981bd12b02ba345c142d96c1fcbbed06aefcd2da1d70859077fdb",
+        "nodes_strict": "479cbc615dfa5721b5274a974f597637fae6682dfe4a6a51fa056c0ec2dbf5f1",
+        "edges_facts": "328014f61752de4c09bbe3417e6476de0b98dfe73e78ba0df3abf3e5f66c7157",
+        "edges_strict": "bc2e0b0d030db73056fd8a5f7a03326a888813230b07095b770072c0c86a9e4f",
+        "raw_references_facts": "d54b22fdf001a8b07858e8f36e947629f90812c6f59f66b9f1b22c46cfa12d9f",
+        "raw_references_strict": "3f429993087a8f1b9c6dbaad6cc3ca5bd9f82a8b24d8feec6bf8b7d8a8ed1649",
+        "shards_facts": "dbfad80ee52604b2d2be70c0fa7dab411b9ba435b4d2807ad7c10dc3176dbc62",
+        "files_facts": "3237d76473a1d60c4efa6404149660849d9717f28faefdafc10b006d47058428",
+        "shard_edges_facts": "ebded3daba5dc81521be92082893f7f869a4d3a29b432e094e2ec604f8cf259a"
+      }
+    },
+    {
+      "wall_time_ms": 13997.665,
+      "cpu_time_ms": 10015.625,
+      "peak_rss_bytes": 330346496,
+      "db_size_bytes": 240082944,
+      "counts": {
+        "nodes": 48929,
+        "symbols": 47688,
+        "raw_references": 84941,
+        "edges": 59614,
+        "shards": 46,
+        "boundary_edges": 4291,
+        "resolved_references": 17210,
+        "ambiguous_references": 28421,
+        "unresolved_references": 39310,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 305
+      },
+      "rep": 1,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T07:32:26Z",
+      "baseline_digests": {
+        "nodes_facts": "523f91929e00d51471aae6a7a22c71a8fe370860e68a887451a655fc99163c63",
+        "nodes_strict": "49295cb74343aa94c57d9ae3c30ec7892e222a2c29aae07c40cb67a3880053a1",
+        "edges_facts": "09e65d1381dd72bdd85749bf874961e3418a0b30a38782881395b5ce63789032",
+        "edges_strict": "332936ab4c2d12b500dc7c8dedd73cc47696792f5343c234ed3aa82c5cc70fa7",
+        "raw_references_facts": "da0d3f44a6599a2d59d9005b150fc4a197adea0b1eac5c4b7ff0196519642443",
+        "raw_references_strict": "e371ffb9d6c0f5b7679a81013f685341e93dc153bebc7be64bbd8aa9a8873b9f",
+        "shards_facts": "e9eec0e1f5a7f2e5b01a2bd8ef5bc68a9aef7ae4fa31a7217d8c64c79df112e6",
+        "files_facts": "821fb12d74421a68f1c19b7f262109705744e4c40dfb281fdb5c0fc3ec1893aa",
+        "shard_edges_facts": "2a1ef5236388c2160eb470ff774ab925cfa51840749998d72d4379faebad987a"
+      },
+      "baseline_file_state_hashes": {
+        "src/butil/time.cpp": "8538d9ad83495c0d96b4e1e4786bc4a9b34197d513d35d91c94bfb54fec2164c"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 14271.066,
+      "cpu_time_ms": 13656.25,
+      "peak_rss_bytes": 812318720,
+      "db_size_bytes": 240488448,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "src/butil/time.cpp"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 1,
+      "files_reused": 1167,
+      "files_changed_reported": 1,
+      "nodes_changed": 28,
+      "edges_changed": 0,
+      "references_reprocessed": 22,
+      "references_reused": 84919,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "523f91929e00d51471aae6a7a22c71a8fe370860e68a887451a655fc99163c63",
+        "nodes_strict": "49295cb74343aa94c57d9ae3c30ec7892e222a2c29aae07c40cb67a3880053a1",
+        "edges_facts": "09e65d1381dd72bdd85749bf874961e3418a0b30a38782881395b5ce63789032",
+        "edges_strict": "332936ab4c2d12b500dc7c8dedd73cc47696792f5343c234ed3aa82c5cc70fa7",
+        "raw_references_facts": "da0d3f44a6599a2d59d9005b150fc4a197adea0b1eac5c4b7ff0196519642443",
+        "raw_references_strict": "e371ffb9d6c0f5b7679a81013f685341e93dc153bebc7be64bbd8aa9a8873b9f",
+        "shards_facts": "e9eec0e1f5a7f2e5b01a2bd8ef5bc68a9aef7ae4fa31a7217d8c64c79df112e6",
+        "files_facts": "b870babc8f3accd4ac5a8e9e57d08fd39c7b8784e2fd985de1ac8fe167c66782",
+        "shard_edges_facts": "2a1ef5236388c2160eb470ff774ab925cfa51840749998d72d4379faebad987a"
+      },
+      "digest_ms": 11012.422,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated src/butil/time.cpp)",
+            "observed": "db=661b8b96c04b disk=661b8b96c04b",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 1.159,
+        "query_visible_time_to_freshness_ms": 14272.225,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 1,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "src/butil/time.cpp",
+          "type": "replace_first",
+          "pre_sha256": "8538d9ad83495c0d96b4e1e4786bc4a9b34197d513d35d91c94bfb54fec2164c",
+          "post_sha256": "661b8b96c04b55f47919dcec36d1329d116bd68233e69f894c5e3fadca807e09",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T07:32:26Z",
+      "mutation_applied_at_utc": "2026-09-16T07:32:37Z",
+      "mutation_applied_after_initial_build_s": 11.404191,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 1,
+        "files_reparsed_observed": 1,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "src/butil/time.cpp"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 1,
+      "role": "parity_full",
+      "digest_ms": 29147.08,
+      "digests": {
+        "nodes_facts": "523f91929e00d51471aae6a7a22c71a8fe370860e68a887451a655fc99163c63",
+        "nodes_strict": "49295cb74343aa94c57d9ae3c30ec7892e222a2c29aae07c40cb67a3880053a1",
+        "edges_facts": "09e65d1381dd72bdd85749bf874961e3418a0b30a38782881395b5ce63789032",
+        "edges_strict": "332936ab4c2d12b500dc7c8dedd73cc47696792f5343c234ed3aa82c5cc70fa7",
+        "raw_references_facts": "da0d3f44a6599a2d59d9005b150fc4a197adea0b1eac5c4b7ff0196519642443",
+        "raw_references_strict": "e371ffb9d6c0f5b7679a81013f685341e93dc153bebc7be64bbd8aa9a8873b9f",
+        "shards_facts": "e9eec0e1f5a7f2e5b01a2bd8ef5bc68a9aef7ae4fa31a7217d8c64c79df112e6",
+        "files_facts": "b870babc8f3accd4ac5a8e9e57d08fd39c7b8784e2fd985de1ac8fe167c66782",
+        "shard_edges_facts": "2a1ef5236388c2160eb470ff774ab925cfa51840749998d72d4379faebad987a"
+      }
+    },
+    {
+      "wall_time_ms": 17979.103,
+      "cpu_time_ms": 8687.5,
+      "peak_rss_bytes": 329658368,
+      "db_size_bytes": 240115712,
+      "counts": {
+        "nodes": 48929,
+        "symbols": 47688,
+        "raw_references": 84941,
+        "edges": 59614,
+        "shards": 46,
+        "boundary_edges": 4291,
+        "resolved_references": 17210,
+        "ambiguous_references": 28421,
+        "unresolved_references": 39310,
+        "files_scanned": 1168,
+        "files_parsed": 1168,
+        "parse_failures": 0,
+        "syntax_error_files": 305
+      },
+      "rep": 2,
+      "role": "initial_index",
+      "built_at_utc": "2026-09-16T07:34:04Z",
+      "baseline_digests": {
+        "nodes_facts": "a1be9c2d0defe8633625ebc84cef8cea56461faa881846e6dceaf482b3aa2954",
+        "nodes_strict": "a6e6d80a01983a542050741e49369e236a1a517f2d980d9d41f66439b3b1f893",
+        "edges_facts": "b83741be1c56fd00122a494013184011c23f1db12b28e151f5342e8a2ae75c9e",
+        "edges_strict": "6962484100d80897315b18e8e32e8c7390cf50b8d97232f9d84650474bec898c",
+        "raw_references_facts": "442326ab06cbca954623f1e9cbb136d51619a092a85667fec2d03705c18029b1",
+        "raw_references_strict": "2a7e9ce9f2acc23b954cbb4a643b31f636b4b13699598c7bce964602df777508",
+        "shards_facts": "f4767c0e75bc75dd26d58f27358d20f746a4b1826b6463af0c5a26e3f8255b85",
+        "files_facts": "bdefc9fc8740911d7c0d3f2f260428b88e2a58436b3e42d66b61d0c919cd2f8f",
+        "shard_edges_facts": "e5f2fd283cee73799013ba381e43fdd46b5c70f320dbc9762ebfe7b6aee494d5"
+      },
+      "baseline_file_state_hashes": {
+        "src/butil/time.cpp": "8538d9ad83495c0d96b4e1e4786bc4a9b34197d513d35d91c94bfb54fec2164c"
+      },
+      "file_state_matches_frozen_a": true
+    },
+    {
+      "wall_time_ms": 29677.131,
+      "cpu_time_ms": 27296.875,
+      "peak_rss_bytes": 811810816,
+      "db_size_bytes": 240500736,
+      "changed": true,
+      "changes": {
+        "added": [],
+        "modified": [
+          "src/butil/time.cpp"
+        ],
+        "deleted": []
+      },
+      "files_reparsed": 1,
+      "files_reused": 1167,
+      "files_changed_reported": 1,
+      "nodes_changed": 28,
+      "edges_changed": 0,
+      "references_reprocessed": 22,
+      "references_reused": 84919,
+      "impact_frontier_size": 0,
+      "digests": {
+        "nodes_facts": "a1be9c2d0defe8633625ebc84cef8cea56461faa881846e6dceaf482b3aa2954",
+        "nodes_strict": "a6e6d80a01983a542050741e49369e236a1a517f2d980d9d41f66439b3b1f893",
+        "edges_facts": "b83741be1c56fd00122a494013184011c23f1db12b28e151f5342e8a2ae75c9e",
+        "edges_strict": "6962484100d80897315b18e8e32e8c7390cf50b8d97232f9d84650474bec898c",
+        "raw_references_facts": "442326ab06cbca954623f1e9cbb136d51619a092a85667fec2d03705c18029b1",
+        "raw_references_strict": "2a7e9ce9f2acc23b954cbb4a643b31f636b4b13699598c7bce964602df777508",
+        "shards_facts": "f4767c0e75bc75dd26d58f27358d20f746a4b1826b6463af0c5a26e3f8255b85",
+        "files_facts": "37f67289bf10a7e49a0dcbbfd2306a9a55c9d882d3cbba3587dcc3f424ece798",
+        "shard_edges_facts": "e5f2fd283cee73799013ba381e43fdd46b5c70f320dbc9762ebfe7b6aee494d5"
+      },
+      "digest_ms": 22142.91,
+      "freshness_probe": {
+        "probe_ok": true,
+        "checks": [
+          {
+            "check": "file_state_hash_changed",
+            "expected": "file_state.source_hash == sha256(mutated src/butil/time.cpp)",
+            "observed": "db=661b8b96c04b disk=661b8b96c04b",
+            "passed": true
+          }
+        ],
+        "probe_latency_ms": 0.964,
+        "query_visible_time_to_freshness_ms": 29678.096,
+        "note": "frozen post-update validation query; observation measured, not assumed equal to update latency"
+      },
+      "rep": 2,
+      "role": "incremental",
+      "mutation_ops": [
+        {
+          "file": "src/butil/time.cpp",
+          "type": "replace_first",
+          "pre_sha256": "8538d9ad83495c0d96b4e1e4786bc4a9b34197d513d35d91c94bfb54fec2164c",
+          "post_sha256": "661b8b96c04b55f47919dcec36d1329d116bd68233e69f894c5e3fadca807e09",
+          "content_changed": true,
+          "anchor_changed": true
+        }
+      ],
+      "initial_db_built_at_utc": "2026-09-16T07:34:04Z",
+      "mutation_applied_at_utc": "2026-09-16T07:34:12Z",
+      "mutation_applied_after_initial_build_s": 7.818584,
+      "workload_c_gate": {
+        "mutation_pre_hash_differs_from_post_hash": true,
+        "incremental_changed_true": true,
+        "mutation_anchor_changed": true,
+        "incremental_input_db_built_before_mutation": true,
+        "files_changed_reported_min_met": true,
+        "expected_files_touched_min": 1,
+        "files_changed_reported_observed": 1,
+        "files_reparsed_observed": 1,
+        "changed_paths": {
+          "added": [],
+          "modified": [
+            "src/butil/time.cpp"
+          ],
+          "deleted": []
+        },
+        "passed": true
+      },
+      "full_vs_incremental_parity": true,
+      "strict_digest_match": true
+    },
+    {
+      "rep": 2,
+      "role": "parity_full",
+      "digest_ms": 8383.437,
+      "digests": {
+        "nodes_facts": "a1be9c2d0defe8633625ebc84cef8cea56461faa881846e6dceaf482b3aa2954",
+        "nodes_strict": "a6e6d80a01983a542050741e49369e236a1a517f2d980d9d41f66439b3b1f893",
+        "edges_facts": "b83741be1c56fd00122a494013184011c23f1db12b28e151f5342e8a2ae75c9e",
+        "edges_strict": "6962484100d80897315b18e8e32e8c7390cf50b8d97232f9d84650474bec898c",
+        "raw_references_facts": "442326ab06cbca954623f1e9cbb136d51619a092a85667fec2d03705c18029b1",
+        "raw_references_strict": "2a7e9ce9f2acc23b954cbb4a643b31f636b4b13699598c7bce964602df777508",
+        "shards_facts": "f4767c0e75bc75dd26d58f27358d20f746a4b1826b6463af0c5a26e3f8255b85",
+        "files_facts": "37f67289bf10a7e49a0dcbbfd2306a9a55c9d882d3cbba3587dcc3f424ece798",
+        "shard_edges_facts": "e5f2fd283cee73799013ba381e43fdd46b5c70f320dbc9762ebfe7b6aee494d5"
+      }
+    }
+  ],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "incremental": {
+    "mutation_family": "function_body_edit",
+    "mutation_id": "M1",
+    "mutation_scope": "local",
+    "mutation_interface_sensitive": false,
+    "reps": 3,
+    "files_touched": 3,
+    "files_reparsed": 3,
+    "files_reused": 3501,
+    "nodes_changed": 84,
+    "edges_changed": 0,
+    "references_reprocessed": 66,
+    "references_reused": 254757,
+    "update_completion_latency_ms": 14271.066,
+    "freshness_probe": {
+      "probe_ok": true,
+      "checks": [
+        {
+          "check": "file_state_hash_changed",
+          "expected": "file_state.source_hash == sha256(mutated src/butil/time.cpp)",
+          "observed": "db=661b8b96c04b disk=661b8b96c04b",
+          "passed": true
+        }
+      ],
+      "probe_latency_ms": 1.159,
+      "query_visible_time_to_freshness_ms": 14272.225,
+      "note": "checks shown for rep 0; per-rep probe results are retained in raw_reps. Query-Visible Time-to-Freshness is measured as mutation applied -> incremental_update returns -> frozen probe observes expected changed graph state (same sequential child process; harness spawn overhead is reported separately in clocks.benchmark_setup_time_ms)."
+    },
+    "full_vs_incremental_parity": true,
+    "workload_c_gate": {
+      "execution_order": "build_frozen_A_then_mutation_then_incremental_then_full_B",
+      "expected_files_touched_min": 1,
+      "mutation_pre_hash_differs_from_post_hash": true,
+      "incremental_changed_true": true,
+      "mutation_anchor_changed": true,
+      "incremental_input_db_built_before_mutation": true,
+      "files_changed_reported_min_met": true,
+      "per_rep": [
+        {
+          "rep": 0,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 1,
+          "files_reparsed_observed": 1,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "src/butil/time.cpp"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        },
+        {
+          "rep": 1,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 1,
+          "files_reparsed_observed": 1,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "src/butil/time.cpp"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        },
+        {
+          "rep": 2,
+          "mutation_pre_hash_differs_from_post_hash": true,
+          "incremental_changed_true": true,
+          "mutation_anchor_changed": true,
+          "incremental_input_db_built_before_mutation": true,
+          "files_changed_reported_min_met": true,
+          "expected_files_touched_min": 1,
+          "files_changed_reported_observed": 1,
+          "files_reparsed_observed": 1,
+          "changed_paths": {
+            "added": [],
+            "modified": [
+              "src/butil/time.cpp"
+            ],
+            "deleted": []
+          },
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "parity_gate": {
+      "covered_states": [
+        "node identities (nodes_facts)",
+        "edge identities (edges_facts)",
+        "raw-reference identity/location/resolution state incl. candidates (raw_references_facts)",
+        "shard state incl. api_fingerprint and public symbols (shards_facts)",
+        "file identities incl. source hashes (files_facts)",
+        "boundary shard-edge index (shard_edges_facts)"
+      ],
+      "digest_fields": [
+        "nodes_facts",
+        "edges_facts",
+        "raw_references_facts",
+        "shards_facts",
+        "files_facts",
+        "shard_edges_facts"
+      ],
+      "not_covered_states": [
+        "generation counters (build-history artifacts, not query-visible state)",
+        "graph_generation metrics rows",
+        "nodes/edges/shards metadata JSON beyond identity columns (strict digests, diagnostic only)",
+        "document_state (redundant with file_state/files for code-index workloads)",
+        "raw_evidence_links (knowledge layer; not produced by A/B/C/D code-index workloads)",
+        "OS-level database file byte layout"
+      ],
+      "strict_digest_match": true,
+      "strict_mismatch_disposition": "RECORDED_NON_GATING_PROVENANCE_DIVERGENCE"
+    },
+    "clocks": {
+      "system_under_test_latency_ms": 14271.066,
+      "benchmark_setup_time_ms": 846.4557,
+      "validation_time_ms": 22413.5678,
+      "parity_verification_time_ms": 30526.3468,
+      "end_to_end_benchmark_wall_time_ms": 255630.5981,
+      "boundary_note": "system_under_test_latency_ms = median incremental_update child wall time only; benchmark_setup = repository copy plus frozen mutation application (initial A index and baseline verification are excluded from setup); validation = baseline A verification plus freshness probe plus snapshot digest computation; parity_verification = digest computation for both DBs; end_to_end includes all harness orchestration and is NOT a system latency. C-vs-A comparisons must use system_under_test_latency_ms only."
+    }
+  },
+  "qualification_gates": {
+    "build_measured_reps_minimum_met": true,
+    "workload_c_reps_minimum_met": true,
+    "query_warm_rounds_minimum_met": true,
+    "schedule_frozen": true,
+    "load_note_present": true,
+    "passed": true
+  }
+}

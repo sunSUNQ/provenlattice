@@ -1,0 +1,54 @@
+{
+  "schema": "SYSTEMS_RUN_SCHEMA_V1",
+  "schema_version": 1,
+  "contract": "SYSTEMS_BENCHMARK_CONTRACT_V1",
+  "contract_sha256": "61ffceac286278994483bc75d35fb8f6a49311b73320c2d76a977c78c3e00410",
+  "run_id": "SYSV1-B1ARIA2-D-20260915T100305Z",
+  "run_kind": "smoke",
+  "workload": "D",
+  "benchmark": "B1-aria2",
+  "started_at_utc": "2026-09-15T10:03:05Z",
+  "completed_at_utc": "2026-09-15T10:03:09Z",
+  "environment": {
+    "os": "Windows",
+    "os_version": "10.0.26200",
+    "machine": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.10",
+    "provenlattice_git_head": "ef1bc8e2b81fee6467db02c7ad34842582d32acf",
+    "sqlite_version": "3.49.1",
+    "load_note": ""
+  },
+  "inputs": {
+    "repo_path": "C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+    "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "commit_matches_manifest": true,
+    "c_cpp_loc": 118926,
+    "runner_sha256": "1e6a67ca10938cf15539831c118182f5c9e96340533ed0669246436ec7caa3b9",
+    "benchmark_manifest": "manifests/benchmarks-v1.json",
+    "benchmark_manifest_sha256": "2c94803f7311f80d31efa71bebdb8c12c6a41e3d91276be2099aeeda3379eff8",
+    "mutation_manifest": null,
+    "mutation_manifest_sha256": null,
+    "query_manifest": "experiments/systems_v1/manifests/queries-aria2-v1.json",
+    "query_manifest_sha256": "0a1ae439f9818e84f5856da06a8907fc1d850256f925f01f0723e1968f9dd512"
+  },
+  "protocol": {
+    "shard_strategy": "directory",
+    "warmup": 1,
+    "reps": 5,
+    "notes": [
+      "child-process isolation per measured unit",
+      "raw measurements retained verbatim; derived block is recomputable",
+      "workdir: sysv1-SYSV1-B1ARIA2-D-20260915T100305Z-erajem_u"
+    ]
+  },
+  "raw_reps": [],
+  "governance": {
+    "evidence_level": "OBSERVED",
+    "claim_scope": "Windows 11, frozen benchmark commits, single machine, B1-B3 bands, ProvenLattice V0.2 implementation, SYSTEMS_BENCHMARK_CONTRACT_V1; no concurrency stress, no S3+ scale bands, no cross-version comparison"
+  },
+  "query": {},
+  "infrastructure_failure": {
+    "stage": "workload_execution",
+    "detail": "RuntimeError: child task query_session failed (rc=1): Traceback (most recent call last):\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 805, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 730, in main\n    result = run_child_task(json.loads(payload))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 333, in run_child_task\n    return run_query_session_child(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 291, in run_query_session_child\n    resolved = [(spec, resolve_anchor(query, spec)) for spec in queries]\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 282, in resolve_anchor\n    return min(rows, key=lambda row: (str(row.get(\"qualified_name\")), str(row.get(\"id\"))))\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\sunqinghw\\Documents\\ChatGPT\\codegraph\\provenlattice\\experiments\\systems_v1\\tools\\run-systems-workload-v1.py\", line 282, in <lambda>\n    return min(rows, key=lambda row: (str(row.get(\"qualified_name\")), str(row.get(\"id\"))))\n                                          ^^^^^^^\nAttributeError: 'str' object has no attribute 'get'"
+  }
+}
