@@ -1,5 +1,11 @@
 # P0 Graph Fidelity Qualification V1 — Status Report V1
 
+> **SUPERSEDED (2026-09-15):** P0 is CLOSED at evidence level `QUALIFIED`. The terminal state,
+> verified artifact hash chain and deferred-gap ledger live in
+> [P0 Graph Fidelity Qualification V1 Final Freeze](../experiments/fidelity_v1/results/p0-graph-fidelity-qualification-v1-freeze.md).
+> The "RQ1 verdict NOT WRITTEN" row below reflects the snapshot date (pre-attribution,
+> pre-synthesis) and is retained unmodified as history.
+
 Status snapshot of the P0 Graph Fidelity Qualification V1 pipeline: blind annotation, agreement audits,
 source-only adjudication, Gold Set freeze, system prediction join, and deterministic fidelity scoring.
 All numbers below are recomputed by versioned scripts from frozen, hash-anchored artifacts.

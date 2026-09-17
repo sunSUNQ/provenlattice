@@ -1,0 +1,202 @@
+{
+  "artifact": "rq1-graph-fidelity-evidence-synthesis-v1",
+  "status": "RQ1_EVIDENCE_SYNTHESIS_COMPLETE",
+  "rq1_question": "How faithfully does the current ProvenLattice Graph Fabric represent and resolve the evaluated C/C++ structural relations under the frozen V1 benchmark?",
+  "verdict": {
+    "summary": "Within the frozen V1 benchmark, ProvenLattice V0.2 usually selects the correct semantic target when it resolves an evaluable C/C++ CALLS or IMPORTS relation, but population-level fidelity is substantially limited by resolution coverage, especially CALLS in high-weight nonresolved strata.",
+    "semantic_precision_when_resolving": "SUPPORTED_WITH_SCOPE_QUALIFIER",
+    "coverage_is_primary_limitation": "SUPPORTED_WITH_SCOPE_QUALIFIER",
+    "imports_strong_in_benchmark": "SUPPORTED_WITH_SCOPE_QUALIFIER",
+    "calls_dominant_limitation": "SUPPORTED_WITH_SCOPE_QUALIFIER",
+    "single_accuracy_number_permitted": false
+  },
+  "evidence_level": {
+    "level": "QUALIFIED",
+    "scope": {
+      "system": "ProvenLattice V0.2 Graph Fabric",
+      "language": "C/C++",
+      "relations": ["CALLS", "IMPORTS"],
+      "repositories": ["aria2", "brpc", "RocksDB"],
+      "sampling_frame": "frozen V1"
+    },
+    "positive_basis": [
+      "three repositories",
+      "174 frozen Gold cases",
+      "independent blinded annotation across multiple batches",
+      "adjudication",
+      "deterministic join and scoring",
+      "28 of 28 errors attributed",
+      "population weighting",
+      "per-stratum reporting"
+    ],
+    "ceiling_reasons": [
+      "only C/C++",
+      "only CALLS and IMPORTS evaluable",
+      "C/C++ REFERENCES not represented",
+      "only three repositories",
+      "no external-system baseline",
+      "no post-repair replication",
+      "no million or 10M-scale fidelity generalization"
+    ]
+  },
+  "evaluation_scope": {
+    "title": "C/C++ Structural Relation Fidelity V1",
+    "gold_cases": 174,
+    "relations": {"CALLS": 86, "IMPORTS": 88, "REFERENCES": 0},
+    "gold_cardinality": {"UNIQUE": 123, "DIVERGENT": 6, "ABSENT": 44, "INDETERMINATE": 1}
+  },
+  "scoring_states": {
+    "CORRECT_RESOLUTION": 108,
+    "WRONG_TARGET_RESOLUTION": 1,
+    "MISSED_RESOLUTION_OPPORTUNITY": 20,
+    "FALSE_RESOLUTION_ON_ABSENT": 7,
+    "JUSTIFIED_ABSTENTION": 37,
+    "INDETERMINATE_EXCLUDED": 1
+  },
+  "metrics": {
+    "sample_descriptive": {
+      "resolved_precision": 0.9310,
+      "selective_risk": 0.0690,
+      "resolution_coverage": 0.6705,
+      "target_opportunity_coverage": 0.8450,
+      "false_resolution_on_absent_rate": 0.1591,
+      "abstention_rate": 0.3295,
+      "abstention_quality": 0.6491,
+      "missed_resolution_opportunity_rate": 0.1550
+    },
+    "population_weighted": {
+      "resolved_precision": 0.8992,
+      "selective_risk": 0.1008,
+      "resolution_coverage": 0.1866,
+      "target_opportunity_coverage": 0.2436,
+      "false_resolution_on_absent_rate": 0.0468,
+      "abstention_rate": 0.8134,
+      "abstention_quality": 0.3393,
+      "missed_resolution_opportunity_rate": 0.7564
+    },
+    "relation_macro_sample": {
+      "CALLS": {"resolved_precision": 0.8571, "target_opportunity_coverage": 0.7101, "abstention_quality": 0.3103},
+      "IMPORTS": {"resolved_precision": 1.0000, "target_opportunity_coverage": 1.0000, "abstention_quality": 1.0000}
+    }
+  },
+  "weighted_interpretation": {
+    "sample_and_weighted_can_both_be_correct": true,
+    "explanation": "The descriptive sample is stratified and intentionally balanced across repository, relation, and resolved/nonresolved strata. Population weighting restores frozen population shares, so it is dominated by large nonresolved strata rather than by the sample allocation.",
+    "not_an_anomaly": true,
+    "sample_is_deployment_population": false,
+    "dominant_stratum": {
+      "repository": "RocksDB",
+      "stratum": "CALLS_NONRESOLVED",
+      "population_N_cpp": 226886,
+      "population_weight": 0.5503,
+      "sample_target_present": 6,
+      "sample_missed_resolution": 6,
+      "sample_absent": 3,
+      "sample_justified_abstention": 3
+    }
+  },
+  "relation_findings": {
+    "CALLS": {
+      "assessment": "DOMINANT_MEASURED_FIDELITY_LIMITATION",
+      "all_attributed_errors_are_calls": true,
+      "attributed_error_count": 28
+    },
+    "IMPORTS": {
+      "assessment": "STRONG_WITHIN_FROZEN_BENCHMARK",
+      "attributed_error_count": 0,
+      "universal_generalization_supported": false
+    },
+    "REFERENCES": {
+      "population_N_cpp": 0,
+      "evaluable": false,
+      "fidelity_estimable": false,
+      "classification": "GRAPH_REPRESENTATION_GAP",
+      "not_a_low_accuracy_measurement": true
+    }
+  },
+  "failure_mechanisms": {
+    "all_errors_attributed": 28,
+    "primary_totals": {
+      "CANDIDATE_GENERATION_MISS": 10,
+      "RESOLVER_ABSTENTION": 11,
+      "RESOLVER_OVER_RESOLUTION": 7
+    },
+    "missed_resolution_opportunity_split": {
+      "correct_target_absent_from_candidate_set": 9,
+      "correct_target_present_but_resolver_abstained": 11
+    },
+    "wrong_target_resolution": {
+      "count": 1,
+      "primary": "CANDIDATE_GENERATION_MISS",
+      "contributing": ["RESOLVER_WRONG_SELECTION", "RECEIVER_OR_OWNER_MISMATCH"]
+    },
+    "false_resolution_on_absent": {
+      "count": 7,
+      "primary": "RESOLVER_OVER_RESOLUTION",
+      "receiver_or_owner_mismatch": 7,
+      "single_candidate_unique_symbol_external_receiver": 6
+    },
+    "non_equivalences": [
+      "candidate target absent is not resolver selected wrong candidate",
+      "correct candidate present but unresolved is not candidate-generation failure",
+      "Gold ABSENT but system resolves is not missed resolution"
+    ]
+  },
+  "claim_boundary": {
+    "supported": [
+      "The frozen scoring-state counts and metrics reported in this artifact.",
+      "Resolved semantic targets are usually correct in both the descriptive sample and weighted estimates.",
+      "Coverage is the primary measured limitation relative to wrong-target selection.",
+      "The three failure mechanisms are distinct and should not be collapsed into resolver errors.",
+      "C/C++ REFERENCES population is zero and REFERENCES fidelity cannot be estimated in V1."
+    ],
+    "supported_with_scope_qualifier": [
+      "Current V0.2 usually resolves evaluated C/C++ CALLS and IMPORTS to the correct semantic target in this frozen three-repository benchmark.",
+      "IMPORTS is strong within this benchmark.",
+      "CALLS is the dominant fidelity limitation within this benchmark.",
+      "Population-weighted fidelity is more coverage-limited than the descriptive sample view."
+    ],
+    "required_qualifiers": ["current V0.2", "aria2/brpc/RocksDB", "C/C++", "CALLS/IMPORTS", "frozen V1 benchmark"],
+    "not_supported": [
+      "ProvenLattice has high graph fidelity in general.",
+      "ProvenLattice handles C/C++ REFERENCES reliably.",
+      "ProvenLattice generalizes to arbitrary repositories.",
+      "ProvenLattice outperforms Joern, SCIP, or CodeGraphContext.",
+      "ProvenLattice works at one-million- or 10M-LOC fidelity.",
+      "The Graph Fidelity problem is solved.",
+      "IMPORTS is universally perfect.",
+      "The unweighted sample directly represents the deployment population."
+    ]
+  },
+  "threats_and_limitations": [
+    "C/C++ CALLS and IMPORTS only",
+    "C/C++ REFERENCES representation gap",
+    "three repositories",
+    "174 Gold cases",
+    "dependence on frozen stratified sampling and weights",
+    "RocksDB CALLS_NONRESOLVED contributes population weight 0.5503",
+    "one INDETERMINATE case excluded",
+    "no external baseline",
+    "no independent or post-repair replication",
+    "no million or 10M-scale fidelity generalization"
+  ],
+  "next_evidence_required": [
+    "freeze a C/C++ REFERENCES population before estimating REFERENCES fidelity",
+    "replicate on additional repositories and relation populations",
+    "run an independently frozen post-repair evaluation before claiming improvement",
+    "add external-system baselines before comparative claims",
+    "validate fidelity at substantially larger graph scales before scale claims"
+  ],
+  "milestone_recommendation": {
+    "freeze_p0_graph_fidelity_qualification_v1": true,
+    "research_milestone_closed": true,
+    "graph_fidelity_problem_solved": false,
+    "wording": "P0 Graph Fidelity Qualification V1 may be frozen as a completed QUALIFIED research milestone; this closes the bounded evidence milestone, not the Graph Fidelity problem."
+  },
+  "discipline": {
+    "input_artifacts_modified": false,
+    "scoring_results_modified": false,
+    "repair_performed": false,
+    "scoring_rerun": false
+  }
+}
