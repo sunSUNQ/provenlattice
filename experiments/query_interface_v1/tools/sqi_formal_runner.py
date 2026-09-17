@@ -230,12 +230,12 @@ def run_cell(task: dict, arm: str, repetition: int, config: dict,
             if line.strip():
                 call_log.append(json.loads(line))
     events = [event.to_dict() for event in result.events]
+    violations: list[str] = []
     leaks = leakage_events(events, repo_path)
     for leak in leaks:
         violations.append("CHECKOUT_LEAKAGE:%s:%s" % (leak["operation"],
                                                       leak["target"][:120]))
     evaluation = evaluate_cell(task, arm, result.output, events, call_log, database)
-    violations = []
     for flag in evaluation["capability_failure_flags"]:
         if flag == "SQI_ACCESS_IN_NATIVE":
             violations.append(flag)

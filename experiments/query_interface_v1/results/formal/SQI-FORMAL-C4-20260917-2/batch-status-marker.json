@@ -1,0 +1,8 @@
+{
+ "schema": "SQI_FORMAL_BATCH_MARKER_V1",
+ "batch_id": "SQI-FORMAL-C4-20260917-2",
+ "status": "INVALID_EXCLUDED",
+ "reason": "36/36 cells failed: C3 isolation hardening broke agent bootstrap (no absolute DB/CLI paths discoverable under Read(./**)); leakage scanner misclassified grep patterns as paths; agents created empty database files via misrouted bridge calls. Full attribution: reviews/c4-attribution-review.md",
+ "cells_valid": 0,
+ "excluded_from": "C4 before/after comparison and every conclusion"
+}

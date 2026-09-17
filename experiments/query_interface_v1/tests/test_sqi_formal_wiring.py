@@ -388,6 +388,55 @@ class TestSessionShortCircuitAndPolicy(unittest.TestCase):
                          [])
 
 
+class TestFormalRunnerCellPath(unittest.TestCase):
+    """C4 incident regression: run_cell must execute END-TO-END. The C3
+    CHECKOUT_LEAKAGE wiring crashed the formal runner before its first cell
+    could run because no test exercised this path — this test closes that
+    gap with a stub adapter (no agent, no network)."""
+
+    def test_run_cell_end_to_end_with_stub_adapter(self):
+        import tempfile
+        import sqi_formal_runner as fr
+
+        class _StubResult:
+            output = "stub answer"
+            events = []
+            exit_reason = "completed"
+            error = None
+            actual_model = None
+            actual_version = None
+            permission_denials = []
+
+        class _StubAdapter:
+            def __init__(self, command):
+                pass
+
+            def run(self, request):
+                return _StubResult()
+
+        task = next(t for t in load_tasks() if t["task_id"] == "SQI-T01")
+        config = load_config()
+        with tempfile.TemporaryDirectory() as tmp:
+            original_results = fr.RESULTS_DIR
+            fr.RESULTS_DIR = Path(tmp)
+            original_adapter = fr.agent_adapter.CommandAgentAdapter
+            fr.agent_adapter.CommandAgentAdapter = _StubAdapter
+            try:
+                outcome = fr.run_cell(task, "sqi", 1, config,
+                                      "SQI-TEST-CELLPATH")
+                record = outcome["record"]
+                self.assertIn(record["status"], ("completed", "failed"))
+                self.assertIsInstance(record["policy_violations"], list)
+                self.assertIn("checkout_leakage_events", record)
+                run_json = Path(outcome["run_dir"]) / "run.json"
+                self.assertTrue(run_json.exists())
+                evaluation = Path(outcome["run_dir"]) / "evaluation.json"
+                self.assertTrue(evaluation.exists())
+            finally:
+                fr.RESULTS_DIR = original_results
+                fr.agent_adapter.CommandAgentAdapter = original_adapter
+
+
 class TestArmParityAndPreflight(unittest.TestCase):
     """The two arms differ ONLY in system prompt + allowed tools (protocol S2)."""
 

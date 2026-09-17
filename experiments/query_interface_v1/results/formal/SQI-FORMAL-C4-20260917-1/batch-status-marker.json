@@ -1,0 +1,6 @@
+{
+ "schema": "SQI_FORMAL_BATCH_MARKER_V1",
+ "batch_id": "SQI-FORMAL-C4-20260917-1",
+ "status": "INVALID_EXCLUDED",
+ "reason": "runner startup crash (UnboundLocalError in CHECKOUT_LEAKAGE wiring, fixed pre-evidence); 0 cells produced"
+}
