@@ -212,6 +212,15 @@ def verify_anchors(task: dict, outputs: list[dict]) -> dict:
             row.get("qualified_name") == target for row in related["data"])
         checks["cross_layer_evidence"] = [e["evidence_id"] for e in related["evidence"]
                                           if e["kind"] == "CROSS_LAYER_LINK"]
+        # V1.2/OPT-T05-COMPRESSION: the composite returns BOTH frozen ids
+        returned = set(related.get("returned_evidence_ids") or [])
+        checks["required_ids_returned"] = sorted(
+            set(gt["required_evidence_ids"]) & returned)
+        by_db = gt.get("required_evidence_ids_by_database") or {}
+        checks["knowledge_db_id_returned"] = sorted(
+            set(by_db.get("knowledge_database", [])) & returned)
+        checks["code_db_id_returned"] = sorted(
+            set(by_db.get("code_database", [])) & returned)
     elif tid == "SQI-T06":
         bundle = outputs[0]["envelope"]
         checks["evidence_within_budget"] = \

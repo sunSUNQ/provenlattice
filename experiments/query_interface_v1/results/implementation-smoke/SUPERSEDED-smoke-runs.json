@@ -1,26 +1,31 @@
 {
-  "schema": "SQI_SMOKE_SUPERSESSION_V1",
-  "superseded_runs": [
-    {
-      "run_id": "SQI-SMOKE-20260916T095144Z-6e83c2",
-      "reason": "adapter pre-freeze iteration (partial budget echo KeyError); superseded before implementation freeze",
-      "status": "SUPERSEDED"
-    },
-    {
-      "run_id": "SQI-SMOKE-20260916T095219Z-73786c",
-      "reason": "pre-freeze iteration: frontier boundary_edge_ids listing, honest bundle omission counts, and Q3 owner-axis merge not yet present",
-      "status": "SUPERSEDED"
-    },
-    {
-      "run_id": "SQI-SMOKE-20260916T095614Z-a407c6",
-      "reason": "pre-freeze iteration: same as above; superseded by implementation freeze seal",
-      "status": "SUPERSEDED"
-    }
-  ],
-  "current_run": {
-    "run_id": "SQI-SMOKE-20260917T020338Z-15ea13",
-    "status": "CURRENT",
-    "note": "smoke from the Stage-3A-re-sealed implementation (adapter file_path enrichment); frozen-anchor verification 6/6"
+ "schema": "SQI_SMOKE_SUPERSESSION_V1",
+ "superseded_runs": [
+  {
+   "run_id": "SQI-SMOKE-20260916T095144Z-6e83c2",
+   "reason": "adapter pre-freeze iteration (partial budget echo KeyError); superseded before implementation freeze",
+   "status": "SUPERSEDED"
   },
-  "policy": "failed/superseded artifacts are retained verbatim and excluded from evidence; nothing is deleted"
+  {
+   "run_id": "SQI-SMOKE-20260916T095219Z-73786c",
+   "reason": "pre-freeze iteration: frontier boundary_edge_ids listing, honest bundle omission counts, and Q3 owner-axis merge not yet present",
+   "status": "SUPERSEDED"
+  },
+  {
+   "run_id": "SQI-SMOKE-20260916T095614Z-a407c6",
+   "reason": "pre-freeze iteration: same as above; superseded by implementation freeze seal",
+   "status": "SUPERSEDED"
+  },
+  {
+   "run_id": "SQI-SMOKE-20260917T020338Z-15ea13",
+   "reason": "pre-C2 implementation (adapter before projection/composite/dedup); superseded by the C2-era re-smoke after secondary seal v1.2",
+   "status": "SUPERSEDED"
+  }
+ ],
+ "current_run": {
+  "run_id": "SQI-SMOKE-20260917T071325Z-f64393",
+  "status": "CURRENT",
+  "note": "optimized-implementation smoke (C2): compact lookup projection, code.related composite (dual-DB ids), identity/policy dedup; frozen-anchor verification 6/6"
+ },
+ "policy": "failed/superseded artifacts are retained verbatim and excluded from evidence; nothing is deleted"
 }
