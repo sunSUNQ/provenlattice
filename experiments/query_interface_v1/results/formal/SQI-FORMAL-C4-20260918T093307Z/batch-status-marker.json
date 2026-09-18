@@ -1,0 +1,17 @@
+{
+ "schema": "SQI_C4_BATCH_STATUS_MARKER_V1",
+ "batch_id": "SQI-FORMAL-C4-20260918T093307Z",
+ "halted": true,
+ "halted_at_cell": "SQI-T01.sqi.r1",
+ "reason": "INVALID_UNEXPECTED",
+ "detail": "PermissionError(13, 'Permission denied')",
+ "cells_completed": 3,
+ "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+ "git_head": "724b225411ecf419f0466853b2b9f03377041431",
+ "cells_executed": [
+  "SQI-T01.native.r1",
+  "SQI-T01.native.r2",
+  "SQI-T01.native.r3",
+  "SQI-T01.sqi.r1"
+ ]
+}
