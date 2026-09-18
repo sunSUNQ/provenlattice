@@ -53,7 +53,7 @@ from sqi_isolation import leakage_events  # noqa: E402
 from v14_c4_lifecycle import (  # noqa: E402
     CellWindow, classify_leakage, prepare_cell)
 from v14_feasibility_noreboot import (  # noqa: E402
-    BENCH, build_runtime, runtime_db_for, task_db_rels)
+    BENCH, RUNTIME_ROOT, build_runtime, runtime_db_for, task_db_rels)
 
 ISOLATION_BASELINE_SHA = "27e40df5e61cd815d8ea0d00203746344c279690"
 BASELINE_BATCH_DIR = LINE_ROOT / "results" / "formal" / "SQI-FORMAL-20260917-1"
@@ -123,7 +123,12 @@ def prepare_sqi_cell(task: dict, batch_output: Path) -> dict:
 
 
 def default_session(cell: dict, surface: dict, config: dict) -> dict:
-    """Production session: claude -p inside the open window."""
+    """Production session: claude -p inside the open window.
+
+    The SQI call log is WRITTEN by the bridge inside the window (append is
+    not blocked by the deny-(RD) window, finding P3) but is NEVER read back
+    here: its base path may sit under the denied tree, so the runner reads
+    and archives it only after CellWindow exit/restore (run_cell)."""
     task = cell["_task"]
     run_dir = Path(surface["run_dir"])
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -144,16 +149,31 @@ def default_session(cell: dict, surface: dict, config: dict) -> dict:
     adapter = harness_agent_adapter.CommandAgentAdapter(command)
     result = adapter.run(request)
     events = [event.to_dict() for event in result.events]
-    call_log = []
-    log_path = surface["environment"].get("PL_SQI_CALL_LOG")
-    if log_path and Path(log_path).exists():
-        call_log = [json.loads(line) for line in
-                    Path(log_path).read_text(encoding="utf-8").splitlines()
-                    if line.strip()]
     return {"exit_reason": result.exit_reason, "error": result.error,
             "events": events, "output": result.output or "",
-            "call_log": call_log,
+            "call_log": [], "call_log_path":
+                surface["environment"].get("PL_SQI_CALL_LOG"),
             "permission_denials": result.permission_denials or []}
+
+
+def collect_call_log(surface: dict, run_dir: Path) -> list[dict]:
+    """Post-restore: read the bridge call log (now outside any deny window),
+    archive the raw file into run_dir, return parsed entries."""
+    log_path = surface["environment"].get("PL_SQI_CALL_LOG")
+    if not log_path or not Path(log_path).exists():
+        return []
+    entries = []
+    for line in Path(log_path).read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            try:
+                entries.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    run_dir.mkdir(parents=True, exist_ok=True)
+    target = run_dir / "sqi-call-log.ndjson"
+    if Path(log_path).resolve() != target.resolve():
+        shutil.copy2(log_path, target)
+    return entries
 
 
 def _classify_exit_failure(window: CellWindow) -> str:
@@ -176,12 +196,18 @@ class C4BatchRunner:
 
     def __init__(self, config: dict, tasks: list[dict], batch_id: str,
                  batch_dir: Path, window_factory=None, session_fn=None,
-                 evaluate_fn=None):
+                 evaluate_fn=None, runtime_output_root: Path | None = None):
         self.config = config
         self.tasks = {t["task_id"]: t for t in tasks}
         self.batch_id = batch_id
         self.batch_dir = Path(batch_dir)
-        self.batch_output = self.batch_dir / "runtime-output"
+        # Call-log base lives OUTSIDE the denied checkout (amendment §2:
+        # results flow back through the sanitized runtime output area); the
+        # runner reads it only after the window has closed and restore has
+        # been verified. Injectable base for wiring tests on synthetic trees.
+        self.runtime_output = (Path(runtime_output_root) if runtime_output_root
+                               else RUNTIME_ROOT / "output" / "c4" / batch_id)
+        self.runtime_output.mkdir(parents=True, exist_ok=True)
         self._window_factory = window_factory or (lambda label: CellWindow(label))
         self._session_fn = session_fn or default_session
         self._evaluate_fn = evaluate_fn or evaluate_cell
@@ -197,10 +223,10 @@ class C4BatchRunner:
         run_dir = (self.batch_dir / task_id / arm / f"r{repetition}")
         started = time.perf_counter()
         if arm == "sqi":
-            surface = prepare_sqi_cell(task, self.batch_output)
+            surface = prepare_sqi_cell(task, self.runtime_output)
             surface["run_dir"] = str(run_dir)
         else:
-            surface = prepare_native_cell(task, self.batch_output, self.config)
+            surface = prepare_native_cell(task, self.runtime_output, self.config)
             surface["run_dir"] = str(run_dir)
         window = self._window_factory(cell["cell_id"])
         session = None
@@ -215,14 +241,14 @@ class C4BatchRunner:
                         cell["cell_id"], HALT_LEAKAGE,
                         json.dumps(sensitive[:3], ensure_ascii=False))
         except C4BatchHalted:
-            self._persist_halt_artifacts(cell, run_dir, window, session)
+            self._persist_halt_artifacts(cell, surface, run_dir, window, session)
             raise
         except RuntimeError as exc:
             reason = _classify_exit_failure(window)
-            self._persist_halt_artifacts(cell, run_dir, window, session, exc)
+            self._persist_halt_artifacts(cell, surface, run_dir, window, session, exc)
             raise C4BatchHalted(cell["cell_id"], reason, repr(exc)[:300]) from exc
         except Exception as exc:
-            self._persist_halt_artifacts(cell, run_dir, window, session, exc)
+            self._persist_halt_artifacts(cell, surface, run_dir, window, session, exc)
             raise C4BatchHalted(cell["cell_id"], HALT_UNEXPECTED,
                                 repr(exc)[:300]) from exc
         # R1: the window edge already verified restore + fingerprints; the
@@ -232,6 +258,9 @@ class C4BatchRunner:
             reason = _classify_exit_failure(window)
             raise C4BatchHalted(cell["cell_id"], reason,
                                 "post-exit R1 assertion failed")
+        # Post-restore only: read + archive the bridge call log (it lives
+        # outside the deny window at this point).
+        session["call_log"] = collect_call_log(surface, run_dir)
         return self._record_cell(cell, surface, session, window, leaks,
                                  run_dir, started)
 
@@ -250,8 +279,10 @@ class C4BatchRunner:
 
     # -- persistence ----------------------------------------------------
 
-    def _persist_halt_artifacts(self, cell, run_dir, window, session=None,
-                                exc=None):
+    def _persist_halt_artifacts(self, cell, surface, run_dir, window,
+                                session=None, exc=None):
+        """Post-restore best-effort persistence for a halted cell: the window
+        has already closed and verified restore, so checkout reads are safe."""
         try:
             run_dir.mkdir(parents=True, exist_ok=True)
             (run_dir / "window-state.json").write_text(
@@ -264,6 +295,10 @@ class C4BatchRunner:
                     encoding="utf-8")
                 (run_dir / "agent-output.txt").write_text(
                     session.get("output", ""), encoding="utf-8")
+                try:
+                    session["call_log"] = collect_call_log(surface, run_dir)
+                except OSError:
+                    pass
             if exc is not None:
                 (run_dir / "halt-exception.txt").write_text(
                     repr(exc), encoding="utf-8")
@@ -344,9 +379,10 @@ class C4BatchRunner:
                       for e in session["events"]) + "\n", encoding="utf-8")
         (run_dir / "agent-output.txt").write_text(session["output"],
                                                   encoding="utf-8")
-        (run_dir / "sqi-call-log.ndjson").write_text(
-            "\n".join(json.dumps(e, ensure_ascii=False, sort_keys=True)
-                      for e in session["call_log"]) + "\n", encoding="utf-8")
+        if not (run_dir / "sqi-call-log.ndjson").exists():
+            (run_dir / "sqi-call-log.ndjson").write_text(
+                "\n".join(json.dumps(e, ensure_ascii=False, sort_keys=True)
+                          for e in session["call_log"]) + "\n", encoding="utf-8")
         (run_dir / "evaluation.json").write_text(
             json.dumps(evaluation, ensure_ascii=False, indent=1) + "\n",
             encoding="utf-8")

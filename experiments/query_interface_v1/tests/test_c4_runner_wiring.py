@@ -247,6 +247,64 @@ class TestFailClosedHalts(WiringTestBase):
         self.assertEqual(len(calls), 0)
 
 
+class TestCallLogRelocation(WiringTestBase):
+    """Regression for the C4 halt at SQI-T01.sqi.r1
+    (SQI-FORMAL-C4-20260918T093307Z): the runner must never read the bridge
+    call log inside the deny window — writes are allowed (P3), reads are
+    kernel-denied. The call log is read + archived only after restore.
+
+    The runtime-output root is deliberately placed INSIDE the synthetic
+    denied checkout to reproduce the original failure geometry."""
+
+    def runner_inside_checkout(self, session_fn):
+        return C4BatchRunner(
+            self.config, self.tasks, "TEST-C4-BATCH", self.batch_dir,
+            window_factory=self.factory(), session_fn=session_fn,
+            evaluate_fn=stub_evaluate,
+            runtime_output_root=self.checkout / "runtime-output")
+
+    def sqi_cell(self):
+        return [{"task_id": "SQI-T01", "arm": "sqi", "repetition": 1}]
+
+    def test_inwindow_write_then_post_restore_read_and_persist(self):
+        log_writes = []
+        inwindow_read_denied = []
+
+        def bridge_simulating_session(cell, surface, config):
+            # the bridge appends to the call log INSIDE the deny window
+            log_path = Path(surface["environment"]["PL_SQI_CALL_LOG"])
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(log_path, "a", encoding="utf-8") as handle:
+                handle.write(json.dumps({
+                    "call": "symbol.lookup", "params": {"name": "x"},
+                    "envelope": {"evidence": ["E-" + "0" * 24]}}) + "\n")
+            log_writes.append(log_path)
+            # the punishing condition is real: an in-window READ is denied
+            try:
+                log_path.read_text(encoding="utf-8")
+                inwindow_read_denied.append(False)
+            except PermissionError:
+                inwindow_read_denied.append(True)
+            return {"exit_reason": "completed", "error": None, "events": [],
+                    "output": "ok", "call_log": [],
+                    "call_log_path": str(log_path),
+                    "permission_denials": []}
+
+        runner = self.runner_inside_checkout(bridge_simulating_session)
+        records = runner.run_batch(self.sqi_cell())
+        self.assertEqual(len(records), 1)
+        self.assertTrue(inwindow_read_denied[0],
+                        "expected the in-window read to be kernel-denied")
+        self.assertEqual(records[0]["sqi_calls"], 1)
+        persisted = self.batch_dir / "SQI-T01" / "sqi" / "r1" / "sqi-call-log.ndjson"
+        self.assertTrue(persisted.exists(), "call log not archived post-restore")
+        entries = [json.loads(l) for l in
+                   persisted.read_text(encoding="utf-8").splitlines() if l.strip()]
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["call"], "symbol.lookup")
+        self.assert_restored()
+
+
 class TestFrozenOrder(unittest.TestCase):
 
     def test_order_is_36_protocol_s3(self):
