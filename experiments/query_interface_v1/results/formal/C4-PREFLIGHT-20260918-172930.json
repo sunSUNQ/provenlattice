@@ -1,0 +1,84 @@
+{
+ "schema": "SQI_C4_PREFLIGHT_EVIDENCE_V1",
+ "generated_at": "2026-09-18T09:29:30Z",
+ "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+ "runner_commit": "ae557091eaebef8a7540a9622b632d331d4bad83",
+ "head_at_preflight": "ae557091eaebef8a7540a9622b632d331d4bad83",
+ "checks": {
+  "release_verification": {
+   "pass": true,
+   "tail": [
+    "========================================================",
+    "RELEASE VERIFICATION: PASS"
+   ]
+  },
+  "isolation_baseline_commit": {
+   "sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+   "is_ancestor": true,
+   "pass": true
+  },
+  "runner_commit_recorded": {
+   "runner_last_commit": "ae557091eaebef8a7540a9622b632d331d4bad83",
+   "lifecycle_last_commit": "1f42fef8b71001fe6fd26052f112c3fe9218360e",
+   "present": true
+  },
+  "model_config_matches_baseline": {
+   "model_id": {
+    "config": "claude-sonnet-4-5-20250929",
+    "baseline": "claude-sonnet-4-5-20250929",
+    "match": true
+   },
+   "claude_cli_version": {
+    "config": "2.1.270",
+    "baseline": "2.1.270",
+    "match": true
+   },
+   "repetitions_per_cell": {
+    "config": 3,
+    "baseline": 3,
+    "match": true
+   }
+  },
+  "cell_order_frozen": {
+   "cell_total": 36,
+   "expected_total": 36,
+   "total_match": true,
+   "order_fingerprint": "183a388db8cdb75d1ba7baa33047829c1cc1bab06c74e473b6d7bb54ce04a0f1"
+  },
+  "baseline_evidence_unchanged": {
+   "files": {
+    "formal-batch-summary.json": {
+     "exists": true,
+     "sha256": "3f1c324eea1f3f30956b67f6aafcba0b6446736e023072e1adc50eb28087e9e8"
+    },
+    "cost-attribution-v1.json": {
+     "exists": true,
+     "sha256": "b9d0c05bd21a977833bfd3dfea1e50c9318ef54d88bf81f57402d4386dae2106"
+    },
+    "c2-replay-verification-v1.json": {
+     "exists": true,
+     "sha256": "f210b89fe950b7c69e101af517556d9192abf8ff3a2d80ae0d8fdb5b253de0ad"
+    },
+    "manifest.sha256": {
+     "exists": true,
+     "sha256": "5a411ad627435da6c61dc60c9975f5a7578939488a382622de36ba6918273384"
+    }
+   },
+   "manifest_roundtrip": true,
+   "pass": true
+  },
+  "optimized_implementation_frozen": {
+   "implementation_seal": "structured-query-interface-contract-v1.implementation-seal.sha256",
+   "verified_via": "release_verification stage (PASS 5/5)",
+   "pass": true
+  },
+  "working_tree_clean": {
+   "pass": true,
+   "dirty_entries": [],
+   "self_generated_ignored": [
+    "?? experiments/query_interface_v1/results/formal/C4-PREFLIGHT-20260918-172855.json"
+   ]
+  }
+ },
+ "verdict": "PASS"
+}
