@@ -428,7 +428,7 @@ def run_preflight() -> dict:
         baseline_files[rel] = {"exists": path.exists(),
                                "sha256": sha256_file(path) if path.exists()
                                else None}
-    manifest_ok = verify_seal_quiet(BASELINE_MANIFEST)
+    manifest_ok = verify_batch_manifest(BASELINE_MANIFEST)
     checks["baseline_evidence_unchanged"] = {
         "files": baseline_files,
         "manifest_roundtrip": manifest_ok,
@@ -442,9 +442,13 @@ def run_preflight() -> dict:
     }
     status = subprocess.run(["git", "-C", str(REPO_ROOT), "status",
                              "--porcelain"], capture_output=True, text=True)
+    dirty = [l for l in status.stdout.splitlines() if l.strip()
+             and "C4-PREFLIGHT-" not in l]
     checks["working_tree_clean"] = {
-        "pass": not status.stdout.strip(),
-        "dirty_entries": status.stdout.strip().splitlines()[:10],
+        "pass": not dirty,
+        "dirty_entries": dirty[:10],
+        "self_generated_ignored": [l for l in status.stdout.splitlines()
+                                   if "C4-PREFLIGHT-" in l][:5],
     }
     all_pass = all(v.get("pass", True) if isinstance(v, dict) else v
                    for v in checks.values())
@@ -465,12 +469,23 @@ def run_preflight() -> dict:
     return doc
 
 
-def verify_seal_quiet(path: Path) -> bool:
-    if not path.exists():
-        return False
-    sys.path.insert(0, str(HERE))
-    from sqi_formal_runner import verify_seal
-    ok, _passed, _total, _bad = verify_seal(path)
+def verify_batch_manifest(manifest_path: Path) -> bool:
+    """Round-trip a sha256 manifest whose entries are relative to its own
+    directory (baseline batch manifests), unlike repo-rooted verify_seal."""
+    import re
+    pattern = re.compile(r"^([a-f0-9]{64})\s+\*?(.+?)\s*$")
+    base = manifest_path.parent
+    ok = True
+    for line in manifest_path.read_text(encoding="utf-8-sig").splitlines():
+        match = pattern.match(line.strip())
+        if not match:
+            continue
+        expected, rel = match.group(1), match.group(2).replace("\\", "/")
+        target = base / rel
+        if not target.exists() or hashlib.sha256(
+                target.read_bytes()).hexdigest() != expected:
+            ok = False
+            break
     return ok
 
 
