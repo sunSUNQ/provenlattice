@@ -70,16 +70,30 @@ def classify_leakage(leaks: list[dict], runtime_root: Path | str = RUNTIME_ROOT)
 
 
 class CellWindow:
-    """Per-formal-cell deny window (amendment §2). Fail-closed on both edges."""
+    """Per-formal-cell deny window (amendment §2). Fail-closed on both edges.
 
-    def __init__(self, label: str = "cell"):
+    `roots`, `verify_probes`, `fingerprint_repos` and `fingerprint_dbs` are
+    injectable for wiring tests on synthetic trees; the defaults are the real
+    frozen roots and the default behavior is byte-for-byte the frozen
+    lifecycle (amendment §2)."""
+
+    def __init__(self, label: str = "cell", roots=None, verify_probes=None,
+                 fingerprint_repos=None, fingerprint_dbs=None):
         self.label = label
+        self._roots = roots
+        self._verify_probes = tuple(VERIFY_CLOSED_PROBES if verify_probes is None
+                                    else verify_probes)
+        self._repos = dict(FROZEN_REPOS if fingerprint_repos is None
+                           else fingerprint_repos)
+        self._dbs = list(FROZEN_DBS if fingerprint_dbs is None else fingerprint_dbs)
         self.state: dict = {"label": label, "applied": [], "removed": [],
                             "pre_repos": {}, "post_repos": {}, "pre_dbs": {},
                             "post_dbs": {}, "window_closed_verified": None,
                             "restore_verified": None}
 
     def _apply_list(self):
+        if self._roots is not None:
+            return list(self._roots)
         specs = [(CHECKOUT, WINDOW_READ_DENY)]
         if TRANSCRIPT_STORE.exists():
             specs.append((TRANSCRIPT_STORE, WINDOW_READ_DENY))
@@ -88,8 +102,8 @@ class CellWindow:
         return specs
 
     def __enter__(self) -> "CellWindow":
-        self.state["pre_repos"] = {r: repo_state(p) for r, p in FROZEN_REPOS.items()}
-        self.state["pre_dbs"] = {str(db): sha256(db) for db in FROZEN_DBS}
+        self.state["pre_repos"] = {r: repo_state(p) for r, p in self._repos.items()}
+        self.state["pre_dbs"] = {str(db): sha256(db) for db in self._dbs}
         applied = []
         for spec_path, rights in self._apply_list():
             record = apply_deny(spec_path, rights)
@@ -100,7 +114,7 @@ class CellWindow:
                     f"CellWindow apply failed rc={record['rc']} on {spec_path}: "
                     f"{record['stderr'][:120]}")
         self.state["applied"] = applied
-        verify = {name: probe(path) for name, path in VERIFY_CLOSED_PROBES}
+        verify = {name: probe(path) for name, path in self._verify_probes}
         closed = all(p["denied"] for p in verify.values())
         self.state["window_closed_verified"] = {"probes": verify, "closed": closed}
         if not closed:
@@ -115,17 +129,17 @@ class CellWindow:
     def __exit__(self, exc_type, exc, tb) -> bool:
         removed = [remove_deny(Path(record["path"]))
                    for record in self.state["applied"]]
-        restore = {name: probe(path) for name, path in VERIFY_CLOSED_PROBES}
+        restore = {name: probe(path) for name, path in self._verify_probes}
         # P7 insurance: retry one removal pass if any read is still denied
         if any(p["denied"] for p in restore.values()):
             import time
             time.sleep(0.5)
             removed += [remove_deny(Path(record["path"]))
                         for record in self.state["applied"]]
-            restore = {name: probe(path) for name, path in VERIFY_CLOSED_PROBES}
+            restore = {name: probe(path) for name, path in self._verify_probes}
         self.state["removed"] = removed
-        self.state["post_repos"] = {r: repo_state(p) for r, p in FROZEN_REPOS.items()}
-        self.state["post_dbs"] = {str(db): sha256(db) for db in FROZEN_DBS}
+        self.state["post_repos"] = {r: repo_state(p) for r, p in self._repos.items()}
+        self.state["post_dbs"] = {str(db): sha256(db) for db in self._dbs}
         restored = (all(p["readable"] for p in restore.values())
                     and all(r["rc"] == 0 for r in removed)
                     and self.state["post_repos"] == self.state["pre_repos"]

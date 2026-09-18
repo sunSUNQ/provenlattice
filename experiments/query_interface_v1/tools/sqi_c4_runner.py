@@ -1,0 +1,531 @@
+"""C4 Attempt-4 formal runner — the ONLY legal cell lifecycle (frozen).
+
+    build_runtime → per cell: prepare_cell → CellWindow enter → agent session →
+    CHECKOUT_LEAKAGE scanner (finite-root classification) → CellWindow
+    exit/restore → R1 fingerprint verify → evaluate → record
+
+Fail-closed: a batch HALTS immediately on the first offending cell (artifacts
+preserved, the next cell never starts):
+
+  * ACL apply/verify failure        → cell INVALID_EXECUTION
+  * sensitive leakage event         → cell INVALID_LEAKAGE
+  * restore failure                 → cell INVALID_RESTORE
+  * frozen fingerprint drift        → cell INVALID_FINGERPRINT_DRIFT
+  * any unexpected exception        → cell INVALID_UNEXPECTED
+
+Cell order (protocol §3, frozen): tasks ascending, arms native then sqi,
+repetitions ascending — 6 x 2 x 3 = 36 cells.
+
+Isolation baseline: V1.4-Windows Finite-Root Isolation Profile, commit
+27e40df5e61cd815d8ea0d00203746344c279690 (amendment + CellWindow lifecycle
++ sandbox fixes + tests + seals). This runner never bypasses CellWindow:
+every agent session runs inside an open window, every window edge is
+verified, and no code path continues to the next cell after a halt.
+
+Modes:
+  --preflight  environment gate for the batch (no sessions; writes evidence)
+  --batch      execute all 36 cells sequentially after preflight
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import shutil
+import subprocess
+import sys
+import time
+import uuid
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+LINE_ROOT = HERE.parent
+REPO_ROOT = LINE_ROOT.parents[1]
+WORKSPACE = REPO_ROOT.parent
+for _p in (str(HERE), str(REPO_ROOT), str(REPO_ROOT / "src")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from sqi_evaluator import evaluate_cell  # noqa: E402
+from sqi_formal_runner import (  # noqa: E402
+    NATIVE_ARM_PROMPT, NATIVE_ALLOWED_TOOLS, load_config, load_tasks)
+from sqi_isolation import leakage_events  # noqa: E402
+from v14_c4_lifecycle import (  # noqa: E402
+    CellWindow, classify_leakage, prepare_cell)
+from v14_feasibility_noreboot import (  # noqa: E402
+    BENCH, build_runtime, runtime_db_for, task_db_rels)
+
+ISOLATION_BASELINE_SHA = "27e40df5e61cd815d8ea0d00203746344c279690"
+BASELINE_BATCH_DIR = LINE_ROOT / "results" / "formal" / "SQI-FORMAL-20260917-1"
+BASELINE_SUMMARY = BASELINE_BATCH_DIR / "formal-batch-summary.json"
+BASELINE_MANIFEST = BASELINE_BATCH_DIR / "manifest.sha256"
+RUNNER_PATH = "experiments/query_interface_v1/tools/sqi_c4_runner.py"
+LIFECYCLE_PATH = "experiments/query_interface_v1/tools/v14_c4_lifecycle.py"
+
+HALT_EXECUTION = "INVALID_EXECUTION"
+HALT_LEAKAGE = "INVALID_LEAKAGE"
+HALT_RESTORE = "INVALID_RESTORE"
+HALT_DRIFT = "INVALID_FINGERPRINT_DRIFT"
+HALT_UNEXPECTED = "INVALID_UNEXPECTED"
+
+import importlib  # noqa: E402
+harness_agent_adapter = importlib.import_module(
+    "experiments.retrieval-v1.harness.agent_adapter")
+harness_models = importlib.import_module(
+    "experiments.retrieval-v1.harness.models")
+
+
+class C4BatchHalted(Exception):
+    """Raised when a fail-closed condition halts the batch."""
+
+    def __init__(self, cell_id: str, reason: str, detail: str):
+        super().__init__(f"{cell_id}: {reason}: {detail[:300]}")
+        self.cell_id = cell_id
+        self.reason = reason
+        self.detail = detail
+
+
+def frozen_cell_order(config: dict, tasks: list[dict]) -> list[dict]:
+    """Protocol §3 frozen order: tasks ascending, arms native then sqi,
+    repetitions ascending."""
+    order = []
+    for task in sorted(tasks, key=lambda t: t["task_id"]):
+        for arm in ("native", "sqi"):
+            for repetition in range(1, int(config["repetitions_per_cell"]) + 1):
+                order.append({"task_id": task["task_id"], "arm": arm,
+                              "repetition": repetition})
+    return order
+
+
+def order_fingerprint(order: list[dict]) -> str:
+    canonical = ";".join(f"{c['task_id']}:{c['arm']}:r{c['repetition']}"
+                         for c in order)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def prepare_native_cell(task: dict, batch_output: Path, config: dict) -> dict:
+    repo_name = task["repository"].split("-", 1)[1].lower()
+    return {
+        "label": f"{task['task_id']}-native",
+        "repo_path": str(BENCH / repo_name),
+        "database": str(runtime_db_for(task)[0]),
+        "code_database": None,
+        "environment": {"PL_MODEL_ID": config["model_id"]},
+        "system_prompt": NATIVE_ARM_PROMPT,
+        "allowed_tools": NATIVE_ALLOWED_TOOLS,
+    }
+
+
+def prepare_sqi_cell(task: dict, batch_output: Path) -> dict:
+    surface = prepare_cell(task, batch_output)
+    surface["system_prompt"] = surface.pop("arm_prompt")
+    return surface
+
+
+def default_session(cell: dict, surface: dict, config: dict) -> dict:
+    """Production session: claude -p inside the open window."""
+    task = cell["_task"]
+    run_dir = Path(surface["run_dir"])
+    run_dir.mkdir(parents=True, exist_ok=True)
+    request = harness_models.RunRequest(
+        run_id=f"C4-{surface['label']}-{uuid.uuid4().hex[:6]}",
+        task_id=task["task_id"], repo_path=surface["repo_path"],
+        repo_commit=task["commit"], arm=cell["arm"], prompt=task["prompt"],
+        allowed_tools=sorted({"read", "grep", "glob"} |
+                             ({"shell"} if cell["arm"] == "sqi" else set())),
+        environment=surface["environment"],
+        timeout=float(config["timeout_s"]))
+    command = [shutil.which("claude") or "claude", "-p", "--verbose",
+               "--output-format", "stream-json",
+               "--permission-mode", "default",
+               "--append-system-prompt", surface["system_prompt"],
+               "--allowedTools", surface["allowed_tools"],
+               "--model", config["model_id"]]
+    adapter = harness_agent_adapter.CommandAgentAdapter(command)
+    result = adapter.run(request)
+    events = [event.to_dict() for event in result.events]
+    call_log = []
+    log_path = surface["environment"].get("PL_SQI_CALL_LOG")
+    if log_path and Path(log_path).exists():
+        call_log = [json.loads(line) for line in
+                    Path(log_path).read_text(encoding="utf-8").splitlines()
+                    if line.strip()]
+    return {"exit_reason": result.exit_reason, "error": result.error,
+            "events": events, "output": result.output or "",
+            "call_log": call_log,
+            "permission_denials": result.permission_denials or []}
+
+
+def _classify_exit_failure(window: CellWindow) -> str:
+    state = window.state
+    wv = state.get("window_closed_verified")
+    if not (wv and wv.get("closed")):
+        return HALT_EXECUTION
+    restore = state.get("restore_verified") or {}
+    probes = restore.get("probes") or {}
+    if any(not p.get("readable") for p in probes.values()):
+        return HALT_RESTORE
+    if (state.get("post_repos") != state.get("pre_repos")
+            or state.get("post_dbs") != state.get("pre_dbs")):
+        return HALT_DRIFT
+    return HALT_RESTORE
+
+
+class C4BatchRunner:
+    """Wires every cell through the frozen lifecycle; fail-closed per batch."""
+
+    def __init__(self, config: dict, tasks: list[dict], batch_id: str,
+                 batch_dir: Path, window_factory=None, session_fn=None,
+                 evaluate_fn=None):
+        self.config = config
+        self.tasks = {t["task_id"]: t for t in tasks}
+        self.batch_id = batch_id
+        self.batch_dir = Path(batch_dir)
+        self.batch_output = self.batch_dir / "runtime-output"
+        self._window_factory = window_factory or (lambda label: CellWindow(label))
+        self._session_fn = session_fn or default_session
+        self._evaluate_fn = evaluate_fn or evaluate_cell
+        self.cells_executed: list[str] = []
+
+    # -- lifecycle ------------------------------------------------------
+
+    def run_cell(self, task_id: str, arm: str, repetition: int) -> dict:
+        task = self.tasks[task_id]
+        cell = {"task_id": task_id, "arm": arm, "repetition": repetition,
+                "cell_id": f"{task_id}.{arm}.r{repetition}", "_task": task}
+        self.cells_executed.append(cell["cell_id"])
+        run_dir = (self.batch_dir / task_id / arm / f"r{repetition}")
+        started = time.perf_counter()
+        if arm == "sqi":
+            surface = prepare_sqi_cell(task, self.batch_output)
+            surface["run_dir"] = str(run_dir)
+        else:
+            surface = prepare_native_cell(task, self.batch_output, self.config)
+            surface["run_dir"] = str(run_dir)
+        window = self._window_factory(cell["cell_id"])
+        session = None
+        try:
+            with window:
+                session = self._session_fn(cell, surface, self.config)
+                leaks = classify_leakage(
+                    leakage_events(session["events"], surface["repo_path"]))
+                sensitive = [l for l in leaks if l["sensitive"]]
+                if sensitive:
+                    raise C4BatchHalted(
+                        cell["cell_id"], HALT_LEAKAGE,
+                        json.dumps(sensitive[:3], ensure_ascii=False))
+        except C4BatchHalted:
+            self._persist_halt_artifacts(cell, run_dir, window, session)
+            raise
+        except RuntimeError as exc:
+            reason = _classify_exit_failure(window)
+            self._persist_halt_artifacts(cell, run_dir, window, session, exc)
+            raise C4BatchHalted(cell["cell_id"], reason, repr(exc)[:300]) from exc
+        except Exception as exc:
+            self._persist_halt_artifacts(cell, run_dir, window, session, exc)
+            raise C4BatchHalted(cell["cell_id"], HALT_UNEXPECTED,
+                                repr(exc)[:300]) from exc
+        # R1: the window edge already verified restore + fingerprints; the
+        # runner re-asserts the recorded verdict before accepting the cell.
+        restored = (window.state.get("restore_verified") or {}).get("restored")
+        if not restored:
+            reason = _classify_exit_failure(window)
+            raise C4BatchHalted(cell["cell_id"], reason,
+                                "post-exit R1 assertion failed")
+        return self._record_cell(cell, surface, session, window, leaks,
+                                 run_dir, started)
+
+    def run_batch(self, cells: list[dict]) -> list[dict]:
+        records = []
+        for cell in cells:
+            try:
+                records.append(self.run_cell(cell["task_id"], cell["arm"],
+                                             cell["repetition"]))
+                print(json.dumps({"cell": records[-1]["cell_id"],
+                                  "status": records[-1]["status"]}), flush=True)
+            except C4BatchHalted as halt:
+                self._write_halt_marker(halt, records)
+                raise
+        return records
+
+    # -- persistence ----------------------------------------------------
+
+    def _persist_halt_artifacts(self, cell, run_dir, window, session=None,
+                                exc=None):
+        try:
+            run_dir.mkdir(parents=True, exist_ok=True)
+            (run_dir / "window-state.json").write_text(
+                json.dumps(window.state, ensure_ascii=False, indent=1,
+                           default=str) + "\n", encoding="utf-8")
+            if session is not None:
+                (run_dir / "events.ndjson").write_text(
+                    "\n".join(json.dumps(e, ensure_ascii=False, sort_keys=True)
+                              for e in session.get("events", [])) + "\n",
+                    encoding="utf-8")
+                (run_dir / "agent-output.txt").write_text(
+                    session.get("output", ""), encoding="utf-8")
+            if exc is not None:
+                (run_dir / "halt-exception.txt").write_text(
+                    repr(exc), encoding="utf-8")
+        except OSError:
+            pass
+
+    def _write_halt_marker(self, halt: C4BatchHalted, records: list[dict]):
+        marker = {
+            "schema": "SQI_C4_BATCH_STATUS_MARKER_V1",
+            "batch_id": self.batch_id, "halted": True,
+            "halted_at_cell": halt.cell_id, "reason": halt.reason,
+            "detail": halt.detail[:400],
+            "cells_completed": sum(1 for r in records
+                                   if r["status"] == "completed"),
+            "isolation_baseline_sha": ISOLATION_BASELINE_SHA,
+            "git_head": _git("rev-parse", "HEAD").strip(),
+            "cells_executed": self.cells_executed,
+        }
+        (self.batch_dir / "batch-status-marker.json").write_text(
+            json.dumps(marker, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8")
+
+    def _record_cell(self, cell, surface, session, window, leaks, run_dir,
+                     started) -> dict:
+        task = cell["_task"]
+        database = surface.get("database")
+        evaluation = self._evaluate_fn(task, cell["arm"], session["output"],
+                                       session["events"], session["call_log"],
+                                       database)
+        violations = [f"CHECKOUT_LEAKAGE:{l['reason']}:{l['target'][:100]}"
+                      for l in leaks if l["sensitive"]]
+        sensitive_count = sum(1 for l in leaks if l["sensitive"])
+        wv = window.state.get("window_closed_verified") or {}
+        status = ("completed" if session["exit_reason"] == "completed"
+                  and not violations else "failed")
+        record = {
+            "schema": "SQI_FORMAL_RUN_RECORD_V1",
+            "run_kind": "c4-after-optimization",
+            "batch_id": self.batch_id,
+            "cell_id": cell["cell_id"],
+            "run_id": f"C4-{cell['cell_id']}-{uuid.uuid4().hex[:6]}",
+            "task_id": cell["task_id"], "arm": cell["arm"],
+            "repetition": cell["repetition"],
+            "repository": task["repository"], "commit": task["commit"],
+            "database": task["database"],
+            "model_id": self.config["model_id"],
+            "status": status,
+            "exit_reason": session["exit_reason"],
+            "task_success": evaluation.get("task_success"),
+            "capability_failure_flags": evaluation.get(
+                "capability_failure_flags", []),
+            "tool_calls": len(session["events"]),
+            "sqi_calls": len(session["call_log"]),
+            "policy_violations": violations,
+            "checkout_leakage_events": len(leaks),
+            "sensitive_leakage_events": sensitive_count,
+            "prompt_hash": hashlib.sha256(
+                task["prompt"].encode("utf-8")).hexdigest(),
+            "isolation": {
+                "profile": "V1.4-Windows Finite-Root Isolation Profile",
+                "baseline_sha": ISOLATION_BASELINE_SHA,
+                "window_closed_verified": wv.get("closed"),
+                "restore_verified": (window.state.get("restore_verified") or {})
+                .get("restored"),
+                "fingerprint_unchanged": (
+                    window.state.get("post_repos") == window.state.get("pre_repos")
+                    and window.state.get("post_dbs") == window.state.get("pre_dbs")),
+            },
+            "runtime_db_sha256": (sha256_file(database)
+                                  if database and Path(database).exists() else None),
+        }
+        run_dir.mkdir(parents=True, exist_ok=True)
+        (run_dir / "run.json").write_text(
+            json.dumps(record, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8")
+        (run_dir / "events.ndjson").write_text(
+            "\n".join(json.dumps(e, ensure_ascii=False, sort_keys=True)
+                      for e in session["events"]) + "\n", encoding="utf-8")
+        (run_dir / "agent-output.txt").write_text(session["output"],
+                                                  encoding="utf-8")
+        (run_dir / "sqi-call-log.ndjson").write_text(
+            "\n".join(json.dumps(e, ensure_ascii=False, sort_keys=True)
+                      for e in session["call_log"]) + "\n", encoding="utf-8")
+        (run_dir / "evaluation.json").write_text(
+            json.dumps(evaluation, ensure_ascii=False, indent=1) + "\n",
+            encoding="utf-8")
+        (run_dir / "window-state.json").write_text(
+            json.dumps(window.state, ensure_ascii=False, indent=1,
+                       default=str) + "\n", encoding="utf-8")
+        record["duration_ms"] = round((time.perf_counter() - started) * 1000, 3)
+        return record
+
+
+def sha256_file(path) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _git(*args: str) -> str:
+    return subprocess.run(["git", "-C", str(REPO_ROOT), *args],
+                          capture_output=True, text=True).stdout
+
+
+# -- preflight -------------------------------------------------------------
+
+def run_preflight() -> dict:
+    """C4 Attempt-4 environment gate. No sessions are executed."""
+    checks: dict[str, object] = {}
+    release = subprocess.run(
+        [sys.executable, str(HERE / "verify_release.py")],
+        capture_output=True, text=True, timeout=900)
+    checks["release_verification"] = {
+        "pass": release.returncode == 0,
+        "tail": release.stdout.strip().splitlines()[-2:] if release.stdout else [],
+    }
+    checks["isolation_baseline_commit"] = {
+        "sha": ISOLATION_BASELINE_SHA,
+        "is_ancestor": subprocess.run(
+            ["git", "-C", str(REPO_ROOT), "merge-base", "--is-ancestor",
+             ISOLATION_BASELINE_SHA, "HEAD"]).returncode == 0,
+        "pass": True,
+    }
+    checks["isolation_baseline_commit"]["pass"] = (
+        checks["isolation_baseline_commit"]["is_ancestor"])
+    runner_history = _git("log", "-1", "--format=%H", "--", RUNNER_PATH).strip()
+    lifecycle_history = _git("log", "-1", "--format=%H", "--",
+                             LIFECYCLE_PATH).strip()
+    checks["runner_commit_recorded"] = {
+        "runner_last_commit": runner_history,
+        "lifecycle_last_commit": lifecycle_history,
+        "present": bool(runner_history),
+    }
+    config = load_config()
+    baseline = json.loads(BASELINE_SUMMARY.read_text(encoding="utf-8"))
+    checks["model_config_matches_baseline"] = {
+        "model_id": {"config": config["model_id"],
+                     "baseline": baseline["model_id"],
+                     "match": config["model_id"] == baseline["model_id"]},
+        "claude_cli_version": {"config": config["claude_cli_version"],
+                               "baseline": baseline.get("claude_cli_version"),
+                               "match": config["claude_cli_version"]
+                               == baseline.get("claude_cli_version")},
+        "repetitions_per_cell": {"config": config["repetitions_per_cell"],
+                                 "baseline": baseline["repetitions_per_cell"],
+                                 "match": int(config["repetitions_per_cell"])
+                                 == int(baseline["repetitions_per_cell"])},
+    }
+    order = frozen_cell_order(config, load_tasks())
+    checks["cell_order_frozen"] = {
+        "cell_total": len(order),
+        "expected_total": int(config["cell_total"]),
+        "total_match": len(order) == int(config["cell_total"]),
+        "order_fingerprint": order_fingerprint(order),
+    }
+    baseline_files = {}
+    for rel in ("formal-batch-summary.json", "cost-attribution-v1.json",
+                "c2-replay-verification-v1.json", "manifest.sha256"):
+        path = BASELINE_BATCH_DIR / rel
+        baseline_files[rel] = {"exists": path.exists(),
+                               "sha256": sha256_file(path) if path.exists()
+                               else None}
+    manifest_ok = verify_seal_quiet(BASELINE_MANIFEST)
+    checks["baseline_evidence_unchanged"] = {
+        "files": baseline_files,
+        "manifest_roundtrip": manifest_ok,
+        "pass": manifest_ok and all(v["exists"] for v in baseline_files.values()),
+    }
+    checks["optimized_implementation_frozen"] = {
+        "implementation_seal": "structured-query-interface-contract-v1."
+                               "implementation-seal.sha256",
+        "verified_via": "release_verification stage (PASS 5/5)",
+        "pass": checks["release_verification"]["pass"],
+    }
+    status = subprocess.run(["git", "-C", str(REPO_ROOT), "status",
+                             "--porcelain"], capture_output=True, text=True)
+    checks["working_tree_clean"] = {
+        "pass": not status.stdout.strip(),
+        "dirty_entries": status.stdout.strip().splitlines()[:10],
+    }
+    all_pass = all(v.get("pass", True) if isinstance(v, dict) else v
+                   for v in checks.values())
+    if isinstance(checks["model_config_matches_baseline"], dict):
+        all_pass = all_pass and all(
+            v["match"] for v in checks["model_config_matches_baseline"].values())
+    if isinstance(checks["cell_order_frozen"], dict):
+        all_pass = all_pass and checks["cell_order_frozen"]["total_match"]
+    doc = {
+        "schema": "SQI_C4_PREFLIGHT_EVIDENCE_V1",
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "isolation_baseline_sha": ISOLATION_BASELINE_SHA,
+        "runner_commit": checks["runner_commit_recorded"]["runner_last_commit"],
+        "head_at_preflight": _git("rev-parse", "HEAD").strip(),
+        "checks": checks,
+        "verdict": "PASS" if all_pass else "FAIL",
+    }
+    return doc
+
+
+def verify_seal_quiet(path: Path) -> bool:
+    if not path.exists():
+        return False
+    sys.path.insert(0, str(HERE))
+    from sqi_formal_runner import verify_seal
+    ok, _passed, _total, _bad = verify_seal(path)
+    return ok
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--mode", choices=("preflight", "batch"),
+                        default="preflight")
+    parser.add_argument("--batch-id", default=None)
+    args = parser.parse_args()
+
+    if args.mode == "preflight":
+        doc = run_preflight()
+        out_dir = LINE_ROOT / "results" / "formal"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out = out_dir / f"C4-PREFLIGHT-{time.strftime('%Y%m%d-%H%M%S')}.json"
+        out.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n",
+                       encoding="utf-8")
+        print(json.dumps({"verdict": doc["verdict"], "evidence": str(out)},
+                         indent=1))
+        return 0 if doc["verdict"] == "PASS" else 1
+
+    # batch
+    doc = run_preflight()
+    if doc["verdict"] != "PASS":
+        print(json.dumps(doc["checks"], indent=1)[:2000])
+        print("C4 preflight FAIL — batch not started")
+        return 1
+    config = load_config()
+    tasks = load_tasks()
+    batch_id = args.batch_id or time.strftime("SQI-FORMAL-C4-%Y%m%dT%H%M%SZ",
+                                              time.gmtime())
+    batch_dir = LINE_ROOT / "results" / "formal" / batch_id
+    batch_dir.mkdir(parents=True, exist_ok=True)
+    build_runtime({t["task_id"]: task_db_rels(t) for t in tasks})
+    runner = C4BatchRunner(config, tasks, batch_id, batch_dir)
+    cells = frozen_cell_order(config, tasks)
+    try:
+        records = runner.run_batch(cells)
+    except C4BatchHalted as halt:
+        print(json.dumps({"batch_id": batch_id, "halted": True,
+                          "cell": halt.cell_id, "reason": halt.reason},
+                         indent=1))
+        return 1
+    summary = {
+        "schema": "SQI_C4_BATCH_SUMMARY_V1", "batch_id": batch_id,
+        "isolation_baseline_sha": ISOLATION_BASELINE_SHA,
+        "cells_total": len(cells),
+        "cells_completed": sum(1 for r in records if r["status"] == "completed"),
+    }
+    (batch_dir / "batch-summary.json").write_text(
+        json.dumps(summary, ensure_ascii=False, indent=1) + "\n",
+        encoding="utf-8")
+    print(json.dumps(summary, indent=1))
+    return 0 if summary["cells_completed"] == len(cells) else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
