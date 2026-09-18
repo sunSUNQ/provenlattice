@@ -453,12 +453,14 @@ class TestArmParityAndPreflight(unittest.TestCase):
         self.assertEqual(native[3], sqi[3])
         self.assertNotEqual(native, sqi)
         sqi_tools = sqi_allowed_tools(task)
-        self.assertIn("sqi_cli.py", sqi_tools)
+        self.assertIn("Bash(python -m experiments.query_interface_v1.tools.sqi_cli *)",
+                      sqi_tools)
         self.assertNotIn("sqi_cli", NATIVE_ALLOWED_TOOLS)
-        # V1.3 A1: the sqi prompt injects absolute paths (no placeholders)
+        # V1.3 A1: the sqi prompt injects absolute DB paths (no placeholders);
+        # the bridge is invoked in module form (PYTHONPATH preconfigured)
         prompt = build_arm_prompt("sqi", task)
         self.assertIn("--database", prompt)
-        self.assertIn("sqi_cli.py", prompt)
+        self.assertIn("python -m experiments.query_interface_v1.tools.sqi_cli", prompt)
         self.assertNotIn("--database DB", prompt)
         # V1.3 A4: default permission mode denies non-allowlisted tools
         self.assertIn("--permission-mode", sqi)
