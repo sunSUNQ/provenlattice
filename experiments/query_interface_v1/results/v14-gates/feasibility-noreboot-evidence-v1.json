@@ -1,0 +1,479 @@
+{
+ "schema": "SQI_V14_NOREBOOT_FEASIBILITY_V1",
+ "batch_label": "FEAS-NOREBOOT-20260918-164945",
+ "contract": "sqi-v1.4-isolation-contract.md",
+ "amendment_candidate": "V1.4-Windows Finite-Root Isolation Profile",
+ "mechanism": {
+  "deny_roots": [
+   "D:\\ChatGPT\\codegraph\\provenlattice",
+   "C:\\Users\\sunqinghw\\.claude\\projects"
+  ],
+  "deny_write_roots": [
+   "D:\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+   "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+   "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+   "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+   "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+   "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db",
+   "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db"
+  ],
+  "pattern": "single inheritable ACE per root: icacls <root> /deny user:(OI)(CI)(RD) | /remove:d user (pre-flight P1/P2/P7)",
+  "pre_flight_findings": {
+   "P1_plain_denyT_cannot_propagate": true,
+   "P2_inheritable_ace_single_call": true,
+   "P3_denyR_does_not_block_creation": true,
+   "P4_claude_permission_gating_script_form": "claude CLI 2.1.270: local-script execution is approval-gated by safety-constraint system-prompt text and always under the deny window; module-form invocations immune; user-turn text unaffected",
+   "P5_claude_permission_gating_adversarial_wording": "under the deny window, adversarial-sounding system-prompt wording gates module-form execution; neutral ARM-style wording passes with identical command and allowlist rule",
+   "P7_generic_read_deny_bricks_acl_repair": "deny (R) intermittently denies icacls READ_CONTROL so /remove:d fails (rc=5); deny (RD) keeps identical content-read/listing protection and stable repair"
+  },
+  "runtime_root": "D:\\pl-c4-runtime",
+  "runtime_manifest": {
+   "runtime_root": "D:\\pl-c4-runtime",
+   "code": {
+    "src/provenlattice": "tree-copy",
+    "experiments/query_interface_v1/tools/sqi_cli.py": "df51ae2cedeaebca69ae15fdb440ac91890baae20e6a9958c0f1acfef56da700",
+    "experiments/query_interface_v1/tools/sqi_adapter.py": "2f4b592771f9f837d99eed87bb3cd1265803ef0e5f2f2d0d2726371f8e2c31fc",
+    "experiments/query_interface_v1/tools/sqi_validator.py": "f469c93204aad8cc21976c1ee638c96f4579dba1144af69db8273efb0c667c96"
+   },
+   "dbs": {
+    "benchmark-analysis/v0.2-db/aria2.db": {
+     "runtime": "D:\\pl-c4-runtime\\runtime\\db\\aria2.db",
+     "sha256": "cbd56e3c4ca71104b4621cd4e112648e657c5729d310dcf9fb0aef80ee835abb",
+     "bytes": 133021696,
+     "source": "cached"
+    },
+    "benchmark-analysis/v0.2-db/brpc.db": {
+     "runtime": "D:\\pl-c4-runtime\\runtime\\db\\brpc.db",
+     "sha256": "285dbb2efd8b88ceb4497aee396777812c2715871f2018ce6f94a6be3e2663ef",
+     "bytes": 240160768,
+     "source": "cached"
+    },
+    "benchmark-analysis/v1.0-db/brpc-knowledge.db": {
+     "runtime": "D:\\pl-c4-runtime\\runtime\\db\\brpc-knowledge.db",
+     "sha256": "02c191a6881d05c6a6f8b9c3094c958fe36f910f763fecfc7508cd3f1483e449",
+     "bytes": 245264384,
+     "source": "cached"
+    }
+   },
+   "repos": {
+    "brpc": {
+     "path": "D:\\pl-c4-runtime\\benchmark\\brpc",
+     "files": 1864
+    },
+    "aria2": {
+     "path": "D:\\pl-c4-runtime\\benchmark\\aria2",
+     "files": 1393
+    }
+   }
+  }
+ },
+ "threat_model": "experiment-artifact isolation (finite sensitive roots), NOT full OS-namespace isolation; host-at-large reads by the same user remain possible and are documented",
+ "gates": [
+  {
+   "gate": "F1-sanitized-runtime",
+   "bridge_smoke_prewindow": {
+    "label": "prewindow-bridge-smoke",
+    "returncode": 0,
+    "envelope_valid": true,
+    "stderr_head": "",
+    "call_log_path": "D:\\pl-c4-runtime\\output\\prewindow-bridge-smoke\\sqi-call-log.ndjson"
+   },
+   "manifest_dbs": {
+    "benchmark-analysis/v0.2-db/aria2.db": "cbd56e3c4ca71104b4621cd4e112648e657c5729d310dcf9fb0aef80ee835abb",
+    "benchmark-analysis/v0.2-db/brpc.db": "285dbb2efd8b88ceb4497aee396777812c2715871f2018ce6f94a6be3e2663ef",
+    "benchmark-analysis/v1.0-db/brpc-knowledge.db": "02c191a6881d05c6a6f8b9c3094c958fe36f910f763fecfc7508cd3f1483e449"
+   },
+   "repos_built": [
+    "aria2",
+    "brpc"
+   ],
+   "pass": true
+  },
+  {
+   "gate": "F2-bridge-under-window",
+   "bridge_smoke": {
+    "label": "inwindow-bridge-smoke",
+    "returncode": 0,
+    "envelope_valid": true,
+    "stderr_head": "",
+    "call_log_path": "D:\\pl-c4-runtime\\output\\inwindow-bridge-smoke\\sqi-call-log.ndjson"
+   },
+   "pass": true
+  },
+  {
+   "gate": "F3-checkout-read-deny",
+   "sensitive_probes": [
+    {
+     "name": "checkout_root_readme",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\README.md",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "checkout_nested_src",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\src\\provenlattice\\query.py",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "tasks_fixture",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\tasks\\SQI-T04.json",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "frozen_contract",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\contract\\structured-query-interface-contract-v1.md",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "protocol_config",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\contract\\formal-protocol-config.json",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "formal_results",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\results\\formal\\SQI-FORMAL-20260917-1\\formal-batch-summary.json",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "gate_evidence",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\results\\v14-gates\\gate-evidence-v1.4.json",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "reviews",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\reviews\\v1.4-isolation-qualification-review.md",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "git_head",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\.git\\HEAD",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "git_refs",
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\.git\\refs",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    },
+    {
+     "name": "transcript_store",
+     "path": "C:\\Users\\sunqinghw\\.claude\\projects",
+     "stdout": "PROBE_DENIED",
+     "denied": true,
+     "readable": false,
+     "missing": false
+    }
+   ],
+   "out_of_scope_documented": [
+    {
+     "name": "original_db",
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+     "stdout": "PROBE_OK",
+     "denied": false,
+     "readable": true,
+     "missing": false
+    },
+    {
+     "name": "workspace_parent_listing",
+     "path": "D:\\ChatGPT\\codegraph",
+     "stdout": "PROBE_LIST_OK",
+     "denied": false,
+     "readable": true,
+     "missing": false
+    }
+   ],
+   "pass": true
+  },
+  {
+   "gate": "F3b-agent-context-deny",
+   "exit_reason": "completed",
+   "probe_denied_tokens": 8,
+   "probe_ok_tokens": 2,
+   "leakage_events": 1,
+   "output_excerpt": "```\nSENSITIVE checkout_root_readme => PROBE_DENIED\nSENSITIVE checkout_nested_src => PROBE_DENIED\nSENSITIVE tasks_fixture => PROBE_DENIED\nSENSITIVE frozen_contract => PROBE_DENIED\nSENSITIVE formal_results => PROBE_DENIED\nSENSITIVE reviews => PROBE_DENIED\nSENSITIVE git_head => PROBE_DENIED\nSENSITIVE transcript_store => PROBE_DENIED\nOUT_OF_SCOPE original_db => PROBE_OK\nOUT_OF_SCOPE repo_readme => PROBE_OK\nISOPROBE_DONE\n```",
+   "pass": true
+  },
+  {
+   "gate": "F4-frozen-write-deny",
+   "cases": [
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-repos\\aria2\\README.md",
+     "mode": "a",
+     "write_blocked": true,
+     "stdout": "WRITE_OPEN_DENIED",
+     "stderr_head": ""
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc\\README.md",
+     "mode": "a",
+     "write_blocked": true,
+     "stdout": "WRITE_OPEN_DENIED",
+     "stderr_head": ""
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb\\README.md",
+     "mode": "a",
+     "write_blocked": true,
+     "stdout": "WRITE_OPEN_DENIED",
+     "stderr_head": ""
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+     "mode": "r+b",
+     "write_blocked": true,
+     "stdout": "WRITE_OPEN_DENIED",
+     "stderr_head": ""
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+     "mode": "r+b",
+     "write_blocked": true,
+     "stdout": "WRITE_OPEN_DENIED",
+     "stderr_head": ""
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db",
+     "mode": "r+b",
+     "write_blocked": true,
+     "stdout": "WRITE_OPEN_DENIED",
+     "stderr_head": ""
+    },
+    {
+     "target": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db",
+     "mode": "r+b",
+     "write_blocked": true,
+     "stdout": "WRITE_OPEN_DENIED",
+     "stderr_head": ""
+    }
+   ],
+   "disposable_copy_writable": true,
+   "pass": true
+  },
+  {
+   "gate": "F5-representative-sessions",
+   "sessions": [
+    {
+     "cell": "SQI-T01.sqi",
+     "exit_reason": "completed",
+     "sqi_calls": 2,
+     "bridge_calls_ok": true,
+     "leakage_events": 0,
+     "leakage": [],
+     "database": "D:\\pl-c4-runtime\\runtime\\db\\aria2.db",
+     "code_database": null,
+     "pass": true
+    },
+    {
+     "cell": "SQI-T05.sqi",
+     "exit_reason": "completed",
+     "sqi_calls": 20,
+     "bridge_calls_ok": true,
+     "leakage_events": 0,
+     "leakage": [],
+     "database": "D:\\pl-c4-runtime\\runtime\\db\\brpc-knowledge.db",
+     "code_database": "D:\\pl-c4-runtime\\runtime\\db\\brpc.db",
+     "pass": true
+    }
+   ],
+   "pass": true
+  },
+  {
+   "gate": "F6-scanner-zero-leakage",
+   "formal_raw_events": 0,
+   "formal_sensitive_events": 0,
+   "formal_sessions": [
+    {
+     "cell": "SQI-T01.sqi",
+     "raw_events": 0,
+     "sensitive_events": 0,
+     "events": []
+    },
+    {
+     "cell": "SQI-T05.sqi",
+     "raw_events": 0,
+     "sensitive_events": 0,
+     "events": []
+    }
+   ],
+   "redteam_raw_events": 1,
+   "redteam_sensitive_events": 0,
+   "redteam_events": [
+    {
+     "event_index": 0,
+     "operation": "shell",
+     "target": "python -m experiments.query_interface_v1.tools.iso_probe",
+     "reason": "framework_path",
+     "sensitive": false
+    }
+   ],
+   "note": "raw CHECKOUT_LEAKAGE events kept verbatim; SENSITIVE = references any path outside the sanitized runtime root (finite-root threat model). Runtime-internal quoted paths are documented artifacts of the frozen arm prompt, not leaks.",
+   "pass": true
+  },
+  {
+   "gate": "R1-restore-integrity",
+   "window_applied": [
+    {
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice",
+     "rights": "(OI)(CI)(RD)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "C:\\Users\\sunqinghw\\.claude\\projects",
+     "rights": "(OI)(CI)(RD)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+     "rights": "(OI)(CI)(WD,AD,WA)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+     "rights": "(OI)(CI)(WD,AD,WA)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+     "rights": "(OI)(CI)(WD,AD,WA)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+     "rights": "(WD,AD,WA)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+     "rights": "(WD,AD,WA)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db",
+     "rights": "(WD,AD,WA)",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db",
+     "rights": "(WD,AD,WA)",
+     "rc": 0,
+     "stderr": ""
+    }
+   ],
+   "removed": [
+    {
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "C:\\Users\\sunqinghw\\.claude\\projects",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db",
+     "rc": 0,
+     "stderr": ""
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db",
+     "rc": 0,
+     "stderr": ""
+    }
+   ],
+   "restore_probes": [
+    {
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\README.md",
+     "stdout": "PROBE_OK",
+     "denied": false,
+     "readable": true,
+     "missing": false
+    },
+    {
+     "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\tasks\\SQI-T04.json",
+     "stdout": "PROBE_OK",
+     "denied": false,
+     "readable": true,
+     "missing": false
+    },
+    {
+     "path": "C:\\Users\\sunqinghw\\.claude\\projects",
+     "stdout": "PROBE_LIST_OK",
+     "denied": false,
+     "readable": true,
+     "missing": false
+    }
+   ],
+   "repo_states_unchanged": true,
+   "db_hashes_unchanged": true,
+   "pass": true
+  }
+ ],
+ "v1_4_pass_claim": false,
+ "c4_authorized": false,
+ "c4_note": "C4 authorization unchanged: user decides whether this profile is accepted as the C4 isolation amendment",
+ "verdict": "FEASIBLE",
+ "duration_s": 76.1,
+ "session_artifacts": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\results\\v14-gates\\feasibility-noreboot"
+}

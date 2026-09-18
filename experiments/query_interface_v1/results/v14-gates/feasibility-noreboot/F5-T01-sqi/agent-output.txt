@@ -1,0 +1,13 @@
+## Result
+
+**File:** `src/DownloadEngine.h`
+**Declaration line:** line 84 (`class DownloadEngine {`), extending through line 335.
+
+**Responsibility:** `aria2.DownloadEngine` is the central event-loop engine that drives aria2's download processing. It owns the `EventPoll` reactor, the two command queues (`routineCommands_` / `commands_`), and the manager objects for download lifecycle (`RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`), dispatching commands each iteration from its `run(bool oneshot)` loop. It also centralizes shared infrastructure for those commands: the socket pool (`socketPool_` of `SocketPoolEntry`), DNS cache, cookie storage, stat calculation, auth-config factory, and shutdown control (`requestHalt` / `requestForceHalt`).
+
+Note: the name-only lookup was truncated at 8 of 44 hits and returned only forward-declaration sites in other headers; the path-filtered lookup resolved the actual definition.
+
+Evidence Used:
+- E-CODE-94acad33e16eceea6ea5d677
+- E-CODE-5b90c0eeea70294a6db4fabe
+- E-CODE-d69dc4724057c9eef06a45bd

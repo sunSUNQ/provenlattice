@@ -71,14 +71,23 @@ def remove_session_protection(record: dict) -> dict:
 
 
 def build_disposable_copy(repo: Path, target: Path) -> Path:
-    """Robocopy the frozen repo into the per-cell sandbox (exclude .git)."""
+    """Robocopy the frozen repo into the per-cell sandbox (exclude .git).
+
+    2026-09-18 fix (finding P6, v1.4-noreboot-feasibility-review.md): the
+    previous call passed "XD", ".git" as bare tokens after /options, which
+    robocopy parses as file-name filters — producing a degenerate, near-empty
+    copy. Options are now properly prefixed and the result is content-checked.
+    """
     result = subprocess.run(
-        ["robocopy", str(repo), str(target), "/E", "/NFL", "/NDL", "/NJH",
-         "/XJ", "XD", ".git"],
-        capture_output=True, text=True)
+        ["robocopy", str(repo), str(target), "/E", "/XD", ".git",
+         "/NFL", "/NDL", "/NJH", "/XJ"], capture_output=True, text=True)
     # robocopy exit codes 0-7 are success
     if result.returncode > 7:
         raise RuntimeError(f"robocopy failed rc={result.returncode}: {result.stderr[:400]}")
+    file_count = sum(1 for p in target.rglob("*") if p.is_file())
+    if file_count < 1:
+        raise RuntimeError(
+            f"disposable copy degenerate ({file_count} files) — robocopy filters misapplied")
     return target
 
 

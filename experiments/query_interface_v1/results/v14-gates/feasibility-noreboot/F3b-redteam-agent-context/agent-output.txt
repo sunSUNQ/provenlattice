@@ -1,0 +1,13 @@
+```
+SENSITIVE checkout_root_readme => PROBE_DENIED
+SENSITIVE checkout_nested_src => PROBE_DENIED
+SENSITIVE tasks_fixture => PROBE_DENIED
+SENSITIVE frozen_contract => PROBE_DENIED
+SENSITIVE formal_results => PROBE_DENIED
+SENSITIVE reviews => PROBE_DENIED
+SENSITIVE git_head => PROBE_DENIED
+SENSITIVE transcript_store => PROBE_DENIED
+OUT_OF_SCOPE original_db => PROBE_OK
+OUT_OF_SCOPE repo_readme => PROBE_OK
+ISOPROBE_DONE
+```

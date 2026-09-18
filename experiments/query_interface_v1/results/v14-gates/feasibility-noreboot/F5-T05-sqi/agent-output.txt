@@ -1,0 +1,46 @@
+## Core implementation
+
+The documented behavior — consistent hashing with bounded loads (`c_murmurhash_bl`) — is implemented by the class **`brpc::policy::ConsistentHashingBoundedLoadBalancer`**, and its core routine is the **`SelectServer` override** in:
+
+- **`src/brpc/policy/consistent_hashing_load_balancer.cpp:525`** (class defined at **`src/brpc/policy/consistent_hashing_load_balancer.h:98`**)
+
+`SelectServer` is the method that actually performs load-bounded ring selection; the class is registered under the LB name `c_murmurhash_bl` in `src/brpc/global.cpp:416`.
+
+## Document-to-code relationship
+
+The SQI resolves the documentation section `docs/cn/client.md` §`c_murmurhash_bl` (lines 286–289) to the code layer through an explicit cross-layer edge (relation `DOCUMENTS`, distance 1, `resolution_status: resolved`), anchored on the `documentsection:2036840a…` node of that heading. So the knowledge graph asserts a direct section→code link for this heading.
+
+Mapping each sentence of the section to the source I read:
+
+| Doc claim (client.md:286–289) | Code fact | Location |
+|---|---|---|
+| Hash ring identical to `c_murmurhash` | Same `_db_hash_ring`, same `lower_bound(request_code)` walk start | .cpp:553 (bounded) vs .cpp:330–331 (base) |
+| Capacity = `ceil(load_factor * average in-flight)` | `capacity = ceil(_load_factor * (total+1) / lm->size())` | .cpp:546–551 |
+| Overflow clockwise to next server with spare capacity | `for` walk advancing `choice` around the ring, picks first `inflight < capacity` | .cpp:565–588 |
+| Default from `-chash_bounded_load_factor` (1.25, must be > 1) | `DEFINE_double(chash_bounded_load_factor, 1.25, …)`; `ValidateLoadFactor` returns `factor > 1.0` | .cpp:41–50 |
+| Overridable per-channel via `load_factor=1.5` | `SetParameter` key `"load_factor"`, rejects `<= 1.0` | .cpp:509–523 |
+| `replicas` parameter same as `c_murmurhash` | falls through to base `SetParameter`, key `"replicas"` | .cpp:420–422 |
+
+The header's own doc comment (`.h:93–97`) restates the identical semantics ("overflows to the next server clockwise on the ring with spare capacity"), and the class is a `public` subclass of `ConsistentHashingLoadBalancer`, reusing the parent ring while adding a per-socket inflight `LoadMap`.
+
+One nuance worth flagging: the only symbol the doc-section linker actually resolved in this section is the token `replicas` (mapped to `brpc.policy.AddServersInBatch.replicas`, .cpp:265), not the bounded-load class itself. The class→section correspondence is therefore established structurally (by name `c_murmurhash_bl` and the registration in global.cpp), not by a resolved cross-layer edge on the class name.
+
+## Answer
+
+- **Main symbol:** `brpc::policy::ConsistentHashingBoundedLoadBalancer`, core method `ConsistentHashingBoundedLoadBalancer::SelectServer`
+- **File:** `src/brpc/policy/consistent_hashing_load_balancer.cpp` (declaration in `consistent_hashing_load_balancer.h`)
+- **Relationship:** The prose in `client.md` §`c_murmurhash_bl` describes exactly the selection algorithm implemented in `SelectServer` — a parent hash ring with an added per-server capacity `ceil(load_factor * avg inflight)` and clockwise overflow to the next in-capacity ring node — with the flag/default/parameter text matching the `chash_bounded_load_factor` flag and the `load_factor`/`replicas` parameters.
+
+Evidence Used:
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-3f698369ec57552531b20d82
+- E-CODE-367d5b5a91beb9028d859ae9
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-CODE-a53425880569c39491a83992
+- E-CODE-9c1393b324704edd3a5dbdff
+- E-CODE-b6a4972036c5eb78125eab25
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-SHARD-0bd4b5aa4d298e72de409251
+- E-CODE-958e25377596d1f5e9455d79
