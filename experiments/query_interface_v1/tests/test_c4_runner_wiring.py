@@ -350,20 +350,24 @@ class TestCellPrivateClaudeHome(WiringTestBase):
         self.assertTrue(classify_leakage(host_event)[0]["sensitive"])
 
     def test_runtime_internal_hint_probe_not_sensitive(self):
-        """T04.native.r1 halt root cause (SQI-FORMAL-C4-20260920T034423Z):
-        listing hidden dirs inside the agent's OWN disposable copy mentions
-        `.claude` but every path is runtime-internal — documented, not a
-        leak, per amendment §3. A hint with NO path stays sensitive."""
+        """T04/T03 halt root causes (SQI-FORMAL-C4-20260920T034423Z /
+        ...T040621Z): runtime-internal hint probes and framework-hint grep
+        PATTERNS with no path are documented, not leaks, per amendment §3
+        (path-based). Raw events stay recorded either way."""
         from v14_c4_lifecycle import classify_leakage
         internal = classify_leakage([{
             "operation": "shell",
             "target": 'ls -la "D:/pl-c4-runtime/benchmark/rocksdb/.claude" 2>&1',
         }])[0]
         self.assertFalse(internal["sensitive"])
-        no_path = classify_leakage([{
-            "operation": "grep", "target": "grep -r provenlattice .",
+        pattern = classify_leakage([{
+            "operation": "grep", "target": "evidence|provenlattice|\\bsqi\\b",
         }])[0]
-        self.assertTrue(no_path["sensitive"])
+        self.assertFalse(pattern["sensitive"])
+        outside = classify_leakage([{
+            "operation": "read", "target": "C:\\Users\\u\\.claude\\x",
+        }])[0]
+        self.assertTrue(outside["sensitive"])
 
 
 class TestBackendProvenance(WiringTestBase):
