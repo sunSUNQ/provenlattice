@@ -69,10 +69,46 @@ HALT_DRIFT = "INVALID_FINGERPRINT_DRIFT"
 HALT_UNEXPECTED = "INVALID_UNEXPECTED"
 
 import importlib  # noqa: E402
+import os  # noqa: E402
 harness_agent_adapter = importlib.import_module(
     "experiments.retrieval-v1.harness.agent_adapter")
 harness_models = importlib.import_module(
     "experiments.retrieval-v1.harness.models")
+
+# Claude session/config state is CELL-PRIVATE: CLAUDE_CONFIG_DIR points at a
+# per-cell home under the sanitized runtime output area (outside the denied
+# checkout), populated BEFORE the window opens by copying the host auth/config
+# files. Consequences (containment repair, 2026-09-18):
+#   * transcripts / tool-results are written to and re-read from the private
+#     home — the claude-CLI large-tool-result mechanics work again and no
+#     host-store path is ever touched (the transcript-store deny window stays
+#     on as defense in depth);
+#   * runtime-internal paths are non-sensitive under the frozen finite-root
+#     classification, so the INVALID_LEAKAGE halt root cause disappears
+#     without touching scanner or amendment semantics;
+#   * execution semantics (model, CLI version, prompts, allowlists, settings
+#     content) are unchanged — the config files are byte-copies.
+CLAUDE_HOME_FILES = (".claude.json",)
+CLAUDE_HOME_DIR_FILES = (".credentials.json", "settings.json")
+
+
+def build_cell_claude_home(cell_label: str, base: Path) -> Path:
+    """Create a cell-private claude home (pre-window) with byte-copied host
+    config; returns the directory for CLAUDE_CONFIG_DIR."""
+    home = base / "claude-homes" / cell_label
+    home.mkdir(parents=True, exist_ok=True)
+    user_home = Path(os.environ.get("USERPROFILE", ""))
+    for name in CLAUDE_HOME_FILES:
+        src = user_home / name
+        if src.exists():
+            shutil.copy2(src, home / name)
+    claude_dir = user_home / ".claude"
+    for name in CLAUDE_HOME_DIR_FILES:
+        src = claude_dir / name
+        if src.exists():
+            (home / name).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, home / name)
+    return home
 
 
 class C4BatchHalted(Exception):
@@ -222,12 +258,17 @@ class C4BatchRunner:
         self.cells_executed.append(cell["cell_id"])
         run_dir = (self.batch_dir / task_id / arm / f"r{repetition}")
         started = time.perf_counter()
+        # cell-private claude home, populated BEFORE the deny window opens
+        claude_home = build_cell_claude_home(cell["cell_id"],
+                                             self.runtime_output)
         if arm == "sqi":
             surface = prepare_sqi_cell(task, self.runtime_output)
             surface["run_dir"] = str(run_dir)
         else:
             surface = prepare_native_cell(task, self.runtime_output, self.config)
             surface["run_dir"] = str(run_dir)
+        surface["environment"]["CLAUDE_CONFIG_DIR"] = str(claude_home)
+        surface["claude_home"] = str(claude_home)
         window = self._window_factory(cell["cell_id"])
         session = None
         try:
@@ -366,6 +407,12 @@ class C4BatchRunner:
                 "fingerprint_unchanged": (
                     window.state.get("post_repos") == window.state.get("pre_repos")
                     and window.state.get("post_dbs") == window.state.get("pre_dbs")),
+                "claude_config_dir": "cell-private (runtime claude-homes/, "
+                                     "host store untouched; containment "
+                                     "repair e31e324 lineage)",
+                "claude_home_files": sorted(p.name for p in Path(
+                    surface.get("claude_home", "")).glob("*"))
+                if surface.get("claude_home") else [],
             },
             "runtime_db_sha256": (sha256_file(database)
                                   if database and Path(database).exists() else None),

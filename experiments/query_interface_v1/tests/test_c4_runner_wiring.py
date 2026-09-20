@@ -305,6 +305,47 @@ class TestCallLogRelocation(WiringTestBase):
         self.assert_restored()
 
 
+class TestCellPrivateClaudeHome(WiringTestBase):
+    """Containment repair: every cell gets a private CLAUDE_CONFIG_DIR under
+    the runtime output area, populated pre-window with byte-copied host
+    config; runtime-internal claude paths are not scanner-sensitive."""
+
+    def test_claude_home_created_and_wired(self):
+        import os
+        seen = []
+
+        def session(cell, surface, config):
+            seen.append(surface)
+            return benign_session(cell, surface, config)
+
+        runner = self.runner(session)
+        runner.run_batch(self.cells(2))
+        homes = [Path(s["claude_home"]) for s in seen]
+        self.assertEqual(len(set(homes)), 2, "homes must be per-cell distinct")
+        for s in seen:
+            self.assertEqual(s["environment"]["CLAUDE_CONFIG_DIR"],
+                             s["claude_home"])
+            home = Path(s["claude_home"])
+            self.assertTrue(home.is_dir())
+            self.assertTrue((home / ".claude.json").exists(),
+                            "host .claude.json must be byte-copied pre-window")
+        # runtime output area is outside the (synthetic) denied checkout
+        for home in homes:
+            self.assertFalse(str(home).startswith(str(self.checkout)))
+
+    def test_runtime_claude_paths_not_sensitive_host_paths_sensitive(self):
+        from v14_c4_lifecycle import classify_leakage
+        runtime_event = [{"operation": "read", "target":
+                          "D:\\pl-c4-runtime\\output\\c4\\b\\claude-homes"
+                          "\\SQI-T06.sqi.r1\\projects\\slug\\sess\\"
+                          "tool-results\\a.txt"}]
+        host_event = [{"operation": "read", "target":
+                       "C:\\Users\\u\\.claude\\projects\\slug\\sess\\"
+                       "tool-results\\a.txt"}]
+        self.assertFalse(classify_leakage(runtime_event)[0]["sensitive"])
+        self.assertTrue(classify_leakage(host_event)[0]["sensitive"])
+
+
 class TestFrozenOrder(unittest.TestCase):
 
     def test_order_is_36_protocol_s3(self):
