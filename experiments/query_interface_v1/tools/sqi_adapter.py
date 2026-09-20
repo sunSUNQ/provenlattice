@@ -48,7 +48,11 @@ SOURCE_VERIFICATION_POLICY = {
     "usage_discipline": [
         "Never repeat an identical invocation (same call, params, database, "
         "commit): it returns the byte-identical envelope. A truncated result "
-        "will not expand on retry - issue a more targeted query instead.",
+        "will not expand on retry - issue a more targeted query instead. A "
+        "truncated envelope is normal and already contains everything that "
+        "call can return under its budget: finish from the returned evidence "
+        "whenever it suffices, and do not re-query the same anchor with a "
+        "different budget just to obtain a shorter envelope.",
         "Before finishing, verify that every distinct source domain the task "
         "requires has contributed cited evidence (e.g. tasks spanning code "
         "and knowledge must show evidence from each domain); an answer "
