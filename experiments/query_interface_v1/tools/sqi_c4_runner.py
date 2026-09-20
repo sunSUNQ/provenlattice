@@ -595,12 +595,14 @@ def run_preflight() -> dict:
     status = subprocess.run(["git", "-C", str(REPO_ROOT), "status",
                              "--porcelain"], capture_output=True, text=True)
     dirty = [l for l in status.stdout.splitlines() if l.strip()
-             and "C4-PREFLIGHT-" not in l]
+             and "C4-PREFLIGHT-" not in l
+             and "C4-BACKEND-PROBE-" not in l]
     checks["working_tree_clean"] = {
         "pass": not dirty,
         "dirty_entries": dirty[:10],
         "self_generated_ignored": [l for l in status.stdout.splitlines()
-                                   if "C4-PREFLIGHT-" in l][:5],
+                                   if "C4-PREFLIGHT-" in l
+                                   or "C4-BACKEND-PROBE-" in l][:5],
     }
     probe = probe_backend(config, REPO_ROOT)
     checks["backend_probe"] = {
