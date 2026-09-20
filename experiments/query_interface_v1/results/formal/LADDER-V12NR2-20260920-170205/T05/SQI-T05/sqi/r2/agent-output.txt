@@ -1,0 +1,30 @@
+## Core implementation
+
+The documented behavior — 带负载上限的一致性哈希 ("Consistent Hashing with Bounded Loads") — is implemented by the class **`brpc.policy.ConsistentHashingBoundedLoadBalancer`**, defined at **`src/brpc/policy/consistent_hashing_load_balancer.h:98-130`** (Evidence `E-CODE-1726cdc7c9938223c1d04362`). The load-placement logic lives in its main override, the method **`ConsistentHashingBoundedLoadBalancer::SelectServer`**, at **`src/brpc/policy/consistent_hashing_load_balancer.cpp:525-602`** (declared in the header at line 107) — Evidence `E-CODE-3f698369ec57552531b20d82` (definition) and `E-CODE-367d5b5a91beb9028d859ae9` (declaration).
+
+The class is registered under the doc's LB name string `c_murmurhash_bl` in `src/brpc/global.cpp:416` (`RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)`), with the instance declared at `global.cpp:167`. This name string is not itself a graph node, which is why `symbol.lookup` on `c_murmurhash_bl` returns empty and the anchor must be resolved through the class name instead.
+
+## Document → code mapping
+
+The section is `docs/cn/client.md:286-288` (the knowledge node for the whole document is Evidence `E-DOC-84c6687a4e0a0cb4d722f06e`, `docs/cn/client.md`, lines 1-1037). Each documented claim maps to verified source:
+
+| Document claim (client.md:286-288) | Code |
+|---|---|
+| 哈希环与 `c_murmurhash` 完全相同 | Class derives from `ConsistentHashingLoadBalancer` (`.h:98`), inherits the same hash ring |
+| 每台服务器额外有容量上限 `ceil(load_factor * 平均在途请求数)` | `.cpp:546-551`: `capacity = ceil(_load_factor * (total + 1) / lm->size())` |
+| 已达上限时沿哈希环顺时针溢出到下一台有余量的服务器 | `.cpp:552-588`: `lower_bound` to the hashed node, then a clockwise walk taking the first server with `inflight < capacity` |
+| 溢出请求总是落到环上固定的后继节点（对 cache 友好） | The walk is deterministic from the request code (`.cpp:557-561` comment "Walk clockwise from the hashed-to node and take the first server under capacity") |
+| 系数默认来自 `-chash_bounded_load_factor`（默认 1.25，必须大于 1） | `.cpp:41-50`: `DEFINE_double(chash_bounded_load_factor, 1.25, ...)` + `ValidateLoadFactor` requiring `factor > 1.0` |
+| 可按 channel 覆盖 `c_murmurhash_bl:load_factor=1.5` | `.cpp:509-523`: `SetParameter` handles `load_factor`, rejecting `<= 1.0` |
+| `replicas` 参数与 `c_murmurhash` 相同 | Falls through to `ConsistentHashingLoadBalancer::SetParameter`, which handles `"replicas"` (`.cpp:420-422`) |
+| (set_request_code 要求，来自上文 c_murmurhash) | `.cpp:527-534`: `SelectServer` errors `EINVAL` if `!in.has_request_code` or code exceeds 32 bits |
+
+The bounded-load capacity is maintained live: `SelectServer` increments the per-server and total in-flight counters when a server is chosen (`.cpp:596-599`), and `Feedback` decrements them (`.cpp:604-605`), so the average that feeds `capacity` tracks actual in-flight requests.
+
+**Relationship summary:** the document is a user-facing description of one registered load balancer; the exact implementing symbol is the `ConsistentHashingBoundedLoadBalancer` class and specifically its `SelectServer` method in `src/brpc/policy/consistent_hashing_load_balancer.{h,cpp}`, reached through the `c_murmurhash_bl` registration in `src/brpc/global.cpp`. The doc's prose (name, capacity formula, clockwise overflow, default/override parameters) corresponds one-to-one with the verified code lines above.
+
+Evidence Used:
+- E-DOC-84c6687a4e0a0cb4d722f06e
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-3f698369ec57552531b20d82
+- E-CODE-367d5b5a91beb9028d859ae9

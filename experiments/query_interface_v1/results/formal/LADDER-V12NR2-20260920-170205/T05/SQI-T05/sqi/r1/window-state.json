@@ -1,0 +1,198 @@
+{
+ "label": "SQI-T05.sqi.r1",
+ "applied": [
+  {
+   "path": "D:\\ChatGPT\\codegraph\\provenlattice",
+   "rights": "(OI)(CI)(RD)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "C:\\Users\\sunqinghw\\.claude\\projects",
+   "rights": "(OI)(CI)(RD)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+   "rights": "(OI)(CI)(WD,AD,WA)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+   "rights": "(OI)(CI)(WD,AD,WA)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+   "rights": "(OI)(CI)(WD,AD,WA)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+   "rights": "(WD,AD,WA)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+   "rights": "(WD,AD,WA)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db",
+   "rights": "(WD,AD,WA)",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db",
+   "rights": "(WD,AD,WA)",
+   "rc": 0,
+   "stderr": ""
+  }
+ ],
+ "removed": [
+  {
+   "path": "D:\\ChatGPT\\codegraph\\provenlattice",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "C:\\Users\\sunqinghw\\.claude\\projects",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\aria2",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\brpc",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-repos\\rocksdb",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db",
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "path": "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db",
+   "rc": 0,
+   "stderr": ""
+  }
+ ],
+ "pre_repos": {
+  "aria2": {
+   "head": "9e7273583f83e881e3ec067b523ba88724088d2f",
+   "dirty": false
+  },
+  "brpc": {
+   "head": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+   "dirty": false
+  },
+  "rocksdb": {
+   "head": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+   "dirty": false
+  }
+ },
+ "post_repos": {
+  "aria2": {
+   "head": "9e7273583f83e881e3ec067b523ba88724088d2f",
+   "dirty": false
+  },
+  "brpc": {
+   "head": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+   "dirty": false
+  },
+  "rocksdb": {
+   "head": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+   "dirty": false
+  }
+ },
+ "pre_dbs": {
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db": "cbd56e3c4ca71104b4621cd4e112648e657c5729d310dcf9fb0aef80ee835abb",
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db": "285dbb2efd8b88ceb4497aee396777812c2715871f2018ce6f94a6be3e2663ef",
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db": "d30d61109aba16c92bb82037b7fd61ca643cefcdcebc577d6987ecfac89b58d0",
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db": "02c191a6881d05c6a6f8b9c3094c958fe36f910f763fecfc7508cd3f1483e449"
+ },
+ "post_dbs": {
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\aria2.db": "cbd56e3c4ca71104b4621cd4e112648e657c5729d310dcf9fb0aef80ee835abb",
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\brpc.db": "285dbb2efd8b88ceb4497aee396777812c2715871f2018ce6f94a6be3e2663ef",
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v0.2-db\\rocksdb.db": "d30d61109aba16c92bb82037b7fd61ca643cefcdcebc577d6987ecfac89b58d0",
+  "D:\\ChatGPT\\codegraph\\benchmark-analysis\\v1.0-db\\brpc-knowledge.db": "02c191a6881d05c6a6f8b9c3094c958fe36f910f763fecfc7508cd3f1483e449"
+ },
+ "window_closed_verified": {
+  "probes": {
+   "checkout_root_readme": {
+    "path": "D:\\ChatGPT\\codegraph\\provenlattice\\README.md",
+    "stdout": "PROBE_DENIED",
+    "denied": true,
+    "readable": false,
+    "missing": false
+   },
+   "tasks_fixture": {
+    "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\tasks\\SQI-T04.json",
+    "stdout": "PROBE_DENIED",
+    "denied": true,
+    "readable": false,
+    "missing": false
+   },
+   "git_head": {
+    "path": "D:\\ChatGPT\\codegraph\\provenlattice\\.git\\HEAD",
+    "stdout": "PROBE_DENIED",
+    "denied": true,
+    "readable": false,
+    "missing": false
+   }
+  },
+  "closed": true
+ },
+ "restore_verified": {
+  "probes": {
+   "checkout_root_readme": {
+    "path": "D:\\ChatGPT\\codegraph\\provenlattice\\README.md",
+    "stdout": "PROBE_OK",
+    "denied": false,
+    "readable": true,
+    "missing": false
+   },
+   "tasks_fixture": {
+    "path": "D:\\ChatGPT\\codegraph\\provenlattice\\experiments\\query_interface_v1\\tasks\\SQI-T04.json",
+    "stdout": "PROBE_OK",
+    "denied": false,
+    "readable": true,
+    "missing": false
+   },
+   "git_head": {
+    "path": "D:\\ChatGPT\\codegraph\\provenlattice\\.git\\HEAD",
+    "stdout": "PROBE_OK",
+    "denied": false,
+    "readable": true,
+    "missing": false
+   }
+  },
+  "restored": true
+ }
+}

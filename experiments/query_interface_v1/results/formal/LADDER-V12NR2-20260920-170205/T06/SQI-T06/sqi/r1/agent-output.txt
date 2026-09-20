@@ -1,0 +1,45 @@
+## Bundle explanation: `brpc.IsAskedToQuit`
+
+**Anchor / query:** `bundle.explain` on `brpc.IsAskedToQuit` (commit `ae09e960…`), budget `max_evidence=12, max_symbols=6, max_edges=10` (max_sections defaulted to 4). Result is **truncated** (`truncation.truncated: true`).
+
+**Definition location**
+- `src/brpc/controller.cpp`, lines **1976–1979**, entity `symbol:3c1e7e7a…`, kind `Function`, signature `()` — primary evidence **E-CODE-ee01188dd0889e9da9b23334** (relation `DEFINES`).
+- Membership: the function belongs to shard `src/brpc` — **E-SHARD-0bde357513df373d39780249**. Source verification also shows a declaration at `src/brpc/controller.h:1044`.
+
+**Callers returned within budget**
+Ten caller call-sites were returned as CALL relations (all `qualified_name_resolution`, distance 1, confidence 0.99):
+
+| Evidence ID | Caller symbol | Caller file |
+|---|---|---|
+| E-CALL-00a3caa26b074ffa09ed29e6 | `main` | `example/echo_c++/client.cpp` |
+| E-CALL-0273a5fb08cca748f455ef65 | `main` | `example/selective_echo_c++/client.cpp` |
+| E-CALL-09be8da5351041810f00b2c2 | `sender` | `example/bthread_tag_echo_c++/client.cpp` |
+| E-CALL-0c111e1f0403e9ccebbeecf2 | `main` | `example/streaming_echo_c++/client.cpp` |
+| E-CALL-0c4dbf504cfd8c02d7f24fdc | `main` | `example/multi_threaded_echo_fns_c++/server.cpp` |
+| E-CALL-10d353d47fcf5a8e9807f12d | `main` | `example/baidu_proxy_and_generic_call/client.cpp` |
+| E-CALL-192641f3a3d0eae0982de271 | `main` | `tools/rpc_press/rpc_press.cpp` |
+| E-CALL-1ea1cd3a46923fcb2f57e094 | `sender` | `example/memcache_c++/client.cpp` |
+| E-CALL-1f4fb793d5c388eff6ddd01d | `sender` | `example/parallel_echo_c++/client.cpp` |
+| E-CALL-2d556ccad9892fcca94f0fe6 | `main` | `example/mysql_c++/mysqlclient_press.cpp` |
+
+Five further caller symbols were surfaced only in the bundle's `related_entities` (they carry no Evidence ID of their own, so I cite them as structural listing only): `main` in `example/backup_request_c++/client.cpp`, `example/http_c++/benchmark_http.cpp`, `example/selective_echo_c++/server.cpp`, `example/session_data_and_thread_local/client.cpp`, and `example/rpcz_echo_c++/client.cpp`.
+
+**Omitted under budget** (`truncation.omitted_counts`): **39 edges** and **43 symbols** (raw_refs 0, sections 0). Budget usage was evidence 12/12, symbols 6/6, edges 11/10 — so the caller list above is a prefix, not the full caller set; the remaining ~39 caller edges were cut off. Note the tool's own source-verification policy: edge *existence* is directly trusted, but call-site *meaning* is not.
+
+**Verified claim about behavior** (checked in source, as required for a semantic claim): reading `src/brpc/controller.cpp:1976–1979` together with the surrounding definitions at lines 1922–1972, `IsAskedToQuit()` first runs `pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie)` — lazily installing a `quit_handler` for `SIGINT`/`SIGTERM`/`SIGHUP` — and then returns the `static volatile bool s_signal_quit`, which `quit_handler` sets to `true` (line 1928). So it is the "has this process been asked to shut down" predicate: it both guarantees the quit-signal handlers are registered and reports whether a quit signal has been observed. This is the semantic context in which the example clients/servers above call it, consistent with the definition's evidence.
+
+(Incidental source observation, outside the bundle evidence: `src/brpc/server.cpp:1899` also calls `IsAskedToQuit()` in a `while` loop; this caller did not appear in the returned evidence set.)
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

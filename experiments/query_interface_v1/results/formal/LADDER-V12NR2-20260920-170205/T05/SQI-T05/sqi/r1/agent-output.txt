@@ -1,0 +1,53 @@
+I have everything needed from both domains. Here is the synthesis.
+
+## Answer
+
+### Core implementation
+
+**Main code symbol:** `brpc::policy::ConsistentHashingBoundedLoadBalancer` (class) — declared at `src/brpc/policy/consistent_hashing_load_balancer.h:98`, implemented in `src/brpc/policy/consistent_hashing_load_balancer.cpp` (constructor `:427`, the load-aware `SelectServer` `:525`, `Feedback` `:604`).
+
+The behavior described in the `c_murmurhash_bl` section is implemented by this class and its `SelectServer` method, not by a standalone function. It is wired to the public name at `src/brpc/global.cpp:416`:
+
+```cpp
+LoadBalancerExtension()->RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb);
+```
+
+with the member `ConsistentHashingBoundedLoadBalancer ch_mh_bl_lb;` at `src/brpc/global.cpp:167`. So the `load_balancer_name` string in the doc maps directly to the registered singleton of this class.
+
+The bridge independently confirms the class identity: `symbol.lookup name=ConsistentHashingBoundedLoadBalancer` returns the `Class` node `brpc.policy.ConsistentHashingBoundedLoadBalancer` at `.h:98-130` (`E-CODE-1726cdc7c9938223c1d04362`), its constructor declarations (`E-CODE-cddcb1233eb5aa32cb587ed9`), and its `.cpp` constructor definition (`E-CODE-6aa9c25c466cb73b19d2a6b4`).
+
+### Document-to-code relationship
+
+`docs/cn/client.md` lines 286–288 describe the algorithm. The knowledge layer stores the section as a node whose anchor is the heading text `c_murmurhash_bl`. Querying `code.related --arg document=c_murmurhash_bl` resolves that section node and returns an explicit cross-layer link:
+
+- `E-XLINK-3284c4dde04ede3b45992a17` — kind `CROSS_LAYER_LINK`, relation `DOCUMENTS`, from `documentsection:2036840a…` at `docs/cn/client.md:286-289` to target `symbol:b5288136…` = `brpc.policy.AddServersInBatch.replicas` (`E-CODE-9cec5b84fb52b556c0c332c9`).
+
+Note the honesty caveat: the graph's single explicit symbol reference for this section resolved to the token **"replicas"** in the sentence "`replicas`参数与`c_murmurhash`相同", which resolves to the local variable `std::vector<Node> replicas;` at `consistent_hashing_load_balancer.cpp:265`, *not* to the class. That is the stored explicit link (a name-level match), so I treat it as the documented anchor connection only. The actual behavioral mapping between the doc's prose and the class must be, and was, verified by reading source (document equivalence is a source-verification-required claim).
+
+### Source verification of the doc's semantic claims
+
+Reading `src/brpc/policy/consistent_hashing_load_balancer.h/.cpp` confirms each claim in the section:
+
+| Doc claim (client.md:288) | Source evidence |
+|---|---|
+| "Consistent Hashing with Bounded Loads, Mirrokni等, CACM 2017" | Header docstring `consistent_hashing_load_balancer.h:93-97` cites the same paper verbatim |
+| "哈希环与`c_murmurhash`完全相同" | Class derives from `ConsistentHashingLoadBalancer` and reuses `_db_hash_ring`/`_num_replicas`; `SelectServer` uses the same `std::lower_bound` over the ring + wrap (`.cpp:552-556`) |
+| "容量上限 `ceil(load_factor * 平均在途请求数)`" | `.cpp:549-550`: `capacity = ceil(_load_factor * (total + 1) / lm->size())` |
+| "请求沿哈希环顺时针溢出到下一台有余量的服务器" | `.cpp:557-588`: clockwise walk, `if (++choice == s->end()) choice = s->begin();`, take first server with `inflight < capacity` |
+| "系数默认来自`-chash_bounded_load_factor`（默认1.25，必须大于1）" | `.cpp:41-50`: `DEFINE_double(chash_bounded_load_factor, 1.25, …)` + `ValidateLoadFactor` requiring `factor > 1.0` |
+| "可按channel覆盖：`c_murmurhash_bl:load_factor=1.5`" | `.cpp:509-523`: `SetParameter` handles key `"load_factor"`, rejecting values `<= 1.0` |
+| "`replicas`参数与`c_murmurhash`相同" | `.cpp:522` falls through to `ConsistentHashingLoadBalancer::SetParameter`, which handles `"replicas"` (`.cpp:418-421`) |
+
+Adjacent text in the same section also references `brpc::policy::MurmurHash32`, which resolves in the code layer to `src/brpc/policy/hasher.h:36` / `hasher.cpp:59` (`E-CODE-060f2f5eb9cff03f51e97bd0`, `E-CODE-efa45234083dedcce029045a`).
+
+**Summary:** the section documents the load-bounded consistent-hash policy; its single main code symbol is the class `brpc::policy::ConsistentHashingBoundedLoadBalancer` in `src/brpc/policy/consistent_hashing_load_balancer.{h,cpp}`, selected at runtime via the registered name `c_murmurhash_bl` (`global.cpp:416`). Both the knowledge domain (cross-layer `DOCUMENTS` link from the section) and the code domain (class/method definitions) contributed cited evidence.
+
+Evidence Used:
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-SHARD-0bd4b5aa4d298e72de409251
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-CODE-060f2f5eb9cff03f51e97bd0
+- E-CODE-efa45234083dedcce029045a

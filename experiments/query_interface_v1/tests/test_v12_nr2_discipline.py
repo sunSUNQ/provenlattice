@@ -114,10 +114,13 @@ class TestErrorEnvelope(unittest.TestCase):
         self.assertNotIn("c_murmurhash", serialized.lower())
 
     def test_guidance_states_resolution_semantics(self):
+        self.assertIn("call-type-scoped", EMPTY_RESULT_GUIDANCE)
         self.assertIn("exact node id", EMPTY_RESULT_GUIDANCE)
         self.assertIn("qualified_name", EMPTY_RESULT_GUIDANCE)
-        self.assertIn("node name", EMPTY_RESULT_GUIDANCE)
-        self.assertIn("vary the identifier form", EMPTY_RESULT_GUIDANCE)
+        self.assertIn("different call type", EMPTY_RESULT_GUIDANCE)
+        # the "discover stored names" advice is a proven dead end
+        # (bundle.explain related_entities do not embed section node names)
+        self.assertNotIn("discover stored names", EMPTY_RESULT_GUIDANCE)
 
 
 class TestSessionRule(unittest.TestCase):
@@ -125,8 +128,10 @@ class TestSessionRule(unittest.TestCase):
     def test_usage_discipline_has_three_generic_rules(self):
         rules = SOURCE_VERIFICATION_POLICY["usage_discipline"]
         self.assertEqual(len(rules), 3)
-        self.assertIn("empty envelope", rules[2])
+        self.assertIn("definitive only for the call type", rules[2])
+        self.assertIn("different call type", rules[2])
         self.assertIn("semantically equivalent forms", rules[2])
+        self.assertNotIn("discover stored names", rules[2])
         for banned in ("T05", "T06", "E-"):
             self.assertNotIn(banned, rules[2])
 
@@ -152,9 +157,9 @@ class TestSessionRule(unittest.TestCase):
 class TestArmPrompt(unittest.TestCase):
 
     def test_prompt_carries_empty_result_discipline(self):
-        self.assertIn("An empty envelope is definitive for the anchor form",
+        self.assertIn("definitive only for the call type",
                       SQI_ARM_PROMPT_TEMPLATE)
-        self.assertIn("symbol.lookup or bundle.explain on the anchor alone",
+        self.assertIn("retry it under a different call type",
                       SQI_ARM_PROMPT_TEMPLATE)
         self.assertIn("semantically equivalent forms",
                       SQI_ARM_PROMPT_TEMPLATE)

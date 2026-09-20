@@ -57,15 +57,21 @@ SOURCE_VERIFICATION_POLICY = {
         "requires has contributed cited evidence (e.g. tasks spanning code "
         "and knowledge must show evidence from each domain); an answer "
         "missing a required domain is incomplete.",
-        # V1.2-NR2: generic empty-result exploration discipline (no
-        # benchmark specifics). Teaches resolution semantics + recovery
-        # instead of semantically-equivalent retries.
-        "An empty envelope is definitive for the anchor form you used: "
-        "anchors resolve by exact node id, qualified_name, or node name "
-        "only. Check resolution with symbol.lookup or bundle.explain on the "
-        "anchor alone; if it does not resolve, vary the identifier form or "
-        "discover stored names with a broader query instead of retrying "
-        "semantically equivalent forms.",
+        # V1.2-NR2: generic agent usage discipline (no benchmark specifics).
+        # Emitted to the agent once per session with the first envelope.
+        # rules[2] v2: ladder finding - the same anchor string can resolve
+        # under one call type and stay empty under another (resolution is
+        # call-type-scoped); retrying an abandoned string under a different
+        # call type is the generic recovery, "discover stored names" was a
+        # dead end (bundle.explain related_entities do not embed section
+        # node names).
+        "An empty envelope is definitive only for the call type you used: "
+        "symbol.lookup matches code symbols only, while code.related and "
+        "bundle.explain resolve any node kind by exact node id, "
+        "qualified_name, or node name. The same anchor string can resolve "
+        "under one call type and stay empty under another - before "
+        "abandoning an anchor string, retry it under a different call "
+        "type; never retry semantically equivalent forms.",
     ],
 }
 
@@ -74,14 +80,16 @@ SOURCE_VERIFICATION_POLICY = {
 # only — no task identifiers, no required evidence ids, no benchmark
 # specifics. Deterministic content: byte-identical for identical calls.
 EMPTY_RESULT_GUIDANCE = (
-    "empty result: either the anchor matched no node (anchors resolve by "
-    "exact node id, qualified_name, or node name only; path fragments, "
-    "file#section forms, and natural-language variants do not resolve) or "
-    "the anchor exists but has no matching relations. First re-query the "
-    "anchor alone (symbol.lookup or bundle.explain) to check resolution; if "
-    "it does not resolve, vary the identifier form or discover stored names "
-    "with a broader query (e.g. bundle.explain on the enclosing document or "
-    "symbol), then re-query the discovered name."
+    "empty result: either no node matched this anchor for this call type, "
+    "or the anchor exists but has no matching relations. Anchor resolution "
+    "is call-type-scoped: symbol.lookup matches code symbols only, while "
+    "code.related and bundle.explain resolve any node kind (documents and "
+    "document sections included) by exact node id, qualified_name, or node "
+    "name; path fragments and file#section forms never resolve. The same "
+    "anchor string can therefore resolve under one call type and stay empty "
+    "under another: before abandoning an anchor string, retry it under a "
+    "different call type (an identifier that stayed empty under "
+    "symbol.lookup may resolve under code.related)."
 )
 
 ROW_CAP_FIELD = {

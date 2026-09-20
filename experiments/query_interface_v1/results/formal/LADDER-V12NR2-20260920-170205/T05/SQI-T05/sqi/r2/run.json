@@ -1,0 +1,49 @@
+{
+ "schema": "SQI_FORMAL_RUN_RECORD_V1",
+ "run_kind": "c4-after-optimization",
+ "batch_id": "LADDER-V12NR2-20260920-170205-T05",
+ "cell_id": "SQI-T05.sqi.r2",
+ "run_id": "C4-SQI-T05.sqi.r2-073d10",
+ "task_id": "SQI-T05",
+ "arm": "sqi",
+ "repetition": 2,
+ "repository": "B2-brpc",
+ "commit": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+ "database": "benchmark-analysis/v1.0-db/brpc-knowledge.db",
+ "model_id": "claude-sonnet-4-5-20250929",
+ "status": "completed",
+ "exit_reason": "completed",
+ "task_success": false,
+ "capability_failure_flags": [],
+ "tool_calls": 29,
+ "sqi_calls": 16,
+ "policy_violations": [],
+ "checkout_leakage_events": 0,
+ "sensitive_leakage_events": 0,
+ "prompt_hash": "a58fb1ffcf71e60d577c12449e9b08c29db4221aa557db2a7bf8652f290daba1",
+ "isolation": {
+  "profile": "V1.4-Windows Finite-Root Isolation Profile",
+  "baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+  "window_closed_verified": true,
+  "restore_verified": true,
+  "fingerprint_unchanged": true,
+  "claude_config_dir": "cell-private (runtime claude-homes/, host store untouched; containment repair e31e324 lineage)",
+  "claude_home_files": [
+   ".claude.json",
+   ".last-cleanup",
+   "session-env",
+   "sessions",
+   "settings.json",
+   "shell-snapshots",
+   "telemetry"
+  ],
+  "model_provenance": {
+   "requested_model_id": "claude-sonnet-4-5-20250929",
+   "init_reported_model": "claude-sonnet-4-5-20250929",
+   "backend_model": "deepseek-flash",
+   "reference_backend": "deepseek-flash",
+   "backend_verified": true
+  }
+ },
+ "runtime_db_sha256": "02c191a6881d05c6a6f8b9c3094c958fe36f910f763fecfc7508cd3f1483e449"
+}
