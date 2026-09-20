@@ -8,6 +8,7 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 
+from provenlattice import storage
 from provenlattice.graph import full_index
 from provenlattice.incremental import incremental_update
 from provenlattice.query import GraphQuery
@@ -120,6 +121,24 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(updated["delta"]["boundary_dirty"], [])
         self.assertEqual(len(updated["delta"]["shards_updated"]), 1)
         self.assertGreater(updated["delta"]["references_reused"], 0)
+
+    def test_subgraph_parity_across_id_binding_strategies(self) -> None:
+        """Above ID_BIND_LIMIT ids, traversal switches from bound placeholders to
+        a temp-table join. No other test reaches that branch — the fixtures are
+        all far below the limit — so force it and require identical results."""
+        database = Path(self.temp.name) / "graph.db"
+        full_index(self.root, database)
+        with GraphQuery(database) as query:
+            bound = query.get_subgraph("module_a.service.run", max_hops=2, max_nodes=50)
+        original = storage.ID_BIND_LIMIT
+        storage.ID_BIND_LIMIT = 1
+        try:
+            with GraphQuery(database) as query:
+                joined = query.get_subgraph("module_a.service.run", max_hops=2, max_nodes=50)
+        finally:
+            storage.ID_BIND_LIMIT = original
+        self.assertTrue(bound["data"]["nodes"])
+        self.assertEqual(bound["data"], joined["data"])
 
     def test_full_incremental_parity_for_required_changes(self) -> None:
         incremental_db = Path(self.temp.name) / "incremental.db"

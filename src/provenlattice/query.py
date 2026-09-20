@@ -424,13 +424,12 @@ class GraphQuery:
         for _ in range(max_hops):
             if not frontier or len(seen) >= max_nodes:
                 break
-            placeholders = ",".join("?" for _ in frontier)
-            values = tuple(sorted(frontier))
-            edges = self.view.query(
-                "Edge", f"SELECT * FROM edges WHERE src_id IN ({placeholders}) "
-                f"OR dst_id IN ({placeholders})", (*values, *values),
-                lambda row: row.get("src_id") in frontier or row.get("dst_id") in frontier,
-            )
+            with self.view.id_filter(frontier) as (sql, params):
+                edges = self.view.query(
+                    "Edge", f"SELECT * FROM edges WHERE src_id IN ({sql}) "
+                    f"OR dst_id IN ({sql})", (*params, *params),
+                    lambda row: row.get("src_id") in frontier or row.get("dst_id") in frontier,
+                )
             next_frontier: set[str] = set()
             for edge in sorted(edges, key=lambda row: row["id"]):
                 for other in (edge["src_id"], edge["dst_id"]):

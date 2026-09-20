@@ -4,9 +4,17 @@ import json
 import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator
+from typing import Iterable, Iterator
 
 from .models import Edge, Metrics, Node, RawReference, Shard
+
+
+# SQLite caps host parameters (SQLITE_MAX_VARIABLE_NUMBER = 32,766). An id set
+# larger than that cannot be written as an `IN (?, ?, ...)` list at all, which
+# is reachable the moment a hub symbol (a base class, a widely imported utility)
+# is traversed on a real repository. Below the threshold we keep binding plain
+# placeholders: it stays on the index and costs nothing to read.
+ID_BIND_LIMIT = 900
 
 
 SCHEMA = """
@@ -89,6 +97,28 @@ CREATE INDEX IF NOT EXISTS idx_raw_references_name ON raw_references(raw_name);
 CREATE INDEX IF NOT EXISTS idx_raw_references_file ON raw_references(file_id);
 CREATE INDEX IF NOT EXISTS idx_raw_references_owner ON raw_references(owner_symbol_id);
 CREATE INDEX IF NOT EXISTS idx_raw_references_resolved ON raw_references(resolved_symbol_id);
+-- `layer` lives in the metadata JSON but is queried as a column. Without these
+-- the planner scans the whole table, and for nodes that means reading a
+-- metadata blob which is ~95% of the table's bytes.
+--
+-- Two spellings are in use and they need separate indexes: the bare extract
+-- (used by the knowledge layer), and the COALESCE that defaults missing keys
+-- to 'code'. Whitespace inside the expression does not matter -- the planner
+-- matches on the parsed expression, so `json_extract(metadata,'$.layer')` and
+-- `json_extract(metadata, '$.layer')` share one index.
+--
+-- An equality predicate gets a SEARCH. The `!=` predicate used by
+-- replace_snapshot cannot, and is deliberately left as a scan: it removes
+-- every non-knowledge row, so it is anti-selective and one sequential pass
+-- beats materialising rowids and looking each one up. The COALESCE index
+-- therefore earns its keep on the COUNT(*) queries, where the index alone
+-- answers the query and the wide metadata column is never touched.
+CREATE INDEX IF NOT EXISTS idx_nodes_layer ON nodes(json_extract(metadata, '$.layer'));
+CREATE INDEX IF NOT EXISTS idx_nodes_layer_coalesced
+    ON nodes(COALESCE(json_extract(metadata, '$.layer'), 'code'));
+CREATE INDEX IF NOT EXISTS idx_edges_layer ON edges(json_extract(metadata, '$.layer'));
+CREATE INDEX IF NOT EXISTS idx_edges_layer_coalesced
+    ON edges(COALESCE(json_extract(metadata, '$.layer'), 'code'));
 CREATE INDEX IF NOT EXISTS idx_evidence_source ON raw_evidence_links(source_node_id);
 CREATE INDEX IF NOT EXISTS idx_evidence_anchor ON raw_evidence_links(raw_anchor);
 CREATE INDEX IF NOT EXISTS idx_evidence_resolved ON raw_evidence_links(resolved_target_id);
@@ -102,6 +132,7 @@ class SQLiteStorage:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.connection = sqlite3.connect(self.path)
         self.connection.row_factory = sqlite3.Row
+        self._id_filter_seq = 0
         self.connection.executescript(SCHEMA)
         # V0.3 introduced the reverse boundary index. Backfill snapshots created
         # by V0.2 once, before they are frozen as an Overlay base.
@@ -150,8 +181,14 @@ class SQLiteStorage:
         return dict(row) if row else None
 
     def file_states(self, repo_id: str) -> dict[str, dict]:
+        # file_state carries no repo_id of its own; scope it through files so a
+        # database holding more than one repository cannot leak states across.
         rows = self.connection.execute(
-            "SELECT file_id, path, source_hash, generation FROM file_state"
+            """SELECT state.file_id, state.path, state.source_hash, state.generation
+               FROM file_state AS state
+               JOIN files ON files.file_id = state.file_id
+               WHERE files.repo_id = ?""",
+            (repo_id,),
         ).fetchall()
         return {row["path"]: dict(row) for row in rows}
 
@@ -313,6 +350,36 @@ class SQLiteStorage:
 
     def rows(self, sql: str, params: tuple = ()) -> list[dict]:
         return [dict(row) for row in self.connection.execute(sql, params).fetchall()]
+
+    @contextmanager
+    def id_filter(self, values: Iterable[str]) -> Iterator[tuple[str, tuple]]:
+        """Yield an `(sql, params)` pair usable inside `IN (...)`, for any id count.
+
+        Small sets bind one placeholder per id. Large sets are materialised into
+        a temp table and read back as a subquery, so the number of host
+        parameters no longer depends on the caller's set size. Both forms are
+        evaluated as a membership test, so results are identical; only the
+        evaluation plan differs.
+        """
+        ordered = sorted(set(values))
+        if len(ordered) <= ID_BIND_LIMIT:
+            yield ",".join("?" for _ in ordered), tuple(ordered)
+            return
+        # A fresh name per call so that nesting two filters cannot make the
+        # inner DROP pull the table out from under the outer query.
+        self._id_filter_seq += 1
+        table = f"temp._id_filter_{self._id_filter_seq}"
+        self.connection.execute(f"DROP TABLE IF EXISTS {table}")
+        self.connection.execute(f"CREATE TEMP TABLE _id_filter_{self._id_filter_seq}"
+                                "(id TEXT PRIMARY KEY)")
+        try:
+            self.connection.executemany(
+                f"INSERT OR IGNORE INTO {table}(id) VALUES(?)",
+                ((value,) for value in ordered),
+            )
+            yield f"SELECT id FROM {table}", ()
+        finally:
+            self.connection.execute(f"DROP TABLE IF EXISTS {table}")
 
     def row(self, sql: str, params: tuple = ()) -> dict | None:
         result = self.connection.execute(sql, params).fetchone()

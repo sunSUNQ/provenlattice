@@ -29,11 +29,6 @@ def incremental_update(
         if generation == 0:
             raise RuntimeError("repository is not indexed; run `provenlattice index` first")
         old_states = storage.file_states(repo_id)
-        old_cache = storage.parser_cache(repo_id)
-        old_nodes = storage.snapshot_ids("nodes")
-        old_edges = storage.snapshot_ids("edges")
-        old_fingerprints = storage.shard_fingerprints()
-        old_references = storage.raw_reference_cache(repo_id)
 
         current_paths = set(source_by_path)
         old_paths = set(old_states)
@@ -55,6 +50,15 @@ def incremental_update(
                     shards_reused=len(storage.shard_fingerprints()), database_size=storage.database_size,
                 ).to_dict(),
             }
+
+        # Only past the point where the update is known to touch something: these
+        # four dumps dominate update memory (raw_references alone is ~57% of the
+        # database) and a no-op update must not pay for them.
+        old_cache = storage.parser_cache(repo_id)
+        old_nodes = storage.snapshot_ids("nodes")
+        old_edges = storage.snapshot_ids("edges")
+        old_fingerprints = storage.shard_fingerprints()
+        old_references = storage.raw_reference_cache(repo_id)
 
         parsed_files = {}
         parse_failures = 0
