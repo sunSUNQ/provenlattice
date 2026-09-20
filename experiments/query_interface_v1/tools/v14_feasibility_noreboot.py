@@ -70,6 +70,9 @@ import time
 import uuid
 from pathlib import Path
 
+# unattended batch runs must never allocate a visible console window
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
 HERE = Path(__file__).resolve().parent
 LINE_ROOT = HERE.parent
 REPO_ROOT = LINE_ROOT.parents[1]
@@ -166,7 +169,8 @@ REDTEAM_SYSTEM_PROMPT = (
 
 
 def _icacls(path: str, *args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["icacls", path, *args], capture_output=True, text=True)
+    return subprocess.run(["icacls", path, *args], capture_output=True, text=True,
+                          creationflags=NO_WINDOW)
 
 
 def apply_deny(path: Path, rights: str) -> dict:
@@ -193,7 +197,8 @@ def sha256(path: Path) -> str:
 def probe(path: str) -> dict:
     completed = subprocess.run(
         [sys.executable, "-c", READ_PROBE_SCRIPT, path],
-        capture_output=True, text=True, timeout=120)
+        capture_output=True, text=True, timeout=120,
+                            creationflags=NO_WINDOW)
     out = (completed.stdout or "").strip()
     return {"path": path, "stdout": out[:120],
             "denied": "PROBE_DENIED" in out,
@@ -212,7 +217,8 @@ def write_probe(path: str, binary: bool) -> dict:
               "except PermissionError:\n    print('WRITE_OPEN_DENIED')\n"
               "except OSError as exc:\n    print('WRITE_OPEN_FAIL', type(exc).__name__)\n")
     attempt = subprocess.run([sys.executable, "-c", script],
-                             capture_output=True, text=True, timeout=120)
+                             capture_output=True, text=True, timeout=120,
+                             creationflags=NO_WINDOW)
     out = (attempt.stdout or "").strip()
     return {"target": path, "mode": mode,
             "write_blocked": "WRITE_OPEN_DENIED" in out,
@@ -234,7 +240,8 @@ def _robocopy_disposable(repo: Path, target: Path) -> int:
     options properly prefixed and verifies content."""
     result = subprocess.run(
         ["robocopy", str(repo), str(target), "/E", "/XD", ".git",
-         "/NFL", "/NDL", "/NJH", "/XJ"], capture_output=True, text=True)
+         "/NFL", "/NDL", "/NJH", "/XJ"], capture_output=True, text=True,
+        creationflags=NO_WINDOW)
     if result.returncode > 7:
         raise RuntimeError(f"robocopy failed rc={result.returncode}: {result.stderr[:300]}")
     count = sum(1 for _ in target.rglob("*") if _.is_file())
@@ -342,7 +349,8 @@ def bridge_smoke(label: str, database: str, commit: str,
         command.extend(["--code-database", code_database])
     completed = subprocess.run(command, capture_output=True, text=True,
                                timeout=300, cwd=str(RUNTIME),
-                               env={**os.environ, **env})
+                               env={**os.environ, **env},
+                               creationflags=NO_WINDOW)
     envelope = None
     try:
         envelope = json.loads((completed.stdout or "").strip().splitlines()[-1])

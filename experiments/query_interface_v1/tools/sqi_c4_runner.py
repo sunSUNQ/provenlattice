@@ -38,6 +38,9 @@ import time
 import uuid
 from pathlib import Path
 
+# unattended batch runs must never allocate a visible console window
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
 HERE = Path(__file__).resolve().parent
 LINE_ROOT = HERE.parent
 REPO_ROOT = LINE_ROOT.parents[1]
@@ -511,7 +514,8 @@ def probe_backend(config: dict, cwd: Path) -> dict:
         [shutil.which("claude") or "claude", "-p", "Reply with exactly: ALIVE",
          "--verbose", "--output-format", "stream-json",
          "--model", config["model_id"]],
-        cwd=str(cwd), capture_output=True, text=True, env=env, timeout=300)
+        cwd=str(cwd), capture_output=True, text=True, env=env, timeout=300,
+        creationflags=NO_WINDOW)
     parsed = parse_probe_stream(completed.stdout or "")
     parsed["returncode"] = completed.returncode
     return parsed
@@ -519,7 +523,8 @@ def probe_backend(config: dict, cwd: Path) -> dict:
 
 def _git(*args: str) -> str:
     return subprocess.run(["git", "-C", str(REPO_ROOT), *args],
-                          capture_output=True, text=True).stdout
+                          capture_output=True, text=True,
+                          creationflags=NO_WINDOW).stdout
 
 
 # -- preflight -------------------------------------------------------------
@@ -529,7 +534,7 @@ def run_preflight() -> dict:
     checks: dict[str, object] = {}
     release = subprocess.run(
         [sys.executable, str(HERE / "verify_release.py")],
-        capture_output=True, text=True, timeout=900)
+        capture_output=True, text=True, timeout=900, creationflags=NO_WINDOW)
     checks["release_verification"] = {
         "pass": release.returncode == 0,
         "tail": release.stdout.strip().splitlines()[-2:] if release.stdout else [],
@@ -538,7 +543,8 @@ def run_preflight() -> dict:
         "sha": ISOLATION_BASELINE_SHA,
         "is_ancestor": subprocess.run(
             ["git", "-C", str(REPO_ROOT), "merge-base", "--is-ancestor",
-             ISOLATION_BASELINE_SHA, "HEAD"]).returncode == 0,
+             ISOLATION_BASELINE_SHA, "HEAD"],
+         creationflags=NO_WINDOW).returncode == 0,
         "pass": True,
     }
     checks["isolation_baseline_commit"]["pass"] = (
@@ -593,7 +599,8 @@ def run_preflight() -> dict:
         "pass": checks["release_verification"]["pass"],
     }
     status = subprocess.run(["git", "-C", str(REPO_ROOT), "status",
-                             "--porcelain"], capture_output=True, text=True)
+                             "--porcelain"], capture_output=True, text=True,
+                             creationflags=NO_WINDOW)
     dirty = [l for l in status.stdout.splitlines() if l.strip()
              and "C4-PREFLIGHT-" not in l
              and "C4-BACKEND-PROBE-" not in l]

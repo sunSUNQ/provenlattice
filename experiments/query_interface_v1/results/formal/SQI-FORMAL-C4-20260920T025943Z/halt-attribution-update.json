@@ -1,0 +1,36 @@
+{
+ "schema": "SQI_C4_HALT_ATTRIBUTION_UPDATE_V1",
+ "batch_id": "SQI-FORMAL-C4-20260920T025943Z",
+ "halted_at_cell": "SQI-T03.native.r1",
+ "original_reason": "INVALID_EXECUTION (backend identity missing)",
+ "revised_attribution": {
+  "classification": "OPERATOR_OR_PROCESS_TERMINATION (probable)",
+  "evidence": [
+   "empty stream signature: 0-byte agent output, no init event, no assistant "
+   "message, no result event — consistent with the CLI process tree being "
+   "terminated mid-run, not with a gateway protocol failure",
+   "immediately-after health probes: 3/3 ALIVE on deepseek-flash, ruling out "
+   "a sustained backend outage at that moment",
+   "visible CMD console windows had been popping up during detached batch "
+   "runs (each cell spawns claude/cmd/powershell children); a manually "
+   "closed console kills the whole attached process tree"
+  ],
+  "note": "the fail-closed missing-identity gate behaved exactly as designed "
+          "— it stopped the batch on an unverifiable session instead of "
+          "mixing unattributable data"
+ },
+ "remediation": {
+  "hardening": "CREATE_NO_WINDOW applied to every spawn point in the C4 "
+               "execution chain (agent_adapter claude spawn, c4_runner "
+               "probe/git/verify_release, v14_feasibility icacls/probes/"
+               "bridge/robocopy, v14_sandbox icacls/robocopy/git)",
+  "verification": "real SQI-T01.sqi session with visible-window polling: "
+                  "0 visible console windows (cmd/powershell/python/node/"
+                  "conhost/bash), all evidence collection intact "
+                  "(PREFLIGHT-C4-20260920-112414, PASS)",
+  "future_policy": "no visible console during unattended batches; empty-"
+                   "stream halts classified OPERATOR_OR_PROCESS_TERMINATION "
+                   "vs BACKEND_TRANSIENT via process termination status and "
+                   "health probes before any rerun"
+ }
+}

@@ -69,7 +69,11 @@ class CommandAgentAdapter:
             completed = subprocess.run(
                 command, cwd=request.repo_path,
                 input=stdin_value, text=True, encoding="utf-8", errors="replace",
-                capture_output=True, timeout=request.timeout, env={**__import__("os").environ, **env},
+                capture_output=True, timeout=request.timeout,
+                env={**__import__("os").environ, **env},
+                # never allocate a visible console for unattended batch runs:
+                # a manually closed console window kills the whole session tree
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
             )
         except subprocess.TimeoutExpired as exc:
             return AdapterResult(exc.stdout or "", [], "timeout", str(exc))

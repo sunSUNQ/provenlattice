@@ -18,6 +18,9 @@ import os
 import subprocess
 from pathlib import Path
 
+# unattended batch runs must never allocate a visible console window
+NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 WORKSPACE = REPO_ROOT.parent
 USER = os.environ.get("USERNAME", os.environ.get("USER", ""))
@@ -38,7 +41,8 @@ DENY_READ_ARTIFACTS = [
 
 
 def _icacls(path: str, *args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["icacls", path, *args], capture_output=True, text=True)
+    return subprocess.run(["icacls", path, *args], capture_output=True, text=True,
+                          creationflags=NO_WINDOW)
 
 
 def apply_session_protection(user: str | None = None) -> dict:
@@ -80,7 +84,8 @@ def build_disposable_copy(repo: Path, target: Path) -> Path:
     """
     result = subprocess.run(
         ["robocopy", str(repo), str(target), "/E", "/XD", ".git",
-         "/NFL", "/NDL", "/NJH", "/XJ"], capture_output=True, text=True)
+         "/NFL", "/NDL", "/NJH", "/XJ"], capture_output=True, text=True,
+        creationflags=NO_WINDOW)
     # robocopy exit codes 0-7 are success
     if result.returncode > 7:
         raise RuntimeError(f"robocopy failed rc={result.returncode}: {result.stderr[:400]}")
@@ -94,9 +99,11 @@ def build_disposable_copy(repo: Path, target: Path) -> Path:
 def repo_fingerprint(repo: Path) -> dict:
     """HEAD + worktree dirtiness snapshot (post-session integrity check)."""
     head = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"],
-                          capture_output=True, text=True).stdout.strip()
+                          capture_output=True, text=True,
+                          creationflags=NO_WINDOW).stdout.strip()
     status = subprocess.run(["git", "-C", str(repo), "status", "--porcelain"],
-                            capture_output=True, text=True).stdout
+                            capture_output=True, text=True,
+                            creationflags=NO_WINDOW).stdout
     return {"head": head, "dirty": bool(status.strip())}
 
 
