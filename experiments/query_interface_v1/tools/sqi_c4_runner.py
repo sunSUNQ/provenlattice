@@ -155,8 +155,8 @@ def prepare_native_cell(task: dict, batch_output: Path, config: dict) -> dict:
     }
 
 
-def prepare_sqi_cell(task: dict, batch_output: Path) -> dict:
-    surface = prepare_cell(task, batch_output)
+def prepare_sqi_cell(task: dict, batch_output: Path, repetition: int) -> dict:
+    surface = prepare_cell(task, batch_output, label_suffix=f"-r{repetition}")
     surface["system_prompt"] = surface.pop("arm_prompt")
     return surface
 
@@ -273,7 +273,7 @@ class C4BatchRunner:
         claude_home = build_cell_claude_home(cell["cell_id"],
                                              self.runtime_output)
         if arm == "sqi":
-            surface = prepare_sqi_cell(task, self.runtime_output)
+            surface = prepare_sqi_cell(task, self.runtime_output, repetition)
             surface["run_dir"] = str(run_dir)
         else:
             surface = prepare_native_cell(task, self.runtime_output, self.config)

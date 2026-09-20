@@ -1,0 +1,45 @@
+## Bundle explanation: `brpc.IsAskedToQuit`
+
+**Definition (primary evidence).** `bool IsAskedToQuit()` is defined in `src/brpc/controller.cpp`, lines 1976–1979. The bundle returned this as the anchor definition (kind `CODE_DEFINITION`), and the symbol resolves to shard `src/brpc`. Source verification of lines 1976–1979:
+
+```cpp
+bool IsAskedToQuit() {
+    pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie);
+    return s_signal_quit;
+}
+```
+
+**Budget actually applied:** `max_evidence=12, max_symbols=6, max_edges=10`, `max_sections=4` (default filled in). Used: evidence 12, symbols 6, edges 11. `truncated: true`.
+
+**Callers returned** (10 `CALLS` edges delivered with evidence IDs; all are resolved via qualified-name resolution, distance 1):
+
+| Enclosing symbol | Call-site file | Lines |
+|---|---|---|
+| `main` | `example/echo_c++/client.cpp` | 36–97 |
+| `main` | `example/selective_echo_c++/client.cpp` | 87–240 |
+| `sender` | `example/bthread_tag_echo_c++/client.cpp` | 47–83 |
+| `main` | `example/streaming_echo_c++/client.cpp` | 32–83 |
+| `main` | `example/multi_threaded_echo_fns_c++/server.cpp` | 98–188 |
+| `main` | `example/baidu_proxy_and_generic_call/client.cpp` | 35–94 |
+| `main` | `tools/rpc_press/rpc_press.cpp` | 98–129 |
+| `sender` | `example/memcache_c++/client.cpp` | 48–100 |
+| `sender` | `example/parallel_echo_c++/client.cpp` | 51–93 |
+| `main` | `example/mysql_c++/mysqlclient_press.cpp` | 121–244 |
+
+**Omitted due to the budget:** `omitted_counts` reports **39 edges** and **43 symbols** dropped (plus 0 raw_refs, 0 sections). The envelope also flags `retry_same_call_will_not_expand: true`, so the 39/43 remain unrecoverable from this call alone. (Separately, `related_entities` listed 5 further caller symbols — `main` in `example/backup_request_c++/client.cpp`, `example/http_c++/benchmark_http.cpp`, `example/selective_echo_c++/server.cpp`, `example/session_data_and_thread_local/client.cpp`, and `example/rpcz_echo_c++/client.cpp` — carried inside the symbol quota but without their own evidence IDs.)
+
+**Verified claim about what it does.** Read against source lines 1922–1930 and 1976–1979: `IsAskedToQuit` returns the module-level `static volatile bool s_signal_quit`, first calling `pthread_once` to install the quit-signal handlers exactly once; `s_signal_quit` is set to `true` by `quit_handler(int signo)` when a quit signal (SIGINT, and per lines 1960–1972 SIGTERM/SIGHUP when enabled) is received. Its call-site meaning is confirmed as a polling predicate: the echo example uses it directly as a loop guard, `while (!brpc::IsAskedToQuit())` (`example/echo_c++/client.cpp:61`), i.e. callers spin until a shutdown signal has been delivered.
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

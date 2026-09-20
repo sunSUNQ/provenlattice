@@ -1,0 +1,59 @@
+{
+ "schema": "SQI_V12NR1_LADDER_EVIDENCE_V1",
+ "ladder_id": "LADDER-V12NR1-20260920-143147",
+ "runner_commit": "927cab6ee7da24840b0c5191f06a079414d625b9",
+ "stages": [
+  {
+   "stage": "T06",
+   "halted": null,
+   "cells": [
+    {
+     "cell": "SQI-T06.sqi.r1",
+     "task_id": "SQI-T06",
+     "status": "completed",
+     "task_success": true,
+     "sqi_calls": 1,
+     "bundle_explain_calls": 1,
+     "cache_hits": 0,
+     "sensitive_leakage": 0,
+     "citation_closure_ok": true,
+     "machine_checks_failed": [],
+     "backend": "deepseek-flash"
+    },
+    {
+     "cell": "SQI-T06.sqi.r2",
+     "task_id": "SQI-T06",
+     "status": "completed",
+     "task_success": false,
+     "sqi_calls": 2,
+     "bundle_explain_calls": 2,
+     "cache_hits": 0,
+     "sensitive_leakage": 0,
+     "citation_closure_ok": true,
+     "machine_checks_failed": [
+      "single_bundle_explain_call"
+     ],
+     "backend": "deepseek-flash"
+    },
+    {
+     "cell": "SQI-T06.sqi.r3",
+     "task_id": "SQI-T06",
+     "status": "completed",
+     "task_success": false,
+     "sqi_calls": 3,
+     "bundle_explain_calls": 3,
+     "cache_hits": 0,
+     "sensitive_leakage": 0,
+     "citation_closure_ok": true,
+     "machine_checks_failed": [
+      "single_bundle_explain_call"
+     ],
+     "backend": "deepseek-flash"
+    }
+   ],
+   "gate_pass": false,
+   "gate_detail": "all 3 reps: task_success + exactly one bundle.explain, zero identical repeat"
+  }
+ ],
+ "verdict": "FAIL"
+}

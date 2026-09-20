@@ -149,10 +149,15 @@ class CellWindow:
         return False
 
 
-def prepare_cell(task: dict, batch_output: Path) -> dict:
-    """Sanitized per-cell execution surface for the session builder."""
+def prepare_cell(task: dict, batch_output: Path, label_suffix: str = "") -> dict:
+    """Sanitized per-cell execution surface for the session builder.
+
+    `label_suffix` MUST distinguish repetitions (e.g. "-r2"): the SQI call
+    log lives under this label, and a shared label would cross-contaminate
+    the session cache and the evaluator's call accounting across cells
+    (root cause of the T06/T05 evaluation pollution, fixed 2026-09-20)."""
     database, code_database = runtime_db_for(task)
-    label = f"{task['task_id']}-sqi"
+    label = f"{task['task_id']}-sqi{label_suffix}"
     environment = {
         "PL_SQI_PROTOCOL": "1",
         "PL_SQI_CALL_LOG": str(batch_output / label / "sqi-call-log.ndjson"),

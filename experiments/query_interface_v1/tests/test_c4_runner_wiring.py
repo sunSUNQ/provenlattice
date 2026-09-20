@@ -440,6 +440,31 @@ class TestProbeParsing(unittest.TestCase):
         self.assertEqual(parsed["output"], "ALIVE")
 
 
+class TestPerRepetitionCallLog(WiringTestBase):
+    """Root-cause regression (T05/T06 evaluation pollution): repetitions of
+    the same task must use DISTINCT call-log paths — a shared log would
+    cross-serve the session cache and pollute the evaluator's counts."""
+
+    def test_repetitions_get_distinct_call_logs(self):
+        seen = []
+
+        def session(cell, surface, config):
+            seen.append(Path(surface["environment"]["PL_SQI_CALL_LOG"]))
+            return benign_session(cell, surface, config)
+
+        runner = C4BatchRunner(
+            self.config, self.tasks, "TEST-C4-BATCH", self.batch_dir,
+            window_factory=self.factory(), session_fn=session,
+            evaluate_fn=stub_evaluate)
+        runner.run_batch([{"task_id": "SQI-T05", "arm": "sqi",
+                           "repetition": i} for i in (1, 2)])
+        self.assertEqual(len(seen), 2)
+        self.assertNotEqual(seen[0], seen[1])
+        for path in seen:
+            self.assertTrue(str(path).endswith(".ndjson"))
+            self.assertIn("SQI-T05-sqi-r", str(path).replace("\\", "/"))
+
+
 class TestFrozenOrder(unittest.TestCase):
 
     def test_order_is_36_protocol_s3(self):
