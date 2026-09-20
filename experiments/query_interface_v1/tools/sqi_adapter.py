@@ -53,8 +53,32 @@ SOURCE_VERIFICATION_POLICY = {
         "requires has contributed cited evidence (e.g. tasks spanning code "
         "and knowledge must show evidence from each domain); an answer "
         "missing a required domain is incomplete.",
+        # V1.2-NR2: generic empty-result exploration discipline (no
+        # benchmark specifics). Teaches resolution semantics + recovery
+        # instead of semantically-equivalent retries.
+        "An empty envelope is definitive for the anchor form you used: "
+        "anchors resolve by exact node id, qualified_name, or node name "
+        "only. Check resolution with symbol.lookup or bundle.explain on the "
+        "anchor alone; if it does not resolve, vary the identifier form or "
+        "discover stored names with a broader query instead of retrying "
+        "semantically equivalent forms.",
     ],
 }
+
+# V1.2-NR2: generic guidance merged into result_meta of every empty
+# (zero data rows, zero evidence, no error) envelope. Interface semantics
+# only — no task identifiers, no required evidence ids, no benchmark
+# specifics. Deterministic content: byte-identical for identical calls.
+EMPTY_RESULT_GUIDANCE = (
+    "empty result: either the anchor matched no node (anchors resolve by "
+    "exact node id, qualified_name, or node name only; path fragments, "
+    "file#section forms, and natural-language variants do not resolve) or "
+    "the anchor exists but has no matching relations. First re-query the "
+    "anchor alone (symbol.lookup or bundle.explain) to check resolution; if "
+    "it does not resolve, vary the identifier form or discover stored names "
+    "with a broader query (e.g. bundle.explain on the enclosing document or "
+    "symbol), then re-query the discovered name."
+)
 
 ROW_CAP_FIELD = {
     "symbol.lookup": "max_symbols",
@@ -204,6 +228,12 @@ class SQIAdapter:
             "sections": 0,
             "evidence": len(kept_evidence),
         }
+        # V1.2-NR2: empty envelopes carry generic recovery guidance in
+        # result_meta (deterministic; error envelopes exclude it — see
+        # _error). Non-empty envelopes are byte-unchanged.
+        meta = dict(extra_meta or {})
+        if not kept_rows and not kept_evidence:
+            meta["empty_result_guidance"] = EMPTY_RESULT_GUIDANCE
         envelope = {
             "sqi_version": SQI_VERSION,
             "query_id": raw["query_id"],
@@ -225,7 +255,7 @@ class SQIAdapter:
                "omitted_counts": omitted,
                "retry_same_call_will_not_expand": True},
 "source_verification_policy": SOURCE_VERIFICATION_POLICY,
-            "result_meta": extra_meta or {},
+            "result_meta": meta,
             "query_time_ms": raw.get("query_time_ms", 0.0),
         }
         size = len(json.dumps(envelope, ensure_ascii=False))
@@ -246,6 +276,9 @@ class SQIAdapter:
                                    "evidence": [], "bundle_size": 0,
                                    "query_time_ms": 0.0},
                                   declared)
+        # V1.2-NR2: the empty-result guidance describes valid-but-empty
+        # outcomes; an error envelope already explains itself.
+        envelope.get("result_meta", {}).pop("empty_result_guidance", None)
         envelope["error"] = {"code": code, "message": message}
         return envelope
 
@@ -590,6 +623,13 @@ class SQIAdapter:
                 "raw_refs": 0, "sections": len([e for e in related
                                                 if e.get("kind") == "Document"]),
                 "evidence": raw.get("returned_evidence_count", len(evidence))}
+        # V1.2-NR2: empty bundles carry the same generic recovery guidance
+        # as the shared envelope path (deterministic; non-empty unchanged).
+        bundle_meta = {"bundle_profile": bundle.get("profile", "generic"),
+                       "intent": bundle.get("intent", "explain_symbol")}
+        if (not evidence and not related
+                and not raw.get("returned_evidence_count", 0)):
+            bundle_meta["empty_result_guidance"] = EMPTY_RESULT_GUIDANCE
         envelope = {
             "sqi_version": SQI_VERSION,
             "query_id": raw["query_id"],
@@ -613,8 +653,7 @@ class SQIAdapter:
                            "omitted_counts": omitted,
                            "retry_same_call_will_not_expand": True},
             "source_verification_policy": SOURCE_VERIFICATION_POLICY,
-            "result_meta": {"bundle_profile": bundle.get("profile", "generic"),
-                            "intent": bundle.get("intent", "explain_symbol")},
+            "result_meta": bundle_meta,
             "query_time_ms": raw.get("query_time_ms", 0.0),
         }
         size = len(json.dumps(envelope, ensure_ascii=False))

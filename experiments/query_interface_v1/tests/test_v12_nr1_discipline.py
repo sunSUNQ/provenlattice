@@ -83,7 +83,9 @@ class TestUsageDiscipline(unittest.TestCase):
 
     def test_policy_contains_discipline_rules(self):
         rules = SOURCE_VERIFICATION_POLICY.get("usage_discipline", [])
-        self.assertEqual(len(rules), 2)
+        # 2 frozen NR1 rules + 1 NR2 empty-result rule (appended, NR1
+        # rules[0]/rules[1] unchanged)
+        self.assertEqual(len(rules), 3)
         self.assertIn("byte-identical envelope", rules[0])
         self.assertIn("will not expand", rules[0])
         self.assertIn("source domain", rules[1])
@@ -100,7 +102,7 @@ class TestUsageDiscipline(unittest.TestCase):
         ok, errors = validate_envelope(plain)
         self.assertTrue(ok, errors)
         self.assertEqual(len(plain["source_verification_policy"]
-                             ["usage_discipline"]), 2)
+                             ["usage_discipline"]), 3)
 
     def test_arm_prompt_carries_discipline(self):
         self.assertIn("Never repeat an identical bridge invocation",

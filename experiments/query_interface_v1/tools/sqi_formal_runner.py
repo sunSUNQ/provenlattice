@@ -95,6 +95,12 @@ SQI_ARM_PROMPT_TEMPLATE = (
     "Before finishing, verify that every distinct source domain the task requires has "
     "contributed cited evidence (for example, a task spanning both code and knowledge must "
     "show evidence from each domain); an answer missing a required domain is incomplete. "
+    "An empty envelope is definitive for the anchor form you used: anchors resolve by exact "
+    "node id, qualified_name, or node name only — path fragments and natural-language "
+    "variants do not resolve. On an empty result, first check resolution with symbol.lookup "
+    "or bundle.explain on the anchor alone; if it does not resolve, vary the identifier form "
+    "or discover stored names with a broader query (for example bundle.explain on the "
+    "enclosing document or symbol) instead of retrying semantically equivalent forms. "
     "Never bypass, chain, pipe, or truncate the CLI's JSON output. Stay inside the "
     "repository working directory; do not read or probe paths outside it."
 )
