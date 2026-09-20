@@ -103,6 +103,11 @@ def _find_cached(entries: list[dict], call: str, params: dict,
 
 
 def main() -> int:
+    # Deterministic stdout encoding: the envelope bytes are consumed by
+    # agents and test harnesses as UTF-8; never fall back to the console
+    # locale (cp936 would emit GBK bytes for non-ASCII summaries).
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     parser = argparse.ArgumentParser(prog="sqi_cli", add_help=True)
     parser.add_argument("--database", required=True)
     parser.add_argument("--commit", required=True)

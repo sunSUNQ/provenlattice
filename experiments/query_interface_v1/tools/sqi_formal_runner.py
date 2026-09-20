@@ -89,7 +89,13 @@ SQI_ARM_PROMPT_TEMPLATE = (
     "(identity, existence, frontier membership) may be cited directly; semantic claims "
     "(definition meaning, call-site meaning, reference purpose, downstream impact, "
     "document-code equivalence) must be verified by reading the source files before you assert "
-    "them. Never bypass, chain, pipe, or truncate the CLI's JSON output. Stay inside the "
+    "them. Never repeat an identical bridge invocation (same call, parameters, database, and "
+    "commit): it returns the byte-identical envelope, and a truncated result will not expand "
+    "on retry — if you need more or different information, issue a more targeted query instead. "
+    "Before finishing, verify that every distinct source domain the task requires has "
+    "contributed cited evidence (for example, a task spanning both code and knowledge must "
+    "show evidence from each domain); an answer missing a required domain is incomplete. "
+    "Never bypass, chain, pipe, or truncate the CLI's JSON output. Stay inside the "
     "repository working directory; do not read or probe paths outside it."
 )
 NATIVE_ARM_PROMPT = (

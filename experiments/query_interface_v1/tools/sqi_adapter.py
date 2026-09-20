@@ -43,6 +43,17 @@ SOURCE_VERIFICATION_POLICY = {
         "symbol_identity", "edge_existence",
         "reference_existence_and_status", "frontier_membership",
     ],
+    # V1.2-NR1: generic agent usage discipline (no benchmark specifics).
+    # Emitted to the agent once per session with the first envelope.
+    "usage_discipline": [
+        "Never repeat an identical invocation (same call, params, database, "
+        "commit): it returns the byte-identical envelope. A truncated result "
+        "will not expand on retry - issue a more targeted query instead.",
+        "Before finishing, verify that every distinct source domain the task "
+        "requires has contributed cited evidence (e.g. tasks spanning code "
+        "and knowledge must show evidence from each domain); an answer "
+        "missing a required domain is incomplete.",
+    ],
 }
 
 ROW_CAP_FIELD = {
@@ -210,9 +221,10 @@ class SQIAdapter:
             "budget": {"declared": {field: int(declared_full[field])
                                     for field in DEFAULT_BUDGET},
                        "applied": applied, "used": used},
-            "truncation": {"truncated": any(value > 0 for value in omitted.values()),
-                           "omitted_counts": omitted},
-            "source_verification_policy": SOURCE_VERIFICATION_POLICY,
+"truncation": {"truncated": any(value > 0 for value in omitted.values()),
+               "omitted_counts": omitted,
+               "retry_same_call_will_not_expand": True},
+"source_verification_policy": SOURCE_VERIFICATION_POLICY,
             "result_meta": extra_meta or {},
             "query_time_ms": raw.get("query_time_ms", 0.0),
         }
@@ -598,7 +610,8 @@ class SQIAdapter:
             "truncation": {"truncated": any(value > 0 for value in omitted.values())
                            or bool(bundle.get("fallback_triggered") is False
                                    and bundle.get("suppressed_evidence_count", 0) > 0),
-                           "omitted_counts": omitted},
+                           "omitted_counts": omitted,
+                           "retry_same_call_will_not_expand": True},
             "source_verification_policy": SOURCE_VERIFICATION_POLICY,
             "result_meta": {"bundle_profile": bundle.get("profile", "generic"),
                             "intent": bundle.get("intent", "explain_symbol")},
