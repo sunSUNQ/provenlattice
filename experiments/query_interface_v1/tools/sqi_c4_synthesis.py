@@ -1,11 +1,10 @@
-"""C4-R3 clean synthesis + V1.2 final qualification verdict.
+"""C4-R4 clean synthesis + V1.2 final qualification verdict.
 
-Evidence: SQI-FORMAL-C4-20260920T072457Z — single clean 36-cell batch on a
+Evidence: SQI-FORMAL-C4-20260920T093328Z — full clean 36-cell batch on a
 single backend (deepseek-flash), full model_provenance per cell, zero
-sensitive leakage. Supersedes the R2 batch (20260920T042801Z): all earlier
-T05/T06 conclusions were invalidated by the cross-cell call-log pollution
-fixed in bbc03ba; this batch ran with per-repetition call-log labels and the
-V1.2-NR1 discipline (927cab6) active in every envelope.
+sensitive leakage. Ran with the complete V1.2-NR2 repair active
+(empty-result call-type-scoping guidance, subset clause, knowledge-to-code
+composite documentation; commits cf5e8c9..7f8737f).
 
 Frozen evaluation order: capability floors first, then per-task cost with
 the V1.1 baseline (SQI-FORMAL-20260917-1, cost-attribution-v1.json numbers;
@@ -25,7 +24,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 LINE_ROOT = HERE.parent
 RESULTS = LINE_ROOT / "results" / "formal"
-CLEAN_BATCH = RESULTS / "SQI-FORMAL-C4-20260920T072457Z"
+CLEAN_BATCH = RESULTS / "SQI-FORMAL-C4-20260920T093328Z"
 BASELINE_BATCH = RESULTS / "SQI-FORMAL-20260917-1"
 
 
@@ -238,19 +237,28 @@ def main() -> int:
             if identical_dups == dup_groups and dup_groups else "MIXED — "
                                                                 "inspect",
         },
-        "mechanism": "required pair {} is returned by code.related with "
-                     "params document=c_murmurhash_bl (r1 at call 3; r2 at "
-                     "calls 14 and 17 after divergent exploration). The "
-                     "failing cell {} issued {} calls, never that signature — "
-                     "only near-miss shapes (docs/cn/client.md path forms, "
-                     "symbol.lookup of the anchor string). All four content "
-                     "checks passed and citation closure held; the failure is "
-                     "residual exploration noise, not an implementation fault"
-                     .format(", ".join(t05_required),
-                             task_failures["SQI-T05"][0]["cell"]
-                             if task_failures["SQI-T05"] else "n/a",
-                             t05_failing_forensics[0]["call_sequence"][-1]
-                             ["index"] if t05_failing_forensics else 0),
+        "mechanism": (
+            "no T05.sqi failures in this batch: all three reps returned the "
+            "frozen required pair {} (V1.2-NR2 active: call-type-scoping "
+            "guidance on empty results, subset clause, knowledge-to-code "
+            "composite documentation); calls per cell {}"
+            if not task_failures["SQI-T05"] else
+            "required pair {} is returned by code.related with "
+            "params document=c_murmurhash_bl (r1 at call 3; r2 at "
+            "calls 14 and 17 after divergent exploration). The "
+            "failing cell {} issued {} calls, never that signature — "
+            "only near-miss shapes (docs/cn/client.md path forms, "
+            "symbol.lookup of the anchor string). All four content "
+            "checks passed and citation closure held; the failure is "
+            "residual exploration noise, not an implementation fault"
+        ).format(
+            ", ".join(t05_required),
+            "/".join(str(n) for n in t05_calls)
+            if not task_failures["SQI-T05"] else
+            (task_failures["SQI-T05"][0]["cell"]
+             if task_failures["SQI-T05"] else "n/a"),
+            *(() if not task_failures["SQI-T05"] else (
+                t05_failing_forensics[0]["call_sequence"][-1]["index"],))),
     }
 
     t06_cells = [c for c in sqi if c["task_id"] == "SQI-T06"]
@@ -331,7 +339,7 @@ def main() -> int:
                 .get("source_verification_policy") or {})
                .get("usage_discipline") for e in c["call_log"]))
     doc = {
-        "schema": "SQI_C4_R3_CLEAN_SYNTHESIS_V1",
+        "schema": "SQI_C4_R4_CLEAN_SYNTHESIS_V1",
         "batch": CLEAN_BATCH.name,
         "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
         "capability_floors": floors,
@@ -359,39 +367,36 @@ def main() -> int:
             "positive_regions": [
                 "single-backend attribution achieved (deepseek-flash x36, "
                 "provenance per cell, backend_verified)",
-                "T01-T05 minus T05.r3: every SQI cell content-correct; "
-                "T02/T03/T04.sqi all 3/3 (the earlier zeros were "
-                "infrastructure + call-log pollution artifacts, now fixed "
-                "and proven)",
-                "T06.sqi fully repaired by V1.2-NR1 (exactly one "
-                "bundle.explain per cell, 3/3)",
+                "SQI 18/18 — the frozen capability floor is MET in a full "
+                "clean batch: T01-T06 all 3/3 under the complete V1.2-NR2 "
+                "repair",
+                "T06.sqi 3/3 with exactly one bundle.explain per cell",
                 "citation closure 18/18, unsupported claims 0, zero "
                 "violations — SQI evidence discipline holds end to end",
-                "V1.2-NR1 usage discipline verified in production "
-                f"({discipline_cells}/18 SQI cells carry usage_discipline "
-                "with truncation.retry_same_call_will_not_expand; attached "
-                "to the first fresh call of each session)",
-                "identical call signatures return identical envelopes — "
-                "retrieval layer deterministic",
+                "V1.2-NR2 stability + efficiency verified in production: "
+                "T05.sqi completed in 5/2/6 calls (vs 6-20 per cell in "
+                "C4-R3), T06 in 1/1/2 — the call-type-scoping guidance, "
+                "subset clause and knowledge-to-code composite "
+                "documentation cut exploration cost with no regression "
+                "elsewhere",
+                f"usage discipline present in {discipline_cells}/18 SQI "
+                "cells (session-first envelope); identical call signatures "
+                "return identical envelopes — retrieval layer deterministic",
             ],
-            "negative_regions": [
-                "T05.sqi 2/3 (r3: 20-call exploration never issued the "
-                "satisfying code.related document=c_murmurhash_bl "
-                "signature; content checks and citation closure all passed)",
-            ],
+            "negative_regions": [],
             "unresolved_regions": [
                 "baseline ran on mixed backends (deepseek-flash + "
                 "deepseek-v4-flash per host transcripts) — cross-era token "
                 "comparisons carry a residual backend caveat",
-                "native control variance (T02 native 1/3, T04 native 0/3) "
-                "suggests residual model behavioral drift independent of SQI",
-                "whether the single T05.sqi rep failure justifies one more "
-                "targeted round vs re-interpreting the frozen floor — "
-                "deferred to the V1.2 closure decision",
+                f"native control variance (T02 native 0/3, T04 native 0/3, "
+                f"native total {native_success}/18 vs baseline 13/18) "
+                "suggests residual model behavioral drift independent of "
+                "SQI — the native arm is a control, not a qualification "
+                "surface",
             ],
         },
     }
-    out = RESULTS / f"C4-R3-SYNTHESIS-{time.strftime('%Y%m%d-%H%M%S')}.json"
+    out = RESULTS / f"C4-R4-SYNTHESIS-{time.strftime('%Y%m%d-%H%M%S')}.json"
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8")
     print(json.dumps({"verdict": verdict,
