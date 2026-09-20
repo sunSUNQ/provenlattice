@@ -1,0 +1,7 @@
+{
+ "schema": "SQI_C4_BATCH_SUMMARY_V1",
+ "batch_id": "SQI-FORMAL-C4-20260920T072457Z",
+ "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+ "cells_total": 36,
+ "cells_completed": 36
+}
