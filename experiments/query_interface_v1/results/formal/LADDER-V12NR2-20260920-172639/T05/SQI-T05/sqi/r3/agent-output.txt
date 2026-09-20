@@ -1,0 +1,24 @@
+## Documented behavior (docs/cn/client.md:286–288, section 负载均衡 / `c_murmurhash_bl`)
+
+The section heading `### c_murmurhash_bl` describes a bounded-load consistent hash ring: identical to `c_murmurhash`, but each server additionally carries a capacity ceiling of `ceil(load_factor * average in-flight requests)`; when the hashed-to server is at capacity, the request overflows clockwise to the next server with spare capacity. The default factor comes from `-chash_bounded_load_factor` (1.25, must be > 1), overridable per channel via `c_murmurhash_bl:load_factor=1.5`; `replicas` behaves as in `c_murmurhash`.
+
+## Core implementation
+
+- **Main symbol:** the class `brpc.policy.ConsistentHashingBoundedLoadBalancer` — declared at `src/brpc/policy/consistent_hashing_load_balancer.h:98`, implemented in `src/brpc/policy/consistent_hashing_load_balancer.cpp`.
+- It is registered under the documented name in `src/brpc/global.cpp:416`: `LoadBalancerExtension()->RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)` with the instance declared at `global.cpp:167`.
+- The header's own class comment (`consistent_hashing_load_balancer.h:93–97`) restates the doc verbatim: a server reaching `ceil(load_factor * average_inflight)` "overflows to the next server clockwise on the ring with spare capacity."
+- The behavior is realized in `SelectServer` (`consistent_hashing_load_balancer.cpp:525`): it computes `capacity = ceil(_load_factor * (total + 1) / lm->size())` (lines 548–550, `std::ceil` included at line 21), then walks clockwise from the hashed node taking the first server with `inflight < capacity` (lines 557–588), with a first-acceptable fallback for counter inconsistency.
+- The default and per-channel override match the doc: `DEFINE_double(chash_bounded_load_factor, 1.25, ...)` at line 41 (validated > 1 by `ValidateLoadFactor`, line 50), initialized into `_load_factor` at line 430, and overridable in `SetParameter` when `key == "load_factor"` (lines 509–519).
+
+## Document-to-code relationship
+
+The knowledge graph anchors the section node `c_murmurhash_bl` (source `documentsection:2036840a…`, range `docs/cn/client.md` lines 286–289) and its one explicit cross-layer link (E-XLINK-3284c4dde04ede3b45992a17, relation `DOCUMENTS`, confidence 0.7) points at `brpc.policy.AddServersInBatch.replicas` in `consistent_hashing_load_balancer.cpp:265`. Verified in source, that target is only a local `std::vector<Node> replicas` inside the parent `ConsistentHashingLoadBalancer::AddServersInBatch` — captured because the section literally mentions the `replicas` parameter, not because it implements the bounded-load spill-over.
+
+The section's actual behavioral subject — bounded-load overflow — is implemented by the distinct class `ConsistentHashingBoundedLoadBalancer`, which I located structurally via `symbol.lookup` (E-CODE-1726cdc7c9938223c1d04362, class; E-CODE-cddcb1233eb5aa32cb587ed9, ctor decl; E-CODE-6aa9c25c466cb73b19d2a6b4, ctor definition) and confirmed by reading the source. So the document-to-code mapping is: section → `replicas` helper (graph's explicit link, a naming coincidence) plus the true core class `ConsistentHashingBoundedLoadBalancer` registered as `c_murmurhash_bl`. No symbol-level graph edge directly ties the class to the section, so that equivalence is asserted from source reading, not from a returned edge.
+
+Evidence Used:
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-CODE-6aa9c25c466cb73b19d2a6b4

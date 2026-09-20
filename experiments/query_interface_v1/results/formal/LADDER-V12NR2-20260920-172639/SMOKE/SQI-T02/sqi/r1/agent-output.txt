@@ -1,0 +1,54 @@
+## Symbol identity
+
+`butil::Status::error_cstr` (qualified name `butil.Status.error_cstr`) is a `Method` defined in `src/butil/status.h:99-101` (evidence `E-CODE-9b9637ab57e06c9a9ec6367f`, from `symbol.lookup --arg name=error_cstr`).
+
+## What it returns (verified by reading the definition)
+
+From `src/butil/status.h:99-101`:
+
+```cpp
+const char* error_cstr() const {
+    return (_state == nullptr ? "OK" : _state->message);
+}
+```
+
+It returns a `const char*`:
+- `"OK"` when the status is a success (`_state == nullptr`, i.e. `ok()` is true);
+- otherwise `_state->message`, the NUL-terminated raw error-message buffer of the failed `State` (see the `State::message[0]` definition at `status.h:48`).
+
+The header itself warns (`status.h:96-98`) that if the message contains an embedded `'\0'`, `error_cstr()` will not be shown fully — because it stops at the first NUL, unlike the sibling `error_data()` which carries an explicit size.
+
+## Production callers (TEST/anonymous excluded — see note)
+
+Four distinct production files, five call sites, all returned by `symbol.callers` on the symbol id:
+
+| # | File | Enclosing function | Line | Call | Evidence ID |
+|---|------|--------------------|------|------|-------------|
+| 1 | `src/brpc/policy/thrift_protocol.cpp` | `brpc.policy.ProcessThriftRequest` | 500 | `return cntl->SetFailed(EREQUEST, "%s", st.error_cstr());` | `E-CALL-b5561137fc27891cc12e9f7f` |
+| 2 | `src/brpc/policy/thrift_protocol.cpp` | `brpc.policy.ProcessThriftResponse` | 618 | `cntl->SetFailed(ERESPONSE, "%s", st.error_cstr());` | `E-CALL-4af9c1bdb4b5aa616a834340` |
+| 3 | `src/brpc/policy/http_rpc_protocol.cpp` | `brpc.policy.SerializeHttpRequest` | 656 | `return cntl->SetFailed(EREQUEST, "%s", hreq.uri().status().error_cstr());` | `E-CALL-bafbd36f7a6aa4d2873ff005` |
+| 4 | `src/brpc/socket.cpp` | `Socket::WriteRequest::Setup` (file-level edge) | 398 | `bthread_id_error2(id_wait, st.error_code(), st.error_cstr());` | `E-CALL-98d959bc3a7f3ac6a5d8e1e9` |
+| 5 | `src/brpc/policy/rtmp_protocol.cpp` | (file-level edge) | 2776, 3072 | `SendStopMessage(status.error_cstr())` | `E-CALL-e0d68ad0260f4b4d685d3878` |
+
+**Excluded as tests** (as permitted): `test/brpc_uri_unittest.cpp` (`E-CALL-089f90a61b5cb67f0c3dd35d`) and `test/status_unittest.cpp`, an anonymous `TEST_F` (`E-CALL-c1c6fb11d3f64bd405bfd072`). Both are under `test/` and outside production. Note the graph labels one as `qualified_name:"TEST"` and one as `anonymous.TEST_F`.
+
+## Verification of call sites against source
+
+I verified the call sites by reading the actual source (semantic claims require this):
+
+- **thrift_protocol.cpp:500** — the returned `butil::Status st` from `ReadThriftMessageBegin(...)` is checked with `if (!st.ok())`, then `st.error_cstr()` is passed as the `%s` argument of `cntl->SetFailed(EREQUEST, ...)`. This matches the return semantics: on failure the path yields the raw error message; the `!ok()` guard means `"OK"` is never actually used here. (`thrift_protocol.cpp:497-501`)
+- **socket.cpp:398** — `st` comes from `msg->AppendAndDestroySelf(&data, s)`; if `!st.ok()` the request is abandoned and `st.error_cstr()` is handed to `bthread_id_error2` alongside `st.error_code()`. Again the failure branch guarantees a real message. (`socket.cpp:394-399`)
+- **http_rpc_protocol.cpp:656** — guarded by `if (!hreq.uri().status().ok())`, then `hreq.uri().status().error_cstr()` is the `%s` for `SetFailed(EREQUEST, ...)`, i.e. the URI-parse error text. (`http_rpc_protocol.cpp:653-657`)
+- **thrift_protocol.cpp:618** and **rtmp_protocol.cpp:2776/3072** — read directly; same pattern (status from a read/append operation, used only after a failure check).
+
+Consistent across all sites: `error_cstr()` is used only after a failure check, supplying a human-readable, `printf`-compatible error string to a failure/logging path.
+
+Evidence Used:
+- E-CODE-9b9637ab57e06c9a9ec6367f
+- E-CALL-b5561137fc27891cc12e9f7f
+- E-CALL-4af9c1bdb4b5aa616a834340
+- E-CALL-bafbd36f7a6aa4d2873ff005
+- E-CALL-98d959bc3a7f3ac6a5d8e1e9
+- E-CALL-e0d68ad0260f4b4d685d3878
+- E-CALL-089f90a61b5cb67f0c3dd35d
+- E-CALL-c1c6fb11d3f64bd405bfd072

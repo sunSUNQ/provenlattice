@@ -1,0 +1,55 @@
+{
+ "oracle_version": "SQI_FORMAL_ORACLE_V1.1",
+ "arm": "sqi",
+ "task_id": "SQI-T05",
+ "machine_checks": {
+  "names_target_symbol": true,
+  "names_expected_file": true,
+  "cites_document_section": true,
+  "reads_expected_file_source": true,
+  "required_evidence_id_in_session": true,
+  "knowledge_db_id_returned": [
+   "E-XLINK-3284c4dde04ede3b45992a17"
+  ],
+  "code_db_id_returned": [
+   "E-CODE-9cec5b84fb52b556c0c332c9"
+  ]
+ },
+ "machine_checks_pass": true,
+ "task_success": true,
+ "evidence_oracle": {
+  "citation_closure_ok": true,
+  "used_ids": [
+   "E-CODE-1726cdc7c9938223c1d04362",
+   "E-CODE-6aa9c25c466cb73b19d2a6b4",
+   "E-CODE-9cec5b84fb52b556c0c332c9",
+   "E-XLINK-3284c4dde04ede3b45992a17"
+  ],
+  "returned_ids_union_count": 5,
+  "unsupported_claim_ids": []
+ },
+ "source_verification": {
+  "source_read_events": 15,
+  "read_targets": [
+   "**/client.md",
+   "D:/pl-c4-runtime/benchmark/brpc/docs/cn/client.md",
+   "D:/pl-c4-runtime/benchmark/brpc/src",
+   "D:/pl-c4-runtime/benchmark/brpc/src/brpc",
+   "D:/pl-c4-runtime/benchmark/brpc/src/brpc/global.cpp",
+   "D:/pl-c4-runtime/benchmark/brpc/src/brpc/policy/consistent_hashing_load_balancer.cpp",
+   "D:/pl-c4-runtime/benchmark/brpc/src/brpc/policy/consistent_hashing_load_balancer.h"
+  ]
+ },
+ "sqi_call_summary": {
+  "total_calls": 2,
+  "calls_by_type": {
+   "code.related": 1,
+   "symbol.lookup": 1
+  },
+  "total_payload_bytes": 9130
+ },
+ "capability_failure_flags": [],
+ "human_review_required": [
+  "document semantics and code behaviour are equivalent (content-level judgement)"
+ ]
+}

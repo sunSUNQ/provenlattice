@@ -1,0 +1,51 @@
+{
+ "oracle_version": "SQI_FORMAL_ORACLE_V1.1",
+ "arm": "sqi",
+ "task_id": "SQI-T02",
+ "machine_checks": {
+  "production_callers_at_least_4": true,
+  "production_callers_named_count_ge": 5,
+  "source_verification_at_least_2": true,
+  "frozen_call_edges_evidenced": true
+ },
+ "machine_checks_pass": true,
+ "task_success": true,
+ "evidence_oracle": {
+  "citation_closure_ok": true,
+  "used_ids": [
+   "E-CALL-089f90a61b5cb67f0c3dd35d",
+   "E-CALL-4af9c1bdb4b5aa616a834340",
+   "E-CALL-98d959bc3a7f3ac6a5d8e1e9",
+   "E-CALL-b5561137fc27891cc12e9f7f",
+   "E-CALL-bafbd36f7a6aa4d2873ff005",
+   "E-CALL-c1c6fb11d3f64bd405bfd072",
+   "E-CALL-e0d68ad0260f4b4d685d3878",
+   "E-CODE-9b9637ab57e06c9a9ec6367f"
+  ],
+  "returned_ids_union_count": 8,
+  "unsupported_claim_ids": []
+ },
+ "source_verification": {
+  "source_read_events": 7,
+  "read_targets": [
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\src",
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\src\\brpc\\policy\\http_rpc_protocol.cpp",
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\src\\brpc\\policy\\rtmp_protocol.cpp",
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\src\\brpc\\policy\\thrift_protocol.cpp",
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\src\\brpc\\socket.cpp",
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\src\\butil\\status.h"
+  ]
+ },
+ "sqi_call_summary": {
+  "total_calls": 2,
+  "calls_by_type": {
+   "symbol.callers": 1,
+   "symbol.lookup": 1
+  },
+  "total_payload_bytes": 18114
+ },
+ "capability_failure_flags": [],
+ "human_review_required": [
+  "each claimed caller is a real call site of error_cstr (content-level judgement)"
+ ]
+}

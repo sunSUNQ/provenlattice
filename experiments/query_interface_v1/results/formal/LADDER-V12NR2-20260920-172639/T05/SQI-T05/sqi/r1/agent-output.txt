@@ -1,0 +1,35 @@
+## Document section
+
+`docs/cn/client.md` §负载均衡 → §`c_murmurhash_bl` (lines 286–289) documents *Consistent Hashing with Bounded Loads* (Mirrokni et al., CACM 2017) as a `load_balancer_name`: same hash ring as `c_murmurhash`, but each server additionally capped at `ceil(load_factor * average in-flight)`; when the hashed-to server is at capacity the request walks clockwise on the ring to the next server with spare capacity; factor default comes from `-chash_bounded_load_factor` (1.25, must be > 1), overridable per channel as `c_murmurhash_bl:load_factor=1.5`; the `replicas` parameter is the same as `c_murmurhash`.
+
+## Knowledge-enabled query result
+
+`code.related` on the exact section node name `c_murmurhash_bl` resolved the anchor (not to the whole document) and returned one cross-layer link:
+
+- E-XLINK-3284c4dde04ede3b45992a17 — `DOCUMENTS`, source `docs/cn/client.md` lines 286–289 → target `brpc.policy.AddServersInBatch.replicas` (resolution `resolved`, provenance `explicit_symbol_reference`).
+- E-CODE-9cec5b84fb52b556c0c332c9 — the linked code definition: function `brpc.policy.AddServersInBatch.replicas` at `src/brpc/policy/consistent_hashing_load_balancer.cpp:265`.
+
+Reading the source shows what that link actually is: `consistent_hashing_load_balancer.cpp:265` is the local `std::vector<Node> replicas;` inside `ConsistentHashingLoadBalancer::AddServersInBatch` (lines 261–277). The KG attached the section's literal `` `replicas` `` mention to that local variable — a real but incidental symbol match, not the bounded-load logic itself. The section also references the `load_factor` flag, which is not a code symbol and so produced no edge.
+
+## Core implementation
+
+The behavior the section describes is implemented by the derived class `ConsistentHashingBoundedLoadBalancer` (E-CODE-1726cdc7c9938223c1d04362), declared in `src/brpc/policy/consistent_hashing_load_balancer.h:98–130` and defined in `src/brpc/policy/consistent_hashing_load_balancer.cpp` — the **same file** the query's link points into. Its construction site is `consistent_hashing_load_balancer.cpp:427–431` (E-CODE-6aa9c25c466cb73b19d2a6b4).
+
+The core symbol is that class, and its behavioral core is `ConsistentHashingBoundedLoadBalancer::SelectServer` (`consistent_hashing_load_balancer.cpp:525–602`), which the doc's claims map onto directly (verified by reading the source):
+
+- Same ring as `c_murmurhash`: the class inherits `ConsistentHashingLoadBalancer` and delegates `AddServer`/`RemoveServer`/`AddServersInBatch` to the parent (cpp:464–496), reusing the parent's hash ring (`_db_hash_ring`).
+- Capacity cap: `capacity = ceil(_load_factor * (total_inflight + 1) / load_map.size())` (cpp:546–551).
+- Clockwise overflow to a server with spare capacity: `lower_bound` on the ring by `request_code`, then a clockwise walk taking the first server with `inflight < capacity` (cpp:552–588).
+- Default factor 1.25 and "must be > 1": `DEFINE_double(chash_bounded_load_factor, 1.25, ...)` with `ValidateLoadFactor` requiring `factor > 1.0` (cpp:41–50).
+- Per-channel override `load_factor=1.5`: `SetParameter` accepts `load_factor` and rejects values `<= 1.0` (cpp:509–523); `replicas` is handled by the parent `SetParameter` (cpp:420–422).
+- The `load_balancer_name` mapping is registered in `src/brpc/global.cpp:416` (`RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)`), with the instance declared at `global.cpp:167`.
+
+## Document-to-code relationship
+
+The section node is a *knowledge*-layer document section that `DOCUMENTS` a code symbol in the *code* layer. The KG's explicit cross-layer edge for §`c_murmurhash_bl` resolves to `brpc.policy.AddServersInBatch.replicas` — the doc's literal `` `replicas` `` reference, matched to the local variable of that name in `AddServersInBatch` — so the edge is accurate as a symbol-reference fact but incidental as a behavior pointer. The substantive behavior the section describes is implemented by the co-located, name-registered class `ConsistentHashingBoundedLoadBalancer` (its `SelectServer`), which the doc describes without ever naming it; verification required reading the source, since the section→class relationship is semantic, not an explicit symbol reference.
+
+Evidence Used:
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-6aa9c25c466cb73b19d2a6b4

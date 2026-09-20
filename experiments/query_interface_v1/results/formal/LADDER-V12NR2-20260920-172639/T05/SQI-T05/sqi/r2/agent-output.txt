@@ -1,0 +1,24 @@
+## Answer
+
+**Documentation anchor.** `docs/cn/client.md`, section `### c_murmurhash_bl` (lines 286–289), describes *Consistent Hashing with Bounded Loads* (Mirrokni et al., CACM 2017): the hash ring is identical to `c_murmurhash`, but each server has a capacity cap of `ceil(load_factor * average in-flight requests)`, and a request that hashes to a full server overflows clockwise to the next server with spare capacity. The default coefficient comes from `-chash_bounded_load_factor` (1.25, must be > 1), overridable per channel as `c_murmurhash_bl:load_factor=1.5`, with `replicas` behaving as in `c_murmurhash`.
+
+**Document-to-code link.** Queried with the knowledge-enabled `code.related` call on the exact section anchor `c_murmurhash_bl`. The envelope resolved the document section (`docs/cn/client.md`, lines 286–289) through cross-layer edge `E-XLINK-3284c4dde04ede3b45992a17` (`DOCUMENTS`, `resolution_status: resolved`) to a code symbol in **`src/brpc/policy/consistent_hashing_load_balancer.cpp`**. So the composite query places the described behavior in the consistent-hashing load-balancer implementation file in `src/brpc/policy/`.
+
+Caveat on that specific link: the linked symbol is `brpc.policy.AddServersInBatch.replicas` at `consistent_hashing_load_balancer.cpp:265` (`E-CODE-9cec5b84fb52b556c0c332c9`). Reading line 265 shows this is the local `std::vector<Node> replicas;` inside `AddServersInBatch` — i.e. the linker attached the section's inline-code mention of the `replicas` parameter to that identifier. It is a `replicas`-parameter fragment, **not** the bounded-load algorithm itself.
+
+**Core implementation.** The behavior described in the section is implemented by the class **`ConsistentHashingBoundedLoadBalancer`**, declared in `src/brpc/policy/consistent_hashing_load_balancer.h:98` (`E-CODE-1726cdc7c9938223c1d04362`) and implemented in `src/brpc/policy/consistent_hashing_load_balancer.cpp` (constructor at lines 427–431, `E-CODE-6aa9c25c466cb73b19d2a6b4`; declaration `E-CODE-cddcb1233eb5aa32cb587ed9`). It subclasses `ConsistentHashingLoadBalancer` (the `c_murmurhash` ring), so the document's claim "哈希环与 `c_murmurhash` 完全相同" holds structurally.
+
+Verifying the section's semantic claims against the source:
+- **Name registration:** `src/brpc/global.cpp:416` registers `LoadBalancerExtension()->RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)`, tying the documented LB name to this class.
+- **Capacity cap `ceil(load_factor * average in-flight)`:** `SelectServer` (lines 525–602) computes `capacity = ceil(_load_factor * (total + 1) / lm->size())` (lines 549–550), where `total` is the aggregate in-flight counter — i.e. the average in-flight load times the factor.
+- **Clockwise overflow to the next server with room:** after `lower_bound` on the request_code finds the hashed node, the loop walks clockwise (`++choice`, wrapping to `s->begin()`) and takes the first available server whose `inflight < capacity` (lines 565–588), with a fallback if counters are transiently inconsistent.
+- **`load_factor` must be > 1:** `SetParameter` rejects `factor <= 1.0` (lines 511–518), matching "必须大于1"; it delegates other keys (including `replicas`) to the base class (line 522), matching "`replicas` 参数与 `c_murmurhash` 相同".
+
+So the relationship is: the `c_murmurhash_bl` document section is a knowledge-layer description of bounded-load consistent hashing, and `code.related` maps that section into `src/brpc/policy/consistent_hashing_load_balancer.cpp`, where the implementing type is `ConsistentHashingBoundedLoadBalancer` (subclass of `ConsistentHashingLoadBalancer`), registered under the name `c_murmurhash_bl` and driven by `SelectServer`'s capacity-and-overflow logic.
+
+Evidence Used:
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-cddcb1233eb5aa32cb587ed9

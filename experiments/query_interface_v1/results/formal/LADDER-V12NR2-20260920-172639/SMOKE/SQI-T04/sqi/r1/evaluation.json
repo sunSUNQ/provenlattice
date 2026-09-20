@@ -1,0 +1,93 @@
+{
+ "oracle_version": "SQI_FORMAL_ORACLE_V1.1",
+ "arm": "sqi",
+ "task_id": "SQI-T04",
+ "machine_checks": {
+  "reports_frontier_size_49": true,
+  "reports_boundary_edges_1031": true,
+  "reports_wide_impact": true,
+  "reports_truncation": true,
+  "reads_affected_source": true,
+  "interface_aggregates_match_frozen": true
+ },
+ "machine_checks_pass": true,
+ "task_success": true,
+ "evidence_oracle": {
+  "citation_closure_ok": true,
+  "used_ids": [
+   "E-SHARD-01c6ebdabc5414cec8cc4166",
+   "E-SHARD-043a0781377b17d8e1413547",
+   "E-SHARD-05ca0b48b1df0ad658b6478e",
+   "E-SHARD-0b546082a8bf55494f78af5a",
+   "E-SHARD-0f287837010b58295d2f9225",
+   "E-SHARD-11adcbb74906c2ff19694155",
+   "E-SHARD-1a5e717943a35df4daba1bae",
+   "E-SHARD-2d8cc498cede1826e600ac38",
+   "E-SHARD-2e02303c3965fec2e970360e",
+   "E-SHARD-3cc825e4c8c3ab3c1f477a87",
+   "E-SHARD-3ef51966444e255f8a7ceedf",
+   "E-SHARD-4d2bb8745bf92fb784b1a1d7",
+   "E-SHARD-54ad7eef9ffb3d4b308a6751",
+   "E-SHARD-5e5e174709171c1e4add322c",
+   "E-SHARD-5f5724870a7d12c4e72e1bdf",
+   "E-SHARD-61a86ca5bba6718276577931",
+   "E-SHARD-61cef66a8e02bc96a1ec485c",
+   "E-SHARD-6347071f97a50b7b02b97a96",
+   "E-SHARD-64d7ca11fdf8902038286a21",
+   "E-SHARD-72be72af863e00c6ea8db3e7",
+   "E-SHARD-74d447058e4fe55c5ce5caf8",
+   "E-SHARD-75592c1d6cff42bb314f362a",
+   "E-SHARD-75f41a77fca0e03b12422132",
+   "E-SHARD-7b277cce7fca43c50af04b54",
+   "E-SHARD-7ffa4398c4be8cc3cd554470",
+   "E-SHARD-842dfc383768e8481163e6a7",
+   "E-SHARD-85d1239d8141c36194eb5ad9",
+   "E-SHARD-8f2b998fb349ac107959ea96",
+   "E-SHARD-8fc3133457311f78b5f1c399",
+   "E-SHARD-9cd74c1d00028644ce79fe61",
+   "E-SHARD-ad73740735ff2247666eae74",
+   "E-SHARD-b0f9a18460cffe3723de8877",
+   "E-SHARD-b14a6b524e36dc166d96207e",
+   "E-SHARD-b2344cd8b4ee1df9fecab7ed",
+   "E-SHARD-b6cd8febe3883561249257ee",
+   "E-SHARD-b938d151c6720ec7498affb3",
+   "E-SHARD-bc2c885ed83125f571d2e711",
+   "E-SHARD-bcd12a31f882a2817c1d92e4",
+   "E-SHARD-bdcbd89f47e8d546d6d05d34",
+   "E-SHARD-c45fdf54e7d7eb20c47a41f9",
+   "E-SHARD-c4646b6a6e2e6af1880c2bb9",
+   "E-SHARD-c6a540e9015ba8508b5dd69f",
+   "E-SHARD-c75128b3f196dbe3cb663fa9",
+   "E-SHARD-cbdb593a11e78f1b77abad78",
+   "E-SHARD-d4853a2d4add1dd1cec6011b",
+   "E-SHARD-de38931950983c8cb5f8492f",
+   "E-SHARD-e824ffe26d600d6ea54dba3c",
+   "E-SHARD-f478c3533f0668fbb739cb6f",
+   "E-SHARD-fcb9c83a50027c26f100e0f7"
+  ],
+  "returned_ids_union_count": 49,
+  "unsupported_claim_ids": []
+ },
+ "source_verification": {
+  "source_read_events": 13,
+  "read_targets": [
+   "D:\\pl-c4-runtime\\benchmark\\rocksdb",
+   "D:\\pl-c4-runtime\\benchmark\\rocksdb\\db\\builder.cc",
+   "D:\\pl-c4-runtime\\benchmark\\rocksdb\\file\\file_util.h",
+   "D:\\pl-c4-runtime\\benchmark\\rocksdb\\utilities\\blob_db\\blob_db_impl.cc",
+   "D:\\pl-c4-runtime\\benchmark\\rocksdb\\utilities\\checkpoint\\checkpoint_impl.cc",
+   "D:\\pl-c4-runtime\\output\\c4\\LADDER-V12NR2-20260920-172639-SMOKE\\claude-homes\\SQI-T04.sqi.r1\\projects\\D--pl-c4-runtime-benchmark-rocksdb\\ecf700e4-d277-471b-9d36-49ca8b16074f\\tool-results\\bt0snxxv9.txt"
+  ]
+ },
+ "sqi_call_summary": {
+  "total_calls": 1,
+  "calls_by_type": {
+   "impact.frontier": 1
+  },
+  "total_payload_bytes": 44603
+ },
+ "capability_failure_flags": [],
+ "human_review_required": [
+  "answer makes no symbol-level semantic impact assertion (shard-level frontier only, contract S5.3)"
+ ]
+}

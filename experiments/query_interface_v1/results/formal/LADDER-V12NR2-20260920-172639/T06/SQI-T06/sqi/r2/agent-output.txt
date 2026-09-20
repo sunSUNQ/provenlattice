@@ -1,0 +1,41 @@
+## Bundle explanation: `brpc.IsAskedToQuit`
+
+**Definition**
+- `src/brpc/controller.cpp`, lines 1976–1979 — `bool IsAskedToQuit()` (signature `()`, public Function), symbol `symbol:3c1e7e7a…d47a24c`, shard `src/brpc`. [E-CODE-ee01188dd0889e9da9b23334, E-SHARD-0bde357513df373d39780249]
+
+**Callers the budget allowed (10 CALL edges)**
+| Caller | File |
+|---|---|
+| `main` | example/echo_c++/client.cpp |
+| `main` | example/selective_echo_c++/client.cpp |
+| `sender` | example/bthread_tag_echo_c++/client.cpp |
+| `main` | example/streaming_echo_c++/client.cpp |
+| `main` | example/multi_threaded_echo_fns_c++/server.cpp |
+| `main` | example/baidu_proxy_and_generic_call/client.cpp |
+| `main` | tools/rpc_press/rpc_press.cpp |
+| `sender` | example/memcache_c++/client.cpp |
+| `sender` | example/parallel_echo_c++/client.cpp |
+| `main` | example/mysql_c++/mysqlclient_press.cpp |
+
+[E-CALL-00a3caa26b074ffa09ed29e6, E-CALL-0273a5fb08cca748f455ef65, E-CALL-09be8da5351041810f00b2c2, E-CALL-0c111e1f0403e9ccebbeecf2, E-CALL-0c4dbf504cfd8c02d7f24fdc, E-CALL-10d353d47fcf5a8e9807f12d, E-CALL-192641f3a3d0eae0982de271, E-CALL-1ea1cd3a46923fcb2f57e094, E-CALL-1f4fb793d5c388eff6ddd01d, E-CALL-2d556ccad9892fcca94f0fe6]
+
+The symbol view (capped at `max_symbols=6`, i.e. anchor + 5) additionally surfaced caller symbols `main` in `example/backup_request_c++/client.cpp`, `example/http_c++/benchmark_http.cpp`, `example/selective_echo_c++/server.cpp`, `example/session_data_and_thread_local/client.cpp`, and `example/rpcz_echo_c++/client.cpp`.
+
+**Omitted by truncation** (`truncated: true`): 39 edges and 43 symbols; `raw_refs` and `sections` omitted 0. The envelope was budget-sliced, so a smaller-budget retry cannot expand it.
+
+**Verified claim (read from source)**
+`IsAskedToQuit()` reports whether a process-quit signal has been received. `controller.cpp:1976-1979` first runs `pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie)` to install the handlers, then returns the file-static `volatile bool s_signal_quit` (`controller.cpp:1922`). That flag is set to `true` by `quit_handler(int)` (`controller.cpp:1927-1928`), which is registered for SIGINT (line 1944), SIGTERM (1954), and SIGHUP (1965). So the function returns `true` once SIGINT/SIGTERM/SIGHUP has fired — the idiomatic "should I stop my loop" check used by the example client loops above (`AskToQuit()` at line 1981 just `raise(SIGINT)`).
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

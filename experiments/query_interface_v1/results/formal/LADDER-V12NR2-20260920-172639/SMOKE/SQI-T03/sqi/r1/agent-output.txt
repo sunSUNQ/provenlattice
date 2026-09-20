@@ -1,0 +1,45 @@
+## Resolution of `ROCKSDB_NAMESPACE.NumUnsetBytes`
+
+**Symbol identity (from index):** `ROCKSDB_NAMESPACE.NumUnsetBytes` — kind `Function`, defined in `options/options_settable_test.cc:63-87` (id `symbol:0458f52e…60b76`). Verified in source: it is `int NumUnsetBytes(char* start_ptr, size_t total_size, const OffsetGap& excluded)`, which walks the excluded offset/gap ranges plus the remaining tail of the buffer and counts bytes still equal to `kSpecialChar` (i.e. bytes that were never set), returning that count.
+
+**Anchor note:** passing the qualified name string to `symbol.references` returned an empty envelope; the same symbol resolved with its index id (`symbol:0458f52e…`) under the same call type. All reference facts below come from that second invocation.
+
+### Every reference the index knows about
+
+All six are relation `CALLS`, provenance `same_file_resolution`, confidence `0.98`, status `resolved`, and all live in one file:
+
+| # | File | Line | Reference id | Evidence |
+|---|------|------|--------------|----------|
+| 1 | options/options_settable_test.cc | 219 | `reference:14e6ee8eb05d…` | E-REF-b4b68e320d37673a8cfa6b61 |
+| 2 | options/options_settable_test.cc | 265 | `reference:fcef709bdec8…` | E-REF-cf3a28b3ce80f5585dce46aa |
+| 3 | options/options_settable_test.cc | 310 | `reference:41a9b69d3328…` | E-REF-320c02d873d6bc75b33f449f |
+| 4 | options/options_settable_test.cc | 388 | `reference:a584887da479…` | E-REF-0486e0b8db7ddc965589e565 |
+| 5 | options/options_settable_test.cc | 512 | `reference:350da6afada2…` | E-REF-ba14b47f4397f27bea42be84 |
+| 6 | options/options_settable_test.cc | 744 | `reference:8bc433da0dbe…` | E-REF-e7688a8ac44adebf7d591fc7 |
+
+**Resolved vs. unresolved count:** 6 references resolved, **0 unresolved** — the envelope's `status_counts` is `{"resolved": 6}`, with `resolved_to_symbol_count: 6` and `owned_by_symbol_count: 0`. Every reference resolves to the same target symbol `symbol:0458f52e…60b76`.
+
+**Owner attribution (index vs. source):** the index attaches all six references to a single owner symbol `symbol:3d03ee2e…10e7e4`, labeled `ROCKSDB_NAMESPACE.TEST_F` with signature `(OptionsSettableTest, ColumnFamilyOptionsAllFieldsSettable)` (533-830), and `symbol.callers` returns only that one caller (E-CALL-3cbce578bdb0ae7478a057a9). Reading the source, the six call sites actually fall inside four *distinct* test functions — lines 219 in `BlockBasedTableOptionsAllFieldsSettable` (117-231), lines 265/310 in `TablePropertiesAllFieldsSettable` (232-334), lines 388/512 in `DBOptionsAllFieldsSettable` (335-532), and line 744 in `ColumnFamilyOptionsAllFieldsSettable` (533-837). The single-owner grouping is an artifact of the index collapsing the `TEST_F` macro instantiations under one `TEST_F` node, not a property of the source.
+
+### One reference explained in source
+
+**`E-REF-320c02d873d6bc75b33f449f` — call at `options/options_settable_test.cc:310`**, inside `TEST_F(OptionsSettableTest, TablePropertiesAllFieldsSettable)`. The test constructs a `TableProperties` on a raw buffer of `sizeof(TableProperties)` bytes (line 259-261) and parses a `;`-separated property string into it (ending line 307), which set-fills every field except the `std::string`/`UserCollectedProperties` members enumerated in `kTablePropertiesExcluded` (lines 233-257). It then asserts:
+
+```cpp
+// All bytes are set from the parse
+ASSERT_EQ(NumUnsetBytes(new_tp_ptr, sizeof(TableProperties),
+                        kTablePropertiesExcluded),
+          0);
+```
+
+Here `NumUnsetBytes` is used as the completeness oracle: the expected result is `0`, meaning no byte outside the excluded (string/padding) ranges remains at `kSpecialChar`, i.e. the parser wrote every settable byte of the struct. Note the pre-computed count at line 218 (`ASSERT_EQ(unset_bytes_base, …)` at line 219, reference #1) applies the same helper in the analogous `BlockBasedTableOptions` test.
+
+Evidence Used:
+- E-CODE-5f6ca2360631fc6a4cda96c5
+- E-REF-b4b68e320d37673a8cfa6b61
+- E-REF-cf3a28b3ce80f5585dce46aa
+- E-REF-320c02d873d6bc75b33f449f
+- E-REF-0486e0b8db7ddc965589e565
+- E-REF-ba14b47f4397f27bea42be84
+- E-REF-e7688a8ac44adebf7d591fc7
+- E-CALL-3cbce578bdb0ae7478a057a9

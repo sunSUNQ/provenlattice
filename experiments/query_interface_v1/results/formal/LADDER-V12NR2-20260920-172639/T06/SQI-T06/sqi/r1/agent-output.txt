@@ -1,0 +1,55 @@
+## Budgeted explanation of `brpc.IsAskedToQuit`
+
+**Query:** `bundle.explain` on anchor `brpc.IsAskedToQuit`, budget `max_evidence=12, max_symbols=6, max_edges=10`. Applied budget matched the declared one (`max_edges=10, max_evidence=12, max_sections=8, max_symbols=6`), consumed as edges=11, evidence=12, symbols=6, sections=0. The envelope reports `"truncated": true`.
+
+### 1. Definition location
+- `src/brpc/controller.cpp`, lines **1976–1979** (Function, qualified name `brpc.IsAskedToQuit`, signature `()`, public, shard `src/brpc`).
+- Source (verified by reading the file):
+  ```cpp
+  bool IsAskedToQuit() {                              // 1976
+      pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie);
+      return s_signal_quit;                            // 1978
+  }
+  ```
+
+### 2. Callers the budget allowed (10 CALL relations)
+The envelope returned these caller edges (all `scope: boundary`, distance 1, `CALLS` → `brpc.IsAskedToQuit`):
+
+| Evidence ID | Caller function | Call-site file |
+|---|---|---|
+| E-CALL-00a3caa26b074ffa09ed29e6 | `main` | `example/echo_c++/client.cpp` |
+| E-CALL-0273a5fb08cca748f455ef65 | `main` | `example/selective_echo_c++/client.cpp` |
+| E-CALL-09be8da5351041810f00b2c2 | `sender` | `example/bthread_tag_echo_c++/client.cpp` |
+| E-CALL-0c111e1f0403e9ccebbeecf2 | `main` | `example/streaming_echo_c++/client.cpp` |
+| E-CALL-0c4dbf504cfd8c02d7f24fdc | `main` | `example/multi_threaded_echo_fns_c++/server.cpp` |
+| E-CALL-10d353d47fcf5a8e9807f12d | `main` | `example/baidu_proxy_and_generic_call/client.cpp` |
+| E-CALL-192641f3a3d0eae0982de271 | `main` | `tools/rpc_press/rpc_press.cpp` |
+| E-CALL-1ea1cd3a46923fcb2f57e094 | `sender` | `example/memcache_c++/client.cpp` |
+| E-CALL-1f4fb793d5c388eff6ddd01d | `sender` | `example/parallel_echo_c++/client.cpp` |
+| E-CALL-2d556ccad9892fcca94f0fe6 | `main` | `example/mysql_c++/mysqlclient_press.cpp` |
+
+Plus one membership fact: the symbol belongs to shard `src/brpc` (E-SHARD-0bde357513df373d39780249). The symbol-slice (`related_entities`, capped at 6) shows the anchor itself plus 5 distinct `main` symbols — a narrower cut than the 10 caller edges above.
+
+### 3. Items omitted
+From the envelope's truncation block:
+- **39 edges** omitted
+- **43 symbols** omitted
+- 0 sections, 0 raw refs omitted
+- **Total 82 items omitted** (`retry_same_call_will_not_expand: true`)
+
+### 4. Verified claim about what the function does
+Verified against `src/brpc/controller.cpp` (definition at 1976–1979 plus the handler at 1922–1940): `IsAskedToQuit()` lazily installs the quit-signal handlers exactly once via `pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie)` and then returns the module-static flag `s_signal_quit`. That flag is set to `true` by `quit_handler(int signo)` (line 1928), which is registered for `SIGINT`, `SIGTERM`, and `SIGHUP` and chains to any previously installed handler. In other words, the function reports whether the process has received one of those quit signals — it does not itself raise or act on a signal (that is `AskToQuit()` → `raise(SIGINT)`, lines 1981–1983).
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

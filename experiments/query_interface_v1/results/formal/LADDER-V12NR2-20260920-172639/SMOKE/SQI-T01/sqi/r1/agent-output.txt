@@ -1,0 +1,9 @@
+**File:** `src/DownloadEngine.h`
+**Declaration line:** 84 (`class DownloadEngine {`; body spans lines 84–335)
+
+**Responsibility:** `DownloadEngine` is aria2's central download engine: it owns and drives the main event loop, polling sockets/name resolvers and executing `Command` objects (both routine commands and per-download commands) until all downloads finish. It holds the shared runtime state used across the download pipeline — `EventPoll`, the socket pool, DNS cache, cookie storage, HMAC/authentication token state, session id, halt flags, and the manager objects (`RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`) — and exposes the `run()` loop plus command-queue and socket-pooling APIs to the rest of the system.
+
+Evidence Used:
+- E-CODE-94acad33e16eceea6ea5d677
+- E-CODE-d69dc4724057c9eef06a45bd
+- E-CODE-5b90c0eeea70294a6db4fabe

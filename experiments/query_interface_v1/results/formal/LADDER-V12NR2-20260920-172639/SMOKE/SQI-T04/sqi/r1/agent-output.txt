@@ -1,0 +1,87 @@
+## Impact query
+
+`impact.frontier --changed_shard_paths=db,file` (budget 50/20/50/10, the enforced maxima) → `query_id Q-aaafe631e76692ec46c0`, commit `37234...`.
+
+## What the frontier is
+
+A **shard-level, conservative, 1-hop** boundary index: every shard that has a `DEPENDS_ON` boundary edge *into* the changed shards `db` (node `shard:536f6893…`) or `file` (node `shard:0af3f237…`). It is direction-aware (dependents, not dependencies) and does not include the two changed shards themselves.
+
+## Directly affected shard paths — 49 total
+
+Depends on **db** (grouped by boundary-edge count):
+- 187 db/db_impl · 114 db/compaction · 90 table/block_based · 84 table · 77 tools · 58 db/blob · 46 utilities/transactions · 29 tools/c_api_gen · 25 c_api_gen · 23 build_tools · 22 utilities/write_batch_with_index · 21 tools/advisor · 16 memtable · 15 utilities · 14 db_stress_tool · 13 table/plain · 10 options · 9 tools/block_cache_analyzer · 8 db/wide · 7 env · 7 utilities/backup · 7 utilities/trie_index · 7 tools/cpu_corruption_injector · 6 utilities/persistent_cache · 5 monitoring · 4 java/rocksjni · 3 trace_replay · 3 utilities/table_properties_collectors · 2 coverage · 2 tools/dump · 2 utilities/ttl · 1 buckifier · 1 fuzz · 1 include/rocksdb · 1 utilities/agg_merge · 1 utilities/option_change_migration
+
+Depends on **file**:
+- 36 util · 21 utilities/blob_db · 12 utilities/checkpoint · 9 table/cuckoo · 8 test_util · 6 logging · 5 cache · 3 utilities/copy_engine · 3 utilities/options · 3 utilities/simulator_cache · 2 utilities/trace · 1 utilities/convenience · 1 utilities/sorted_run_builder
+
+## How wide
+
+`frontier_size = 49`, `wide_impact = true` (49 > `threshold` 8). Aggregate boundary edges = **1031**; only 50 edge ids were listed and 981 omitted (deterministic budget prefix). The two hubs dominate: `db/db_impl` (187) and `db/compaction` (114) alone account for 301 edges.
+
+## What the frontier does and does not tell you
+
+**Tells you:** the exact set of shards holding a structural compile/link dependency on the changed `db`/`file` shards, the direction (dependent-side), the per-shard boundary-edge count (an exact aggregate), and that the blast radius is repo-wide rather than local.
+
+**Does not tell you:** (1) any symbol-level impact — `result_meta.note` states "no symbol-level impact is derivable from this call"; (2) *which* symbol changed or whether a given dependent's call sites break — a shard can depend on `file` via a different header symbol than the one edited; (3) transitive (2-hop+) propagation — this is strictly 1-hop; (4) runtime/behavioral impact or severity — every edge is confidence 1.0 structural dependency only, no risk weighting; (5) the omitted 981 boundary edges (only a 50-id prefix was returned). Membership is a compile-dependency fact, not evidence that code must be edited.
+
+## Source verification of one affected shard: `utilities/blob_db`
+
+Chosen because it is a frontier member (21 boundary edges into `file`). The changed interface is confirmed as `DeleteDBFile` — declared `file/file_util.h:64-66` and called from the "db" shard at `db/builder.cc:579` (`DeleteDBFile(&db_options, blob_file_path, dbname, false, false)`).
+
+`utilities/blob_db/blob_db_impl.cc` genuinely consumes this interface, not just the header in general:
+- `blob_db_impl.cc:18` — `#include "file/file_util.h"`
+- `blob_db_impl.cc:1869` — `DeleteDBFile(&(db_impl_->immutable_db_options()), bfile->PathName(), blob_dir_, true, /*force_fg=*/false)`
+- `blob_db_impl.cc:1954` — `DeleteDBFile(&soptions, blobdir + "/" + f, blobdir, true, /*force_fg=*/false)`
+
+Both call sites pass the same 5-argument shape (`options, fname, dir_to_sync, force_bg, force_fg`) as the header declaration, so this shard has a real compile-time dependency on the changed signature — it is genuinely impacted, not a nominal frontier member. (Secondary check: `utilities/checkpoint/checkpoint_impl.cc:23` includes the same header and calls `CopyFile` at :152/:746 and `CreateFile` at :489, also declared in `file_util.h`.)
+
+Evidence Used:
+- E-SHARD-5f5724870a7d12c4e72e1bdf
+- E-SHARD-61a86ca5bba6718276577931
+- E-SHARD-75592c1d6cff42bb314f362a
+- E-SHARD-54ad7eef9ffb3d4b308a6751
+- E-SHARD-bc2c885ed83125f571d2e711
+- E-SHARD-6347071f97a50b7b02b97a96
+- E-SHARD-c75128b3f196dbe3cb663fa9
+- E-SHARD-b6cd8febe3883561249257ee
+- E-SHARD-01c6ebdabc5414cec8cc4166
+- E-SHARD-fcb9c83a50027c26f100e0f7
+- E-SHARD-0b546082a8bf55494f78af5a
+- E-SHARD-b0f9a18460cffe3723de8877
+- E-SHARD-bcd12a31f882a2817c1d92e4
+- E-SHARD-b2344cd8b4ee1df9fecab7ed
+- E-SHARD-7b277cce7fca43c50af04b54
+- E-SHARD-bdcbd89f47e8d546d6d05d34
+- E-SHARD-11adcbb74906c2ff19694155
+- E-SHARD-2d8cc498cede1826e600ac38
+- E-SHARD-f478c3533f0668fbb739cb6f
+- E-SHARD-3ef51966444e255f8a7ceedf
+- E-SHARD-d4853a2d4add1dd1cec6011b
+- E-SHARD-8fc3133457311f78b5f1c399
+- E-SHARD-74d447058e4fe55c5ce5caf8
+- E-SHARD-7ffa4398c4be8cc3cd554470
+- E-SHARD-05ca0b48b1df0ad658b6478e
+- E-SHARD-5e5e174709171c1e4add322c
+- E-SHARD-e824ffe26d600d6ea54dba3c
+- E-SHARD-b938d151c6720ec7498affb3
+- E-SHARD-1a5e717943a35df4daba1bae
+- E-SHARD-8f2b998fb349ac107959ea96
+- E-SHARD-ad73740735ff2247666eae74
+- E-SHARD-85d1239d8141c36194eb5ad9
+- E-SHARD-61cef66a8e02bc96a1ec485c
+- E-SHARD-cbdb593a11e78f1b77abad78
+- E-SHARD-c4646b6a6e2e6af1880c2bb9
+- E-SHARD-0f287837010b58295d2f9225
+- E-SHARD-4d2bb8745bf92fb784b1a1d7
+- E-SHARD-c6a540e9015ba8508b5dd69f
+- E-SHARD-de38931950983c8cb5f8492f
+- E-SHARD-9cd74c1d00028644ce79fe61
+- E-SHARD-c45fdf54e7d7eb20c47a41f9
+- E-SHARD-64d7ca11fdf8902038286a21
+- E-SHARD-b14a6b524e36dc166d96207e
+- E-SHARD-75f41a77fca0e03b12422132
+- E-SHARD-2e02303c3965fec2e970360e
+- E-SHARD-72be72af863e00c6ea8db3e7
+- E-SHARD-842dfc383768e8481163e6a7
+- E-SHARD-043a0781377b17d8e1413547
+- E-SHARD-3cc825e4c8c3ab3c1f477a87

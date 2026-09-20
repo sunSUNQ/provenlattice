@@ -1,0 +1,39 @@
+{
+ "oracle_version": "SQI_FORMAL_ORACLE_V1.1",
+ "arm": "sqi",
+ "task_id": "SQI-T01",
+ "machine_checks": {
+  "names_symbol": true,
+  "names_file": true,
+  "names_declaration_line": true,
+  "reads_definition_source": true,
+  "cites_definition_evidence": true
+ },
+ "machine_checks_pass": true,
+ "task_success": true,
+ "evidence_oracle": {
+  "citation_closure_ok": true,
+  "used_ids": [
+   "E-CODE-5b90c0eeea70294a6db4fabe",
+   "E-CODE-94acad33e16eceea6ea5d677",
+   "E-CODE-d69dc4724057c9eef06a45bd"
+  ],
+  "returned_ids_union_count": 11,
+  "unsupported_claim_ids": []
+ },
+ "source_verification": {
+  "source_read_events": 2,
+  "read_targets": [
+   "D:\\pl-c4-runtime\\benchmark\\aria2\\src\\DownloadEngine.h"
+  ]
+ },
+ "sqi_call_summary": {
+  "total_calls": 2,
+  "calls_by_type": {
+   "symbol.lookup": 2
+  },
+  "total_payload_bytes": 12462
+ },
+ "capability_failure_flags": [],
+ "human_review_required": []
+}
