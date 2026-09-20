@@ -1,0 +1,27 @@
+## Answer
+
+**Document section.** The `c_murmurhash_bl` subsection of `docs/cn/client.md` (lines 286–289) is indexed in the knowledge layer as DocumentSection `docs/cn/client.md#79c3f03a99dbabb5` (heading path `此行会被忽略 / 负载均衡 / c_murmurhash_bl`), returned as **E-DOC-51c12e32861bb02b28d8d99a**.
+
+**Core implementation.** The behavior is implemented by the class **`brpc::policy::ConsistentHashingBoundedLoadBalancer`**, declared at `src/brpc/policy/consistent_hashing_load_balancer.h:98-130` and defined at `src/brpc/policy/consistent_hashing_load_balancer.cpp:427-627`. Its central method is **`SelectServer`** (`.cpp:525-602`), and it is wired to the name `"c_murmurhash_bl"` via `LoadBalancerExtension()->RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)` at `src/brpc/global.cpp:416` (instance declared at `global.cpp:167`).
+
+**Document → code relationship.** The graph carries a cross-layer edge from the document section into `src/brpc/policy/` (**E-XLINK-3284c4dde04ede3b45992a17**, `relation: DOCUMENTS`, layer `knowledge`, confidence 0.7). That graph edge resolves lexically to `brpc.policy.AddServersInBatch.replicas` (**E-CODE-9cec5b84fb52b556c0c332c9**) because the prose literally contains the token `replicas` — it is a weak symbol-reference match, **not** the bounded-load implementation. The true implementation is established by reading the source: the class inherits `ConsistentHashingLoadBalancer` (`consistent_hashing_load_balancer.h:46`, header def **E-CODE-958e25377596d1f5e9455d79**), whose doc comment (`header:93-97`) restates the CACM-2017 bounded-loads rule.
+
+**Verification of the documented claims against source** (semantics read, not just graph facts):
+- "哈希环与 c_murmurhash 完全相同" — the class extends the parent and reuses the parent ring `_db_hash_ring` (`header:81`); `SelectServer` reads that ring and does the same `lower_bound` ring walk (`cpp:535-556`).
+- "容量上限 ceil(load_factor * 平均在途请求数)" — computed at `cpp:546-551` as `ceil(_load_factor * (total+1) / lm->size())`.
+- "已达上限时沿环顺时针溢出到下一台有余量的服务器" — the clockwise loop at `cpp:565-588` takes the first node with `inflight < capacity`, keeping a fallback.
+- "默认来自 -chash_bounded_load_factor（默认1.25，必须大于1）" — gflag defined at `cpp:41-50`, validated by `ValidateLoadFactor` (`factor > 1.0`).
+- "可按 channel 覆盖：c_murmurhash_bl:load_factor=1.5" — `SetParameter` handles the `load_factor` key and rejects `<= 1.0` (`cpp:509-523`).
+- "replicas 参数与 c_murmurhash 相同" — inherited `SetParameter` handles `replicas` (`cpp:418-425`), default gflag `chash_num_replicas = 100` (`cpp:36-38`).
+
+Both required domains contributed: the knowledge layer supplied the document section and the cross-layer link (E-DOC / E-XLINK), and the code layer supplied the class/method/registration facts (E-CODE), with the class's membership in shard `src/brpc` confirmed by E-SHARD-0bd4b5aa4d298e72de409251.
+
+Evidence Used:
+- E-DOC-51c12e32861bb02b28d8d99a
+- E-XLINK-3284c4dde04ede3b45992a17
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-CODE-958e25377596d1f5e9455d79
+- E-SHARD-0bd4b5aa4d298e72de409251

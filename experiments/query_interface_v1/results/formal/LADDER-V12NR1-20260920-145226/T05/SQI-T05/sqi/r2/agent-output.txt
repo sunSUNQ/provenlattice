@@ -1,0 +1,31 @@
+## Answer
+
+**Core implementation**
+
+The behavior described in `docs/cn/client.md` §`c_murmurhash_bl` (lines 286–289, "负载均衡") is implemented by the class **`brpc::policy::ConsistentHashingBoundedLoadBalancer`** — qualified name `brpc.policy.ConsistentHashingBoundedLoadBalancer`, symbol id `symbol:c502400a7a3d0bdd6d9867f8c6e39d0a9fa76e311913006b9c6ebe38a3feb14f`.
+
+- **Main code symbol:** class `ConsistentHashingBoundedLoadBalancer` (E-CODE-1726cdc7c9938223c1d04362), declared in **`src/brpc/policy/consistent_hashing_load_balancer.h:98–130`** and implemented in **`src/brpc/policy/consistent_hashing_load_balancer.cpp`**. Its behavior-critical method is `SelectServer` (`cpp:525–602`, E-CODE-3f698369ec57552531b20d82; decl `header:107`, E-CODE-367d5b5a91beb9028d859ae9).
+- It is registered under the LB name in the doc via **`src/brpc/global.cpp:416`** (`RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)`), backed by the member `ConsistentHashingBoundedLoadBalancer ch_mh_bl_lb;` at `global.cpp:167`. (Structural identity of the symbol is confirmed by the bridge; the registration line was read in source.)
+- The class is a member of shard `src/brpc` (E-SHARD-0bd4b5aa4d298e72de409251); its constructor is `cpp:427–431` (E-CODE-6aa9c25c466cb73b19d2a6b4, decl `header:100` E-CODE-cddcb1233eb5aa32cb587ed9).
+
+**Doc-to-code relationship (each semantic point verified by reading source)**
+
+- The doc's citations "(Mirrokni等，CACM 2017)" and its description of ring-preserving overflow match the header's own comment almost verbatim: `consistent_hashing_load_balancer.h:93–97` states it is "Consistent Hashing with Bounded Loads (Mirrokni et al., CACM 2017) on top of the parent's hash ring … overflows to the next server clockwise … with spare capacity".
+- *"每台服务器额外有容量上限 `ceil(load_factor * 平均在途请求数)`"* — `SelectServer` computes `capacity = ceil(_load_factor * (total + 1) / lm->size())` at `cpp:546–551` (the `+1` accounts for the in-flight request being placed).
+- *"请求沿哈希环顺时针溢出到下一台有余量的服务器"* — the clockwise walk that picks the first node with `inflight < capacity` is `cpp:557–588`, with a fallback to the first available node.
+- *"系数默认来自 -chash_bounded_load_factor（默认1.25，必须大于1）"* — flag defined at `cpp:41–50` (`DEFINE_double(chash_bounded_load_factor, 1.25, …)` plus `ValidateLoadFactor` requiring `factor > 1.0`); rejected ≤1.0 in `SetParameter` at `cpp:509–523`.
+- *"可按channel覆盖：`c_murmurhash_bl:load_factor=1.5`"* — the `load_factor` channel parameter handled at `cpp:511–521`.
+- *"`replicas`参数与`c_murmurhash`相同"* — `SetParameter` delegates unknown keys to the parent (`cpp:522`), whose handler accepts `replicas` (`cpp:418–425`).
+- In-flight accounting used by the bound is maintained in `Feedback` (`cpp:604–616`) and is incremented in `SelectServer` when `in.changable_weights` is set (`cpp:596–600`).
+
+**Knowledge-domain link:** anchoring the query on the doc heading `c_murmurhash_bl` (the knowledge-enabled `code.related` call) resolves the document section to code in `src/brpc/policy/consistent_hashing_load_balancer.cpp` through a cross-layer `DOCUMENTS` edge (layer = knowledge, `document_path = docs/cn/client.md`, source range lines 286–289 — exactly this section) — evidence **E-XLINK-3284c4dde04ede3b45992a17**, whose resolved target symbol is the `replicas` token at `cpp:265` (E-CODE-9cec5b84fb52b556c0c332c9). So the graph link from this doc section to that file is confirmed; the class that actually realizes the described algorithm is identified by the code-side definition evidence above.
+
+**Evidence Used:**
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-CODE-3f698369ec57552531b20d82
+- E-CODE-367d5b5a91beb9028d859ae9
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-SHARD-0bd4b5aa4d298e72de409251
+- E-XLINK-3284c4dde04ede3b45992a17

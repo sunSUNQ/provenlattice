@@ -1,0 +1,68 @@
+{
+ "oracle_version": "SQI_FORMAL_ORACLE_V1.1",
+ "arm": "sqi",
+ "task_id": "SQI-T04",
+ "machine_checks": {
+  "reports_frontier_size_49": true,
+  "reports_boundary_edges_1031": true,
+  "reports_wide_impact": true,
+  "reports_truncation": false,
+  "reads_affected_source": true,
+  "interface_aggregates_match_frozen": true
+ },
+ "machine_checks_pass": false,
+ "task_success": false,
+ "evidence_oracle": {
+  "citation_closure_ok": true,
+  "used_ids": [
+   "E-CODE-13d2865270a922bb540ffb87",
+   "E-CODE-f1f053e4f582ef2d0b5691cb",
+   "E-SHARD-0b546082a8bf55494f78af5a",
+   "E-SHARD-2d8cc498cede1826e600ac38",
+   "E-SHARD-3ef51966444e255f8a7ceedf",
+   "E-SHARD-54ad7eef9ffb3d4b308a6751",
+   "E-SHARD-5e5e174709171c1e4add322c",
+   "E-SHARD-61a86ca5bba6718276577931",
+   "E-SHARD-61cef66a8e02bc96a1ec485c",
+   "E-SHARD-64d7ca11fdf8902038286a21",
+   "E-SHARD-75592c1d6cff42bb314f362a",
+   "E-SHARD-8f2b998fb349ac107959ea96",
+   "E-SHARD-b14a6b524e36dc166d96207e",
+   "E-SHARD-b2344cd8b4ee1df9fecab7ed",
+   "E-SHARD-bc2c885ed83125f571d2e711",
+   "E-SHARD-bdcbd89f47e8d546d6d05d34",
+   "E-SHARD-c4646b6a6e2e6af1880c2bb9",
+   "E-SHARD-c75128b3f196dbe3cb663fa9",
+   "E-SHARD-cbdb593a11e78f1b77abad78",
+   "E-SHARD-d4853a2d4add1dd1cec6011b",
+   "E-SHARD-e824ffe26d600d6ea54dba3c",
+   "E-SHARD-fcb9c83a50027c26f100e0f7"
+  ],
+  "returned_ids_union_count": 51,
+  "unsupported_claim_ids": []
+ },
+ "source_verification": {
+  "source_read_events": 6,
+  "read_targets": [
+   "D:/pl-c4-runtime/benchmark/rocksdb",
+   "D:/pl-c4-runtime/benchmark/rocksdb/db/builder.cc",
+   "D:/pl-c4-runtime/benchmark/rocksdb/db/db_impl/db_impl_files.cc",
+   "D:/pl-c4-runtime/benchmark/rocksdb/file/file_util.cc",
+   "D:/pl-c4-runtime/benchmark/rocksdb/file/file_util.h"
+  ]
+ },
+ "sqi_call_summary": {
+  "total_calls": 6,
+  "calls_by_type": {
+   "impact.frontier": 3,
+   "symbol.callers": 1,
+   "symbol.lookup": 1,
+   "symbol.references": 1
+  },
+  "total_payload_bytes": 67304
+ },
+ "capability_failure_flags": [],
+ "human_review_required": [
+  "answer makes no symbol-level semantic impact assertion (shard-level frontier only, contract S5.3)"
+ ]
+}

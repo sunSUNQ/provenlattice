@@ -1,0 +1,6 @@
+The class is `aria2.DownloadEngine`, declared in **src/DownloadEngine.h at line 84** (class body spans lines 84–335).
+
+**Responsibility:** `DownloadEngine` is the central event-loop and dispatch core of aria2. It owns the `EventPoll` reactor, the command queues (`commands_` / `routineCommands_`), the socket pool, DNS cache, cookie storage, and the manager objects (`RequestGroupMan`, `FileAllocationMan`, `CheckIntegrityMan`), registering read/write interest for sockets and name resolvers. Its `run(bool oneshot)` method drives the main loop — polling for readiness (`waitData()` → `eventPoll_->poll`), executing commands in `STATUS_ACTIVE`/`STATUS_ALL` states, refreshing statistics, and returning once downloads are exhausted (or after a single poll in oneshot mode) — plus it exposes halt control, socket pooling, DNS caching, and token validation to the rest of the codebase (verified in src/DownloadEngine.h:84-335 and src/DownloadEngine.cc:158-200).
+
+Evidence Used:
+- E-CODE-94acad33e16eceea6ea5d677

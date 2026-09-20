@@ -1,0 +1,41 @@
+## Budgeted explanation of `brpc.IsAskedToQuit`
+
+**Query:** `bundle.explain` on `symbol=brpc.IsAskedToQuit`, budget `12,6,10,4` → applied `max_evidence=12, max_symbols=6, max_edges=10, max_sections=4`. The envelope reports `truncated: true`, `fallback_triggered: false`, `used: {evidence:12, symbols:6, edges:11, sections:0}`.
+
+### Definition location
+- `src/brpc/controller.cpp`, lines **1976–1979**, `Function` kind, signature `()`, qualified name `brpc.IsAskedToQuit`.
+- Symbol id `symbol:3c1e7e7ace7c8f43f31fa0f15b9e31d22f9f7776e519b18e7db5c1b49d47a24c`; belongs to shard `src/brpc`.
+
+### Callers returned (10 CALL_RELATION items fit the budget)
+| # | Caller symbol | Call site file |
+|---|---|---|
+| 1 | `main` | `example/echo_c++/client.cpp` |
+| 2 | `main` | `example/selective_echo_c++/client.cpp` |
+| 3 | `sender` | `example/bthread_tag_echo_c++/client.cpp` |
+| 4 | `main` | `example/streaming_echo_c++/client.cpp` |
+| 5 | `main` | `example/multi_threaded_echo_fns_c++/server.cpp` |
+| 6 | `main` | `example/baidu_proxy_and_generic_call/client.cpp` |
+| 7 | `main` | `tools/rpc_press/rpc_press.cpp` |
+| 8 | `sender` | `example/memcache_c++/client.cpp` |
+| 9 | `sender` | `example/parallel_echo_c++/client.cpp` |
+| 10 | `main` | `example/mysql_c++/mysqlclient_press.cpp` |
+
+### Omitted items
+The bundle was cut off by the budget. `truncation.omitted_counts`: **43 symbols, 39 edges** (raw_refs and sections 0). All omissions are the excess of the symbol's fan-in over the `max_symbols=6` / `max_edges=10` caps; `retry_same_call_will_not_expand` is `true`.
+
+### Verified claim about the function
+Reading the definition (`src/brpc/controller.cpp:1976-1979`) and its surrounding globals (`:1922-1938`): the body calls `pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie)` and then **returns the process-global `volatile bool s_signal_quit`**, which `quit_handler` sets to `true` when SIGINT/SIGTERM/SIGHUP is delivered. A cited call site confirms the usage — `while (!brpc::IsAskedToQuit()) { ... }` at `example/echo_c++/client.cpp:61` — so the function reports whether a quit signal has been received, letting loops run until shutdown is requested.
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

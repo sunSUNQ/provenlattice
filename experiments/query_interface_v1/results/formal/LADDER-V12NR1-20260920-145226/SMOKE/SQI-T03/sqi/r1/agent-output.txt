@@ -1,0 +1,47 @@
+All six references resolved by the index. Here's the answer.
+
+## Symbol identity
+- **`ROCKSDB_NAMESPACE.NumUnsetBytes`** — kind `Function`, defined in `options/options_settable_test.cc:63-87` (symbol id `symbol:0458f52ec47c7926480c1b74dae2a8f914fb0d2d56b6dbcbaf3668ab36e96076`).
+
+## Reference locations (file and line)
+All six references live in one file, `options/options_settable_test.cc`:
+
+| # | Location | Enclosing test | Evidence |
+|---|----------|----------------|----------|
+| 1 | line 219 (range 219–220) | `TEST_F(OptionsSettableTest, BlockBasedTableOptionsAllFieldsSettable)` | E-REF-b4b68e320d37673a8cfa6b61 |
+| 2 | line 265 | `TablePropertiesAllFieldsSettable` | E-REF-cf3a28b3ce80f5585dce46aa |
+| 3 | line 310 (range 310–311) | `TablePropertiesAllFieldsSettable` | E-REF-320c02d873d6bc75b33f449f |
+| 4 | line 388 | `DBOptionsAllFieldsSettable` | E-REF-0486e0b8db7ddc965589e565 |
+| 5 | line 512 (range 512–513) | `DBOptionsAllFieldsSettable` | E-REF-ba14b47f4397f27bea42be84 |
+| 6 | line 744 (range 744–745) | `ColumnFamilyOptionsAllFieldsSettable` | E-REF-e7688a8ac44adebf7d591fc7 |
+
+The enclosing-test column is my reading of the source; the index itself attributes all six references to a single `owner_symbol_id` (`symbol:3d03ee2e6799eeded7fa53018327b9207ba4e3186c32dfd06eaef079a410e7e4`), whose name I could not resolve via `symbol.callers` (returned empty).
+
+## Resolved vs unresolved
+- **Resolved: 6**
+- **Unresolved: 0**
+
+The query's `result_meta` reports `resolved_to_symbol_count: 6` and `status_counts: {"resolved": 6}`; every reference fact carries `"resolution_status":"resolved"` with `candidate_symbols` naming this symbol. All six are `relation: CALLS`.
+
+## One reference explained in source (line 219, E-REF-b4b68e320d37673a8cfa6b61)
+I read the source around the definition and this call site to verify meaning.
+
+- The definition (`options/options_settable_test.cc:63-87`) walks a raw byte buffer and counts how many bytes still equal `kSpecialChar` (`'z'`, defined at line 43). It skips the `excluded` `OffsetGap` ranges — `<offset, size>` pairs for members that cannot be set from an option string, notably the `shared_ptr`/pointer fields listed in `kBbtoExcluded` (lines 121-134) — and counts special-char bytes in every other region.
+- The call site at lines 218-220 asserts:
+  ```cpp
+  ASSERT_EQ(unset_bytes_base,
+            NumUnsetBytes(new_bbto_ptr, sizeof(BlockBasedTableOptions),
+                          kBbtoExcluded));
+  ```
+  `new_bbto_ptr` was first filled entirely with `'z'` (line 166-167), then passed through `GetBlockBasedTableOptionsFromString()` (line 175). `unset_bytes_base` is the baseline count obtained from a default-constructed struct (lines 152-154). The equality holds only if the parser wrote every non-excluded byte, i.e. no field was left as `'z'`. This is the "all fields settable" guard described in the comment at lines 136-140: if a new option field is added that the string parser does not populate, its bytes stay special-char and the count no longer matches the padding-only baseline, failing the test.
+
+The other five references are the same pattern applied to `TableProperties` (265, 310 — the latter asserting `== 0`, i.e. every byte set), `DBOptions` (388, 512), and `ColumnFamilyOptions` (744).
+
+Evidence Used:
+- E-CODE-5f6ca2360631fc6a4cda96c5
+- E-REF-b4b68e320d37673a8cfa6b61
+- E-REF-cf3a28b3ce80f5585dce46aa
+- E-REF-320c02d873d6bc75b33f449f
+- E-REF-0486e0b8db7ddc965589e565
+- E-REF-ba14b47f4397f27bea42be84
+- E-REF-e7688a8ac44adebf7d591fc7

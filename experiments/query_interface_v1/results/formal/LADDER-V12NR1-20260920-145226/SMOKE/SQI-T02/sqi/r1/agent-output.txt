@@ -1,0 +1,28 @@
+## `butil::Status::error_cstr` (qualified name `butil.Status.error_cstr`)
+
+**Definition** — `src/butil/status.h:99-101`:
+```cpp
+const char* error_cstr() const {
+    return (_state == nullptr ? "OK" : _state->message);
+}
+```
+
+**What it returns (verified by reading source):** a `const char*` pointing to internal, non-owned storage. If the status is OK (`_state == nullptr`) it returns the string literal `"OK"`; otherwise it returns `_state->message`, the NUL-terminated error-text buffer embedded (as a flexible array member `char message[0]`) in the heap-allocated `Status::State` struct (`status.h:44-49`). It is a raw C string, not a `StringPiece`: as the comment at `status.h:98` warns, an embedded `'\0'` truncates the visible text (contrast `error_data()`, which carries an explicit length). Callers must not free it.
+
+**Callers** — the `symbol.callers` query returned 7 edges. Two are tests, which I ignore per the task: `test/status_unittest.cpp` (`anonymous.TEST_F`, edge E-CALL-c1c6fb11d3f64bd405bfd072) and `test/brpc_uri_unittest.cpp` (`TEST`, edge E-CALL-089f90a61b5cb67f0c3dd35d). The five production call sites, each verified against source, are:
+
+1. **`src/brpc/policy/thrift_protocol.cpp:500`** — inside `brpc::policy::ProcessThriftRequest` (def. at line 466). After `ReadThriftMessageBegin` fails, it does `return cntl->SetFailed(EREQUEST, "%s", st.error_cstr());` — verified at lines 497-501.
+2. **`src/brpc/policy/thrift_protocol.cpp:618`** — inside `brpc::policy::ProcessThriftResponse` (def. at line 587). Same pattern with `ERESPONSE`: `cntl->SetFailed(ERESPONSE, "%s", st.error_cstr());` — verified at lines 616-619.
+3. **`src/brpc/policy/http_rpc_protocol.cpp:656`** — inside `brpc::policy::SerializeHttpRequest`. It guards on `!hreq.uri().status().ok()` then `cntl->SetFailed(EREQUEST, "%s", hreq.uri().status().error_cstr());` — verified at lines 653-657.
+4. **`src/brpc/socket.cpp:398`** — inside `Socket::WriteRequest::Setup`. After `msg->AppendAndDestroySelf(&data, s)` fails, `bthread_id_error2(id_wait, st.error_code(), st.error_cstr());` — verified at lines 394-399.
+5. **`src/brpc/policy/rtmp_protocol.cpp:2776`** (and a second call at `:3072`) — file-level `CALLS` edge; both feed `status.error_cstr()` into `player_stream->SendStopMessage(...)` / `publish_stream->SendStopMessage(...)`.
+
+The callers consume `error_cstr()` exactly as its definition implies: as a human-readable, already-formatted error string to forward into an error-reporting API (`SetFailed`, `bthread_id_error2`, `SendStopMessage`) alongside a separately-available numeric `error_code()`.
+
+Evidence Used:
+- E-CODE-9b9637ab57e06c9a9ec6367f
+- E-CALL-b5561137fc27891cc12e9f7f
+- E-CALL-4af9c1bdb4b5aa616a834340
+- E-CALL-bafbd36f7a6aa4d2873ff005
+- E-CALL-98d959bc3a7f3ac6a5d8e1e9
+- E-CALL-e0d68ad0260f4b4d685d3878

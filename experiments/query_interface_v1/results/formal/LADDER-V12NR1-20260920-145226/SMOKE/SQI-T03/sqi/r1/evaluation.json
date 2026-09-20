@@ -1,0 +1,46 @@
+{
+ "oracle_version": "SQI_FORMAL_ORACLE_V1.1",
+ "arm": "sqi",
+ "task_id": "SQI-T03",
+ "machine_checks": {
+  "frozen_locations_reported_all_6": true,
+  "no_index_exceeding_claims_machine_proxy": true,
+  "reads_reference_site": true,
+  "frozen_e_ref_ids_in_session": true
+ },
+ "machine_checks_pass": true,
+ "task_success": true,
+ "evidence_oracle": {
+  "citation_closure_ok": true,
+  "used_ids": [
+   "E-CODE-5f6ca2360631fc6a4cda96c5",
+   "E-REF-0486e0b8db7ddc965589e565",
+   "E-REF-320c02d873d6bc75b33f449f",
+   "E-REF-b4b68e320d37673a8cfa6b61",
+   "E-REF-ba14b47f4397f27bea42be84",
+   "E-REF-cf3a28b3ce80f5585dce46aa",
+   "E-REF-e7688a8ac44adebf7d591fc7"
+  ],
+  "returned_ids_union_count": 7,
+  "unsupported_claim_ids": []
+ },
+ "source_verification": {
+  "source_read_events": 12,
+  "read_targets": [
+   "D:\\pl-c4-runtime\\benchmark\\rocksdb\\options\\options_settable_test.cc"
+  ]
+ },
+ "sqi_call_summary": {
+  "total_calls": 3,
+  "calls_by_type": {
+   "symbol.callers": 1,
+   "symbol.lookup": 1,
+   "symbol.references": 1
+  },
+  "total_payload_bytes": 12156
+ },
+ "capability_failure_flags": [],
+ "human_review_required": [
+  "no reference claimed as resolved beyond the six frozen resolved raw references"
+ ]
+}

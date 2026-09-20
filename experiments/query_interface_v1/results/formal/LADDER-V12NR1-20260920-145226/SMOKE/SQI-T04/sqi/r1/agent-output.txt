@@ -1,0 +1,89 @@
+## Change shape (source-grounded)
+
+The touched interface is `DeleteDBFile`, not the `CopyFile` family:
+
+- `file/file_util.h:64-66` — `Status DeleteDBFile(const ImmutableDBOptions* db_options, const std::string& fname, const std::string& path_to_sync, const bool force_bg, const bool force_fg);`
+- `file/file_util.cc:142-152` — same 5-parameter definition (param named `dir_to_sync` here, `path_to_sync` in the header), forwarding the directory to `SstFileManagerImpl::ScheduleFileDeletion` / `env->DeleteFile`.
+- `db/builder.cc:579-580` — the updated call site: `DeleteDBFile(&db_options, blob_file_path, dbname, /*force_bg=*/false, /*force_fg=*/false)`, i.e. `dbname` supplied for the directory argument.
+
+## Conservative 1-hop impact frontier (`changed_shard_paths=db,file`)
+
+Aggregates from the query envelope: **frontier_size = 49** shard paths, **boundary_edges_total = 1031**, **threshold = 8**, **wide_impact = true**. The relation is `DEPENDS_ON` with the frontier shard as source and the changed shard (`shard:536f…` = `db`, `shard:0af3…` = `file`) as target — i.e. these are *dependents/consumers* of the changed shards.
+
+Returned (budgeted) portion — 20 of 49, with exact crossing-edge counts:
+
+| frontier shard path | depends on | boundary edges |
+|---|---|---|
+| db/db_impl | db | 187 |
+| db/compaction | db | 114 |
+| table/block_based | db | 90 |
+| table | db | 84 |
+| db/blob | db | 58 |
+| c_api_gen | db | 25 |
+| build_tools | db | 23 |
+| memtable | db | 16 |
+| db_stress_tool | db | 14 |
+| options | db | 10 |
+| db/wide | db | 8 |
+| env | db | 7 |
+| monitoring | db | 5 |
+| java/rocksjni | db | 4 |
+| coverage | db | 2 |
+| buckifier | db | 1 |
+| fuzz | db | 1 |
+| include/rocksdb | db | 1 |
+| logging | file | 6 |
+| cache | file | 5 |
+
+**Width:** impact is wide by the query's own flag (49 > threshold 8) and heavily skewed — the bulk sits in `db/db_impl (187)`, `db/compaction (114)`, `table/block_based (90)`, `table (84)`, `db/blob (58)`, with a long tail of 1–2 edge shards. Note the top-level `db` and `file` paths are the *changed* shards themselves, not frontier members; frontier entries are other directories that route edges across the `db`/`file` boundary.
+
+## What the frontier does and does not tell you
+
+**Does:** enumerate *shard paths by directory prefix* whose boundary edges touch the changed shards; give the exact aggregate edge count (1031) and frontier size (49); give edge direction (`DEPENDS_ON`); and flag wide impact. These are structural facts and can be cited directly.
+
+**Does not:**
+- It is **shard/path-level, not symbol-level** — the envelope states plainly "no symbol-level impact is derivable from this call." It cannot tell you which functions or call sites are affected.
+- Membership means **"an edge crosses the shard boundary," not "uses the changed interface."** Shard `db` covers *every* file directly under `db/` (e.g. `db/wal_manager.cc`), so `db/db_impl` appearing could be caused by unrelated `db/*.h` dependencies rather than `builder.cc`.
+- It carries **no severity, no behavioral semantics, and no direction-of-use** — a dependent edge may be a direct call or a transitive header include.
+- It is **conservative/over-approximate by construction** (1-hop, shard granularity): presence ⇒ "touches", never "genuinely broken". Conversely, **absence is not evidence of no impact** — the listing is budgeted (20 of 49 shards and 20 of 1031 edge ids returned; retry will not expand), so unlisted shards are simply unnamed here.
+
+## Source verification — shard `db/db_impl` is genuinely impacted
+
+Frontier membership: `db/db_impl` depends on changed shard `db` via 187 boundary edges (E-SHARD-61a86ca5bba6718276577931). Reading the shard's source confirms this is a real consumer of the changed symbol, not a shard-coincidence:
+
+`db/db_impl/db_impl_files.cc:481-484` — `DBImpl::DeleteObsoleteFileImpl` calls
+```cpp
+file_deletion_status = DeleteDBFile(
+    &immutable_db_options_, fname, path_to_sync,
+    /*force_bg=*/false,
+    /*force_fg=*/(type == kWalFile) ? !wal_in_db_path_ : false);
+```
+This is a direct call to the changed `DeleteDBFile` interface with the directory argument (`path_to_sync`), matching the header's parameter name and arity — so `db/db_impl` is genuinely impacted, independent of the shard-graph reasoning.
+
+Additional call sites (self-grepped, source-verified) show the returned listing is a sample, not the whole picture: `db/wal_manager.cc:202,229,274` (inside the changed shard `db` itself) and `utilities/blob_db/blob_db_impl.cc:1869,1954` (a shard that does not appear in the budgeted 20-item frontier listing).
+
+Note on domains: this task is entirely code-domain; the evidence below is from the code graph (shard relations) and code symbols (definitions) — no knowledge/document domain is required or implicated.
+
+Evidence Used:
+- E-SHARD-0b546082a8bf55494f78af5a
+- E-SHARD-2d8cc498cede1826e600ac38
+- E-SHARD-3ef51966444e255f8a7ceedf
+- E-SHARD-54ad7eef9ffb3d4b308a6751
+- E-SHARD-5e5e174709171c1e4add322c
+- E-SHARD-61a86ca5bba6718276577931
+- E-SHARD-61cef66a8e02bc96a1ec485c
+- E-SHARD-64d7ca11fdf8902038286a21
+- E-SHARD-75592c1d6cff42bb314f362a
+- E-SHARD-8f2b998fb349ac107959ea96
+- E-SHARD-b14a6b524e36dc166d96207e
+- E-SHARD-b2344cd8b4ee1df9fecab7ed
+- E-SHARD-bc2c885ed83125f571d2e711
+- E-SHARD-bdcbd89f47e8d546d6d05d34
+- E-SHARD-c4646b6a6e2e6af1880c2bb9
+- E-SHARD-c75128b3f196dbe3cb663fa9
+- E-SHARD-cbdb593a11e78f1b77abad78
+- E-SHARD-d4853a2d4add1dd1cec6011b
+- E-SHARD-e824ffe26d600d6ea54dba3c
+- E-SHARD-fcb9c83a50027c26f100e0f7
+- E-CODE-13d2865270a922bb540ffb87
+- E-CODE-f1f053e4f582ef2d0b5691cb

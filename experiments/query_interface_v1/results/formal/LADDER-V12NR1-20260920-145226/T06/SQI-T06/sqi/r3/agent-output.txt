@@ -1,0 +1,48 @@
+## Budgeted explanation: `brpc.IsAskedToQuit`
+
+**Query:** `bundle.explain` with `max_evidence=12, max_symbols=6, max_edges=10` (query_id `Q-e4a3d59b8dab2759d823`). Envelope reports `truncated: true`, `fallback_triggered: false`, 12/12 evidence items returned, 6/6 symbols.
+
+### Definition location
+- `src/brpc/controller.cpp`, lines **1976–1979** — function `brpc.IsAskedToQuit`, signature `()`, kind `Function`, shard `src/brpc` (evidence `E-CODE-ee01188dd0889e9da9b23334`; shard membership `E-SHARD-0bde357513df373d39780249`).
+
+### Callers returned (10 CALLS edges within budget)
+| # | Caller | Call site | Evidence |
+|---|--------|-----------|----------|
+| 1 | `main` | example/echo_c++/client.cpp | E-CALL-00a3caa26b074ffa09ed29e6 |
+| 2 | `main` | example/selective_echo_c++/client.cpp | E-CALL-0273a5fb08cca748f455ef65 |
+| 3 | `sender` | example/bthread_tag_echo_c++/client.cpp | E-CALL-09be8da5351041810f00b2c2 |
+| 4 | `main` | example/streaming_echo_c++/client.cpp | E-CALL-0c111e1f0403e9ccebbeecf2 |
+| 5 | `main` | example/multi_threaded_echo_fns_c++/server.cpp | E-CALL-0c4dbf504cfd8c02d7f24fdc |
+| 6 | `main` | example/baidu_proxy_and_generic_call/client.cpp | E-CALL-10d353d47fcf5a8e9807f12d |
+| 7 | `main` | tools/rpc_press/rpc_press.cpp | E-CALL-192641f3a3d0eae0982de271 |
+| 8 | `sender` | example/memcache_c++/client.cpp | E-CALL-1ea1cd3a46923fcb2f57e094 |
+| 9 | `sender` | example/parallel_echo_c++/client.cpp | E-CALL-1f4fb793d5c388eff6ddd01d |
+| 10 | `main` | example/mysql_c++/mysqlclient_press.cpp | E-CALL-2d556ccad9892fcca94f0fe6 |
+
+### Omitted
+- `truncation.omitted_counts`: **39 edges** and **43 symbols** omitted (`retry_same_call_will_not_expand: true`). Wall-clock caller list is far larger than the 10 edges the budget allowed.
+- Accounting note: the envelope's `used` block reports 11 edges / 12 evidence / 6 symbols — the extra edge is the `MEMBER_OF` shard relation (`E-SHARD-0bde357513df373d39780249`) extra to the 10 `CALLS` edges.
+
+### Verified claim about what the function does
+Read from `src/brpc/controller.cpp:1976-1979`: the body is
+```cpp
+bool IsAskedToQuit() {
+    pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie);
+    return s_signal_quit;
+}
+```
+So it lazily installs the quit-signal handlers exactly once (`RegisterQuitSignalOrDie` at lines 1942–1974 registers `quit_handler` for SIGINT, and for SIGTERM/SIGHUP gated by `FLAGS_graceful_quit_on_sigterm` / `FLAGS_graceful_quit_on_sighup`) and then returns the process-wide flag `s_signal_quit`. Confirmed at the call site `example/echo_c++/client.cpp:61`, where it is used as the loop guard `while (!brpc::IsAskedToQuit())`, i.e. a caller polls it to detect that a termination signal has been received and stop working. (Nearby `AskToQuit()` at line 1981 simply `raise(SIGINT)`s to trigger the same path.)
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6
