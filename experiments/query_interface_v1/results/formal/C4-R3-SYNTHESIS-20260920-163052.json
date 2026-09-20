@@ -1,0 +1,665 @@
+{
+ "schema": "SQI_C4_R3_CLEAN_SYNTHESIS_V1",
+ "batch": "SQI-FORMAL-C4-20260920T072457Z",
+ "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+ "capability_floors": {
+  "sqi_18_of_18": {
+   "value": "17/18",
+   "pass": false
+  },
+  "t02_3_of_3": {
+   "value": "3/3",
+   "pass": true
+  },
+  "t04_3_of_3": {
+   "value": "3/3",
+   "pass": true
+  },
+  "citation_closure_100pct": {
+   "value": "18/18",
+   "pass": true
+  },
+  "unsupported_claims_zero": {
+   "value": 0,
+   "pass": true
+  },
+  "machine_checks": {
+   "value": "17/18",
+   "pass": false
+  },
+  "source_verification": {
+   "value": "18/18 cells with source reads",
+   "pass": true
+  },
+  "no_new_violations": {
+   "value": [],
+   "pass": true
+  },
+  "single_backend": {
+   "value": [
+    "deepseek-flash"
+   ],
+   "pass": true
+  }
+ },
+ "floors_pass": false,
+ "task_success": {
+  "sqi": "17/18",
+  "native": "13/18",
+  "per_task_sqi": {
+   "SQI-T01": "3/3",
+   "SQI-T02": "3/3",
+   "SQI-T03": "3/3",
+   "SQI-T04": "3/3",
+   "SQI-T05": "2/3",
+   "SQI-T06": "3/3"
+  },
+  "per_task_native": {
+   "SQI-T01": "3/3",
+   "SQI-T02": "1/3",
+   "SQI-T03": "3/3",
+   "SQI-T04": "0/3",
+   "SQI-T05": "3/3",
+   "SQI-T06": "3/3"
+  },
+  "baseline": {
+   "native": "13/18",
+   "sqi": "18/18"
+  }
+ },
+ "t05_attribution": {
+  "calls_per_cell": [
+   6,
+   20,
+   20
+  ],
+  "cache_hits_total": 1,
+  "required_evidence_ids": [
+   "E-CODE-9cec5b84fb52b556c0c332c9",
+   "E-XLINK-3284c4dde04ede3b45992a17"
+  ],
+  "failures": [
+   {
+    "cell": "SQI-T05.sqi.r3",
+    "sqi_calls": 20,
+    "machine_checks_failed": [
+     "required_evidence_id_in_session",
+     "knowledge_db_id_returned",
+     "code_db_id_returned"
+    ],
+    "output_head": "## Core implementation  **Main code symbol:** `brpc::policy::ConsistentHashingBoundedLoadBalancer` (C++ class), declared in `src/brpc/policy/consistent_hashing_load_balancer.h:98-130` and defined in `src/brpc/policy/cons"
+   }
+  ],
+  "failing_cell_forensics": [
+   {
+    "cell": "SQI-T05.sqi.r3",
+    "required_ids": [
+     "E-CODE-9cec5b84fb52b556c0c332c9",
+     "E-XLINK-3284c4dde04ede3b45992a17"
+    ],
+    "required_pair_returned_in_failed_session": false,
+    "near_miss_calls": [
+     {
+      "index": 5,
+      "call": "code.related",
+      "params": {
+       "document": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 7,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "c_murmurhash_bl"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 9,
+      "call": "code.related",
+      "params": {
+       "document": "docs/cn/client.md#c_murmurhash_bl"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 10,
+      "call": "bundle.explain",
+      "params": {
+       "symbol": "docs/cn/client.md"
+      },
+      "returned_evidence": 1
+     },
+     {
+      "index": 11,
+      "call": "bundle.explain",
+      "params": {
+       "symbol": "docs/cn/client.md#c_murmurhash_bl"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 12,
+      "call": "code.related",
+      "params": {
+       "budget": {
+        "max_edges": 25,
+        "max_evidence": 40,
+        "max_sections": 8,
+        "max_symbols": 12
+       },
+       "document": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 13,
+      "call": "code.related",
+      "params": {
+       "document": "client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 14,
+      "call": "code.related",
+      "params": {
+       "document": "docs/cn/client.md#负载均衡"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 15,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 17,
+      "call": "code.related",
+      "params": {
+       "budget": {
+        "max_edges": 8,
+        "max_evidence": 8,
+        "max_sections": 4,
+        "max_symbols": 4
+       },
+       "document": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     }
+    ],
+    "call_sequence": [
+     {
+      "index": 1,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "BoundedLoadBalancer"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 2,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "ConsistentHashingBoundedLoadBalancer"
+      },
+      "returned_evidence": 3
+     },
+     {
+      "index": 3,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "ConsistentHashingBoundedLoadBalancer::SelectServer"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 4,
+      "call": "bundle.explain",
+      "params": {
+       "budget": {
+        "max_edges": 20,
+        "max_evidence": 30,
+        "max_sections": 6,
+        "max_symbols": 10
+       },
+       "symbol": "brpc.policy.ConsistentHashingBoundedLoadBalancer"
+      },
+      "returned_evidence": 2
+     },
+     {
+      "index": 5,
+      "call": "code.related",
+      "params": {
+       "document": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 6,
+      "call": "symbol.references",
+      "params": {
+       "symbol": "brpc.policy.ConsistentHashingBoundedLoadBalancer"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 7,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "c_murmurhash_bl"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 8,
+      "call": "symbol.callers",
+      "params": {
+       "symbol": "brpc.policy.ConsistentHashingBoundedLoadBalancer"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 9,
+      "call": "code.related",
+      "params": {
+       "document": "docs/cn/client.md#c_murmurhash_bl"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 10,
+      "call": "bundle.explain",
+      "params": {
+       "symbol": "docs/cn/client.md"
+      },
+      "returned_evidence": 1
+     },
+     {
+      "index": 11,
+      "call": "bundle.explain",
+      "params": {
+       "symbol": "docs/cn/client.md#c_murmurhash_bl"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 12,
+      "call": "code.related",
+      "params": {
+       "budget": {
+        "max_edges": 25,
+        "max_evidence": 40,
+        "max_sections": 8,
+        "max_symbols": 12
+       },
+       "document": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 13,
+      "call": "code.related",
+      "params": {
+       "document": "client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 14,
+      "call": "code.related",
+      "params": {
+       "document": "docs/cn/client.md#负载均衡"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 15,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 16,
+      "call": "symbol.references",
+      "params": {
+       "symbol": "brpc.policy.ConsistentHashingBoundedLoadBalancer.SelectServer"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 17,
+      "call": "code.related",
+      "params": {
+       "budget": {
+        "max_edges": 8,
+        "max_evidence": 8,
+        "max_sections": 4,
+        "max_symbols": 4
+       },
+       "document": "docs/cn/client.md"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 18,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "chash_bounded_load_factor"
+      },
+      "returned_evidence": 0
+     },
+     {
+      "index": 19,
+      "call": "symbol.lookup",
+      "params": {
+       "name": "ConsistentHashingLoadBalancer"
+      },
+      "returned_evidence": 5
+     },
+     {
+      "index": 20,
+      "call": "symbol.callees",
+      "params": {
+       "symbol": "brpc.policy.ConsistentHashingBoundedLoadBalancer"
+      },
+      "returned_evidence": 0
+     }
+    ]
+   }
+  ],
+  "satisfying_call_shapes_in_passing_reps": [
+   {
+    "call": "code.related",
+    "params": {
+     "document": "c_murmurhash_bl"
+    }
+   },
+   {
+    "call": "code.related",
+    "params": {
+     "document": "c_murmurhash_bl"
+    }
+   },
+   {
+    "call": "code.related",
+    "params": {
+     "budget": {
+      "max_edges": 20,
+      "max_evidence": 20,
+      "max_sections": 10,
+      "max_symbols": 20
+     },
+     "document": "c_murmurhash_bl"
+    }
+   }
+  ],
+  "satisfying_reps": [
+   1,
+   2
+  ],
+  "determinism_cross_check": {
+   "identical_signature_groups": 6,
+   "byte_identical_groups": 6,
+   "volatility_keys_excluded": [
+    "query_time_ms",
+    "source_verification_policy"
+   ],
+   "conclusion": "identical call signatures return identical envelopes once the wall-clock timing and the session-once policy advertisement are excluded — outcome variance is agent exploration behavior, not retrieval nondeterminism"
+  },
+  "mechanism": "required pair E-CODE-9cec5b84fb52b556c0c332c9, E-XLINK-3284c4dde04ede3b45992a17 is returned by code.related with params document=c_murmurhash_bl (r1 at call 3; r2 at calls 14 and 17 after divergent exploration). The failing cell SQI-T05.sqi.r3 issued 20 calls, never that signature — only near-miss shapes (docs/cn/client.md path forms, symbol.lookup of the anchor string). All four content checks passed and citation closure held; the failure is residual exploration noise, not an implementation fault"
+ },
+ "t06_attribution": {
+  "cells": [
+   {
+    "cell": "SQI-T06.sqi.r1",
+    "sqi_calls": 2,
+    "bundle_explain_calls": 1,
+    "cache_served": 0
+   },
+   {
+    "cell": "SQI-T06.sqi.r2",
+    "sqi_calls": 1,
+    "bundle_explain_calls": 1,
+    "cache_served": 0
+   },
+   {
+    "cell": "SQI-T06.sqi.r3",
+    "sqi_calls": 1,
+    "bundle_explain_calls": 1,
+    "cache_served": 0
+   }
+  ],
+  "repair_verified": true,
+  "mechanism": "the frozen T06 machine check requires exactly one bundle.explain invocation; after the V1.2-NR1 completion/repeat discipline (927cab6) and per-repetition call-log labels (bbc03ba, root cause of the earlier cross-cell cache/evaluator pollution) every T06.sqi cell issued exactly one bundle.explain and passed 3/3 — T06 fully repaired in this batch"
+ },
+ "cost_comparison": {
+  "after_sqi_totals": {
+   "cells": 18,
+   "sqi_calls": 90,
+   "envelope_bytes": 451116,
+   "input_tokens": 635502,
+   "output_tokens": 112193,
+   "cache_read_tokens": 5293696,
+   "cache_creation_tokens": 0,
+   "cache_hits": 2,
+   "duration_ms": 0.0,
+   "source_read_bytes": 260887,
+   "source_read_events": 74,
+   "agent_output_bytes": 60844,
+   "cache_amplification": 8.3
+  },
+  "after_native_totals": {
+   "cells": 18,
+   "sqi_calls": 0,
+   "envelope_bytes": 0,
+   "input_tokens": 530451,
+   "output_tokens": 133314,
+   "cache_read_tokens": 3878144,
+   "cache_creation_tokens": 0,
+   "cache_hits": 0,
+   "duration_ms": 0.0,
+   "source_read_bytes": 281813,
+   "source_read_events": 100,
+   "agent_output_bytes": 59381,
+   "cache_amplification": 7.3
+  },
+  "before_totals": {
+   "sqi_cells": 18,
+   "sqi_calls": 59,
+   "envelope_bytes_total": 517226,
+   "envelope_decomposition": {
+    "data": 190120,
+    "evidence_total": 247745,
+    "evidence_identity": 128799,
+    "evidence_location": 23694,
+    "evidence_narrative": 22381,
+    "evidence_extras": 73433,
+    "overhead_incl_constant_blocks": 79361
+   },
+   "evidence_entries": 320,
+   "evidence_used_bytes": 198354,
+   "evidence_used_ratio_pct": 80.2,
+   "evidence_duplicate_bytes": 18453,
+   "evidence_duplicate_ratio_pct": 7.5,
+   "source_read_bytes": 1215437,
+   "source_read_events": 324,
+   "agent_output_bytes": 69360,
+   "tokens": {
+    "input": 962640,
+    "output": 230508,
+    "cache_read": 14738944,
+    "cache_creation": 0
+   },
+   "cache_amplification_total": 15.3,
+   "native_comparison": {
+    "input_tokens": 527160,
+    "cache_read_tokens": 3410816,
+    "cache_amplification_total": 6.5,
+    "source_read_events": 213
+   }
+  },
+  "per_task_after": {
+   "SQI-T01": {
+    "cells": 3,
+    "sqi_calls": 7,
+    "envelope_bytes": 35832,
+    "input_tokens": 86090,
+    "output_tokens": 4683,
+    "cache_read_tokens": 272384,
+    "cache_creation_tokens": 0,
+    "cache_hits": 0,
+    "duration_ms": 0.0,
+    "source_read_bytes": 33608,
+    "source_read_events": 6,
+    "agent_output_bytes": 3224,
+    "cache_amplification": 3.2
+   },
+   "SQI-T02": {
+    "cells": 3,
+    "sqi_calls": 10,
+    "envelope_bytes": 82368,
+    "input_tokens": 103375,
+    "output_tokens": 12048,
+    "cache_read_tokens": 438016,
+    "cache_creation_tokens": 0,
+    "cache_hits": 1,
+    "duration_ms": 0.0,
+    "source_read_bytes": 19518,
+    "source_read_events": 19,
+    "agent_output_bytes": 11437,
+    "cache_amplification": 4.2
+   },
+   "SQI-T03": {
+    "cells": 3,
+    "sqi_calls": 11,
+    "envelope_bytes": 42384,
+    "input_tokens": 85779,
+    "output_tokens": 11522,
+    "cache_read_tokens": 474624,
+    "cache_creation_tokens": 0,
+    "cache_hits": 0,
+    "duration_ms": 0.0,
+    "source_read_bytes": 13140,
+    "source_read_events": 11,
+    "agent_output_bytes": 10587,
+    "cache_amplification": 5.5
+   },
+   "SQI-T04": {
+    "cells": 3,
+    "sqi_calls": 12,
+    "envelope_bytes": 96429,
+    "input_tokens": 118621,
+    "output_tokens": 32462,
+    "cache_read_tokens": 1286656,
+    "cache_creation_tokens": 0,
+    "cache_hits": 0,
+    "duration_ms": 0.0,
+    "source_read_bytes": 38118,
+    "source_read_events": 13,
+    "agent_output_bytes": 14361,
+    "cache_amplification": 10.8
+   },
+   "SQI-T05": {
+    "cells": 3,
+    "sqi_calls": 46,
+    "envelope_bytes": 93118,
+    "input_tokens": 127191,
+    "output_tokens": 33581,
+    "cache_read_tokens": 1843712,
+    "cache_creation_tokens": 0,
+    "cache_hits": 1,
+    "duration_ms": 0.0,
+    "source_read_bytes": 52399,
+    "source_read_events": 15,
+    "agent_output_bytes": 10405,
+    "cache_amplification": 14.5
+   },
+   "SQI-T06": {
+    "cells": 3,
+    "sqi_calls": 4,
+    "envelope_bytes": 100985,
+    "input_tokens": 114446,
+    "output_tokens": 17897,
+    "cache_read_tokens": 978304,
+    "cache_creation_tokens": 0,
+    "cache_hits": 0,
+    "duration_ms": 0.0,
+    "source_read_bytes": 104104,
+    "source_read_events": 10,
+    "agent_output_bytes": 10830,
+    "cache_amplification": 8.5
+   }
+  },
+  "per_task_before": {
+   "SQI-T01": {
+    "cells": 3,
+    "sqi_calls": 6,
+    "envelope_bytes_total": 46417,
+    "input_tokens": 110972,
+    "cache_read_tokens": 1123200
+   },
+   "SQI-T02": {
+    "cells": 3,
+    "sqi_calls": 8,
+    "envelope_bytes_total": 56583,
+    "input_tokens": 164612,
+    "cache_read_tokens": 3057920
+   },
+   "SQI-T03": {
+    "cells": 3,
+    "sqi_calls": 11,
+    "envelope_bytes_total": 58823,
+    "input_tokens": 113365,
+    "cache_read_tokens": 1108096
+   },
+   "SQI-T04": {
+    "cells": 3,
+    "sqi_calls": 4,
+    "envelope_bytes_total": 170810,
+    "input_tokens": 224923,
+    "cache_read_tokens": 2782208
+   },
+   "SQI-T05": {
+    "cells": 3,
+    "sqi_calls": 26,
+    "envelope_bytes_total": 80409,
+    "input_tokens": 173112,
+    "cache_read_tokens": 3918208
+   },
+   "SQI-T06": {
+    "cells": 3,
+    "sqi_calls": 4,
+    "envelope_bytes_total": 104184,
+    "input_tokens": 175656,
+    "cache_read_tokens": 2749312
+   }
+  }
+ },
+ "verdict": "HOLD / PARTIAL — single-backend attribution achieved and T06.sqi fully repaired, but the frozen capability floor is breached at SQI-T05 (17/18 vs 18/18 floor); positive and negative regions preserved for the V1.2 closure decision",
+ "verdict_scope": "V1.2 (cost optimization qualification) only — SQI-V1/V1.1 functional qualification unaffected",
+ "regions": {
+  "positive_regions": [
+   "single-backend attribution achieved (deepseek-flash x36, provenance per cell, backend_verified)",
+   "T01-T05 minus T05.r3: every SQI cell content-correct; T02/T03/T04.sqi all 3/3 (the earlier zeros were infrastructure + call-log pollution artifacts, now fixed and proven)",
+   "T06.sqi fully repaired by V1.2-NR1 (exactly one bundle.explain per cell, 3/3)",
+   "citation closure 18/18, unsupported claims 0, zero violations — SQI evidence discipline holds end to end",
+   "V1.2-NR1 usage discipline verified in production (18/18 SQI cells carry usage_discipline with truncation.retry_same_call_will_not_expand; attached to the first fresh call of each session)",
+   "identical call signatures return identical envelopes — retrieval layer deterministic"
+  ],
+  "negative_regions": [
+   "T05.sqi 2/3 (r3: 20-call exploration never issued the satisfying code.related document=c_murmurhash_bl signature; content checks and citation closure all passed)"
+  ],
+  "unresolved_regions": [
+   "baseline ran on mixed backends (deepseek-flash + deepseek-v4-flash per host transcripts) — cross-era token comparisons carry a residual backend caveat",
+   "native control variance (T02 native 1/3, T04 native 0/3) suggests residual model behavioral drift independent of SQI",
+   "whether the single T05.sqi rep failure justifies one more targeted round vs re-interpreting the frozen floor — deferred to the V1.2 closure decision"
+  ]
+ }
+}
