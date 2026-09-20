@@ -715,7 +715,9 @@ def main() -> int:
                                               time.gmtime())
     batch_dir = LINE_ROOT / "results" / "formal" / batch_id
     batch_dir.mkdir(parents=True, exist_ok=True)
-    build_runtime({t["task_id"]: task_db_rels(t) for t in tasks})
+    build_runtime({t["task_id"]: task_db_rels(t) for t in tasks},
+                  repos=sorted({t["repository"].split("-", 1)[1].lower()
+                                for t in tasks}))
     runner = C4BatchRunner(config, tasks, batch_id, batch_dir,
                            expected_backend=doc.get("backend_reference"))
     cells = frozen_cell_order(config, tasks)

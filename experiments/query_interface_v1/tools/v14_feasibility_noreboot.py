@@ -250,8 +250,14 @@ def _robocopy_disposable(repo: Path, target: Path) -> int:
     return count
 
 
-def build_runtime(task_db_map: dict[str, list[str]]) -> dict:
-    """Rebuild D:\\pl-c4-runtime (DB copies cached by hash), return manifest."""
+def build_runtime(task_db_map: dict[str, list[str]], repos=None) -> dict:
+    """Rebuild D:\\pl-c4-runtime (DB copies cached by hash), return manifest.
+
+    `repos` = disposable-copy repo names to build; default is the
+    feasibility pair (aria2, brpc). C4 batch mode passes every repo
+    referenced by the task matrix — a missing copy would give the agent
+    session a nonexistent cwd (root cause of the T03/T04 empty sessions,
+    fixed 2026-09-20)."""
     manifest = {"runtime_root": str(RUNTIME_ROOT), "code": {}, "dbs": {}, "repos": {}}
     RUNTIME.mkdir(parents=True, exist_ok=True)
     RUNTIME_DB.mkdir(parents=True, exist_ok=True)
@@ -295,7 +301,7 @@ def build_runtime(task_db_map: dict[str, list[str]]) -> dict:
         manifest["dbs"][rel] = {"runtime": str(target), "sha256": sha256(target),
                                 "bytes": target.stat().st_size, "source": copied}
     # 3. disposable repo copies (no .git)
-    for repo in FEASIBILITY_REPOS:
+    for repo in sorted(set(repos) if repos is not None else set(FEASIBILITY_REPOS)):
         target = BENCH / repo
         if target.exists():
             shutil.rmtree(target)

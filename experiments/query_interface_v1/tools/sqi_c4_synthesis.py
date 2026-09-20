@@ -184,7 +184,15 @@ def main() -> int:
         failed_checks = [k for k, v in (c["eval"].get("machine_checks")
                                         or {}).items() if not v]
         tool_events = cell_tool_events(c["dir"])
-        if c["run"].get("sqi_calls", 0) == 0 and tool_events == 0:
+        if c["run"].get("exit_reason") == "adapter_error":
+            # corrected 2026-09-20: these sessions NEVER STARTED — the C4
+            # batch built disposable copies only for aria2/brpc (feasibility
+            # scope leftover), so T03/T04 (rocksdb) got a nonexistent cwd;
+            # OSError -> adapter_error -> empty stream. NOT agent behavior.
+            kind = "INFRASTRUCTURE_MISSING_REPO_COPY (session never started: " \
+                   "adapter_error with nonexistent cwd; corrected from the " \
+                   "earlier agent-behavior misattribution)"
+        elif c["run"].get("sqi_calls", 0) == 0 and tool_events == 0:
             kind = "agent_behavior_no_tool_use (session answered with zero " \
                    "tool events; sqi arm invalid without a bridge call)"
         elif c["run"].get("sqi_calls", 0) == 0:
@@ -195,6 +203,7 @@ def main() -> int:
         failure_attribution.append({
             "cell": c["cell"], "sqi_calls": c["run"].get("sqi_calls"),
             "tool_events": tool_events,
+            "exit_reason": c["run"].get("exit_reason"),
             "machine_checks_failed": failed_checks,
             "classification": kind,
         })
@@ -220,10 +229,10 @@ def main() -> int:
         },
         "finding": "the gateway routes the frozen alias to at least two "
                    "different backend models, varying BETWEEN CELLS within "
-                   "the C4 batch and across eras; the native control arm "
-                   "collapsed identically (T03 native 3/3 -> 0/3) without "
-                   "touching SQI — capability floors therefore cannot be "
-                   "attributed to the optimized SQI implementation",
+                   "the C4 batch and across eras — cost/capability "
+                   "comparisons across eras remain confounded until "
+                   "actual_model provenance is recorded per cell (now "
+                   "implemented in the runner)",
         "recording_gap": "C4 run records do not persist actual_model (the "
                          "harness result carries it); future batches must "
                          "record it per cell",
@@ -291,12 +300,11 @@ def main() -> int:
         ],
         "negative_regions": [
             f"SQI task_success {sqi_success}/18 vs frozen floor 18/18",
-            "T03.sqi 0/3 and T04.sqi 0/3: sessions answered with ZERO tool "
-            "events (agent behavior; sqi arm invalid without a bridge call)",
+            "T03.sqi 0/3 and T04.sqi 0/3: INFRASTRUCTURE — sessions never "
+            "started (missing rocksdb disposable copy -> nonexistent cwd -> "
+            "adapter_error); corrected from the earlier agent-behavior "
+            "misattribution",
             "T06.sqi 1/3 (r2/r3 violated the frozen single-call pattern)",
-            "native control arm collapsed identically (T03 native 3/3 -> "
-            "0/3) — the failure cause is execution-backend drift, not the "
-            "optimized SQI implementation",
         ],
         "unresolved_regions": [
             "execution-backend model drift: the frozen model_id is a "
