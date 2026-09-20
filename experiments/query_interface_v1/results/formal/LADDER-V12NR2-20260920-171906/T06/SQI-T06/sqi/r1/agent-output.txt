@@ -1,0 +1,51 @@
+## Bundle explanation of `brpc.IsAskedToQuit`
+
+**Query:** `bundle.explain --arg symbol=brpc.IsAskedToQuit --arg budget=12,6,10,4` → intent `explain_symbol`, profile `generic`, bundle_size 21113. Budget applied: `max_evidence=12, max_symbols=6, max_edges=10, max_sections=4`; used: evidence 12, symbols 6, edges 11.
+
+**Definition location**
+- Definition: `src/brpc/controller.cpp:1976-1979` — `bool IsAskedToQuit() { ... }`, symbol `3c1e7e7a...` (primary evidence).
+- Declaration only: `src/brpc/controller.h:1044` (prototype, same qualified name). The bundle query anchors on the controller.cpp definition; `symbol.lookup` separately returned both sites.
+- Shard membership: `brpc.IsAskedToQuit belongs to src/brpc`.
+
+**Callers returned within the 10-edge budget** (all `CALLS`, distance 1, `scope: boundary`, `resolution: qualified_name_resolution`):
+
+| # | Caller | Call-site file | Evidence |
+|---|--------|----------------|----------|
+| 1 | `main` | example/echo_c++/client.cpp | E-CALL-00a3caa26b074ffa09ed29e6 |
+| 2 | `main` | example/selective_echo_c++/client.cpp | E-CALL-0273a5fb08cca748f455ef65 |
+| 3 | `sender` | example/bthread_tag_echo_c++/client.cpp | E-CALL-09be8da5351041810f00b2c2 |
+| 4 | `main` | example/streaming_echo_c++/client.cpp | E-CALL-0c111e1f0403e9ccebbeecf2 |
+| 5 | `main` | example/multi_threaded_echo_fns_c++/server.cpp | E-CALL-0c4dbf504cfd8c02d7f24fdc |
+| 6 | `main` | example/baidu_proxy_and_generic_call/client.cpp | E-CALL-10d353d47fcf5a8e9807f12d |
+| 7 | `main` | tools/rpc_press/rpc_press.cpp | E-CALL-192641f3a3d0eae0982de271 |
+| 8 | `sender` | example/memcache_c++/client.cpp | E-CALL-1ea1cd3a46923fcb2f57e094 |
+| 9 | `sender` | example/parallel_echo_c++/client.cpp | E-CALL-1f4fb793d5c388eff6ddd01d |
+| 10 | `main` | example/mysql_c++/mysqlclient_press.cpp | E-CALL-2d556ccad9892fcca94f0fe6 |
+
+The `related_entities` section (symbol cap = 6) additionally returned 5 caller *symbols* whose CALLS edges carry no evidence id: `main` in example/backup_request_c++/client.cpp, example/http_c++/benchmark_http.cpp, example/selective_echo_c++/server.cpp, example/session_data_and_thread_local/client.cpp, and example/rpcz_echo_c++/client.cpp. So 15 distinct caller symbols were visible across the two sections.
+
+**Omitted (truncation)** — `truncated: true`, `omitted_counts`: **39 edges, 43 symbols** (0 raw_refs, 0 sections). `retry_same_call_will_not_expand: true`, so a budgeted retry cannot recover them.
+
+**Verified claim (read from source)**
+In `src/brpc/controller.cpp` the function body is:
+```cpp
+bool IsAskedToQuit() {
+    pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie);
+    return s_signal_quit;
+}
+```
+`RegisterQuitSignalOrDie` installs `quit_handler` for SIGINT/SIGTERM/SIGHUP, and `quit_handler` sets the file-static volatile flag `s_signal_quit = true` (controller.cpp:1922, 1927-1928, 1944-1965). So `IsAskedToQuit()` lazily installs those quit-signal handlers on first call and then returns the sticky flag that becomes true once such a signal has been received — matching the header's stated meaning, "True if Ctrl-C is ever pressed" (controller.h:1043-1044). Call-site semantics also verified: in `example/echo_c++/client.cpp:61` it is used as the loop guard `while (!brpc::IsAskedToQuit())`, and in `tools/rpc_press/rpc_press.cpp:119` likewise to keep the client running until Ctrl-C. Note the bundle summary reports signature `()`, i.e. the C++ overload set `brpc.IsAskedToQuit()`.
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

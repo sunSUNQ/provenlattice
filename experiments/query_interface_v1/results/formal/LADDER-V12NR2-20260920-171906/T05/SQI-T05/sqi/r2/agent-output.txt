@@ -1,0 +1,28 @@
+## 结论
+
+文档 `docs/cn/client.md` 的 **负载均衡 / c_murmurhash_bl** 小节（第 286–289 行）所描述的行为，其核心实现是类 **`brpc::policy::ConsistentHashingBoundedLoadBalancer`**，定义在 **`src/brpc/policy/consistent_hashing_load_balancer.h:98`**（实现位于同目录 `consistent_hashing_load_balancer.cpp`）。核心方法为 `ConsistentHashingBoundedLoadBalancer::SelectServer`（`consistent_hashing_load_balancer.cpp:525`）。
+
+## 文档—代码对应关系
+
+**文档锚点（知识域）**：该小节在知识库中被解析为一个独立 DocumentSection，`qualified_name = docs/cn/client.md#79c3f03a99dbabb5`，`source_range = 286–289`，属 `DOCUMENTS` 关系，其父文档为 `docs/cn/client.md`。
+
+| 文档表述 | 代码实现（已读源码核实） |
+|---|---|
+| "哈希环与 `c_murmurhash` 完全相同" | 类以 `ConsistentHashingLoadBalancer` 为基类（`.h:98`），复用父类哈希环 |
+| "每台服务器额外有容量上限 `ceil(load_factor * 平均在途请求数)`" | `capacity = (int64_t)std::ceil(_load_factor * (double)(total + 1) / (double)lm->size());`（`.cpp:549-550`，`total=_total_inflight`） |
+| "已达上限时沿哈希环顺时针溢出到下一台有余量的服务器" | `SelectServer` 从 `lower_bound(request_code)` 起顺时针走环，取首个 `inflight < capacity` 的节点（`.cpp:552-588`，环回 `++choice`），并以首个可服务节点作 fallback |
+| "系数默认来自 `-chash_bounded_load_factor`（默认 1.25，必须大于 1）" | `DEFINE_double(chash_bounded_load_factor, 1.25, ...)`（`.cpp:41`）；构造函数 `_load_factor(FLAGS_chash_bounded_load_factor)`（`.cpp:430`）；校验 `ValidateLoadFactor` 返回 `factor > 1.0`（`.cpp:47-50`） |
+| "可按 channel 覆盖：`c_murmurhash_bl:load_factor=1.5`" | `SetParameter` 解析 `load_factor` 并赋值 `_load_factor`（`.cpp:509-519`） |
+| "`replicas` 参数与 `c_murmurhash` 相同" | 由基类 `ConsistentHashingLoadBalancer` 继承提供 |
+
+**名称注册**：字符串 `"c_murmurhash_bl"` 通过 `LoadBalancerExtension()->RegisterOrDie("c_murmurhash_bl", &g_ext->ch_mh_bl_lb)`（`src/brpc/global.cpp:416`，实例 `ConsistentHashingBoundedLoadBalancer ch_mh_bl_lb;` 于 `global.cpp:167`）绑定到该类，从而把文档中的 `load_balancer_name` 值连接到这份实现。
+
+**结构事实与语义核实的区分**：类的身份与文件位置、各方法定义符号属结构事实，直接引自返回的 evidence；"容量上限公式""顺时针溢出取下一可用节点""默认系数 1.25 且必须 >1"等语义断言均通过阅读上述源码行核实（含 `.cpp:549-550`、`:565-588`、`:41-50`）。文档文字"`ceil(load_factor * 平均在途请求数)`"与代码略有差别：代码用 `(total + 1) / 服务器数` 并在 `ceil` 前乘 `load_factor`，即把当前这次在途请求也计入平均，与该算法定义一致。
+
+Evidence Used:
+- E-DOC-51c12e32861bb02b28d8d99a
+- E-DOC-84c6687a4e0a0cb4d722f06e
+- E-CODE-1726cdc7c9938223c1d04362
+- E-CODE-3f698369ec57552531b20d82
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-367d5b5a91beb9028d859ae9

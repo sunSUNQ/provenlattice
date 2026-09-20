@@ -153,6 +153,22 @@ class TestSessionRule(unittest.TestCase):
                       SQI_ARM_PROMPT_TEMPLATE)
         self.assertIn("never adds information", SQI_ARM_PROMPT_TEMPLATE)
 
+    def test_prompt_documents_knowledge_to_code_composite(self):
+        # NR2 ladder #4 finding: the agent resolved the anchor but chose
+        # bundle.explain (local bundle only) for the document-to-code step;
+        # the prompt now documents the code.related composite semantics.
+        self.assertIn("knowledge-to-code composite query",
+                      SQI_ARM_PROMPT_TEMPLATE)
+        self.assertIn("cross-layer links together with the linked code "
+                      "definitions", SQI_ARM_PROMPT_TEMPLATE)
+        self.assertIn("never the document-to-code links",
+                      SQI_ARM_PROMPT_TEMPLATE)
+        # generic: no task identifiers, no frozen evidence ids
+        self.assertNotIn("T05", SQI_ARM_PROMPT_TEMPLATE)
+        self.assertNotIn("T06", SQI_ARM_PROMPT_TEMPLATE)
+        self.assertNotIn("9cec5b84", SQI_ARM_PROMPT_TEMPLATE)
+        self.assertNotIn("3284c4dd", SQI_ARM_PROMPT_TEMPLATE)
+
 
 class TestArmPrompt(unittest.TestCase):
 

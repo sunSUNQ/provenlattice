@@ -1,0 +1,29 @@
+## Core implementation
+
+The behavior documented under **`### c_murmurhash_bl`** (docs/cn/client.md:286-289) — Consistent Hashing with Bounded Loads — is implemented by the class **`brpc::policy::ConsistentHashingBoundedLoadBalancer`**, declared in `src/brpc/policy/consistent_hashing_load_balancer.h:98` and implemented in `src/brpc/policy/consistent_hashing_load_balancer.cpp`.
+
+**Main code symbol:** `brpc.policy.ConsistentHashingBoundedLoadBalancer` (`src/brpc/policy/consistent_hashing_load_balancer.h:98-130`), with its core method `ConsistentHashingBoundedLoadBalancer::SelectServer` (`src/brpc/policy/consistent_hashing_load_balancer.cpp:525-602`).
+
+### How the code matches the documented behavior
+Reading the source (semantic claims require this), each documented element is present:
+- **"hash ring identical to c_murmurhash"** — the class derives from `ConsistentHashingLoadBalancer` and only overrides `AddServer/RemoveServer/AddServersInBatch/RemoveServersInBatch/New/SelectServer/Feedback/Describe` (`.h:98-109`).
+- **"capacity = ceil(load_factor * average in-flight)"** — `SelectServer` computes `capacity = ceil(_load_factor * (total + 1) / lm->size())` (`.cpp:546-551`).
+- **"overflow clockwise to the next server with spare capacity"** — it `lower_bound`s on the request code and walks the ring clockwise, taking the first server with `inflight < capacity`, wrapping around (`.cpp:552-588`).
+- **"load_factor default from -chash_bounded_load_factor (1.25, must be > 1), overridable per channel as `load_factor=...`"** — flag `DEFINE_double(chash_bounded_load_factor, 1.25, ...)` with `ValidateLoadFactor` requiring `factor > 1.0` (`.cpp:41-50`); the constructor seeds `_load_factor` from the flag (`.cpp:427-431`), and `SetParameter` handles the `load_factor` key (`.cpp:509-519`).
+
+The doc's `replicas` parameter is inherited unchanged: the bounded class does not override replica handling, and `AddServersInBatch` still uses `_num_replicas` (`.cpp:261-273`).
+
+### Document-to-code relationship
+The knowledge graph resolves the section anchor `c_murmurhash_bl` (code.related) to a cross-layer `DOCUMENTS` edge whose target is a symbol at `src/brpc/policy/consistent_hashing_load_balancer.cpp:265` (evidence E-XLINK-3284c4dde04ede3b45992a17 → E-CODE-9cec5b84fb52b556c0c332c9). Reading that source line shows it is the local variable `std::vector<Node> replicas;` inside `ConsistentHashingLoadBalancer::AddServersInBatch` (`.cpp:265`) — i.e., the graph linked the document section only via the literal token `replicas` mentioned in the prose, recorded under the parsed name `brpc.policy.AddServersInBatch.replicas`. That edge is incidental to the section's actual subject (the bounded-load algorithm); by reading the source I confirmed the section's behavioral subject is `ConsistentHashingBoundedLoadBalancer`, not that local variable. The class is registered as the `"c_murmurhash_bl"` load-balancer name (`src/brpc/global.cpp:416`, instance `ch_mh_bl_lb` at `global.cpp:167`), which is the real code entry point named by the document section.
+
+Evidence Used:
+- E-CODE-1726cdc7c9938223c1d04362
+- E-SHARD-0bd4b5aa4d298e72de409251
+- E-CODE-6aa9c25c466cb73b19d2a6b4
+- E-CODE-cddcb1233eb5aa32cb587ed9
+- E-CODE-367d5b5a91beb9028d859ae9
+- E-CODE-3f698369ec57552531b20d82
+- E-CODE-9c1393b324704edd3a5dbdff
+- E-CODE-a53425880569c39491a83992
+- E-CODE-9cec5b84fb52b556c0c332c9
+- E-XLINK-3284c4dde04ede3b45992a17
