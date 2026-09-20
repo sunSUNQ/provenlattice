@@ -1,0 +1,44 @@
+## Bundle explanation: `brpc.IsAskedToQuit`
+
+**Query:** `bundle.explain` with `budget={"max_evidence":12,"max_symbols":6,"max_edges":10,"max_sections":8}` — returned `truncated:true`.
+
+**Definition location**
+- `brpc.IsAskedToQuit`, `Function` (C++), signature `()`, defined at **`src/brpc/controller.cpp:1976–1979`** (E-CODE-ee01188dd0889e9da9b23334); belongs to shard `src/brpc` (E-SHARD-0bde357513df373d39780249).
+
+**Callers returned within budget** (10 evidence-backed `CALLS` edges)
+| Caller | Call-site file | Lines |
+|---|---|---|
+| `main` | `example/echo_c++/client.cpp` | 36–97 |
+| `main` | `example/selective_echo_c++/client.cpp` | 87–240 |
+| `sender` | `example/bthread_tag_echo_c++/client.cpp` | 47–83 |
+| `main` | `example/streaming_echo_c++/client.cpp` | 32–83 |
+| `main` | `example/multi_threaded_echo_fns_c++/server.cpp` | 98–188 |
+| `main` | `example/baidu_proxy_and_generic_call/client.cpp` | 35–94 |
+| `main` | `tools/rpc_press/rpc_press.cpp` | 98–129 |
+| `sender` | `example/memcache_c++/client.cpp` | 48–100 |
+| `sender` | `example/parallel_echo_c++/client.cpp` | 51–93 |
+| `main` | `example/mysql_c++/mysqlclient_press.cpp` | 121–244 |
+
+The envelope also lists 5 further callers as related-entity symbols only (no call-evidence ID): `main` in `example/backup_request_c++/client.cpp`, `example/http_c++/benchmark_http.cpp`, `example/selective_echo_c++/server.cpp`, `example/session_data_and_thread_local/client.cpp`, and `example/rpcz_echo_c++/client.cpp`.
+
+**Omitted / truncation**
+- `edges: 39`, `symbols: 43` omitted (`raw_refs: 0`, `sections: 0`).
+- Budget used: evidence 12/12, symbols 6/6, edges 11/10 (over by the definition edge).
+- `retry_same_call_will_not_expand: true` — the same query will not return more.
+
+**Verified claim about what the function does** (read from source, not just the envelope)
+`IsAskedToQuit()` takes no arguments; it lazily performs one-time registration of the quit-signal handling via `pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie)` and then returns the current value of the static `volatile bool s_signal_quit` (`src/brpc/controller.cpp:1976-1979`). `RegisterQuitSignalOrDie` installs `quit_handler` for SIGINT, SIGTERM, and SIGHUP (`controller.cpp:1942-1965`), and `quit_handler` sets `s_signal_quit = true` when any of those signals arrives (`controller.cpp:1922-1938`). So the function is a non-blocking poll reporting whether a quit signal has been received — confirmed by caller usage `while (!brpc::IsAskedToQuit())` at `example/echo_c++/client.cpp:61`.
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

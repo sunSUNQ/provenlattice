@@ -1,0 +1,54 @@
+{
+ "oracle_version": "SQI_FORMAL_ORACLE_V1.1",
+ "arm": "sqi",
+ "task_id": "SQI-T06",
+ "machine_checks": {
+  "single_bundle_explain_call": false,
+  "budget_matches_frozen": false,
+  "truncation_declared": true,
+  "omitted_counts_nonzero": true,
+  "honest_omission_reported": true,
+  "reads_definition_source": true
+ },
+ "machine_checks_pass": false,
+ "task_success": false,
+ "evidence_oracle": {
+  "citation_closure_ok": true,
+  "used_ids": [
+   "E-CALL-00a3caa26b074ffa09ed29e6",
+   "E-CALL-0273a5fb08cca748f455ef65",
+   "E-CALL-09be8da5351041810f00b2c2",
+   "E-CALL-0c111e1f0403e9ccebbeecf2",
+   "E-CALL-0c4dbf504cfd8c02d7f24fdc",
+   "E-CALL-10d353d47fcf5a8e9807f12d",
+   "E-CALL-192641f3a3d0eae0982de271",
+   "E-CALL-1ea1cd3a46923fcb2f57e094",
+   "E-CALL-1f4fb793d5c388eff6ddd01d",
+   "E-CALL-2d556ccad9892fcca94f0fe6",
+   "E-CODE-ee01188dd0889e9da9b23334",
+   "E-SHARD-0bde357513df373d39780249"
+  ],
+  "returned_ids_union_count": 20,
+  "unsupported_claim_ids": []
+ },
+ "source_verification": {
+  "source_read_events": 5,
+  "read_targets": [
+   "**/query_interface_v1/**/*.py",
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\example\\echo_c++\\client.cpp",
+   "D:\\pl-c4-runtime\\benchmark\\brpc\\src\\brpc\\controller.cpp",
+   "D:\\pl-c4-runtime\\output\\c4\\LADDER-V12NR2-20260920-165337-T06\\claude-homes\\SQI-T06.sqi.r1\\projects\\D--pl-c4-runtime-benchmark-brpc\\d1578711-302a-47bf-89c6-accbb91a51d8\\tool-results\\bh2gkxgay.txt"
+  ]
+ },
+ "sqi_call_summary": {
+  "total_calls": 2,
+  "calls_by_type": {
+   "bundle.explain": 2
+  },
+  "total_payload_bytes": 85390
+ },
+ "capability_failure_flags": [],
+ "human_review_required": [
+  "reported omission figures match the envelope and the definition semantics claim is source-verified"
+ ]
+}
