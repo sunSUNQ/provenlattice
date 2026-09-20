@@ -189,7 +189,9 @@ def default_session(cell: dict, surface: dict, config: dict) -> dict:
             "events": events, "output": result.output or "",
             "call_log": [], "call_log_path":
                 surface["environment"].get("PL_SQI_CALL_LOG"),
-            "permission_denials": result.permission_denials or []}
+            "permission_denials": result.permission_denials or [],
+            "actual_model": result.actual_model,
+            "backend_model": result.backend_model}
 
 
 def collect_call_log(surface: dict, run_dir: Path) -> list[dict]:
@@ -232,11 +234,17 @@ class C4BatchRunner:
 
     def __init__(self, config: dict, tasks: list[dict], batch_id: str,
                  batch_dir: Path, window_factory=None, session_fn=None,
-                 evaluate_fn=None, runtime_output_root: Path | None = None):
+                 evaluate_fn=None, runtime_output_root: Path | None = None,
+                 expected_backend: str | None = None):
         self.config = config
         self.tasks = {t["task_id"]: t for t in tasks}
         self.batch_id = batch_id
         self.batch_dir = Path(batch_dir)
+        # Backend identity provenance (C4-R1): every cell must run on the
+        # same actually-served backend as the pre-batch probe; any drift is
+        # a fail-closed halt (INVALID_EXECUTION). None disables the check
+        # (synthetic wiring tests only).
+        self.expected_backend = expected_backend
         # Call-log base lives OUTSIDE the denied checkout (amendment §2:
         # results flow back through the sanitized runtime output area); the
         # runner reads it only after the window has closed and restore has
@@ -274,6 +282,19 @@ class C4BatchRunner:
         try:
             with window:
                 session = self._session_fn(cell, surface, self.config)
+                # C4-R1 backend provenance gate (fail-closed)
+                backend = session.get("backend_model")
+                if self.expected_backend is not None:
+                    if not backend:
+                        raise C4BatchHalted(
+                            cell["cell_id"], HALT_EXECUTION,
+                            "backend identity missing (no assistant model "
+                            "reported by the CLI stream)")
+                    if backend != self.expected_backend:
+                        raise C4BatchHalted(
+                            cell["cell_id"], HALT_EXECUTION,
+                            f"backend drift: observed {backend!r} != "
+                            f"reference {self.expected_backend!r}")
                 leaks = classify_leakage(
                     leakage_events(session["events"], surface["repo_path"]))
                 sensitive = [l for l in leaks if l["sensitive"]]
@@ -413,6 +434,17 @@ class C4BatchRunner:
                 "claude_home_files": sorted(p.name for p in Path(
                     surface.get("claude_home", "")).glob("*"))
                 if surface.get("claude_home") else [],
+                "model_provenance": {
+                    "requested_model_id": self.config["model_id"],
+                    "init_reported_model": session.get("actual_model"),
+                    "backend_model": session.get("backend_model"),
+                    "reference_backend": self.expected_backend,
+                    "backend_verified": bool(
+                        session.get("backend_model")
+                        and (self.expected_backend is None
+                             or session.get("backend_model")
+                             == self.expected_backend)),
+                },
             },
             "runtime_db_sha256": (sha256_file(database)
                                   if database and Path(database).exists() else None),
@@ -446,6 +478,43 @@ def sha256_file(path) -> str:
         for chunk in iter(lambda: handle.read(1 << 20), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def parse_probe_stream(stdout: str) -> dict:
+    """Parse one tiny claude -p --output-format stream-json session:
+    returns the requested alias (init), the actually-served backend
+    (first assistant message), the CLI version and the reply text."""
+    requested = backend = version = None
+    text = ""
+    for line in (stdout or "").splitlines():
+        try:
+            value = json.loads(line)
+        except ValueError:
+            continue
+        if value.get("type") == "system" and value.get("subtype") == "init":
+            requested = value.get("model")
+            version = value.get("claude_code_version")
+        elif value.get("type") == "assistant":
+            message_model = (value.get("message") or {}).get("model")
+            if message_model and backend is None:
+                backend = str(message_model)
+        elif value.get("type") == "result":
+            text = str(value.get("result") or "")
+    return {"requested_model": requested, "backend_model": backend,
+            "cli_version": version, "output": text.strip()[:80]}
+
+
+def probe_backend(config: dict, cwd: Path) -> dict:
+    """One minimal live session to identify the actually-served backend."""
+    env = {**os.environ, "PL_MODEL_ID": config["model_id"]}
+    completed = subprocess.run(
+        [shutil.which("claude") or "claude", "-p", "Reply with exactly: ALIVE",
+         "--verbose", "--output-format", "stream-json",
+         "--model", config["model_id"]],
+        cwd=str(cwd), capture_output=True, text=True, env=env, timeout=300)
+    parsed = parse_probe_stream(completed.stdout or "")
+    parsed["returncode"] = completed.returncode
+    return parsed
 
 
 def _git(*args: str) -> str:
@@ -533,6 +602,14 @@ def run_preflight() -> dict:
         "self_generated_ignored": [l for l in status.stdout.splitlines()
                                    if "C4-PREFLIGHT-" in l][:5],
     }
+    probe = probe_backend(config, REPO_ROOT)
+    checks["backend_probe"] = {
+        "pass": bool(probe["backend_model"]),
+        "requested_model_id": config["model_id"],
+        "init_reported_model": probe["requested_model"],
+        "backend_model": probe["backend_model"],
+        "cli_version": probe["cli_version"],
+    }
     all_pass = all(v.get("pass", True) if isinstance(v, dict) else v
                    for v in checks.values())
     if isinstance(checks["model_config_matches_baseline"], dict):
@@ -546,6 +623,7 @@ def run_preflight() -> dict:
         "isolation_baseline_sha": ISOLATION_BASELINE_SHA,
         "runner_commit": checks["runner_commit_recorded"]["runner_last_commit"],
         "head_at_preflight": _git("rev-parse", "HEAD").strip(),
+        "backend_reference": probe["backend_model"],
         "checks": checks,
         "verdict": "PASS" if all_pass else "FAIL",
     }
@@ -574,10 +652,36 @@ def verify_batch_manifest(manifest_path: Path) -> bool:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=("preflight", "batch"),
+    parser.add_argument("--mode", choices=("preflight", "batch", "probe"),
                         default="preflight")
     parser.add_argument("--batch-id", default=None)
+    parser.add_argument("--probe-count", type=int, default=4)
     args = parser.parse_args()
+
+    if args.mode == "probe":
+        config = load_config()
+        probes = [probe_backend(config, REPO_ROOT) for _ in
+                  range(max(1, args.probe_count))]
+        backends = [p["backend_model"] for p in probes]
+        stable = all(b and b == backends[0] for b in backends)
+        doc = {
+            "schema": "SQI_C4_BACKEND_PROBE_EVIDENCE_V1",
+            "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "requested_model_id": config["model_id"],
+            "probe_count": len(probes),
+            "probes": probes,
+            "backends_observed": sorted(set(b or "None" for b in backends)),
+            "stable": stable,
+            "verdict": "STABLE" if stable else "DRIFT",
+        }
+        out = (LINE_ROOT / "results" / "formal" /
+               f"C4-BACKEND-PROBE-{time.strftime('%Y%m%d-%H%M%S')}.json")
+        out.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + "\n",
+                       encoding="utf-8")
+        print(json.dumps({"verdict": doc["verdict"],
+                          "backends_observed": doc["backends_observed"],
+                          "evidence": str(out)}, indent=1))
+        return 0 if stable else 1
 
     if args.mode == "preflight":
         doc = run_preflight()
@@ -603,7 +707,8 @@ def main() -> int:
     batch_dir = LINE_ROOT / "results" / "formal" / batch_id
     batch_dir.mkdir(parents=True, exist_ok=True)
     build_runtime({t["task_id"]: task_db_rels(t) for t in tasks})
-    runner = C4BatchRunner(config, tasks, batch_id, batch_dir)
+    runner = C4BatchRunner(config, tasks, batch_id, batch_dir,
+                           expected_backend=doc.get("backend_reference"))
     cells = frozen_cell_order(config, tasks)
     try:
         records = runner.run_batch(cells)

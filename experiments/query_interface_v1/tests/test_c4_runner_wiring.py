@@ -36,7 +36,9 @@ def stub_evaluate(task, arm, output, events, call_log, database):
 
 def benign_session(cell, surface, config):
     return {"exit_reason": "completed", "error": None, "events": [],
-            "output": "ok", "call_log": [], "permission_denials": []}
+            "output": "ok", "call_log": [], "permission_denials": [],
+            "actual_model": "claude-sonnet-4-5-20250929",
+            "backend_model": "test-backend-A"}
 
 
 class WiringTestBase(unittest.TestCase):
@@ -85,7 +87,7 @@ class WiringTestBase(unittest.TestCase):
         return C4BatchRunner(
             self.config, self.tasks, "TEST-C4-BATCH", self.batch_dir,
             window_factory=self.factory(), session_fn=session_fn,
-            evaluate_fn=stub_evaluate)
+            evaluate_fn=stub_evaluate, expected_backend="test-backend-A")
 
     def cells(self, count=2):
         return [{"task_id": "SQI-T01", "arm": "native", "repetition": i + 1}
@@ -128,7 +130,9 @@ class TestFailClosedHalts(WiringTestBase):
                     "events": [{"operation": "shell",
                                 "query": f"python -c open('{CHECKOUT_PATH}')"}],
                     "output": "ok", "call_log": [],
-                    "permission_denials": []}
+                    "permission_denials": [],
+                    "actual_model": "claude-sonnet-4-5-20250929",
+                    "backend_model": "test-backend-A"}
 
         runner = self.runner(leaking_session)
         with self.assertRaises(C4BatchHalted) as ctx:
@@ -344,6 +348,76 @@ class TestCellPrivateClaudeHome(WiringTestBase):
                        "tool-results\\a.txt"}]
         self.assertFalse(classify_leakage(runtime_event)[0]["sensitive"])
         self.assertTrue(classify_leakage(host_event)[0]["sensitive"])
+
+
+class TestBackendProvenance(WiringTestBase):
+    """C4-R1: per-cell backend identity is fail-closed — drift or a missing
+    backend identity halts the batch (INVALID_EXECUTION); a matching backend
+    completes and is persisted in model_provenance."""
+
+    def test_backend_drift_halts_batch(self):
+        calls = []
+
+        def drifted_session(cell, surface, config):
+            calls.append(cell["cell_id"])
+            session = benign_session(cell, surface, config)
+            session["backend_model"] = "backend-B"
+            return session
+
+        runner = self.runner(drifted_session)
+        with self.assertRaises(C4BatchHalted) as ctx:
+            runner.run_batch(self.cells(2))
+        self.assertEqual(ctx.exception.reason, "INVALID_EXECUTION")
+        self.assertIn("backend drift", ctx.exception.detail)
+        self.assertEqual(len(calls), 1)
+        self.assert_restored()
+
+    def test_missing_backend_identity_halts(self):
+        calls = []
+
+        def anonymous_session(cell, surface, config):
+            calls.append(cell["cell_id"])
+            session = benign_session(cell, surface, config)
+            session["backend_model"] = None
+            return session
+
+        runner = self.runner(anonymous_session)
+        with self.assertRaises(C4BatchHalted) as ctx:
+            runner.run_batch(self.cells(1))
+        self.assertEqual(ctx.exception.reason, "INVALID_EXECUTION")
+        self.assertIn("backend identity missing", ctx.exception.detail)
+        self.assertEqual(len(calls), 1)
+
+    def test_matching_backend_completes_with_provenance(self):
+        runner = self.runner(benign_session)
+        records = runner.run_batch(self.cells(1))
+        self.assertEqual(records[0]["status"], "completed")
+        provenance = records[0]["isolation"]["model_provenance"]
+        self.assertTrue(provenance["backend_verified"])
+        self.assertEqual(provenance["backend_model"], "test-backend-A")
+        self.assertEqual(provenance["reference_backend"], "test-backend-A")
+        self.assertEqual(provenance["requested_model_id"],
+                         self.config["model_id"])
+
+
+class TestProbeParsing(unittest.TestCase):
+
+    def test_parse_probe_stream_extracts_backend(self):
+        from sqi_c4_runner import parse_probe_stream
+        stdout = "\n".join([
+            json.dumps({"type": "system", "subtype": "init",
+                        "model": "claude-sonnet-4-5-20250929",
+                        "claude_code_version": "2.1.270"}),
+            json.dumps({"type": "assistant", "message": {
+                "model": "deepseek-flash",
+                "content": [{"type": "text", "text": "ALIVE"}]}}),
+            json.dumps({"type": "result", "result": "ALIVE"}),
+        ])
+        parsed = parse_probe_stream(stdout)
+        self.assertEqual(parsed["requested_model"], "claude-sonnet-4-5-20250929")
+        self.assertEqual(parsed["backend_model"], "deepseek-flash")
+        self.assertEqual(parsed["cli_version"], "2.1.270")
+        self.assertEqual(parsed["output"], "ALIVE")
 
 
 class TestFrozenOrder(unittest.TestCase):

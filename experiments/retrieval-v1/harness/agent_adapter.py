@@ -20,6 +20,7 @@ class AdapterResult:
     error: str | None = None
     actual_model: str | None = None
     actual_version: str | None = None
+    backend_model: str | None = None
     permission_denials: list[dict] | None = None
 
 
@@ -79,6 +80,7 @@ class CommandAgentAdapter:
         output_lines: list[str] = []
         actual_model: str | None = None
         actual_version: str | None = None
+        backend_model: str | None = None
         permission_denials: list[dict] = []
         for line in completed.stdout.splitlines():
             try:
@@ -92,6 +94,11 @@ class CommandAgentAdapter:
                 if on_event:
                     on_event(event)
             elif value.get("type") == "assistant":
+                message_model = (value.get("message") or {}).get("model")
+                if message_model and backend_model is None:
+                    # the actually-served backend (gateway-resolved), as
+                    # opposed to the requested alias reported by init
+                    backend_model = str(message_model)
                 for content in (value.get("message") or {}).get("content", []):
                     if content.get("type") != "tool_use":
                         continue
@@ -161,7 +168,8 @@ class CommandAgentAdapter:
         reason = "completed" if completed.returncode == 0 else "agent_nonzero_exit"
         error = completed.stderr.strip() or None
         return AdapterResult("\n".join(output_lines), events, reason, error,
-                             actual_model, actual_version, permission_denials)
+                             actual_model, actual_version, backend_model,
+                             permission_denials)
 
     @staticmethod
     def _tool_result_text(content) -> str:
