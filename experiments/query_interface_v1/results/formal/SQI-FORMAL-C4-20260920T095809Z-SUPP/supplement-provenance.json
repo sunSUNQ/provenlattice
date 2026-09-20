@@ -1,0 +1,14 @@
+{
+ "schema": "SQI_C4_SUPPLEMENT_PROVENANCE_V1",
+ "batch_id": "SQI-FORMAL-C4-20260920T095809Z-SUPP",
+ "supplement_for": "SQI-FORMAL-C4-20260918T095621Z",
+ "parent_batch_verdict": "halted at T06.sqi.r1 (INVALID_LEAKAGE); 33 cells valid, preserved, commit 148ea47",
+ "containment_repair": "cell-private CLAUDE_CONFIG_DIR (option A), commit 1b82119 lineage",
+ "equivalence_evidence": "experiments/query_interface_v1/results/formal/C4-CONFIG-EQUIVALENCE-20260920-095517.json",
+ "equivalence_verdict": "PASS (33 cells remain valid = YES)",
+ "cells": [
+  "SQI-T06.sqi.r1",
+  "SQI-T06.sqi.r2",
+  "SQI-T06.sqi.r3"
+ ]
+}
