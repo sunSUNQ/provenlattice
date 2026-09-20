@@ -1,5 +1,10 @@
 # C4-R3 EXECUTION STATE — PRESERVED BEFORE REBOOT (2026-09-20)
 
+> **STATUS: COMPLETED post-reboot (2026-09-20).** Synthesis delivered in
+> `C4-R3-SYNTHESIS-20260920-163052.json` (commit `75a40d7`): verdict
+> HOLD / PARTIAL, SQI 17/18, sole negative region T05.sqi.r3 (exploration
+> noise, fully attributed). This file is retained as the recovery record.
+
 ## Batch completed just before reboot — NO work in flight
 
 - **C4-R3 clean 36-cell batch: COMPLETE**
