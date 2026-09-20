@@ -1,0 +1,32 @@
+{
+ "schema": "SQI_C4_BATCH_STATUS_MARKER_V1",
+ "batch_id": "SQI-FORMAL-C4-20260920T034423Z",
+ "halted": true,
+ "halted_at_cell": "SQI-T04.native.r1",
+ "reason": "INVALID_LEAKAGE",
+ "detail": "[{\"event_index\": 10, \"operation\": \"shell\", \"target\": \"ls -la \\\"D:/pl-c4-runtime/benchmark/rocksdb\\\" | tail -40; echo \\\"==== hidden dirs ====\\\"; ls -la \\\"D:/pl-c4-runtime/benchmark/rocksdb/.claude\\\" 2>&1; ls -la \\\"D:/pl-c4-runtime/benchmark/rocksdb/.pl\\\" 2>&1\", \"reason\": \"framework_path\", \"sensitive\": true}]",
+ "cells_completed": 18,
+ "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+ "git_head": "0af056ffcf38b852b681105e79d0dab1b3192150",
+ "cells_executed": [
+  "SQI-T01.native.r1",
+  "SQI-T01.native.r2",
+  "SQI-T01.native.r3",
+  "SQI-T01.sqi.r1",
+  "SQI-T01.sqi.r2",
+  "SQI-T01.sqi.r3",
+  "SQI-T02.native.r1",
+  "SQI-T02.native.r2",
+  "SQI-T02.native.r3",
+  "SQI-T02.sqi.r1",
+  "SQI-T02.sqi.r2",
+  "SQI-T02.sqi.r3",
+  "SQI-T03.native.r1",
+  "SQI-T03.native.r2",
+  "SQI-T03.native.r3",
+  "SQI-T03.sqi.r1",
+  "SQI-T03.sqi.r2",
+  "SQI-T03.sqi.r3",
+  "SQI-T04.native.r1"
+ ]
+}

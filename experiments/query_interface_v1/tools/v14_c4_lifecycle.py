@@ -48,24 +48,26 @@ VERIFY_CLOSED_PROBES = (
 
 
 def classify_leakage(leaks: list[dict], runtime_root: Path | str = RUNTIME_ROOT) -> list[dict]:
-    """Finite-root classification: an event is SENSITIVE iff it references a
-    path outside the sanitized runtime root or a framework-sensitive string
-    (codegraph checkout / .claude store)."""
+    """Finite-root classification (amendment §3): an event is SENSITIVE iff
+    it references a path OUTSIDE the sanitized runtime root. Runtime-internal
+    references (even hint-bearing ones, e.g. a probe for a `.claude` dir
+    inside the disposable copy) are documented, not leaks. Framework hints
+    in text WITHOUT any absolute path stay sensitive (conservative)."""
     import os
     import re
     abs_re = re.compile(r"([A-Za-z]:[/\\][^\s\"']*)", re.IGNORECASE)
     root = str(runtime_root).lower()
     out = []
     for lk in leaks or []:
-        sensitive = False
-        for m in abs_re.finditer(str(lk.get("target") or "")):
-            candidate = os.path.abspath(m.group(1).lower())
-            if not candidate.startswith(root):
-                sensitive = True
-                break
-        hinted = any(h in str(lk.get("target") or "").lower()
-                     for h in ("codegraph", "provenlattice", ".claude"))
-        out.append({**lk, "sensitive": bool(sensitive or hinted)})
+        text = str(lk.get("target") or "")
+        paths = [os.path.abspath(m.group(1).lower())
+                 for m in abs_re.finditer(text)]
+        if paths:
+            sensitive = any(not p.startswith(root) for p in paths)
+        else:
+            sensitive = any(h in text.lower()
+                            for h in ("codegraph", "provenlattice", ".claude"))
+        out.append({**lk, "sensitive": bool(sensitive)})
     return out
 
 

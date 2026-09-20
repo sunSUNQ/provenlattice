@@ -349,6 +349,22 @@ class TestCellPrivateClaudeHome(WiringTestBase):
         self.assertFalse(classify_leakage(runtime_event)[0]["sensitive"])
         self.assertTrue(classify_leakage(host_event)[0]["sensitive"])
 
+    def test_runtime_internal_hint_probe_not_sensitive(self):
+        """T04.native.r1 halt root cause (SQI-FORMAL-C4-20260920T034423Z):
+        listing hidden dirs inside the agent's OWN disposable copy mentions
+        `.claude` but every path is runtime-internal — documented, not a
+        leak, per amendment §3. A hint with NO path stays sensitive."""
+        from v14_c4_lifecycle import classify_leakage
+        internal = classify_leakage([{
+            "operation": "shell",
+            "target": 'ls -la "D:/pl-c4-runtime/benchmark/rocksdb/.claude" 2>&1',
+        }])[0]
+        self.assertFalse(internal["sensitive"])
+        no_path = classify_leakage([{
+            "operation": "grep", "target": "grep -r provenlattice .",
+        }])[0]
+        self.assertTrue(no_path["sensitive"])
+
 
 class TestBackendProvenance(WiringTestBase):
     """C4-R1: per-cell backend identity is fail-closed — drift or a missing
