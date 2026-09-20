@@ -1,0 +1,38 @@
+## Bundle explanation: `brpc.IsAskedToQuit` (budget 12/6/10)
+
+**Definition location**
+`bool brpc::IsAskedToQuit()` — `src/brpc/controller.cpp` lines 1976–1979 (Function, shard `src/brpc`). Symbol id `symbol:3c1e7e7ace7c8f43f31fa0f15b9e31d22f9f7776e519b18e7db5c1b49d47a24c`.
+
+**Callers returned within budget (10 CALL edges)**
+| # | Caller | Call site |
+|---|--------|-----------|
+| 1 | `main` | `example/echo_c++/client.cpp` |
+| 2 | `main` | `example/selective_echo_c++/client.cpp` |
+| 3 | `sender` | `example/bthread_tag_echo_c++/client.cpp` |
+| 4 | `main` | `example/streaming_echo_c++/client.cpp` |
+| 5 | `main` | `example/multi_threaded_echo_fns_c++/server.cpp` |
+| 6 | `main` | `example/baidu_proxy_and_generic_call/client.cpp` |
+| 7 | `main` | `tools/rpc_press/rpc_press.cpp` |
+| 8 | `sender` | `example/memcache_c++/client.cpp` |
+| 9 | `sender` | `example/parallel_echo_c++/client.cpp` |
+| 10 | `main` | `example/mysql_c++/mysqlclient_press.cpp` |
+
+**Omitted by truncation**
+`truncated: true`. Omitted counts: **39 call/edge relations** and **43 symbols** (raw_refs 0, sections 0). Budget actually spent: evidence 12/12, symbols 6/6, edges 11/10 — so the caller list is a sample, not the full caller set.
+
+**Verified claim (source-read, not just structural)**
+`IsAskedToQuit()` lazily registers the quit-signal handlers on first call via `pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie)` and then returns the static `volatile bool s_signal_quit` (controller.cpp:1922, 1976–1979). The registered `quit_handler` sets `s_signal_quit = true` when SIGINT arrives (SIGTERM/SIGHUP too, gated by `FLAGS_graceful_quit_on_sigterm`/`_sighup`; controller.cpp:1927–1928, 1944–1965). At the verified call site it is used as a loop guard — `while (!brpc::IsAskedToQuit()) { ... }` in `example/echo_c++/client.cpp:61` — i.e. the function reports whether a shutdown signal has been received, so callers can end their loop cleanly.
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

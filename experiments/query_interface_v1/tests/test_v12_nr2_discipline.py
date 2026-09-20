@@ -135,23 +135,23 @@ class TestSessionRule(unittest.TestCase):
         for banned in ("T05", "T06", "E-"):
             self.assertNotIn(banned, rules[2])
 
-    def test_truncation_rule_carries_finish_over_requery_clause(self):
-        # NR2 ladder finding: truncation-triggered budget-shrink re-query
+    def test_truncation_rule_carries_subset_clause(self):
+        # NR2 ladder findings: truncation-triggered budget-shrink re-query
         # violates the frozen single-call check; the NR1 rule gains the
-        # generic finish-over-requery clause (rules[0] NR1 text unchanged).
+        # generic subset clause (verified on the frozen DBs: same anchor,
+        # smaller budget -> evidence-id subset, both bundle and lookup).
         rule = SOURCE_VERIFICATION_POLICY["usage_discipline"][0]
         self.assertIn("byte-identical envelope", rule)
         self.assertIn("will not expand", rule)
-        self.assertIn("already contains everything that call can return",
-                      rule)
-        self.assertIn("different budget", rule)
+        self.assertIn("subset of the evidence the first envelope", rule)
+        self.assertIn("never adds information", rule)
         for banned in ("T05", "T06", "E-"):
             self.assertNotIn(banned, rule)
 
-    def test_prompt_carries_finish_over_requery_clause(self):
-        self.assertIn("already contains everything that call can return",
+    def test_prompt_carries_subset_clause(self):
+        self.assertIn("subset of the evidence the first envelope",
                       SQI_ARM_PROMPT_TEMPLATE)
-        self.assertIn("different budget", SQI_ARM_PROMPT_TEMPLATE)
+        self.assertIn("never adds information", SQI_ARM_PROMPT_TEMPLATE)
 
 
 class TestArmPrompt(unittest.TestCase):

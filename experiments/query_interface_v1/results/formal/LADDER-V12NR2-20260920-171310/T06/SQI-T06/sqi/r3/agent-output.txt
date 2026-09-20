@@ -1,0 +1,36 @@
+## Bundle explanation: `brpc.IsAskedToQuit`
+
+**Definition.** `brpc.IsAskedToQuit` is a public C++ `Function` with signature `()` defined at **`src/brpc/controller.cpp` lines 1976–1979**, belonging to shard `src/brpc` (evidence `E-CODE-ee01188dd0889e9da9b23334`, `E-SHARD-0bde357513df373d39780249`).
+
+**Callers returned (budget allowed 10 of the `CALLS` edges).** All are inbound `CALLS` edges at distance 1 (`relation: CALLS`, `resolution: qualified_name_resolution`, `scope: boundary`):
+
+| Evidence ID | Caller | File (enclosing function span) |
+|---|---|---|
+| E-CALL-00a3caa26b074ffa09ed29e6 | `main` | `example/echo_c++/client.cpp` (36–97) |
+| E-CALL-0273a5fb08cca748f455ef65 | `main` | `example/selective_echo_c++/client.cpp` (87–240) |
+| E-CALL-09be8da5351041810f00b2c2 | `sender` | `example/bthread_tag_echo_c++/client.cpp` (47–83) |
+| E-CALL-0c111e1f0403e9ccebbeecf2 | `main` | `example/streaming_echo_c++/client.cpp` (32–83) |
+| E-CALL-0c4dbf504cfd8c02d7f24fdc | `main` | `example/multi_threaded_echo_fns_c++/server.cpp` (98–188) |
+| E-CALL-10d353d47fcf5a8e9807f12d | `main` | `example/baidu_proxy_and_generic_call/client.cpp` (35–94) |
+| E-CALL-192641f3a3d0eae0982de271 | `main` | `tools/rpc_press/rpc_press.cpp` (98–129) |
+| E-CALL-1ea1cd3a46923fcb2f57e094 | `sender` | `example/memcache_c++/client.cpp` (48–100) |
+| E-CALL-1f4fb793d5c388eff6ddd01d | `sender` | `example/parallel_echo_c++/client.cpp` (51–93) |
+| E-CALL-2d556ccad9892fcca94f0fe6 | `main` | `example/mysql_c++/mysqlclient_press.cpp` (121–244) |
+
+**Omitted items.** The envelope is `truncated: true` with `omitted_counts`: **39 edges**, **43 symbols**, 0 raw_refs, 0 sections. Used budget: 12 evidence, 11 edges (max_edges 10, slight overshoot), 6 symbols (the definition plus 5 caller entities in `related_entities`). Retry of the same call will not expand the result — a narrower/targeted query would be needed for the rest.
+
+**Verified claim (definition semantics).** Reading `src/brpc/controller.cpp` confirms the returned flag is signal-driven: line 1922 declares `static volatile bool s_signal_quit = false`; `quit_handler` (line 1927) sets it to `true` (line 1928) and is installed for `SIGINT`, `SIGTERM`, and `SIGHUP` (lines 1944, 1954, 1965). `IsAskedToQuit()` (1976–1979) calls `pthread_once(&register_quit_signal_once, RegisterQuitSignalOrDie)` and then returns `s_signal_quit` — i.e. it lazily installs the quit-signal handlers exactly once and then reports whether a quit signal has been received. A verified call site matches this use: `example/echo_c++/client.cpp:61` drives its request loop with `while (!brpc::IsAskedToQuit())` and exits with "EchoClient is going to quit" (line 95).
+
+Evidence Used:
+- E-CODE-ee01188dd0889e9da9b23334
+- E-SHARD-0bde357513df373d39780249
+- E-CALL-00a3caa26b074ffa09ed29e6
+- E-CALL-0273a5fb08cca748f455ef65
+- E-CALL-09be8da5351041810f00b2c2
+- E-CALL-0c111e1f0403e9ccebbeecf2
+- E-CALL-0c4dbf504cfd8c02d7f24fdc
+- E-CALL-10d353d47fcf5a8e9807f12d
+- E-CALL-192641f3a3d0eae0982de271
+- E-CALL-1ea1cd3a46923fcb2f57e094
+- E-CALL-1f4fb793d5c388eff6ddd01d
+- E-CALL-2d556ccad9892fcca94f0fe6

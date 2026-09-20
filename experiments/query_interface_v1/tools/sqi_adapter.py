@@ -51,8 +51,11 @@ SOURCE_VERIFICATION_POLICY = {
         "will not expand on retry - issue a more targeted query instead. A "
         "truncated envelope is normal and already contains everything that "
         "call can return under its budget: finish from the returned evidence "
-        "whenever it suffices, and do not re-query the same anchor with a "
-        "different budget just to obtain a shorter envelope.",
+        "whenever it suffices. Re-querying the same anchor with a different "
+        "budget can only return a subset of the evidence the first envelope "
+        "already returned (budget slicing is a deterministic prefix), so a "
+        "smaller-budget retry never adds information - finish from the "
+        "first envelope instead.",
         "Before finishing, verify that every distinct source domain the task "
         "requires has contributed cited evidence (e.g. tasks spanning code "
         "and knowledge must show evidence from each domain); an answer "
