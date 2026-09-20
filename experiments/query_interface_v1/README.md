@@ -1,13 +1,17 @@
 # P2 / SQI-V1 — Structured Query Interface V1 (Agent-Facing)
 
-> 状态：**SQI-V1 = QUALIFIED + V1.1 HARDENING PASS**（2026-09-17）。
+> 状态：**SQI-V1 = QUALIFIED + V1.1 HARDENING PASS + V1.2 QUALIFIED / RELEASE READY**（2026-09-20）。
 > Contract V1 FROZEN → Implementation FROZEN → Six-Task Smoke PASS →
 > Formal Protocol V1 FROZEN → **Formal Batch 36/36**（native 13/18 vs SQI 18/18，
 > 0 blocker / 0 capability failure）→ **V1.1 Hardening PASS**：
 > sandbox 隔离（预防层 live 实证 + `CHECKOUT_LEAKAGE` 检测层）、
 > T05 fixture repair（双库 evidence source 一致，amendment seal 2/2）、
 > oracle normalization 前置冻结（protocol v1.1）。
-> 下一主线（独立开线）：SQI Cost Optimization V1。
+> **SQI Cost Optimization V1 → SQI-V1.2 QUALIFIED（release ready）**：
+> C4-R4 完整 clean 36-cell batch 单 backend SQI 18/18、9/9 frozen floors、
+> 成本 vs V1.1 baseline input -36% / output -58% / cache-read -73%；
+> 修复路线 = 失败 → 归因 → 通用修复（V1.2-NR2）→ 完整重资格
+> （`reviews/v1.2-final-qualification-review.md`）。
 
 ## 1. 本线要回答的问题
 

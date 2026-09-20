@@ -24,7 +24,12 @@ ProvenLattice 希望探索一种新的工程上下文组织方式：
 
 ## Reproducibility Baseline
 
-当前资格结论（RQ1/RQ2/SQI-V1）与一键验证入口见 **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**：
+当前资格结论（RQ1/RQ2/SQI-V1/SQI-V1.2）与一键验证入口见 **[REPRODUCIBILITY.md](REPRODUCIBILITY.md)**。
+
+最新发布：**SQI-V1.2 = QUALIFIED / RELEASE READY**（2026-09-20，tag
+`provenlattice-sqi-v1.2`）——SQI 18/18、9/9 frozen floors、单 backend 完整
+clean batch；成本相对 V1.1 baseline：input -36% / output -58% /
+cache-read -73%。详见 `docs/releases/sqi-v1.2.md`：
 
 ```bash
 python experiments/query_interface_v1/tools/verify_release.py

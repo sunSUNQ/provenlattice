@@ -12,12 +12,12 @@ RQ2  Systems + Scale Qualification V1  = QUALIFIED   (Contract V1 scope, 2026-09
 SQI-V1 Structured Query Interface      = QUALIFIED   (Formal Protocol V1 scope, 2026-09-17)
 SQI-V1.1 Evaluation Hardening          = PASS        (2026-09-17)
 SQI Cost Optimization C0               = PASS / Analysis Only (2026-09-17)
+SQI-V1.2 Cost Optimization Qualification = QUALIFIED / RELEASE READY (2026-09-20)
 ```
 
 **尚未做（防止误读）：**
 
 ```text
-SQI Cost Optimization C1/C2/C3/C4 implementation = NOT STARTED
 Overlay V1.1                                     = NOT STARTED
 S3+ scale bands / concurrency                    = NOT STARTED（RQ2 明确排除）
 第四个 benchmark 仓库                             = NOT STARTED（明确不做）
@@ -54,6 +54,17 @@ C0：59 SQI calls · ~517 KB envelope · evidence 字节 80.2% 被实际引用
     cache amplification 15.3×（native 6.5×）为成本主导机制
 ```
 
+### SQI-V1.2（C4-R4 clean batch，2026-09-20）
+
+```text
+SQI 18/18（T01-T06 全部 3/3）· 9/9 frozen floors PASS · verdict QUALIFIED
+单 backend deepseek-flash x36 · 逐 cell provenance · 零 sensitive leakage
+成本 vs V1.1 baseline：input -36% · output -58% · cache-read -73% ·
+    amplification 15.3 → 6.4 · calls 59 → 49 · envelope bytes -26%
+T05.sqi 调用数 6-20/rep → 5/2/6（V1.2-NR2 通用修复，无任务特判、
+    无硬编码 required id、无 oracle 变更）
+```
+
 ## 3. 复现矩阵
 
 | 结论 | 复现入口 | 验证内容 | 需要 Agent/DB |
@@ -63,6 +74,7 @@ C0：59 SQI calls · ~517 KB envelope · evidence 字节 80.2% 被实际引用
 | SQI 冻结任务 | `experiments/query_interface_v1/tasks/SQI-T01..T06.json` | 任务/锚点/ground truth | 记录已含 |
 | SQI smoke | `results/implementation-smoke/SQI-SMOKE-20260917T020338Z-15ea13/` | frozen anchors 6/6 | DB（只读） |
 | SQI formal | `results/formal/SQI-FORMAL-20260917-1/` | Native vs SQI 36 cells | 需 Agent 环境（见 §5） |
+| SQI-V1.2 formal | `results/formal/SQI-FORMAL-C4-20260920T093328Z/`（batch-summary）+ `results/formal/C4-R4-SYNTHESIS-20260920-175458.json` + `reviews/v1.2-final-qualification-review.md` | SQI 18/18 · 9/9 floors · 单 backend 36 cells | 需 Agent 环境（见 §5） |
 | C0 成本归因 | `results/formal/.../cost-attribution-v1.json` + `reviews/c0-cost-attribution-review.md` | 成本逐源拆解（不跑 Agent） | 已有记录 |
 
 ## 4. 一键验证
@@ -81,14 +93,14 @@ Amendment seal (Protocol V1.1 + T05)       PASS 2/2
 Secondary seal (V1.1, 10 files)            PASS 10/10
 Systems contract seal (RQ2)                PASS 25/25
 Frozen databases                           PASS 4/4
-Tests (...)                                PASS 48/48
+Tests (...)                                PASS 61/61
 ```
 
 单跑测试：
 
 ```bash
 PYTHONPATH=src python -m unittest experiments.query_interface_v1.tests.test_sqi_v1 \
-    experiments.query_interface_v1.tests.test_sqi_formal_wiring   # 48 tests
+    experiments.query_interface_v1.tests.test_sqi_formal_wiring   # 61 tests
 PYTHONPATH=src python -m unittest discover -s tests              # 核心 integration tests
 ```
 
@@ -113,7 +125,7 @@ sha256 必须与本锁文件一致方可复跑 qualification。
 
 | 层 | 位置 | 内容 |
 | --- | --- | --- |
-| **formal** | `experiments/systems_v1/results/QUALIFICATION-V1-*.json`、`qualification-v1-*-summary.json`、`rq2-cross-system-synthesis-v1.json`；`experiments/query_interface_v1/results/formal/SQI-FORMAL-20260917-1/`（summary/synthesis/cost-attribution/manifest） | 支撑结论的正式证据 |
+| **formal** | `experiments/systems_v1/results/QUALIFICATION-V1-*.json`、`qualification-v1-*-summary.json`、`rq2-cross-system-synthesis-v1.json`；`experiments/query_interface_v1/results/formal/SQI-FORMAL-20260917-1/`（summary/synthesis/cost-attribution/manifest）；`experiments/query_interface_v1/results/formal/SQI-FORMAL-C4-20260920T093328Z/`（batch-summary）+ `C4-R4-SYNTHESIS-20260920-175458.json` | 支撑结论的正式证据 |
 | **smoke** | `experiments/systems_v1/results/RESMOKE-*.json`；`experiments/query_interface_v1/results/implementation-smoke/SQI-SMOKE-20260917T020338Z-15ea13/` | 有效 smoke（非正式证据） |
 | **historical** | `experiments/systems_v1/results/SUPERSEDED-*.md`、`SYSV1-*`（pre-freeze）、`*.invalid.json`；`experiments/query_interface_v1/results/implementation-smoke/SUPERSEDED-smoke-runs.json`、V1 batch 内每 cell 的 `evaluation.json`(V1) 与 `evaluation-v11.json` | superseded / invalid / excluded，显式标记、永不删除 |
 
@@ -126,6 +138,6 @@ sha256 必须与本锁文件一致方可复跑 qualification。
 | --- | --- |
 | RQ1 Graph Fidelity | `experiments/fidelity_v1/` + `docs/p0-graph-fidelity-v1-status-v1.md` |
 | RQ2 Systems & Scale | `experiments/systems_v1/README.md` |
-| SQI-V1 / V1.1 | `experiments/query_interface_v1/README.md` |
+| SQI-V1 / V1.1 / V1.2 | `experiments/query_interface_v1/README.md` |
 | 治理框架 | `docs/provenlattice-research-validation-framework-v1.md` |
 | 证据盘点 | `docs/provenlattice-evidence-inventory-gap-matrix-v1.md` |
