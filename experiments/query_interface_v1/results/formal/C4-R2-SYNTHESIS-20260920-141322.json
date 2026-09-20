@@ -1,0 +1,336 @@
+{
+ "schema": "SQI_C4_R2_CLEAN_SYNTHESIS_V1",
+ "batch": "SQI-FORMAL-C4-20260920T042801Z",
+ "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+ "capability_floors": {
+  "sqi_18_of_18": {
+   "value": "15/18",
+   "pass": false
+  },
+  "t02_3_of_3": {
+   "value": "3/3",
+   "pass": true
+  },
+  "t04_3_of_3": {
+   "value": "3/3",
+   "pass": true
+  },
+  "citation_closure_100pct": {
+   "value": "18/18",
+   "pass": true
+  },
+  "unsupported_claims_zero": {
+   "value": 0,
+   "pass": true
+  },
+  "machine_checks": {
+   "value": "15/18",
+   "pass": false
+  },
+  "source_verification": {
+   "value": "18/18 cells with source reads",
+   "pass": true
+  },
+  "no_new_violations": {
+   "value": [],
+   "pass": true
+  },
+  "single_backend": {
+   "value": [
+    "deepseek-flash"
+   ],
+   "pass": true
+  }
+ },
+ "floors_pass": false,
+ "task_success": {
+  "sqi": "15/18",
+  "native": "12/18",
+  "per_task_sqi": {
+   "SQI-T01": "3/3",
+   "SQI-T02": "3/3",
+   "SQI-T03": "3/3",
+   "SQI-T04": "3/3",
+   "SQI-T05": "2/3",
+   "SQI-T06": "1/3"
+  },
+  "per_task_native": {
+   "SQI-T01": "3/3",
+   "SQI-T02": "0/3",
+   "SQI-T03": "3/3",
+   "SQI-T04": "0/3",
+   "SQI-T05": "3/3",
+   "SQI-T06": "3/3"
+  },
+  "baseline": {
+   "native": "13/18",
+   "sqi": "18/18"
+  }
+ },
+ "t05_attribution": {
+  "calls_per_cell": [
+   11,
+   25,
+   30
+  ],
+  "cache_hits_total": 8,
+  "failures": [
+   {
+    "cell": "SQI-T05.sqi.r1",
+    "sqi_calls": 11,
+    "machine_checks_failed": [
+     "required_evidence_id_in_session",
+     "knowledge_db_id_returned",
+     "code_db_id_returned"
+    ],
+    "output_head": "## Result  **Document anchor.** `docs/cn/client.md` § 负载均衡 / `c_murmurhash_bl` (lines 286–288) describes load-balancer name `c_murmurhash_bl`: bounded-load consistent hashing (\"Consistent Hashing with Bounded Loads\", Mir"
+   }
+  ],
+  "mechanism": "OPT-T05 session cache ACTIVE and correct: repeats served byte-identical envelopes from the call log (r2: 3 hits, r3: 4 hits). The r1 failure is agent exploration behavior — 11 calls without reaching the required knowledge-DB/code-DB evidence ids; determinism cross-checked: the first 11 calls of r1/r2/r3 have byte-identical envelopes"
+ },
+ "t06_attribution": {
+  "cells": [
+   {
+    "cell": "SQI-T06.sqi.r1",
+    "sqi_calls": 2,
+    "bundle_explain_calls": 1,
+    "cache_served": 0
+   },
+   {
+    "cell": "SQI-T06.sqi.r2",
+    "sqi_calls": 4,
+    "bundle_explain_calls": 2,
+    "cache_served": 0
+   },
+   {
+    "cell": "SQI-T06.sqi.r3",
+    "sqi_calls": 5,
+    "bundle_explain_calls": 3,
+    "cache_served": 1
+   }
+  ],
+  "mechanism": "the frozen T06 machine check requires exactly one bundle.explain invocation; the observed failures are agents RE-INVOKING the same bundle.explain (byte-identical 32040-byte envelopes, later repeats served from the OPT-T05 session cache) — agent call-pattern behavior, not an implementation fault: the cache returned byte-identical envelopes and citation closure/unsupported claims stayed clean"
+ },
+ "cost_comparison": {
+  "after_sqi_totals": {
+   "cells": 18,
+   "sqi_calls": 151,
+   "envelope_bytes": 900714,
+   "input_tokens": 622848,
+   "output_tokens": 102693,
+   "cache_read_tokens": 5054464,
+   "cache_creation_tokens": 0,
+   "cache_hits": 29,
+   "duration_ms": 0.0,
+   "source_read_bytes": 310839,
+   "source_read_events": 82,
+   "agent_output_bytes": 58590,
+   "cache_amplification": 8.1
+  },
+  "after_native_totals": {
+   "cells": 18,
+   "sqi_calls": 0,
+   "envelope_bytes": 0,
+   "input_tokens": 563621,
+   "output_tokens": 131826,
+   "cache_read_tokens": 4017280,
+   "cache_creation_tokens": 0,
+   "cache_hits": 0,
+   "duration_ms": 0.0,
+   "source_read_bytes": 314425,
+   "source_read_events": 90,
+   "agent_output_bytes": 61879,
+   "cache_amplification": 7.1
+  },
+  "before_totals": {
+   "sqi_cells": 18,
+   "sqi_calls": 59,
+   "envelope_bytes_total": 517226,
+   "envelope_decomposition": {
+    "data": 190120,
+    "evidence_total": 247745,
+    "evidence_identity": 128799,
+    "evidence_location": 23694,
+    "evidence_narrative": 22381,
+    "evidence_extras": 73433,
+    "overhead_incl_constant_blocks": 79361
+   },
+   "evidence_entries": 320,
+   "evidence_used_bytes": 198354,
+   "evidence_used_ratio_pct": 80.2,
+   "evidence_duplicate_bytes": 18453,
+   "evidence_duplicate_ratio_pct": 7.5,
+   "source_read_bytes": 1215437,
+   "source_read_events": 324,
+   "agent_output_bytes": 69360,
+   "tokens": {
+    "input": 962640,
+    "output": 230508,
+    "cache_read": 14738944,
+    "cache_creation": 0
+   },
+   "cache_amplification_total": 15.3,
+   "native_comparison": {
+    "input_tokens": 527160,
+    "cache_read_tokens": 3410816,
+    "cache_amplification_total": 6.5,
+    "source_read_events": 213
+   }
+  },
+  "per_task_after": {
+   "SQI-T01": {
+    "cells": 3,
+    "sqi_calls": 12,
+    "envelope_bytes": 66498,
+    "input_tokens": 87031,
+    "output_tokens": 5067,
+    "cache_read_tokens": 357888,
+    "cache_creation_tokens": 0,
+    "cache_hits": 6,
+    "duration_ms": 0.0,
+    "source_read_bytes": 36419,
+    "source_read_events": 8,
+    "agent_output_bytes": 3286,
+    "cache_amplification": 4.1
+   },
+   "SQI-T02": {
+    "cells": 3,
+    "sqi_calls": 12,
+    "envelope_bytes": 99328,
+    "input_tokens": 90272,
+    "output_tokens": 8757,
+    "cache_read_tokens": 330752,
+    "cache_creation_tokens": 0,
+    "cache_hits": 4,
+    "duration_ms": 0.0,
+    "source_read_bytes": 14339,
+    "source_read_events": 14,
+    "agent_output_bytes": 9940,
+    "cache_amplification": 3.7
+   },
+   "SQI-T03": {
+    "cells": 3,
+    "sqi_calls": 27,
+    "envelope_bytes": 98039,
+    "input_tokens": 91171,
+    "output_tokens": 14133,
+    "cache_read_tokens": 743808,
+    "cache_creation_tokens": 0,
+    "cache_hits": 5,
+    "duration_ms": 0.0,
+    "source_read_bytes": 17662,
+    "source_read_events": 16,
+    "agent_output_bytes": 10936,
+    "cache_amplification": 8.2
+   },
+   "SQI-T04": {
+    "cells": 3,
+    "sqi_calls": 23,
+    "envelope_bytes": 193042,
+    "input_tokens": 104451,
+    "output_tokens": 29546,
+    "cache_read_tokens": 1423232,
+    "cache_creation_tokens": 0,
+    "cache_hits": 5,
+    "duration_ms": 0.0,
+    "source_read_bytes": 31139,
+    "source_read_events": 11,
+    "agent_output_bytes": 13010,
+    "cache_amplification": 13.6
+   },
+   "SQI-T05": {
+    "cells": 3,
+    "sqi_calls": 66,
+    "envelope_bytes": 162679,
+    "input_tokens": 117605,
+    "output_tokens": 22307,
+    "cache_read_tokens": 1251200,
+    "cache_creation_tokens": 0,
+    "cache_hits": 8,
+    "duration_ms": 0.0,
+    "source_read_bytes": 64193,
+    "source_read_events": 21,
+    "agent_output_bytes": 11198,
+    "cache_amplification": 10.6
+   },
+   "SQI-T06": {
+    "cells": 3,
+    "sqi_calls": 11,
+    "envelope_bytes": 281128,
+    "input_tokens": 132318,
+    "output_tokens": 22883,
+    "cache_read_tokens": 947584,
+    "cache_creation_tokens": 0,
+    "cache_hits": 1,
+    "duration_ms": 0.0,
+    "source_read_bytes": 147087,
+    "source_read_events": 12,
+    "agent_output_bytes": 10220,
+    "cache_amplification": 7.2
+   }
+  },
+  "per_task_before": {
+   "SQI-T01": {
+    "cells": 3,
+    "sqi_calls": 6,
+    "envelope_bytes_total": 46417,
+    "input_tokens": 110972,
+    "cache_read_tokens": 1123200
+   },
+   "SQI-T02": {
+    "cells": 3,
+    "sqi_calls": 8,
+    "envelope_bytes_total": 56583,
+    "input_tokens": 164612,
+    "cache_read_tokens": 3057920
+   },
+   "SQI-T03": {
+    "cells": 3,
+    "sqi_calls": 11,
+    "envelope_bytes_total": 58823,
+    "input_tokens": 113365,
+    "cache_read_tokens": 1108096
+   },
+   "SQI-T04": {
+    "cells": 3,
+    "sqi_calls": 4,
+    "envelope_bytes_total": 170810,
+    "input_tokens": 224923,
+    "cache_read_tokens": 2782208
+   },
+   "SQI-T05": {
+    "cells": 3,
+    "sqi_calls": 26,
+    "envelope_bytes_total": 80409,
+    "input_tokens": 173112,
+    "cache_read_tokens": 3918208
+   },
+   "SQI-T06": {
+    "cells": 3,
+    "sqi_calls": 4,
+    "envelope_bytes_total": 104184,
+    "input_tokens": 175656,
+    "cache_read_tokens": 2749312
+   }
+  }
+ },
+ "verdict": "HOLD / PARTIAL — single-backend attribution achieved, but the frozen capability floor is breached at T05.sqi 2/3 and T06.sqi 1/3; positive and negative regions preserved for V1.2 negative-region repair",
+ "verdict_scope": "V1.2 (cost optimization qualification) only — SQI-V1/V1.1 functional qualification unaffected",
+ "regions": {
+  "positive_regions": [
+   "single-backend attribution achieved (deepseek-flash x36, provenance per cell)",
+   "T02/T03/T04.sqi all 3/3 (T03/T04 recovered once the infrastructure defect was fixed)",
+   "citation closure 18/18, unsupported claims 0, zero violations — SQI evidence discipline holds end to end",
+   "OPT-T05 session cache verified in production: repeated invocations served byte-identical envelopes at zero recomputation"
+  ],
+  "negative_regions": [
+   "T05.sqi 2/3 (r1: exploration shortfall, 11 calls without the required evidence ids)",
+   "T06.sqi 1/3 (r2/r3: bundle.explain re-invocation violates the frozen single-call machine check)"
+  ],
+  "unresolved_regions": [
+   "baseline ran on mixed backends (deepseek-flash + deepseek-v4-flash per host transcripts) — cross-era token comparisons carry a residual backend caveat",
+   "native control variance (T02 native 0/3 vs baseline 1/3) suggests residual model behavioral drift independent of SQI",
+   "whether T06 re-invocation is INVITED by the compressed envelope (agent wants more than truncated:true provides) vs pure model nondeterminism"
+  ]
+ }
+}
