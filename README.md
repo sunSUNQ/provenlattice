@@ -35,6 +35,34 @@ cache-read -73%。详见 `docs/releases/sqi-v1.2.md`：
 python experiments/query_interface_v1/tools/verify_release.py
 ```
 
+## Qualification Evidence（基座 → Agent 证据链）
+
+ProvenLattice 的能力不是 demo 叙事，而是按
+
+```text
+图构得出来 → 图事实正确 → 大仓可运行 → 增量仍正确 → Agent 可消费 → 成本可控
+```
+
+逐层取得正式资格（全部数字来自冻结 artifact，详证见
+[experiments/foundation_analysis/reviews/provenlattice-foundation-evidence-review.md](experiments/foundation_analysis/reviews/provenlattice-foundation-evidence-review.md)）：
+
+| 验证线 | 回答的问题 | 正式结果 | 状态 |
+| --- | --- | --- | --- |
+| RQ1 图保真度 | 图里的事实能不能信？ | 174 例双盲 Gold（CALLS 86 / IMPORTS 88）；resolved precision **0.931**（样本）/ **0.899**（加权）；覆盖（尤其 CALLS）是主要限制而非错选 | **QUALIFIED**（2026-09-15，限 V0.2 / C-C++ / CALLS+IMPORTS / 三仓） |
+| RQ2 系统与规模 | 大仓能否构建、增量是否一致？ | aria2 118.9k / brpc 227.2k / RocksDB 622.8k C/C++ LOC；21 条正式记录；**36/36 增量 rep 六状态层 exact parity**；A/B 计数精确落冻结锚点 | **QUALIFIED**（2026-09-16，Contract V1 scope） |
+| SQI 结构化查询 | 图能否被 Agent 稳定查询？ | SQI **18/18** vs Native 13/18（V1）/ 12/18（C4-R4 对照）；citation closure 18/18 | **QUALIFIED**（V1 + V1.2） |
+| V1.2 成本优化 | Agent 消费成本是否可控？ | input −36% / output −58% / cache-read −73%；T05 调用数 6–20/rep → 5/2/6 | **QUALIFIED / RELEASE READY** |
+
+同批横向对照（C4-R4 clean batch，单 backend deepseek-flash ×36）：SQI 任务成功率
+100% vs Native 66.7%；按成功任务归一后上下文成本 **−28.1%**。Native 失败的
+恰好是两张图依赖型任务（完整 caller 枚举、impact frontier）。详见
+[experiments/query_interface_v1/reviews/c4-r4-native-vs-sqi-v1.2.md](experiments/query_interface_v1/reviews/c4-r4-native-vs-sqi-v1.2.md)。
+
+诚实边界：Overlay = IMPLEMENTED / PARTIALLY QUALIFIED（V0.4 工程
+parity/conflict 证据，未进冻结正式资格，V1.1 NOT STARTED）；增量延迟当前
+**高于**全量构建（正式记录在案、非门禁观察）；核心图查询 p95/p99、并发
+QPS、10M+ LOC、跨仓统一索引、向量索引、分布式同步 = 未测/未实现。
+
 ## Research Direction
 
 当前主要关注以下方向：
@@ -73,17 +101,23 @@ Token、读取字符数和工具轮次在实验中作为检索效率的辅助观
 ProvenLattice 与 TASCO 是两个独立工具。ProvenLattice 的版本、接口和实验不依赖 TASCO；未来如有组合实验，将在两个工具各自完成独立验证后另行定义。
 
 ```text
-Core V0.4  Branch / Session Overlay                         ✅
-V1.0      Knowledge Layer / Cross-Layer Evidence            ✅
-V1.0-R1   Standalone Retrieval Qualification                 next
-V1.1      Commit / ChangeSet / Version Evidence
-V1.2      Runtime / Log / Validation Evidence
-V1.3      Unified Engineering Evidence Query
-V1.4      Large-scale / Multi-branch Qualification
-V2.0      Standalone Agent-facing ProvenLattice
+Core V0.3  Shard / Incremental Foundation                      ✅
+Core V0.4  Branch / Session Overlay                            ✅（工程级 parity；正式资格 V1.1 NOT STARTED）
+V1.0      Knowledge Layer / Cross-Layer Evidence               ✅
+RQ1       Graph Fidelity Qualification V1                      ✅ QUALIFIED（2026-09-15）
+RQ2       Systems + Scale Qualification V1                     ✅ QUALIFIED（2026-09-16）
+SQI-V1    Structured Query Interface Qualification             ✅ QUALIFIED（2026-09-17）
+SQI-V1.1  Evaluation Hardening                                 ✅ PASS（2026-09-17）
+SQI-V1.2  Cost Optimization Qualification                      ✅ QUALIFIED / RELEASE READY（2026-09-20）
+Overlay V1.1                                                   next candidate
+S3+ scale bands / concurrency                                  not started
+第四个 benchmark 仓库 / 跨仓统一索引 / 向量索引                  not started
+MCP / Plugin / SDK                                             evidence-driven decision
 ```
 
-R1 只比较 Native Code Agent、Code Agent + ProvenLattice CodeGraph、Code Agent + ProvenLattice CodeGraph + Knowledge Evidence。当前优先稳定 CLI / Python Query API，再根据实验证据决定是否需要 MCP、Plugin 或 SDK。
+接口路线：SQI 契约已冻结（byte-identical envelope + citation closure），
+当前优先稳定 CLI / Python Query API；是否引入 MCP、Plugin 或 SDK 由后续
+使用证据决定。
 
 ## V1.0 Knowledge Layer
 
@@ -125,9 +159,20 @@ Windows PowerShell 中先执行 `$env:PYTHONPATH='src'`。
 
 ## Status
 
-🚧 **Research / V1.0-R1 Retrieval Harness**
+✅ **SQI-V1.2 = QUALIFIED / RELEASE READY**（tag `provenlattice-sqi-v1.2`，GitHub Release 已发布）
 
-当前实现覆盖 Python/C/C++ CodeGraph，以及 Markdown Spec/Requirement/Document 到代码的可追溯确定性证据。Runtime Log、Commit History、Validation Result、Embedding、Vector DB、LLM linker、MCP、UI、TASCO 与 Agent 集成均未引入。
+当前实现覆盖 Python/C/C++ CodeGraph，以及 Markdown Spec/Requirement/Document 到代码的可追溯确定性证据；RQ1 图保真度与 RQ2 系统规模资格已闭合，SQI 已完成 V1 → V1.1 → V1.2 三代 Agent 侧资格。Runtime Log、Commit History、Validation Result、Embedding、Vector DB、LLM linker、MCP、UI、TASCO 与 Agent 集成均未引入。
+
+关键文档索引：
+
+| 内容 | 位置 |
+| --- | --- |
+| 汇报母文档 | [docs/report-v1.2.md](docs/report-v1.2.md) |
+| 基座能力证据链 | [experiments/foundation_analysis/reviews/provenlattice-foundation-evidence-review.md](experiments/foundation_analysis/reviews/provenlattice-foundation-evidence-review.md) |
+| RQ1 图保真度综合 | experiments/fidelity_v1/results/rq1-graph-fidelity-evidence-synthesis-v1.md |
+| RQ2 系统与规模综合 | experiments/systems_v1/results/rq2-cross-system-synthesis-v1.json |
+| V1.2 发布文档 | docs/releases/sqi-v1.2.md |
+| C4-R4 Native vs SQI 横向分析 | experiments/query_interface_v1/reviews/c4-r4-native-vs-sqi-v1.2.md |
 
 ---
 

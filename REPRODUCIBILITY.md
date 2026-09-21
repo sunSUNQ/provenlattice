@@ -76,6 +76,8 @@ T05.sqi 调用数 6-20/rep → 5/2/6（V1.2-NR2 通用修复，无任务特判�
 | SQI formal | `results/formal/SQI-FORMAL-20260917-1/` | Native vs SQI 36 cells | 需 Agent 环境（见 §5） |
 | SQI-V1.2 formal | `results/formal/SQI-FORMAL-C4-20260920T093328Z/`（batch-summary）+ `results/formal/C4-R4-SYNTHESIS-20260920-175458.json` + `reviews/v1.2-final-qualification-review.md` | SQI 18/18 · 9/9 floors · 单 backend 36 cells | 需 Agent 环境（见 §5） |
 | C0 成本归因 | `results/formal/.../cost-attribution-v1.json` + `reviews/c0-cost-attribution-review.md` | 成本逐源拆解（不跑 Agent） | 已有记录 |
+| 基座能力证据链 | `experiments/foundation_analysis/results/PROVENLATTICE-FOUNDATION-EVIDENCE.json` + `experiments/foundation_analysis/reviews/provenlattice-foundation-evidence-review.md` | RQ1/RQ2/工程基线/架构映射/缺口矩阵综合（只读现有正式 evidence） | 已有记录 |
+| C4-R4 Native vs SQI 横向 | `experiments/query_interface_v1/results/analysis/C4-R4-NATIVE-VS-SQI-V1.2.json` + `reviews/c4-r4-native-vs-sqi-v1.2.md` | 同批横向成功率（100% vs 66.7%）与 success-normalized 成本（−28.1%）分析 | 已有记录 |
 
 ## 4. 一键验证
 
