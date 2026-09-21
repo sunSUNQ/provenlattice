@@ -1,0 +1,62 @@
+# Which semantic events each defect pattern needs.
+#
+# Keys are the numbering from defect-evidence-matrix-v1.md; `grade` is that
+# table's A/B/C grade, repeated here so a coverage report can be read without
+# opening the matrix. `requires` is the matrix's "Required Events" column --
+# the matrix itself leaves those five fields blank for now, so the entries
+# below are seeded from design doc §9 and cover only the patterns stage 2/4
+# will actually attack. Filling in the rest waits until the matrix's five
+# fields are expanded (matrix decision #6).
+#
+# `missing_events()` on the loaded pattern reports which requirements stage 2
+# cannot satisfy yet, which is the honest answer to "can we detect this now?".
+
+[patterns."1.1"]
+name = "共享数据竞态"
+grade = "A"
+requires = ["ATOMIC", "LOCK", "READ", "THREAD_JOIN", "THREAD_SPAWN", "UNLOCK", "WRITE"]
+
+[patterns."1.3"]
+name = "死锁 / 锁序错误"
+grade = "B"
+requires = ["LOCK", "UNLOCK"]
+
+[patterns."3.1"]
+name = "空指针解引用"
+grade = "B"
+requires = ["CHECK", "DEREFERENCE"]
+
+[patterns."4.1"]
+name = "内存泄漏"
+grade = "A"
+requires = ["ALLOC", "RELEASE", "RETURN"]
+
+[patterns."4.2"]
+name = "双重释放"
+grade = "B"
+requires = ["RELEASE"]
+
+[patterns."4.3"]
+name = "释放后使用"
+grade = "B"
+requires = ["DEREFERENCE", "READ", "RELEASE", "WRITE"]
+
+# The one pattern whose stage-2 coverage is decided by an omission rather than
+# by design: it needs OPEN/CLOSE, which the design doc §23 lists as node types
+# but the stage 2 level 0 list in appendix B.4 leaves out. It is graded A in
+# the matrix, so this is a real conflict between the two documents, not a
+# scheduling choice.
+[patterns."4.5"]
+name = "非内存资源泄漏与关闭不当"
+grade = "A"
+requires = ["CLOSE", "OPEN", "RETURN"]
+
+[patterns."4.6"]
+name = "错误路径清理不完整（含锁未释放）"
+grade = "A"
+requires = ["ALLOC", "LOCK", "RELEASE", "RETURN", "THROW", "UNLOCK"]
+
+[patterns."9.1"]
+name = "未检查返回值"
+grade = "A"
+requires = ["CALL", "CHECK", "RETURN"]
