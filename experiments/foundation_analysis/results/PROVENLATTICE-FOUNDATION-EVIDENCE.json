@@ -1,0 +1,1123 @@
+{
+ "schema": "PROVENLATTICE_FOUNDATION_EVIDENCE_V1",
+ "generated_at": "2026-09-21T02:56:35Z",
+ "purpose": "CodeGraph / engineering evidence foundation capability proof for docs/report-v1.2.md — synthesis of existing formal evidence only",
+ "evidence_inventory": {
+  "rq1": {
+   "status": "QUALIFIED",
+   "status_scope": "V0.2 Graph Fabric; C/C++ CALLS + IMPORTS; aria2/brpc/RocksDB; frozen V1 sampling frame; 2026-09-15 P0 Graph Fidelity Qualification V1 CLOSED",
+   "question_answered": "graph facts are trustworthy when a relation is resolved; coverage (especially CALLS) is the primary limitation, not wrong-target selection",
+   "gold_set": {
+    "artifact": "experiments/fidelity_v1/gold/cpp-structural-relation-gold-v1.json",
+    "freeze_status": "SEALED_FROZEN",
+    "cases_total": 174,
+    "calls": 86,
+    "imports": 88,
+    "references": 0,
+    "references_classification": "GRAPH_REPRESENTATION_GAP"
+   },
+   "annotation_protocol": {
+    "annotators": 2,
+    "blinding": "independent blinded annotation, blind packages batch-02..batch-05, blindness provenance audit",
+    "calibration_gate": "calibration-gate-01: CALIBRATION_QUALIFIED_WITH_DOCUMENTED_DEVIATIONS",
+    "calibration_protocol_commit": "12f405c677582a2982d035433bf6837126772716",
+    "disagreement_adjudication": {
+     "cohort_reconciliation": {
+      "calibration_01": {
+       "total": 16,
+       "calls": 8,
+       "imports": 8,
+       "agreed": 14,
+       "adjudicated": 2
+      },
+      "batch_02": {
+       "total": 38,
+       "calls": 18,
+       "imports": 20,
+       "agreed": 34,
+       "adjudicated": 4
+      },
+      "batch_03": {
+       "total": 40,
+       "calls": 20,
+       "imports": 20,
+       "agreed": 38,
+       "adjudicated": 2
+      },
+      "batch_04": {
+       "total": 41,
+       "calls": 23,
+       "imports": 18,
+       "agreed": 32,
+       "adjudicated": 9
+      },
+      "batch_05": {
+       "total": 39,
+       "calls": 17,
+       "imports": 22,
+       "agreed": 37,
+       "adjudicated": 2
+      }
+     },
+     "final_cpp_adjudication": "experiments/fidelity_v1/final-cpp-adjudication.json"
+    }
+   },
+   "metrics": {
+    "resolved_precision_sample": 0.931,
+    "resolved_precision_weighted": 0.8992,
+    "target_opportunity_coverage_weighted": 0.2436,
+    "missed_resolution_opportunity_rate_weighted": 0.7564,
+    "per_relation_sample": {
+     "CALLS": {
+      "resolved_precision": 0.8571,
+      "target_opportunity_coverage": 0.7101,
+      "abstention_quality": 0.3103
+     },
+     "IMPORTS": {
+      "resolved_precision": 1.0,
+      "target_opportunity_coverage": 1.0,
+      "abstention_quality": 1.0
+     },
+     "REFERENCES": {
+      "evaluable": false,
+      "classification": "GRAPH_REPRESENTATION_GAP"
+     }
+    },
+    "scoring_states": {
+     "CORRECT_RESOLUTION": 108,
+     "WRONG_TARGET_RESOLUTION": 1,
+     "MISSED_RESOLUTION_OPPORTUNITY": 20,
+     "FALSE_RESOLUTION_ON_ABSENT": 7,
+     "JUSTIFIED_ABSTENTION": 37,
+     "INDETERMINATE_EXCLUDED": 1
+    },
+    "failure_attribution_primary": {
+     "CANDIDATE_GENERATION_MISS": 10,
+     "RESOLVER_ABSTENTION": 11,
+     "RESOLVER_OVER_RESOLUTION": 7
+    }
+   },
+   "sources": [
+    "experiments/fidelity_v1/results/rq1-graph-fidelity-evidence-synthesis-v1.json",
+    "experiments/fidelity_v1/results/rq1-graph-fidelity-evidence-synthesis-v1.md",
+    "experiments/fidelity_v1/gold/gold-freeze-manifest.json",
+    "experiments/fidelity_v1/results/calibration-gate-01.json",
+    "experiments/fidelity_v1/results/p0-graph-fidelity-qualification-v1-freeze.md"
+   ]
+  },
+  "rq2": {
+   "status": "QUALIFIED",
+   "status_scope": "SYSTEMS_BENCHMARK_CONTRACT_V1 (frozen, seal 25/25): Windows 11, frozen commits, single machine, B1-B3 bands, V0.2 implementation; excludes concurrency and S3+ bands",
+   "qualification_id_prefix": "RQ2-FORMAL-B1/B2/B3-2026-09-16",
+   "workload_chain_incremental": [
+    "copy frozen repository A",
+    "Full Build(A) initial index",
+    "baseline-A verification against frozen file hashes",
+    "apply frozen mutation (workload_c_gate hard gate: mutation_pre_sha256 != mutation_post_sha256)",
+    "Incremental Update A->B",
+    "freshness probe (state B observed in same sequential child)",
+    "Fresh Full Build(B)",
+    "exact parity: Incremental(B) digests == Full(B) digests over all six state layers"
+   ],
+   "state_layers_exact_names": [
+    "nodes_facts",
+    "edges_facts",
+    "raw_references_facts",
+    "shards_facts",
+    "files_facts",
+    "shard_edges_facts"
+   ],
+   "incremental_totals": {
+    "formal_reps": 36,
+    "hard_gate_pass": 36,
+    "freshness_pass": 36,
+    "exact_parity_pass": 36
+   },
+   "runner_defect_discovery_and_repair": {
+    "superseded_records": "34 pre-freeze SYSV1-* records SUPERSEDED (results/SUPERSEDED-workload-c-mutation-order.md): mutation applied BEFORE initial index produced B-vs-B comparisons (changed=false, files_changed_reported=0); blocker WORKLOAD_C_MUTATION_ORDER (contract delta review finding C1); records retained, never deleted",
+    "corrected_runner_order": "copy frozen A -> Full(A) -> baseline-A verify -> frozen mutation -> Incremental(A->B) -> freshness probe -> Full(B) -> exact parity, with workload_c_gate const-true conditions",
+    "engine_defect_exposed": "corrected harness exposed M3 raw_references parity failures on B2/B3 (raw-reference cache reuse after symbol removal); fixed in src/provenlattice/resolver.py + integration regression test; smoke records SYSV1-B2BRPC-C-20260916T061945Z / SYSV1-B3ROCKSDB-C-20260916T062127Z",
+    "formal_36_reps": "QUALIFICATION-V1-B1/B2/B3-*-C-M1..M4.json (2026-09-16): 36/36 PASS"
+   },
+   "mutation_families": {
+    "M1": {
+     "family": "function_body_edit",
+     "scope": "local",
+     "interface_sensitive": false,
+     "target_summary": "butil/time.cpp (aria2/brpc analogues), local function-body edit, API unchanged",
+     "formal_reps_per_repo": 3,
+     "result": "parity PASS 3/3 repos"
+    },
+    "M2": {
+     "family": "add_symbol",
+     "scope": "local",
+     "interface_sensitive": false,
+     "target_summary": "file-local symbol addition (new nodes/references)",
+     "formal_reps_per_repo": 3,
+     "result": "parity PASS 3/3 repos"
+    },
+    "M3": {
+     "family": "delete_file",
+     "scope": "file_level",
+     "interface_sensitive": false,
+     "target_summary": "file-level deletion / tombstone handling",
+     "formal_reps_per_repo": 3,
+     "result": "parity PASS 3/3 repos"
+    },
+    "M4": {
+     "family": "cross_file_signature_change",
+     "scope": "cross_file",
+     "interface_sensitive": true,
+     "target_summary": "cross-file public signature change + call-site update",
+     "formal_reps_per_repo": 3,
+     "result": "parity PASS 3/3 repos"
+    }
+   },
+   "mutation_families_deferred": [
+    "rename/move",
+    "file addition",
+    "header high-fanout change",
+    "branch/overlay merge"
+   ],
+   "incremental_latency_inversion_observed": {
+    "observation": "aria2 incremental system_under_test latency (~5.6-6.0 s) exceeds its full build median (~4.5 s); same pattern in B2 (10.9-14.3 s vs 8.3 s) and B3 (37.7-47.5 s vs 28.2 s): incremental update latency exceeds cold full-build latency at all three scales",
+    "disposition": "OBSERVED_ONLY, non-gating (Contract V1 anomaly guard): incremental correctness is QUALIFIED; whether incremental is faster than full build is a separate optimization question"
+   },
+   "cross_system_totals": {
+    "formal_records_total": 21,
+    "per_system": 7,
+    "workload_a_measured_reps_total": 15,
+    "workload_b_measured_reps_total": 15,
+    "workload_c_incremental_reps_total": 36,
+    "workload_c_hard_gate_pass": 36,
+    "workload_c_freshness_pass": 36,
+    "workload_c_strict_digest_parity_pass": 36,
+    "workload_d_warm_query_samples_total": 1800,
+    "valid_records": 21,
+    "INVALID_EXECUTION_records": 0,
+    "infrastructure_attributed_artifacts": 1,
+    "infrastructure_attributed_detail": "QUALIFICATION-V1-B3-ROCKSDB-D.invalid.json: operator launch-environment defect (missing PYTHONPATH) during session takeover; failed before any measurement; excluded from formal evidence; full D re-executed and valid",
+    "silently_dropped_runs": 0
+   },
+   "sources": [
+    "experiments/systems_v1/results/rq2-cross-system-synthesis-v1.json",
+    "experiments/systems_v1/reviews/rq2-final-qualification-review.md",
+    "experiments/systems_v1/manifests/benchmarks-v1.json",
+    "experiments/systems_v1/manifests/mutations-aria2-v1.json",
+    "experiments/systems_v1/manifests/mutations-brpc-v1.json",
+    "experiments/systems_v1/manifests/mutations-rocksdb-v1.json",
+    "experiments/systems_v1/results/SUPERSEDED-workload-c-mutation-order.md",
+    "experiments/systems_v1/reviews/workload-c-m3-delete-invalidation-review.md"
+   ],
+   "repositories": {
+    "B1-aria2": {
+     "role": "Small Regression",
+     "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+     "c_cpp_loc": 118926,
+     "files_recorded_denominator": 1168,
+     "symbols_recorded_denominator": 27936,
+     "nodes": 29117,
+     "raw_references": 49109,
+     "edges": 37074,
+     "full_build_workload_a": {
+      "measured_reps": 5,
+      "median_ms": 4494.126,
+      "p95_ms": 4765.934,
+      "p99_ms": 4765.934,
+      "min_ms": 4303.319,
+      "max_ms": 4765.934
+     },
+     "warm_rebuild_workload_b": {
+      "measured_reps": 5,
+      "median_ms": 4561.364
+     },
+     "incremental_workload_c": {
+      "reps": 12,
+      "hard_gate_pass": true,
+      "families": [
+       {
+        "mutation_id": "M1",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 5843.13
+       },
+       {
+        "mutation_id": "M2",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 6045.816
+       },
+       {
+        "mutation_id": "M3",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 5742.237
+       },
+       {
+        "mutation_id": "M4",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 5590.888
+       }
+      ]
+     },
+     "query_workload_d": {
+      "record": "QUALIFICATION-V1-B1-ARIA2-D.json",
+      "run_id": "SYSV1-B1ARIA2-D-20260916T071923Z",
+      "sha256": "d55822571c21ba87456d951ae5be07495ce4b129eeeaf856d9d84572d71a38e2",
+      "query_manifest_sha256": "8716bb535dfc7c00b0165fbcfc2a9bdf9b5ba2e4fe3617e9ee84f0c74294fe09",
+      "execution_order": "manifest_file_order",
+      "order_frozen": true,
+      "anchor_validation": "qualified_name_exact_match",
+      "warm_measured_rounds": 30,
+      "warm_samples_per_query_type": {
+       "callees": 150,
+       "callers": 150,
+       "subgraph": 150,
+       "symbol": 150
+      },
+      "warm_median_latency_ms": {
+       "callees": 20.7824,
+       "callers": 47.8588,
+       "subgraph": 44.3564,
+       "symbol": 19.8154
+      }
+     },
+     "observed_v0_2_baseline": {
+      "full_index_time_ms": 3953.631,
+      "peak_memory_bytes": 195563520,
+      "database_size_bytes": 132034560,
+      "note": "single-run OBSERVED anchor baseline, NOT a qualification result (manifest note)"
+     },
+     "formal_peak_rss_db": {
+      "peak_rss_median_bytes": 200781824.0,
+      "db_size_median_bytes": 132988928.0,
+      "n": 5
+     }
+    },
+    "B2-brpc": {
+     "role": "Target-like Primary",
+     "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+     "c_cpp_loc": 227154,
+     "files_recorded_denominator": 1168,
+     "symbols_recorded_denominator": 47688,
+     "nodes": 48929,
+     "raw_references": 84941,
+     "edges": 59614,
+     "full_build_workload_a": {
+      "measured_reps": 5,
+      "median_ms": 8337.305,
+      "p95_ms": 14791.543,
+      "p99_ms": 14791.543,
+      "min_ms": 8153.793,
+      "max_ms": 14791.543
+     },
+     "warm_rebuild_workload_b": {
+      "measured_reps": 5,
+      "median_ms": 9819.849
+     },
+     "incremental_workload_c": {
+      "reps": 12,
+      "hard_gate_pass": true,
+      "families": [
+       {
+        "mutation_id": "M1",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 14271.066
+       },
+       {
+        "mutation_id": "M2",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 11412.992
+       },
+       {
+        "mutation_id": "M3",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 11250.951
+       },
+       {
+        "mutation_id": "M4",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 10852.147
+       }
+      ]
+     },
+     "query_workload_d": {
+      "record": "QUALIFICATION-V1-B2-BRPC-D.json",
+      "run_id": "SYSV1-B2BRPC-D-20260916T074515Z",
+      "sha256": "4d91c430e4100a139f75408e356045fc6837c024e6c9d76e0ea5ca8700320bd1",
+      "query_manifest_sha256": "5cad7df53ef39e8734a007797f1284cc503c9e2b17782d4272b5d5cd20cb9a8c",
+      "execution_order": "manifest_file_order",
+      "order_frozen": true,
+      "anchor_validation": "qualified_name_exact_match",
+      "warm_measured_rounds": 30,
+      "warm_samples_per_query_type": {
+       "callees": 150,
+       "callers": 150,
+       "subgraph": 150,
+       "symbol": 150
+      },
+      "warm_median_latency_ms": {
+       "callees": 32.1713,
+       "callers": 33.6416,
+       "subgraph": 39.1647,
+       "symbol": 26.7781
+      }
+     },
+     "observed_v0_2_baseline": {
+      "full_index_time_ms": 7590.77,
+      "peak_memory_bytes": 323907584,
+      "database_size_bytes": 237162496,
+      "note": "single-run OBSERVED anchor baseline, NOT a qualification result (manifest note)"
+     },
+     "formal_peak_rss_db": {
+      "peak_rss_median_bytes": 329740288.0,
+      "db_size_median_bytes": 240234496.0,
+      "n": 5
+     }
+    },
+    "B3-rocksdb": {
+     "role": "Scale",
+     "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+     "c_cpp_loc": 622772,
+     "files_recorded_denominator": 1478,
+     "symbols_recorded_denominator": 117097,
+     "nodes": 118655,
+     "raw_references": 311111,
+     "edges": 143585,
+     "full_build_workload_a": {
+      "measured_reps": 5,
+      "median_ms": 28238.675,
+      "p95_ms": 28921.022,
+      "p99_ms": 28921.022,
+      "min_ms": 27556.164,
+      "max_ms": 28921.022
+     },
+     "warm_rebuild_workload_b": {
+      "measured_reps": 5,
+      "median_ms": 29669.906
+     },
+     "incremental_workload_c": {
+      "reps": 12,
+      "hard_gate_pass": true,
+      "families": [
+       {
+        "mutation_id": "M1",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 37750.157
+       },
+       {
+        "mutation_id": "M2",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 46905.126
+       },
+       {
+        "mutation_id": "M3",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 47469.315
+       },
+       {
+        "mutation_id": "M4",
+        "reps": 3,
+        "aggregate_parity": true,
+        "strict_digest_match": true,
+        "latency_ms": 41946.501
+       }
+      ]
+     },
+     "query_workload_d": {
+      "record": "QUALIFICATION-V1-B3-ROCKSDB-D.json",
+      "run_id": "SYSV1-B3ROCKSDB-D-20260916T085043Z",
+      "sha256": "7d533f988ba45c7eef55b1afc7d8b32ddbb330f7b27983acedf69340ab268dbf",
+      "query_manifest_sha256": "51cf0408c8a26e3610b2303389804e76d2adf846e08d6c0d76bb67f54f4ec447",
+      "execution_order": "manifest_file_order",
+      "order_frozen": true,
+      "anchor_validation": "qualified_name_exact_match",
+      "warm_measured_rounds": 30,
+      "warm_samples_per_query_type": {
+       "callees": 150,
+       "callers": 150,
+       "subgraph": 150,
+       "symbol": 150
+      },
+      "warm_median_latency_ms": {
+       "callees": 74.0976,
+       "callers": 166.3123,
+       "subgraph": 70.0327,
+       "symbol": 62.2958
+      }
+     },
+     "observed_v0_2_baseline": {
+      "full_index_time_ms": 26190.219,
+      "peak_memory_bytes": 1121484800,
+      "database_size_bytes": 876105728,
+      "note": "single-run OBSERVED anchor baseline, NOT a qualification result (manifest note)"
+     },
+     "formal_peak_rss_db": {
+      "peak_rss_median_bytes": 1127731200.0,
+      "db_size_median_bytes": 884146176.0,
+      "n": 5
+     }
+    }
+   }
+  },
+  "engineering_baselines": {
+   "v0_3_shard_qualification": {
+    "status": "PASS (V0.3 engineering benchmark; superseded at formal level by RQ2 36/36)",
+    "strategies": [
+     "directory",
+     "build-aware",
+     "structural"
+    ],
+    "shard_counts": {
+     "B1-aria2": {
+      "directory": 8,
+      "build-aware": 8,
+      "structural": 21
+     },
+     "B2-brpc": {
+      "directory": 46,
+      "build-aware": 40,
+      "structural": 56
+     },
+     "B3-rocksdb": {
+      "directory": 64,
+      "build-aware": 59,
+      "structural": 70
+     }
+    },
+    "api_fingerprint": "public kind/qualified-name/signature; body edits keep fingerprint, signature changes set boundary_dirty",
+    "mutation_parity": "B1 M1-M5 all PASS; B2/B3 single-file representative mutation parity PASS; 20 unittests",
+    "source": "docs/benchmarks/provenlattice-v0.3-shard.json"
+   },
+   "v0_4_overlay": {
+    "status": "IMPLEMENTED + PARTIALLY QUALIFIED",
+    "status_basis": "branch/session overlay fully implemented (GraphView Session>Branch>Base, tombstone DELETE, conflict matrix NO_CONFLICT/ENTITY_CONFLICT/DELETE_UPDATE_CONFLICT/ADD_ADD_CONFLICT/BOUNDARY_CONFLICT, REBASE_REQUIRED, compatible rebase) with real B1/B2/B3 single-file body-only overlay parity PASS, B1/B2 lifecycle/conflict matrix, and tests/test_overlay.py; NOT covered by the frozen SYSTEMS_BENCHMARK_CONTRACT_V1 formal qualification; Overlay V1.1 = NOT STARTED (REPRODUCIBILITY.md)",
+    "baseline_rows": [
+     {
+      "benchmark": "B1-aria2",
+      "changed_file": "src/AbstractCommand.cc",
+      "base_db_bytes": 132984832,
+      "overlay_db_bytes": 245760,
+      "overlay_to_base_ratio": 0.001848,
+      "shards_touched": 1,
+      "overlay_apply_ms": 2312.295,
+      "materialization_parity": true,
+      "branch_query_p95_overhead": 0.005618120668569038
+     },
+     {
+      "benchmark": "B2-brpc",
+      "changed_file": "src/brpc/builtin/common.cpp",
+      "base_db_bytes": 240123904,
+      "overlay_db_bytes": 135168,
+      "overlay_to_base_ratio": 0.000563,
+      "shards_touched": 1,
+      "overlay_apply_ms": 3953.028,
+      "materialization_parity": true,
+      "branch_query_p95_overhead": 0.05960321602139662
+     },
+     {
+      "benchmark": "B3-rocksdb",
+      "changed_file": "db/db_impl/db_impl.cc",
+      "base_db_bytes": 884084736,
+      "overlay_db_bytes": 2355200,
+      "overlay_to_base_ratio": 0.002664,
+      "shards_touched": 1,
+      "overlay_apply_ms": 15013.565,
+      "materialization_parity": true,
+      "branch_query_p95_overhead": 0.019059120368403404
+     }
+    ],
+    "query_overhead": "branch P95 overhead < 6% on all three repos (20-sample local baseline)",
+    "branch_session_support": "persistent branch overlay + ephemeral session overlay, commit-to-branch, discard, rebase; git remains the source merge authority",
+    "sources": [
+     "docs/benchmarks/provenlattice-v0.4-overlay.json",
+     "docs/benchmarks/provenlattice-v0.4-conflicts.json",
+     "docs/benchmarks/provenlattice-v0.4-overlay.md"
+    ]
+   },
+   "v1_0_knowledge_layer": {
+    "status": "IMPLEMENTED (31 unittests; C1-C6 fixtures; B2 brpc real-repo knowledge baseline) + agent consumption QUALIFIED via SQI T05/T06",
+    "b2_brpc_baseline": {
+     "knowledge_nodes": 1404,
+     "document_sections": 1255,
+     "raw_evidence_links": 736,
+     "evidence_resolved": 80,
+     "evidence_ambiguous": 202,
+     "evidence_unresolved": 454,
+     "cross_layer_edges": 80,
+     "knowledge_index_time_ms": 26641.7
+    },
+    "query_latency_b2": {
+     "evidence_lookup": {
+      "p50_ms": 0.5578,
+      "p95_ms": 1.2693,
+      "samples": 30
+     },
+     "document_to_code": {
+      "p50_ms": 24.4154,
+      "p95_ms": 27.2017,
+      "samples": 30
+     },
+     "cross_layer_subgraph": {
+      "p50_ms": 23.1982,
+      "p95_ms": 26.2102,
+      "samples": 30
+     }
+    },
+    "sources": [
+     "docs/benchmarks/provenlattice-v1.0-knowledge.json",
+     "docs/releases/provenlattice-v1.0.md"
+    ]
+   }
+  },
+  "languages": {
+   "parsers_implemented": [
+    "c",
+    "cpp",
+    "python"
+   ],
+   "parser_evidence": "src/provenlattice/parser.py (tree-sitter: TreeSitterParser for python, CppTreeSitterParser for c/cpp); formal RQ2 records protocol languages ['c','cpp','python']",
+   "formal_benchmark_languages": {
+    "rq1": "C/C++ only (CALLS + IMPORTS); 9 Python pilot cases excluded from the C/C++ scoring universe at the calibration gate (OUT_OF_SCOPE, retained in audit package)",
+    "rq2": "C/C++ LOC denominators (118,926 / 227,154 / 622,772); python files scanned by the formal runner but outside the LOC denominator"
+   },
+   "rows": [
+    {
+     "language": "C",
+     "parser": "tree-sitter (CppTreeSitterParser)",
+     "formal_evidence": "RQ1 + RQ2 formal (aria2/brpc/RocksDB)",
+     "status": "QUALIFIED (within RQ1/RQ2 frozen scope)"
+    },
+    {
+     "language": "C++",
+     "parser": "tree-sitter (CppTreeSitterParser)",
+     "formal_evidence": "RQ1 + RQ2 formal (aria2/brpc/RocksDB)",
+     "status": "QUALIFIED (within RQ1/RQ2 frozen scope)"
+    },
+    {
+     "language": "Python",
+     "parser": "tree-sitter (TreeSitterParser)",
+     "formal_evidence": "parser implemented + scanned in RQ2 runs; excluded from RQ1 C/C++ fidelity scoring; no formal Python fidelity/scale benchmark",
+     "status": "IMPLEMENTED / NOT YET QUALIFIED"
+    }
+   ],
+   "guard": "parser support is NOT equivalent to production-grade qualification"
+  },
+  "agent_consumption": {
+   "sqi_v1": {
+    "status": "QUALIFIED (Formal Protocol V1 scope, 2026-09-17)",
+    "result": "Native 13/18 vs SQI 18/18 (36 formal cells, 6 tasks x 2 arms x 3 reps); citation closure 18/18",
+    "source": "experiments/query_interface_v1/results/formal/SQI-FORMAL-20260917-1/"
+   },
+   "sqi_v1_2": {
+    "status": "QUALIFIED / RELEASE READY (2026-09-20)",
+    "result": "C4-R4 clean batch SQI 18/18, 9/9 frozen floors, single backend deepseek-flash x36; longitudinal cost vs V1.1: input -36% / output -58% / cache-read -73% (mixed-backend historical caveat)",
+    "source": "experiments/query_interface_v1/results/formal/C4-R4-SYNTHESIS-20260920-175458.json"
+   },
+   "c4_r4_horizontal_native_vs_sqi": {
+    "status": "ANALYSIS COMPLETE (same-batch, single backend)",
+    "result": "SQI 100% vs Native 66.7% task success; cost per successful task -28.1% with SQI",
+    "source": "experiments/query_interface_v1/results/analysis/C4-R4-NATIVE-VS-SQI-V1.2.json"
+   }
+  },
+  "capability_table": [
+   {
+    "capability": "Graph fact correctness (CALLS/IMPORTS)",
+    "verification": "RQ1 Fidelity V1 (174-case dual-blind gold)",
+    "result": "resolved precision 0.931 sample / 0.899 weighted; coverage-limited",
+    "status": "QUALIFIED (bounded scope)"
+   },
+   {
+    "capability": "Large-repo graph construction",
+    "verification": "RQ2 A/B (aria2/brpc/RocksDB, 5+5 reps/repo)",
+    "result": "118.9k/227.2k/622.8k LOC; counts exact on frozen anchors",
+    "status": "QUALIFIED (Contract V1 scope)"
+   },
+   {
+    "capability": "Incremental correctness A->B vs Full(B)",
+    "verification": "RQ2 Workload C (4 mutation families x 3 repos x 3 reps)",
+    "result": "36/36 hard gate + freshness + exact parity",
+    "status": "QUALIFIED (Contract V1 scope)"
+   },
+   {
+    "capability": "Multi-state exact parity",
+    "verification": "six state-layer digests, Incremental(B) vs Full(B)",
+    "result": "nodes/edges/raw_references/shards/files/shard_edges facts 36/36",
+    "status": "QUALIFIED (Contract V1 scope)"
+   },
+   {
+    "capability": "Structured query correctness (SQI)",
+    "verification": "SQI Formal Protocol V1 (36 cells) + V1.2 re-qualification",
+    "result": "18/18, citation closure 18/18, byte-identical envelopes",
+    "status": "QUALIFIED"
+   },
+   {
+    "capability": "Agent consumption",
+    "verification": "SQI-V1 + C4-R4 36-cell formal batches",
+    "result": "SQI 18/18 vs Native 13/18 (V1) and 12/18 (C4-R4 control); zero capability failures",
+    "status": "QUALIFIED"
+   },
+   {
+    "capability": "Cost control (V1.2)",
+    "verification": "C0-C4 cost attribution + optimization ladder",
+    "result": "input -36% / output -58% / cache-read -73% vs V1.1 (historical backend caveat)",
+    "status": "QUALIFIED / RELEASE READY"
+   },
+   {
+    "capability": "Overlay (branch/session)",
+    "verification": "V0.4 engineering parity/conflict benchmark + unittests; NOT a frozen formal qualification",
+    "result": "real-repo materialization parity PASS, delta 0.06-0.27% of base, conflict matrix PASS",
+    "status": "IMPLEMENTED / PARTIALLY QUALIFIED; Overlay V1.1 NOT STARTED"
+   },
+   {
+    "capability": "Knowledge layer (docs/requirements/evidence)",
+    "verification": "V1.0 unittests + B2 real-repo knowledge baseline + SQI T05/T06 formal consumption",
+    "result": "1,404 knowledge nodes / 1,255 sections / 736 evidence links / 80 cross-layer edges (brpc)",
+    "status": "IMPLEMENTED; agent consumption QUALIFIED via SQI"
+   },
+   {
+    "capability": "Multi-Repo",
+    "verification": "three repos under ONE frozen protocol (independent databases)",
+    "result": "no unified cross-repo index/query yet",
+    "status": "PARTIAL (protocol-level) / unified index NOT_TESTED"
+   },
+   {
+    "capability": "Vector retrieval",
+    "verification": "none",
+    "result": "explicitly excluded from V1.0 scope",
+    "status": "NOT_IMPLEMENTED"
+   },
+   {
+    "capability": "Distributed sync",
+    "verification": "none",
+    "result": "single-machine sequential scope",
+    "status": "NOT_IMPLEMENTED"
+   }
+  ],
+  "architecture_mapping": [
+   {
+    "target_layer": "应用接入层 (Application access)",
+    "existing": "SQI 七类规范化查询 envelope (budget-bounded, citation-closed) + CLI",
+    "evidence": "SQI-V1/V1.2 formal qualification; byte-identical session envelopes",
+    "gap": "IDE / CI / web surfaces not built"
+   },
+   {
+    "target_layer": "服务编排层 (Service orchestration)",
+    "existing": "in-process query API + per-session call log + usage discipline",
+    "evidence": "SQI formal call logs; session discipline tests",
+    "gap": "no multi-tenant service platform / orchestration layer (NOT_TESTED)"
+   },
+   {
+    "target_layer": "计算引擎层 (Compute engine)",
+    "existing": "tree-sitter parsing, candidate generation, resolver, sharding, incremental, impact frontier",
+    "evidence": "RQ1 QUALIFIED; RQ2 QUALIFIED; V0.3 shard qualification",
+    "gap": "CALLS candidate coverage / abstention improvements (deferred, not fixed); REFERENCES representation gap"
+   },
+   {
+    "target_layer": "存储引擎层 (Storage engine)",
+    "existing": "single-node SQLite with six state layers + reverse boundary index",
+    "evidence": "RQ2 36/36 parity; formal db_size/peak_rss captured",
+    "gap": "storage backend abstraction (non-SQLite) NOT_STARTED"
+   },
+   {
+    "target_layer": "同步协调层 (Sync coordination)",
+    "existing": "incremental freshness/parity chain (36/36) + V0.4 branch/session overlay deltas",
+    "evidence": "RQ2 workload C; V0.4 overlay/conflict artifacts",
+    "gap": "CDC / replication / distributed consistency NOT_IMPLEMENTED"
+   },
+   {
+    "target_layer": "图谱索引 (Graph index)",
+    "existing": "six state layers, shard/boundary edges, qualified-name indexes",
+    "evidence": "RQ2 exact anchors + D anchor validation",
+    "gap": "S3+ scale bands NOT_TESTED"
+   },
+   {
+    "target_layer": "全局索引 (Global multi-repo index)",
+    "existing": "none",
+    "evidence": "each repo indexed independently",
+    "gap": "NOT_TESTED / NOT_STARTED"
+   },
+   {
+    "target_layer": "向量索引 (Vector index)",
+    "existing": "none (explicitly excluded)",
+    "evidence": "V1.0 release scope statement",
+    "gap": "NOT_IMPLEMENTED"
+   }
+  ],
+  "missing_metrics": [
+   {
+    "metric": "Peak Memory (formal reps)",
+    "state": "AVAILABLE",
+    "evidence": "QUALIFICATION-V1-*-A.json derived.peak_rss_bytes (medians 191/314/1075 MB); v0.2-observed anchors"
+   },
+   {
+    "metric": "DB Size",
+    "state": "AVAILABLE",
+    "evidence": "QUALIFICATION-V1-*-A.json derived.db_size_bytes (medians 126.8/229.1/843.2 MB); v0.2-observed anchors"
+   },
+   {
+    "metric": "Cold Build wall time",
+    "state": "AVAILABLE",
+    "evidence": "Workload A (5 reps/repo, medians 4.49/8.34/28.24 s)"
+   },
+   {
+    "metric": "Warm Build wall time",
+    "state": "AVAILABLE",
+    "evidence": "Workload B (5 reps/repo, medians 4.56/9.82/29.67 s)"
+   },
+   {
+    "metric": "Incremental latency",
+    "state": "AVAILABLE",
+    "evidence": "Workload C per-family system_under_test latency; documented to EXCEED full-build latency (non-gating observation)"
+   },
+   {
+    "metric": "Query p95 (core graph queries)",
+    "state": "NOT_CAPTURED",
+    "evidence": "RQ2 Workload D formally reports warm MEDIANS only (raw per-sample latencies retained in records); p95 formally reported only for knowledge-layer queries (v1.0 brpc) and overlay symbol queries (v0.4)"
+   },
+   {
+    "metric": "Query p99",
+    "state": "NOT_CAPTURED",
+    "evidence": "no formal query workload reports p99"
+   },
+   {
+    "metric": "Concurrent QPS",
+    "state": "NOT_TESTED",
+    "evidence": "SYSTEMS_BENCHMARK_CONTRACT_V1 explicitly excludes concurrency"
+   },
+   {
+    "metric": "10M+ LOC scale",
+    "state": "NOT_TESTED",
+    "evidence": "S3+ scale bands excluded from Contract V1 scope; largest formal band is 622,772 C/C++ LOC"
+   },
+   {
+    "metric": "Multi-Repo unified index",
+    "state": "NOT_TESTED",
+    "evidence": "three repos indexed under one frozen protocol, each with its own database; no unified cross-repo index or query"
+   },
+   {
+    "metric": "Cross-Repo navigation",
+    "state": "NOT_TESTED",
+    "evidence": "no formal artifact exercises cross-repo edges/queries"
+   },
+   {
+    "metric": "Vector index / embedding",
+    "state": "NOT_IMPLEMENTED",
+    "evidence": "V1.0 release explicitly excludes Embedding/Vector DB"
+   },
+   {
+    "metric": "Distributed sync / CDC / replication",
+    "state": "NOT_IMPLEMENTED",
+    "evidence": "single-machine sequential scope; no replication or change-data-capture layer exists"
+   },
+   {
+    "metric": "Duration (agent formal cells, C4 batches)",
+    "state": "NOT_CAPTURED",
+    "evidence": "C4 runner computed duration_ms in memory only; see C4-R4 analysis duration_note"
+   }
+  ],
+  "repositories": {
+   "B1-aria2": {
+    "role": "Small Regression",
+    "commit_sha": "9e7273583f83e881e3ec067b523ba88724088d2f",
+    "c_cpp_loc": 118926,
+    "files_recorded_denominator": 1168,
+    "symbols_recorded_denominator": 27936,
+    "nodes": 29117,
+    "raw_references": 49109,
+    "edges": 37074,
+    "full_build_workload_a": {
+     "measured_reps": 5,
+     "median_ms": 4494.126,
+     "p95_ms": 4765.934,
+     "p99_ms": 4765.934,
+     "min_ms": 4303.319,
+     "max_ms": 4765.934
+    },
+    "warm_rebuild_workload_b": {
+     "measured_reps": 5,
+     "median_ms": 4561.364
+    },
+    "incremental_workload_c": {
+     "reps": 12,
+     "hard_gate_pass": true,
+     "families": [
+      {
+       "mutation_id": "M1",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 5843.13
+      },
+      {
+       "mutation_id": "M2",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 6045.816
+      },
+      {
+       "mutation_id": "M3",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 5742.237
+      },
+      {
+       "mutation_id": "M4",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 5590.888
+      }
+     ]
+    },
+    "query_workload_d": {
+     "record": "QUALIFICATION-V1-B1-ARIA2-D.json",
+     "run_id": "SYSV1-B1ARIA2-D-20260916T071923Z",
+     "sha256": "d55822571c21ba87456d951ae5be07495ce4b129eeeaf856d9d84572d71a38e2",
+     "query_manifest_sha256": "8716bb535dfc7c00b0165fbcfc2a9bdf9b5ba2e4fe3617e9ee84f0c74294fe09",
+     "execution_order": "manifest_file_order",
+     "order_frozen": true,
+     "anchor_validation": "qualified_name_exact_match",
+     "warm_measured_rounds": 30,
+     "warm_samples_per_query_type": {
+      "callees": 150,
+      "callers": 150,
+      "subgraph": 150,
+      "symbol": 150
+     },
+     "warm_median_latency_ms": {
+      "callees": 20.7824,
+      "callers": 47.8588,
+      "subgraph": 44.3564,
+      "symbol": 19.8154
+     }
+    },
+    "observed_v0_2_baseline": {
+     "full_index_time_ms": 3953.631,
+     "peak_memory_bytes": 195563520,
+     "database_size_bytes": 132034560,
+     "note": "single-run OBSERVED anchor baseline, NOT a qualification result (manifest note)"
+    },
+    "formal_peak_rss_db": {
+     "peak_rss_median_bytes": 200781824.0,
+     "db_size_median_bytes": 132988928.0,
+     "n": 5
+    }
+   },
+   "B2-brpc": {
+    "role": "Target-like Primary",
+    "commit_sha": "ae09e960c7291605dda52356cc0c2d45567fb53e",
+    "c_cpp_loc": 227154,
+    "files_recorded_denominator": 1168,
+    "symbols_recorded_denominator": 47688,
+    "nodes": 48929,
+    "raw_references": 84941,
+    "edges": 59614,
+    "full_build_workload_a": {
+     "measured_reps": 5,
+     "median_ms": 8337.305,
+     "p95_ms": 14791.543,
+     "p99_ms": 14791.543,
+     "min_ms": 8153.793,
+     "max_ms": 14791.543
+    },
+    "warm_rebuild_workload_b": {
+     "measured_reps": 5,
+     "median_ms": 9819.849
+    },
+    "incremental_workload_c": {
+     "reps": 12,
+     "hard_gate_pass": true,
+     "families": [
+      {
+       "mutation_id": "M1",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 14271.066
+      },
+      {
+       "mutation_id": "M2",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 11412.992
+      },
+      {
+       "mutation_id": "M3",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 11250.951
+      },
+      {
+       "mutation_id": "M4",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 10852.147
+      }
+     ]
+    },
+    "query_workload_d": {
+     "record": "QUALIFICATION-V1-B2-BRPC-D.json",
+     "run_id": "SYSV1-B2BRPC-D-20260916T074515Z",
+     "sha256": "4d91c430e4100a139f75408e356045fc6837c024e6c9d76e0ea5ca8700320bd1",
+     "query_manifest_sha256": "5cad7df53ef39e8734a007797f1284cc503c9e2b17782d4272b5d5cd20cb9a8c",
+     "execution_order": "manifest_file_order",
+     "order_frozen": true,
+     "anchor_validation": "qualified_name_exact_match",
+     "warm_measured_rounds": 30,
+     "warm_samples_per_query_type": {
+      "callees": 150,
+      "callers": 150,
+      "subgraph": 150,
+      "symbol": 150
+     },
+     "warm_median_latency_ms": {
+      "callees": 32.1713,
+      "callers": 33.6416,
+      "subgraph": 39.1647,
+      "symbol": 26.7781
+     }
+    },
+    "observed_v0_2_baseline": {
+     "full_index_time_ms": 7590.77,
+     "peak_memory_bytes": 323907584,
+     "database_size_bytes": 237162496,
+     "note": "single-run OBSERVED anchor baseline, NOT a qualification result (manifest note)"
+    },
+    "formal_peak_rss_db": {
+     "peak_rss_median_bytes": 329740288.0,
+     "db_size_median_bytes": 240234496.0,
+     "n": 5
+    }
+   },
+   "B3-rocksdb": {
+    "role": "Scale",
+    "commit_sha": "37234200b57d8d0a6a5c41f2d9811bbd2e293544",
+    "c_cpp_loc": 622772,
+    "files_recorded_denominator": 1478,
+    "symbols_recorded_denominator": 117097,
+    "nodes": 118655,
+    "raw_references": 311111,
+    "edges": 143585,
+    "full_build_workload_a": {
+     "measured_reps": 5,
+     "median_ms": 28238.675,
+     "p95_ms": 28921.022,
+     "p99_ms": 28921.022,
+     "min_ms": 27556.164,
+     "max_ms": 28921.022
+    },
+    "warm_rebuild_workload_b": {
+     "measured_reps": 5,
+     "median_ms": 29669.906
+    },
+    "incremental_workload_c": {
+     "reps": 12,
+     "hard_gate_pass": true,
+     "families": [
+      {
+       "mutation_id": "M1",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 37750.157
+      },
+      {
+       "mutation_id": "M2",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 46905.126
+      },
+      {
+       "mutation_id": "M3",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 47469.315
+      },
+      {
+       "mutation_id": "M4",
+       "reps": 3,
+       "aggregate_parity": true,
+       "strict_digest_match": true,
+       "latency_ms": 41946.501
+      }
+     ]
+    },
+    "query_workload_d": {
+     "record": "QUALIFICATION-V1-B3-ROCKSDB-D.json",
+     "run_id": "SYSV1-B3ROCKSDB-D-20260916T085043Z",
+     "sha256": "7d533f988ba45c7eef55b1afc7d8b32ddbb330f7b27983acedf69340ab268dbf",
+     "query_manifest_sha256": "51cf0408c8a26e3610b2303389804e76d2adf846e08d6c0d76bb67f54f4ec447",
+     "execution_order": "manifest_file_order",
+     "order_frozen": true,
+     "anchor_validation": "qualified_name_exact_match",
+     "warm_measured_rounds": 30,
+     "warm_samples_per_query_type": {
+      "callees": 150,
+      "callers": 150,
+      "subgraph": 150,
+      "symbol": 150
+     },
+     "warm_median_latency_ms": {
+      "callees": 74.0976,
+      "callers": 166.3123,
+      "subgraph": 70.0327,
+      "symbol": 62.2958
+     }
+    },
+    "observed_v0_2_baseline": {
+     "full_index_time_ms": 26190.219,
+     "peak_memory_bytes": 1121484800,
+     "database_size_bytes": 876105728,
+     "note": "single-run OBSERVED anchor baseline, NOT a qualification result (manifest note)"
+    },
+    "formal_peak_rss_db": {
+     "peak_rss_median_bytes": 1127731200.0,
+     "db_size_median_bytes": 884146176.0,
+     "n": 5
+    }
+   }
+  }
+ },
+ "evidence_chain": [
+  "Source / Docs",
+  "Graph Build (tree-sitter c/cpp/python; six state layers)",
+  "RQ1 Fidelity V1 -> graph facts trustworthy when resolved (QUALIFIED, bounded)",
+  "RQ2 Systems V1 -> large-repo build + incremental A->B + Full(B) exact parity (QUALIFIED)",
+  "SQI -> bounded, citation-closed agent queries (QUALIFIED)",
+  "Agent Formal Qualification -> SQI 18/18 (36-cell batches)",
+  "V1.2 Cost Optimization -> input -36% / output -58% / cache-read -73% (QUALIFIED / RELEASE READY)",
+  "Code Agent / Code Detection / IDE / CI (interface boundaries defined, consumption surfaces to build)"
+ ],
+ "governance": {
+  "verify_release": "python experiments/query_interface_v1/tools/verify_release.py -> PASS (7 seals + frozen DBs + 61 internal tests; 97/97 unittest suite)",
+  "no_new_experiments": true,
+  "superseded_evidence_retained": "experiments/systems_v1/results/SUPERSEDED-workload-c-mutation-order.md"
+ }
+}

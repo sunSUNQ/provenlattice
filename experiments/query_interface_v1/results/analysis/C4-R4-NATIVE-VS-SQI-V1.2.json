@@ -1,0 +1,1747 @@
+{
+ "schema": "C4_R4_NATIVE_VS_SQI_V12_ANALYSIS_V1",
+ "generated_at": "2026-09-21T02:35:16Z",
+ "batch": {
+  "batch_id": "SQI-FORMAL-C4-20260920T093328Z",
+  "cells_total": 36,
+  "isolation_baseline_sha": "27e40df5e61cd815d8ea0d00203746344c279690",
+  "comparability": "Native and ProvenLattice V1.2 arms come from the SAME clean formal batch: identical frozen task set (SQI-T01..T06), identical protocol / oracle / prompts, identical V1.4 finite-root isolation, identical time window, single backend deepseek-flash with per-cell verified model provenance. This is the most defensible Native vs ProvenLattice horizontal comparison available."
+ },
+ "question_separation": {
+  "question_A_longitudinal": {
+   "comparison": "SQI V1.1 (SQI-FORMAL-20260917-1) vs SQI V1.2 (this batch) — 'did ProvenLattice get cheaper?'",
+   "frozen_result": {
+    "baseline_batch": "SQI-FORMAL-20260917-1",
+    "clean_batch": "SQI-FORMAL-C4-20260920T093328Z",
+    "deltas": {
+     "input_tokens_pct": -36,
+     "output_tokens_pct": -58,
+     "cache_read_tokens_pct": -73,
+     "envelope_bytes_pct": -26,
+     "sqi_calls_pct": -17
+    },
+    "caveat": "baseline ran on mixed backends (deepseek-flash + deepseek-v4-flash) — cross-era token comparisons carry a residual backend caveat"
+   }
+  },
+  "question_B_horizontal": {
+   "comparison": "C4-R4 Native vs C4-R4 ProvenLattice V1.2 — 'what do task success and agent cost look like with vs without ProvenLattice?'",
+   "scope": "this document; both arms of one clean batch"
+  },
+  "rule": "A and B must never be merged into one conclusion"
+ },
+ "validity": {
+  "cells_total": 36,
+  "native_cells": 18,
+  "sqi_cells": 18,
+  "backends": [
+   "deepseek-flash"
+  ],
+  "backend_all_verified": true,
+  "backend_unverified_cells": [],
+  "execution_valid_cells": 36,
+  "execution_invalid_cells": [],
+  "isolation_broken_cells": [],
+  "leaky_cells": [],
+  "raw_checkout_leakage_events_total": 39,
+  "leakage_criterion": "frozen C4 criterion: sensitive_leakage_events == 0 and policy_violations == [] — raw checkout_leakage_events additionally counts classified non-sensitive events (runtime-internal paths / documented arm-prompt hint patterns) and is informational",
+  "capability_flagged_cells": [],
+  "evaluator_consistency_mismatches": [],
+  "prompt_hash_inconsistent_tasks": {},
+  "no_cells_excluded": true
+ },
+ "success": {
+  "overall": {
+   "native": {
+    "success": 12,
+    "total": 18,
+    "rate_pct": 66.7
+   },
+   "sqi": {
+    "success": 18,
+    "total": 18,
+    "rate_pct": 100.0
+   }
+  },
+  "per_task": {
+   "SQI-T01": {
+    "native": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "sqi": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "delta": 0
+   },
+   "SQI-T02": {
+    "native": {
+     "success": 0,
+     "total": 3,
+     "rate_pct": 0.0
+    },
+    "sqi": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "delta": 3
+   },
+   "SQI-T03": {
+    "native": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "sqi": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "delta": 0
+   },
+   "SQI-T04": {
+    "native": {
+     "success": 0,
+     "total": 3,
+     "rate_pct": 0.0
+    },
+    "sqi": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "delta": 3
+   },
+   "SQI-T05": {
+    "native": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "sqi": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "delta": 0
+   },
+   "SQI-T06": {
+    "native": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "sqi": {
+     "success": 3,
+     "total": 3,
+     "rate_pct": 100.0
+    },
+    "delta": 0
+   }
+  },
+  "execution_valid_vs_task_success": "execution_valid = runner status completed without violations; task_success = frozen oracle evaluation. They are reported separately and are never conflated."
+ },
+ "cost_overall": {
+  "native": {
+   "input": {
+    "n": 18,
+    "sum": 594224,
+    "mean": 33012.4,
+    "median": 28109.5,
+    "p25": 25318.2,
+    "p75": 37965.2
+   },
+   "output": {
+    "n": 18,
+    "sum": 103713,
+    "mean": 5761.8,
+    "median": 3382.5,
+    "p25": 2819.0,
+    "p75": 6371.8
+   },
+   "cache_read": {
+    "n": 18,
+    "sum": 3633792,
+    "mean": 201877.3,
+    "median": 152256.0,
+    "p25": 100256.0,
+    "p75": 228416.0
+   },
+   "cache_creation": {
+    "n": 18,
+    "sum": 0,
+    "mean": 0.0,
+    "median": 0.0,
+    "p25": 0.0,
+    "p75": 0.0
+   },
+   "total_as_logged": {
+    "n": 18,
+    "sum": 4331729,
+    "mean": 240651.6,
+    "median": 183831.5,
+    "p25": 128897.5,
+    "p75": 277232.0
+   },
+   "sqi_calls": {
+    "sum": 0,
+    "mean": 0.0
+   },
+   "native_tool_events": {
+    "sum": 233,
+    "mean": 12.94
+   },
+   "envelope_bytes": {
+    "sum": 0
+   }
+  },
+  "sqi": {
+   "input": {
+    "n": 18,
+    "sum": 616598,
+    "mean": 34255.4,
+    "median": 33459.5,
+    "p25": 30058.5,
+    "p75": 37362.2
+   },
+   "output": {
+    "n": 18,
+    "sum": 97249,
+    "mean": 5402.7,
+    "median": 4756.0,
+    "p25": 3214.8,
+    "p75": 7344.5
+   },
+   "cache_read": {
+    "n": 18,
+    "sum": 3954944,
+    "mean": 219719.1,
+    "median": 192512.0,
+    "p25": 132576.0,
+    "p75": 303584.0
+   },
+   "cache_creation": {
+    "n": 18,
+    "sum": 0,
+    "mean": 0.0,
+    "median": 0.0,
+    "p25": 0.0,
+    "p75": 0.0
+   },
+   "total_as_logged": {
+    "n": 18,
+    "sum": 4668791,
+    "mean": 259377.3,
+    "median": 229241.0,
+    "p25": 169930.8,
+    "p75": 352053.5
+   },
+   "sqi_calls": {
+    "sum": 49,
+    "mean": 2.72
+   },
+   "native_tool_events": {
+    "sum": 199,
+    "mean": 11.06
+   },
+   "envelope_bytes": {
+    "sum": 384049
+   }
+  },
+  "delta_pct_sqi_vs_native": {
+   "input": 3.8,
+   "output": -6.2,
+   "cache_read": 8.8,
+   "cache_creation": null,
+   "total_as_logged": 7.8,
+   "envelope_bytes": null
+  },
+  "token_semantics": "per-cell session-cumulative usage from the agent adapter (CLI final result event usage), aggregated with the frozen synthesis cell_tokens semantics; total_as_logged is the event-provided total, not a constructed sum",
+  "duration": "METRIC_NOT_CAPTURED",
+  "duration_note": "duration_ms existed only in the C4 runner's in-memory cell record (added after run.json was persisted); events.ndjson timestamps are end-of-session flush stamps, so per-cell wall-clock duration cannot be recovered from raw artifacts. Minimum new measurement: persist duration_ms in run.json for future batches."
+ },
+ "cost_per_successful_task": {
+  "overall": {
+   "native": {
+    "successful_tasks": 12,
+    "input_per_success": 49518.7,
+    "output_per_success": 8642.8,
+    "cache_read_per_success": 302816.0,
+    "cache_creation_per_success": 0.0,
+    "total_as_logged_per_success": 360977.4
+   },
+   "sqi": {
+    "successful_tasks": 18,
+    "input_per_success": 34255.4,
+    "output_per_success": 5402.7,
+    "cache_read_per_success": 219719.1,
+    "cache_creation_per_success": 0.0,
+    "total_as_logged_per_success": 259377.3
+   }
+  },
+  "per_task": {
+   "SQI-T01": {
+    "native": {
+     "successful_tasks": 3,
+     "input_per_success": 24380.3,
+     "output_per_success": 1280.3,
+     "cache_read_per_success": 82858.7,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 108519.3
+    },
+    "sqi": {
+     "successful_tasks": 3,
+     "input_per_success": 28716.7,
+     "output_per_success": 1299.3,
+     "cache_read_per_success": 64469.3,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 94485.3
+    }
+   },
+   "SQI-T02": {
+    "native": {
+     "successful_tasks": 0,
+     "note": "N/A — zero successful tasks"
+    },
+    "sqi": {
+     "successful_tasks": 3,
+     "input_per_success": 31530.3,
+     "output_per_success": 3415.0,
+     "cache_read_per_success": 138069.3,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 173014.7
+    }
+   },
+   "SQI-T03": {
+    "native": {
+     "successful_tasks": 3,
+     "input_per_success": 27808.7,
+     "output_per_success": 4432.0,
+     "cache_read_per_success": 114474.7,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 146715.3
+    },
+    "sqi": {
+     "successful_tasks": 3,
+     "input_per_success": 29917.0,
+     "output_per_success": 5647.3,
+     "cache_read_per_success": 168789.3,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 204353.7
+    }
+   },
+   "SQI-T04": {
+    "native": {
+     "successful_tasks": 0,
+     "note": "N/A — zero successful tasks"
+    },
+    "sqi": {
+     "successful_tasks": 3,
+     "input_per_success": 40890.7,
+     "output_per_success": 9477.7,
+     "cache_read_per_success": 363178.7,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 413547.0
+    }
+   },
+   "SQI-T05": {
+    "native": {
+     "successful_tasks": 3,
+     "input_per_success": 42732.7,
+     "output_per_success": 3016.0,
+     "cache_read_per_success": 222378.7,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 268127.3
+    },
+    "sqi": {
+     "successful_tasks": 3,
+     "input_per_success": 36256.0,
+     "output_per_success": 6606.3,
+     "cache_read_per_success": 304938.7,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 347801.0
+    }
+   },
+   "SQI-T06": {
+    "native": {
+     "successful_tasks": 3,
+     "input_per_success": 27429.3,
+     "output_per_success": 9160.0,
+     "cache_read_per_success": 153344.0,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 189933.3
+    },
+    "sqi": {
+     "successful_tasks": 3,
+     "input_per_success": 38222.0,
+     "output_per_success": 5970.7,
+     "cache_read_per_success": 278869.3,
+     "cache_creation_per_success": 0.0,
+     "total_as_logged_per_success": 323062.0
+    }
+   }
+  },
+  "interpretation_guard": "batch-level success-normalized token index only — not a monetary cost"
+ },
+ "per_task": {
+  "SQI-T01": {
+   "native": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 73141,
+      "mean": 24380.3,
+      "median": 24281,
+      "p25": 23514.5,
+      "p75": 25196.5
+     },
+     "output": {
+      "n": 3,
+      "sum": 3841,
+      "mean": 1280.3,
+      "median": 1287,
+      "p25": 1276.5,
+      "p75": 1287.5
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 248576,
+      "mean": 82858.7,
+      "median": 89728,
+      "p25": 77504.0,
+      "p75": 91648.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 325558,
+      "mean": 108519.3,
+      "median": 115296,
+      "p25": 102295.0,
+      "p75": 118132.0
+     }
+    },
+    "sqi_calls_sum": 0,
+    "native_tool_events_sum": 16
+   },
+   "sqi": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 86150,
+      "mean": 28716.7,
+      "median": 28974,
+      "p25": 28497.0,
+      "p75": 29065.0
+     },
+     "output": {
+      "n": 3,
+      "sum": 3898,
+      "mean": 1299.3,
+      "median": 1324,
+      "p25": 1197.0,
+      "p75": 1414.0
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 193408,
+      "mean": 64469.3,
+      "median": 46592,
+      "p25": 46528.0,
+      "p75": 73472.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 283456,
+      "mean": 94485.3,
+      "median": 76890,
+      "p25": 76790.0,
+      "p75": 103383.0
+     }
+    },
+    "sqi_calls_sum": 6,
+    "native_tool_events_sum": 10
+   },
+   "delta_pct_tokens": {
+    "input": 17.8,
+    "output": 1.5,
+    "cache_read": -22.2,
+    "cache_creation": null,
+    "total_as_logged": -12.9
+   }
+  },
+  "SQI-T02": {
+   "native": {
+    "success": 0,
+    "total": 3,
+    "rate_pct": 0.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 80887,
+      "mean": 26962.3,
+      "median": 26521,
+      "p25": 25910.0,
+      "p75": 27794.0
+     },
+     "output": {
+      "n": 3,
+      "sum": 9516,
+      "mean": 3172.0,
+      "median": 3341,
+      "p25": 2876.0,
+      "p75": 3552.5
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 380032,
+      "mean": 126677.3,
+      "median": 121472,
+      "p25": 117632.0,
+      "p75": 133120.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 470435,
+      "mean": 156811.7,
+      "median": 152950,
+      "p25": 147691.0,
+      "p75": 164001.5
+     }
+    },
+    "sqi_calls_sum": 0,
+    "native_tool_events_sum": 35
+   },
+   "sqi": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 94591,
+      "mean": 31530.3,
+      "median": 31040,
+      "p25": 30958.0,
+      "p75": 31857.5
+     },
+     "output": {
+      "n": 3,
+      "sum": 10245,
+      "mean": 3415.0,
+      "median": 3520,
+      "p25": 3316.5,
+      "p75": 3566.0
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 414208,
+      "mean": 138069.3,
+      "median": 136448,
+      "p25": 136000.0,
+      "p75": 139328.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 519044,
+      "mean": 173014.7,
+      "median": 171100,
+      "p25": 170320.5,
+      "p75": 174751.5
+     }
+    },
+    "sqi_calls_sum": 7,
+    "native_tool_events_sum": 30
+   },
+   "delta_pct_tokens": {
+    "input": 16.9,
+    "output": 7.7,
+    "cache_read": 9.0,
+    "cache_creation": null,
+    "total_as_logged": 10.3
+   }
+  },
+  "SQI-T03": {
+   "native": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 83426,
+      "mean": 27808.7,
+      "median": 25361,
+      "p25": 24626.0,
+      "p75": 29767.5
+     },
+     "output": {
+      "n": 3,
+      "sum": 13296,
+      "mean": 4432.0,
+      "median": 3424,
+      "p25": 3352.5,
+      "p75": 5007.5
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 343424,
+      "mean": 114474.7,
+      "median": 95744,
+      "p25": 81024.0,
+      "p75": 138560.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 440146,
+      "mean": 146715.3,
+      "median": 124386,
+      "p25": 109002.5,
+      "p75": 173263.5
+     }
+    },
+    "sqi_calls_sum": 0,
+    "native_tool_events_sum": 30
+   },
+   "sqi": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 89751,
+      "mean": 29917.0,
+      "median": 29786,
+      "p25": 28496.0,
+      "p75": 31272.5
+     },
+     "output": {
+      "n": 3,
+      "sum": 16942,
+      "mean": 5647.3,
+      "median": 4801,
+      "p25": 3690.5,
+      "p75": 7181.0
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 506368,
+      "mean": 168789.3,
+      "median": 179328,
+      "p25": 139008.0,
+      "p75": 203840.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 613061,
+      "mean": 204353.7,
+      "median": 213915,
+      "p25": 171194.5,
+      "p75": 242293.5
+     }
+    },
+    "sqi_calls_sum": 13,
+    "native_tool_events_sum": 35
+   },
+   "delta_pct_tokens": {
+    "input": 7.6,
+    "output": 27.4,
+    "cache_read": 47.4,
+    "cache_creation": null,
+    "total_as_logged": 39.3
+   }
+  },
+  "SQI-T04": {
+   "native": {
+    "success": 0,
+    "total": 3,
+    "rate_pct": 0.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 146284,
+      "mean": 48761.3,
+      "median": 52117,
+      "p25": 45673.0,
+      "p75": 53527.5
+     },
+     "output": {
+      "n": 3,
+      "sum": 40532,
+      "mean": 13510.7,
+      "median": 13429,
+      "p25": 13194.5,
+      "p75": 13786.0
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 1534592,
+      "mean": 511530.7,
+      "median": 535936,
+      "p25": 477504.0,
+      "p75": 557760.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 1721408,
+      "mean": 573802.7,
+      "median": 603834,
+      "p25": 537782.0,
+      "p75": 624839.0
+     }
+    },
+    "sqi_calls_sum": 0,
+    "native_tool_events_sum": 80
+   },
+   "sqi": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 122672,
+      "mean": 40890.7,
+      "median": 41687,
+      "p25": 38904.0,
+      "p75": 43275.5
+     },
+     "output": {
+      "n": 3,
+      "sum": 28433,
+      "mean": 9477.7,
+      "median": 9457,
+      "p25": 8076.5,
+      "p75": 10868.5
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 1089536,
+      "mean": 363178.7,
+      "median": 310656,
+      "p25": 296512.0,
+      "p75": 403584.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 1240641,
+      "mean": 413547.0,
+      "median": 356234,
+      "p25": 347873.0,
+      "p75": 450564.5
+     }
+    },
+    "sqi_calls_sum": 6,
+    "native_tool_events_sum": 40
+   },
+   "delta_pct_tokens": {
+    "input": -16.1,
+    "output": -29.9,
+    "cache_read": -29.0,
+    "cache_creation": null,
+    "total_as_logged": -27.9
+   }
+  },
+  "SQI-T05": {
+   "native": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 128198,
+      "mean": 42732.7,
+      "median": 48188,
+      "p25": 39265.0,
+      "p75": 48928.0
+     },
+     "output": {
+      "n": 3,
+      "sum": 9048,
+      "mean": 3016.0,
+      "median": 3011,
+      "p25": 2883.0,
+      "p75": 3146.5
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 667136,
+      "mean": 222378.7,
+      "median": 244096,
+      "p25": 209024.0,
+      "p75": 246592.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 804382,
+      "mean": 268127.3,
+      "median": 295039,
+      "p25": 251172.0,
+      "p75": 298538.5
+     }
+    },
+    "sqi_calls_sum": 0,
+    "native_tool_events_sum": 32
+   },
+   "sqi": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 108768,
+      "mean": 36256.0,
+      "median": 37190,
+      "p25": 35675.0,
+      "p75": 37304.0
+     },
+     "output": {
+      "n": 3,
+      "sum": 19819,
+      "mean": 6606.3,
+      "median": 7160,
+      "p25": 5935.5,
+      "p75": 7554.0
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 914816,
+      "mean": 304938.7,
+      "median": 323584,
+      "p25": 264640.0,
+      "p75": 354560.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 1043403,
+      "mean": 347801.0,
+      "median": 368162,
+      "p25": 306364.5,
+      "p75": 399418.0
+     }
+    },
+    "sqi_calls_sum": 13,
+    "native_tool_events_sum": 51
+   },
+   "delta_pct_tokens": {
+    "input": -15.2,
+    "output": 119.0,
+    "cache_read": 37.1,
+    "cache_creation": null,
+    "total_as_logged": 29.7
+   }
+  },
+  "SQI-T06": {
+   "native": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 82288,
+      "mean": 27429.3,
+      "median": 27152,
+      "p25": 26228.0,
+      "p75": 28492.0
+     },
+     "output": {
+      "n": 3,
+      "sum": 27480,
+      "mean": 9160.0,
+      "median": 5714,
+      "p25": 5710.5,
+      "p75": 10886.5
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 460032,
+      "mean": 153344.0,
+      "median": 159744,
+      "p25": 141056.0,
+      "p75": 168832.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 569800,
+      "mean": 189933.3,
+      "median": 192610,
+      "p25": 172994.5,
+      "p75": 208210.5
+     }
+    },
+    "sqi_calls_sum": 0,
+    "native_tool_events_sum": 40
+   },
+   "sqi": {
+    "success": 3,
+    "total": 3,
+    "rate_pct": 100.0,
+    "tokens": {
+     "input": {
+      "n": 3,
+      "sum": 114666,
+      "mean": 38222.0,
+      "median": 37762,
+      "p25": 37478.5,
+      "p75": 38735.5
+     },
+     "output": {
+      "n": 3,
+      "sum": 17912,
+      "mean": 5970.7,
+      "median": 6469,
+      "p25": 5253.0,
+      "p75": 6937.5
+     },
+     "cache_read": {
+      "n": 3,
+      "sum": 836608,
+      "mean": 278869.3,
+      "median": 217216,
+      "p25": 174400.0,
+      "p75": 352512.0
+     },
+     "cache_creation": {
+      "n": 3,
+      "sum": 0,
+      "mean": 0.0,
+      "median": 0,
+      "p25": 0.0,
+      "p75": 0.0
+     },
+     "total_as_logged": {
+      "n": 3,
+      "sum": 969186,
+      "mean": 323062.0,
+      "median": 260880,
+      "p25": 217131.5,
+      "p75": 397901.5
+     }
+    },
+    "sqi_calls_sum": 4,
+    "native_tool_events_sum": 33
+   },
+   "delta_pct_tokens": {
+    "input": 39.3,
+    "output": -34.8,
+    "cache_read": 81.9,
+    "cache_creation": null,
+    "total_as_logged": 70.1
+   }
+  }
+ },
+ "tool_use": {
+  "native_by_tool": {
+   "Read": 102,
+   "Grep": 82,
+   "Bash": 32,
+   "Glob": 17
+  },
+  "sqi_calls_by_type": {
+   "symbol.lookup": 24,
+   "symbol.references": 7,
+   "symbol.callers": 6,
+   "code.related": 6,
+   "impact.frontier": 3,
+   "bundle.explain": 3
+  },
+  "sqi_arm_all_tool_events": {
+   "Bash": 86,
+   "Read": 80,
+   "Grep": 32,
+   "Glob": 1
+  },
+  "sqi_arm_native_tool_events_excl_sqi_cli": {
+   "Read": 76,
+   "Bash": 41,
+   "Grep": 32,
+   "Glob": 1
+  },
+  "per_task": {
+   "SQI-T01": {
+    "native_tools_by_type": {
+     "Read": 5,
+     "Glob": 4,
+     "Grep": 4,
+     "Bash": 3
+    },
+    "sqi_calls_by_type": {
+     "symbol.lookup": 6
+    },
+    "sqi_calls_total": 6,
+    "sqi_arm_native_tools_excl_sqi_cli": {
+     "Read": 4
+    }
+   },
+   "SQI-T02": {
+    "native_tools_by_type": {
+     "Read": 18,
+     "Grep": 12,
+     "Glob": 5
+    },
+    "sqi_calls_by_type": {
+     "symbol.lookup": 4,
+     "symbol.callers": 3
+    },
+    "sqi_calls_total": 7,
+    "sqi_arm_native_tools_excl_sqi_cli": {
+     "Read": 19,
+     "Grep": 4
+    }
+   },
+   "SQI-T03": {
+    "native_tools_by_type": {
+     "Grep": 13,
+     "Read": 10,
+     "Bash": 5,
+     "Glob": 2
+    },
+    "sqi_calls_by_type": {
+     "symbol.references": 7,
+     "symbol.lookup": 5,
+     "symbol.callers": 1
+    },
+    "sqi_calls_total": 13,
+    "sqi_arm_native_tools_excl_sqi_cli": {
+     "Read": 15,
+     "Grep": 4,
+     "Bash": 3
+    }
+   },
+   "SQI-T04": {
+    "native_tools_by_type": {
+     "Grep": 30,
+     "Read": 25,
+     "Bash": 23,
+     "Glob": 2
+    },
+    "sqi_calls_by_type": {
+     "impact.frontier": 3,
+     "symbol.callers": 2,
+     "symbol.lookup": 1
+    },
+    "sqi_calls_total": 6,
+    "sqi_arm_native_tools_excl_sqi_cli": {
+     "Bash": 12,
+     "Grep": 11,
+     "Read": 11
+    }
+   },
+   "SQI-T05": {
+    "native_tools_by_type": {
+     "Read": 18,
+     "Grep": 12,
+     "Glob": 1,
+     "Bash": 1
+    },
+    "sqi_calls_by_type": {
+     "symbol.lookup": 7,
+     "code.related": 6
+    },
+    "sqi_calls_total": 13,
+    "sqi_arm_native_tools_excl_sqi_cli": {
+     "Read": 20,
+     "Grep": 10,
+     "Bash": 8
+    }
+   },
+   "SQI-T06": {
+    "native_tools_by_type": {
+     "Read": 26,
+     "Grep": 11,
+     "Glob": 3
+    },
+    "sqi_calls_by_type": {
+     "bundle.explain": 3,
+     "symbol.lookup": 1
+    },
+    "sqi_calls_total": 4,
+    "sqi_arm_native_tools_excl_sqi_cli": {
+     "Bash": 18,
+     "Read": 7,
+     "Grep": 3,
+     "Glob": 1
+    }
+   }
+  },
+  "equivalence_note": "native tool calls and SQI calls are NOT treated as equivalent units: native tools return raw text/binary hits, SQI calls return schema'd evidence envelopes. The goal is to expose exploration-structure differences, not to claim 1 SQI call = 1 Read."
+ },
+ "cell_records": [
+  {
+   "cell_id": "SQI-T01.native.r1",
+   "task_id": "SQI-T01",
+   "arm": "native",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 22748,
+    "output": 1266,
+    "cache_read": 65280,
+    "cache_creation": 0,
+    "total_as_logged": 89294
+   },
+   "tool_calls": 4,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T01.native.r2",
+   "task_id": "SQI-T01",
+   "arm": "native",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 26112,
+    "output": 1288,
+    "cache_read": 93568,
+    "cache_creation": 0,
+    "total_as_logged": 120968
+   },
+   "tool_calls": 6,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T01.native.r3",
+   "task_id": "SQI-T01",
+   "arm": "native",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 24281,
+    "output": 1287,
+    "cache_read": 89728,
+    "cache_creation": 0,
+    "total_as_logged": 115296
+   },
+   "tool_calls": 6,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T01.sqi.r1",
+   "task_id": "SQI-T01",
+   "arm": "sqi",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 29156,
+    "output": 1070,
+    "cache_read": 46464,
+    "cache_creation": 0,
+    "total_as_logged": 76690
+   },
+   "tool_calls": 3,
+   "sqi_calls": 2
+  },
+  {
+   "cell_id": "SQI-T01.sqi.r2",
+   "task_id": "SQI-T01",
+   "arm": "sqi",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 28974,
+    "output": 1324,
+    "cache_read": 46592,
+    "cache_creation": 0,
+    "total_as_logged": 76890
+   },
+   "tool_calls": 3,
+   "sqi_calls": 2
+  },
+  {
+   "cell_id": "SQI-T01.sqi.r3",
+   "task_id": "SQI-T01",
+   "arm": "sqi",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 28020,
+    "output": 1504,
+    "cache_read": 100352,
+    "cache_creation": 0,
+    "total_as_logged": 129876
+   },
+   "tool_calls": 4,
+   "sqi_calls": 2
+  },
+  {
+   "cell_id": "SQI-T02.native.r1",
+   "task_id": "SQI-T02",
+   "arm": "native",
+   "repetition": 1,
+   "task_success": false,
+   "tokens": {
+    "input": 25299,
+    "output": 3341,
+    "cache_read": 113792,
+    "cache_creation": 0,
+    "total_as_logged": 142432
+   },
+   "tool_calls": 14,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T02.native.r2",
+   "task_id": "SQI-T02",
+   "arm": "native",
+   "repetition": 2,
+   "task_success": false,
+   "tokens": {
+    "input": 29067,
+    "output": 2411,
+    "cache_read": 121472,
+    "cache_creation": 0,
+    "total_as_logged": 152950
+   },
+   "tool_calls": 8,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T02.native.r3",
+   "task_id": "SQI-T02",
+   "arm": "native",
+   "repetition": 3,
+   "task_success": false,
+   "tokens": {
+    "input": 26521,
+    "output": 3764,
+    "cache_read": 144768,
+    "cache_creation": 0,
+    "total_as_logged": 175053
+   },
+   "tool_calls": 13,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T02.sqi.r1",
+   "task_id": "SQI-T02",
+   "arm": "sqi",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 32675,
+    "output": 3520,
+    "cache_read": 142208,
+    "cache_creation": 0,
+    "total_as_logged": 178403
+   },
+   "tool_calls": 11,
+   "sqi_calls": 3
+  },
+  {
+   "cell_id": "SQI-T02.sqi.r2",
+   "task_id": "SQI-T02",
+   "arm": "sqi",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 30876,
+    "output": 3113,
+    "cache_read": 135552,
+    "cache_creation": 0,
+    "total_as_logged": 169541
+   },
+   "tool_calls": 10,
+   "sqi_calls": 2
+  },
+  {
+   "cell_id": "SQI-T02.sqi.r3",
+   "task_id": "SQI-T02",
+   "arm": "sqi",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 31040,
+    "output": 3612,
+    "cache_read": 136448,
+    "cache_creation": 0,
+    "total_as_logged": 171100
+   },
+   "tool_calls": 9,
+   "sqi_calls": 2
+  },
+  {
+   "cell_id": "SQI-T03.native.r1",
+   "task_id": "SQI-T03",
+   "arm": "native",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 34174,
+    "output": 6591,
+    "cache_read": 181376,
+    "cache_creation": 0,
+    "total_as_logged": 222141
+   },
+   "tool_calls": 14,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T03.native.r2",
+   "task_id": "SQI-T03",
+   "arm": "native",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 23891,
+    "output": 3424,
+    "cache_read": 66304,
+    "cache_creation": 0,
+    "total_as_logged": 93619
+   },
+   "tool_calls": 8,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T03.native.r3",
+   "task_id": "SQI-T03",
+   "arm": "native",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 25361,
+    "output": 3281,
+    "cache_read": 95744,
+    "cache_creation": 0,
+    "total_as_logged": 124386
+   },
+   "tool_calls": 8,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T03.sqi.r1",
+   "task_id": "SQI-T03",
+   "arm": "sqi",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 27206,
+    "output": 2580,
+    "cache_read": 98688,
+    "cache_creation": 0,
+    "total_as_logged": 128474
+   },
+   "tool_calls": 5,
+   "sqi_calls": 2
+  },
+  {
+   "cell_id": "SQI-T03.sqi.r2",
+   "task_id": "SQI-T03",
+   "arm": "sqi",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 32759,
+    "output": 9561,
+    "cache_read": 228352,
+    "cache_creation": 0,
+    "total_as_logged": 270672
+   },
+   "tool_calls": 18,
+   "sqi_calls": 7
+  },
+  {
+   "cell_id": "SQI-T03.sqi.r3",
+   "task_id": "SQI-T03",
+   "arm": "sqi",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 29786,
+    "output": 4801,
+    "cache_read": 179328,
+    "cache_creation": 0,
+    "total_as_logged": 213915
+   },
+   "tool_calls": 12,
+   "sqi_calls": 4
+  },
+  {
+   "cell_id": "SQI-T04.native.r1",
+   "task_id": "SQI-T04",
+   "arm": "native",
+   "repetition": 1,
+   "task_success": false,
+   "tokens": {
+    "input": 52117,
+    "output": 14143,
+    "cache_read": 579584,
+    "cache_creation": 0,
+    "total_as_logged": 645844
+   },
+   "tool_calls": 24,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T04.native.r2",
+   "task_id": "SQI-T04",
+   "arm": "native",
+   "repetition": 2,
+   "task_success": false,
+   "tokens": {
+    "input": 54938,
+    "output": 12960,
+    "cache_read": 535936,
+    "cache_creation": 0,
+    "total_as_logged": 603834
+   },
+   "tool_calls": 31,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T04.native.r3",
+   "task_id": "SQI-T04",
+   "arm": "native",
+   "repetition": 3,
+   "task_success": false,
+   "tokens": {
+    "input": 39229,
+    "output": 13429,
+    "cache_read": 419072,
+    "cache_creation": 0,
+    "total_as_logged": 471730
+   },
+   "tool_calls": 25,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T04.sqi.r1",
+   "task_id": "SQI-T04",
+   "arm": "sqi",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 36121,
+    "output": 9457,
+    "cache_read": 310656,
+    "cache_creation": 0,
+    "total_as_logged": 356234
+   },
+   "tool_calls": 13,
+   "sqi_calls": 4
+  },
+  {
+   "cell_id": "SQI-T04.sqi.r2",
+   "task_id": "SQI-T04",
+   "arm": "sqi",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 44864,
+    "output": 12280,
+    "cache_read": 282368,
+    "cache_creation": 0,
+    "total_as_logged": 339512
+   },
+   "tool_calls": 13,
+   "sqi_calls": 1
+  },
+  {
+   "cell_id": "SQI-T04.sqi.r3",
+   "task_id": "SQI-T04",
+   "arm": "sqi",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 41687,
+    "output": 6696,
+    "cache_read": 496512,
+    "cache_creation": 0,
+    "total_as_logged": 544895
+   },
+   "tool_calls": 14,
+   "sqi_calls": 1
+  },
+  {
+   "cell_id": "SQI-T05.native.r1",
+   "task_id": "SQI-T05",
+   "arm": "native",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 48188,
+    "output": 2755,
+    "cache_read": 244096,
+    "cache_creation": 0,
+    "total_as_logged": 295039
+   },
+   "tool_calls": 10,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T05.native.r2",
+   "task_id": "SQI-T05",
+   "arm": "native",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 30342,
+    "output": 3011,
+    "cache_read": 173952,
+    "cache_creation": 0,
+    "total_as_logged": 207305
+   },
+   "tool_calls": 13,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T05.native.r3",
+   "task_id": "SQI-T05",
+   "arm": "native",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 49668,
+    "output": 3282,
+    "cache_read": 249088,
+    "cache_creation": 0,
+    "total_as_logged": 302038
+   },
+   "tool_calls": 9,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T05.sqi.r1",
+   "task_id": "SQI-T05",
+   "arm": "sqi",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 37418,
+    "output": 7160,
+    "cache_read": 323584,
+    "cache_creation": 0,
+    "total_as_logged": 368162
+   },
+   "tool_calls": 19,
+   "sqi_calls": 5
+  },
+  {
+   "cell_id": "SQI-T05.sqi.r2",
+   "task_id": "SQI-T05",
+   "arm": "sqi",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 34160,
+    "output": 4711,
+    "cache_read": 205696,
+    "cache_creation": 0,
+    "total_as_logged": 244567
+   },
+   "tool_calls": 12,
+   "sqi_calls": 2
+  },
+  {
+   "cell_id": "SQI-T05.sqi.r3",
+   "task_id": "SQI-T05",
+   "arm": "sqi",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 37190,
+    "output": 7948,
+    "cache_read": 385536,
+    "cache_creation": 0,
+    "total_as_logged": 430674
+   },
+   "tool_calls": 20,
+   "sqi_calls": 6
+  },
+  {
+   "cell_id": "SQI-T06.native.r1",
+   "task_id": "SQI-T06",
+   "arm": "native",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 27152,
+    "output": 5714,
+    "cache_read": 159744,
+    "cache_creation": 0,
+    "total_as_logged": 192610
+   },
+   "tool_calls": 10,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T06.native.r2",
+   "task_id": "SQI-T06",
+   "arm": "native",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 29832,
+    "output": 16059,
+    "cache_read": 177920,
+    "cache_creation": 0,
+    "total_as_logged": 223811
+   },
+   "tool_calls": 20,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T06.native.r3",
+   "task_id": "SQI-T06",
+   "arm": "native",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 25304,
+    "output": 5707,
+    "cache_read": 122368,
+    "cache_creation": 0,
+    "total_as_logged": 153379
+   },
+   "tool_calls": 10,
+   "sqi_calls": 0
+  },
+  {
+   "cell_id": "SQI-T06.sqi.r1",
+   "task_id": "SQI-T06",
+   "arm": "sqi",
+   "repetition": 1,
+   "task_success": true,
+   "tokens": {
+    "input": 37195,
+    "output": 6469,
+    "cache_read": 217216,
+    "cache_creation": 0,
+    "total_as_logged": 260880
+   },
+   "tool_calls": 9,
+   "sqi_calls": 1
+  },
+  {
+   "cell_id": "SQI-T06.sqi.r2",
+   "task_id": "SQI-T06",
+   "arm": "sqi",
+   "repetition": 2,
+   "task_success": true,
+   "tokens": {
+    "input": 39709,
+    "output": 7406,
+    "cache_read": 487808,
+    "cache_creation": 0,
+    "total_as_logged": 534923
+   },
+   "tool_calls": 18,
+   "sqi_calls": 1
+  },
+  {
+   "cell_id": "SQI-T06.sqi.r3",
+   "task_id": "SQI-T06",
+   "arm": "sqi",
+   "repetition": 3,
+   "task_success": true,
+   "tokens": {
+    "input": 37762,
+    "output": 4037,
+    "cache_read": 131584,
+    "cache_creation": 0,
+    "total_as_logged": 173383
+   },
+   "tool_calls": 6,
+   "sqi_calls": 2
+  }
+ ]
+}
