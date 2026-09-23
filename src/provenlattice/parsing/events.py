@@ -53,6 +53,27 @@ class OwnerSpan:
     signature: str
 
 
+<<<<<<< HEAD
+=======
+@dataclass(frozen=True, slots=True)
+class EventHit:
+    """One vocabulary hit with the byte range it was found at (stage 3).
+
+    The event layer needs only the `ParsedEvent`; the CFG builder additionally
+    needs *where* in the tree each event sits, because edges are position
+    facts. Both consume the same matcher through this one record, so a hit
+    cannot appear in the event layer while being invisible to the CFG layer --
+    two implementations of the matcher would drift, and the failure mode is
+    exactly the silent kind: edges that skip an operation the events table has.
+    """
+
+    start_byte: int
+    end_byte: int
+    visit_index: int
+    event: ParsedEvent
+
+
+>>>>>>> 07170a3 (完成实现cfg)
 class OwnerIndex:
     """Innermost-enclosing lookup over the spans the symbol extractor produced.
 
@@ -89,6 +110,19 @@ class OwnerIndex:
             index -= 1
         return None
 
+<<<<<<< HEAD
+=======
+    @property
+    def spans(self) -> tuple[OwnerSpan, ...]:
+        """The spans in open order, as identity objects.
+
+        The CFG builder maps each span to its AST node by byte range and holds
+        the same object it gets back from `owner_of`, so span comparisons are
+        identity comparisons and cannot be fooled by equal-but-distinct spans.
+        """
+        return tuple(self._spans)
+
+>>>>>>> 07170a3 (完成实现cfg)
 
 class EventExtractor:
     """Promote the operations a vocabulary names into events.
@@ -132,10 +166,21 @@ class EventExtractor:
         # candidate, and it must be visible that stage 2 does not see it.
         self.skipped_outside_owner = 0
 
+<<<<<<< HEAD
     def extract(self, root: Any) -> list[ParsedEvent]:
         self._walk(root)
         return self._assign_ordinals()
 
+=======
+    def extract_hits(self, root: Any) -> list[EventHit]:
+        """Every owned hit in source order, with byte ranges attached."""
+        self._walk(root)
+        return self._assign_ordinals()
+
+    def extract(self, root: Any) -> list[ParsedEvent]:
+        return [hit.event for hit in self.extract_hits(root)]
+
+>>>>>>> 07170a3 (完成实现cfg)
     def _walk(self, node: Any) -> None:
         self._match(node)
         for child in node.named_children:
@@ -211,14 +256,23 @@ class EventExtractor:
             (node.start_byte, node.end_byte, self._visit_index, spec, matched_name, matched_via, flags)
         )
 
+<<<<<<< HEAD
     def _assign_ordinals(self) -> list[ParsedEvent]:
+=======
+    def _assign_ordinals(self) -> list[EventHit]:
+>>>>>>> 07170a3 (完成实现cfg)
         # Source order, not walk order. A pre-order walk visits `f` before `g`
         # in `f(g(x))` even though `g` starts earlier, and an ordinal a reader
         # cannot reproduce by looking at the file is worse than no ordinal.
         ordered = sorted(self._found, key=lambda item: (item[0], item[1], item[2]))
         counters: dict[tuple[str, str, str, str], int] = {}
+<<<<<<< HEAD
         events: list[ParsedEvent] = []
         for start_byte, end_byte, _, spec, matched_name, matched_via, flags in ordered:
+=======
+        hits: list[EventHit] = []
+        for start_byte, end_byte, visit_index, spec, matched_name, matched_via, flags in ordered:
+>>>>>>> 07170a3 (完成实现cfg)
             owner = self.owners.owner_of(start_byte, end_byte)
             if owner is None:
                 self.skipped_outside_owner += 1
@@ -226,6 +280,7 @@ class EventExtractor:
             key = (owner.kind, owner.qualified_name, owner.signature, spec.event_type)
             ordinal = counters.get(key, 0)
             counters[key] = ordinal + 1
+<<<<<<< HEAD
             events.append(
                 ParsedEvent(
                     event_type=spec.event_type,
@@ -241,3 +296,25 @@ class EventExtractor:
                 )
             )
         return events
+=======
+            hits.append(
+                EventHit(
+                    start_byte=start_byte,
+                    end_byte=end_byte,
+                    visit_index=visit_index,
+                    event=ParsedEvent(
+                        event_type=spec.event_type,
+                        owner_kind=owner.kind,
+                        owner_qualified_name=owner.qualified_name,
+                        owner_signature=owner.signature,
+                        ordinal=ordinal,
+                        start_line=self.line_of(start_byte, False),
+                        end_line=self.line_of(end_byte, True),
+                        matched_name=matched_name,
+                        matched_via=matched_via,
+                        flags=flags,
+                    ),
+                )
+            )
+        return hits
+>>>>>>> 07170a3 (完成实现cfg)

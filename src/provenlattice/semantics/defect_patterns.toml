@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Which semantic events each defect pattern needs.
 #
 # Keys are the numbering from defect-evidence-matrix-v1.md; `grade` is that
@@ -10,36 +11,112 @@
 #
 # `missing_events()` on the loaded pattern reports which requirements stage 2
 # cannot satisfy yet, which is the honest answer to "can we detect this now?".
+=======
+# What each defect pattern needs, split into two questions that stage 4
+# finally separated:
+#
+#   requires / relations                     -> what *confirming* the defect needs
+#   candidate_requires / candidate_relations -> what *proposing* a candidate needs
+#
+# The two are not the same, and the gap between them is the answer to the
+# stage 4 acceptance question "is Event + CFG enough?". `1.1` is the sharp
+# case: proposing a race candidate reads only events the pipeline already
+# produces, while confirming one needs READ/WRITE, which the DFG will have to
+# add. Before the split, `missing_events()` conflated the two and could only
+# say "not attackable" about a pattern stage 4 does attack.
+#
+# Keys are the numbering from defect-evidence-matrix-v1.md; `grade` is that
+# table's A/B/C grade, repeated here so a coverage report can be read without
+# opening the matrix. `requires` and `relations` are that matrix's "Required
+# Events" / "Required Relations" columns for the five rows its priority-family
+# block expanded (1.1, 3.1, 4.1, 4.2, 4.3). The rows it did not expand
+# (1.3, 1.4, 4.5, 4.6, 9.1) keep their seeded events and, where a query exists,
+# take their relations from design doc §9 -- the table that maps each defect
+# family to the relations it needs.
+#
+# `query` names the typed query that produces candidates. A pattern with no
+# `query` is unexpanded: that is a third value, distinct from "expanded and
+# needs nothing", which is why the key is simply absent rather than empty.
+#
+# `missing_events()` / `missing_relations()` report what *confirmation* still
+# lacks; `candidate_missing_events()` / `candidate_missing_relations()` report
+# what *candidate generation* still lacks. Every list below is sorted.
+>>>>>>> 07170a3 (完成实现cfg)
 
 [patterns."1.1"]
 name = "共享数据竞态"
 grade = "A"
+<<<<<<< HEAD
 requires = ["ATOMIC", "LOCK", "READ", "THREAD_JOIN", "THREAD_SPAWN", "UNLOCK", "WRITE"]
+=======
+query = "race_condition"
+requires = ["ATOMIC", "LOCK", "READ", "THREAD_JOIN", "THREAD_SPAWN", "UNLOCK", "WRITE"]
+relations = ["EXECUTES_IN", "MAY_PARALLEL", "PROTECTED_BY", "READS", "WRITES"]
+candidate_requires = ["ATOMIC", "LOCK", "THREAD_JOIN", "THREAD_SPAWN", "UNLOCK"]
+candidate_relations = ["CONTROL_REACHES"]
+>>>>>>> 07170a3 (完成实现cfg)
 
 [patterns."1.3"]
 name = "死锁 / 锁序错误"
 grade = "B"
+<<<<<<< HEAD
 requires = ["LOCK", "UNLOCK"]
+=======
+query = "lock_order"
+requires = ["LOCK", "UNLOCK"]
+relations = ["ACQUIRES", "CONTROL_REACHES"]
+candidate_requires = ["LOCK", "UNLOCK"]
+candidate_relations = ["CONTROL_REACHES"]
+
+[patterns."1.4"]
+name = "重复加锁 / 锁不可重入"
+grade = "A"
+query = "lock_order"
+requires = ["LOCK", "UNLOCK"]
+relations = ["ACQUIRES", "CONTROL_REACHES"]
+candidate_requires = ["LOCK", "UNLOCK"]
+candidate_relations = ["CONTROL_REACHES"]
+>>>>>>> 07170a3 (完成实现cfg)
 
 [patterns."3.1"]
 name = "空指针解引用"
 grade = "B"
+<<<<<<< HEAD
 requires = ["CHECK", "DEREFERENCE"]
+=======
+requires = ["CALL", "READ", "RETURN", "THROW", "WRITE"]
+>>>>>>> 07170a3 (完成实现cfg)
 
 [patterns."4.1"]
 name = "内存泄漏"
 grade = "A"
+<<<<<<< HEAD
 requires = ["ALLOC", "RELEASE", "RETURN"]
+=======
+query = "resource_lifetime"
+requires = ["ALLOC", "RELEASE", "RETURN", "THROW"]
+relations = ["CONSUMES", "CONTROL_REACHES", "PRODUCES", "RELEASES", "RETURNS"]
+candidate_requires = ["ALLOC", "RELEASE", "RETURN"]
+candidate_relations = ["CONTROL_REACHES"]
+>>>>>>> 07170a3 (完成实现cfg)
 
 [patterns."4.2"]
 name = "双重释放"
 grade = "B"
+<<<<<<< HEAD
 requires = ["RELEASE"]
+=======
+requires = ["ALLOC", "RELEASE", "THROW"]
+>>>>>>> 07170a3 (完成实现cfg)
 
 [patterns."4.3"]
 name = "释放后使用"
 grade = "B"
+<<<<<<< HEAD
 requires = ["DEREFERENCE", "READ", "RELEASE", "WRITE"]
+=======
+requires = ["CALL", "READ", "RELEASE", "RETURN", "THROW", "WRITE"]
+>>>>>>> 07170a3 (完成实现cfg)
 
 # The one pattern whose stage-2 coverage is decided by an omission rather than
 # by design: it needs OPEN/CLOSE, which the design doc §23 lists as node types
@@ -54,7 +131,15 @@ requires = ["CLOSE", "OPEN", "RETURN"]
 [patterns."4.6"]
 name = "错误路径清理不完整（含锁未释放）"
 grade = "A"
+<<<<<<< HEAD
 requires = ["ALLOC", "LOCK", "RELEASE", "RETURN", "THROW", "UNLOCK"]
+=======
+query = "resource_lifetime"
+requires = ["ALLOC", "LOCK", "RELEASE", "RETURN", "THROW", "UNLOCK"]
+relations = ["ACQUIRES", "CONTROL_REACHES", "PRODUCES", "RELEASES"]
+candidate_requires = ["ALLOC", "LOCK", "RETURN", "UNLOCK"]
+candidate_relations = ["CONTROL_REACHES"]
+>>>>>>> 07170a3 (完成实现cfg)
 
 [patterns."9.1"]
 name = "未检查返回值"

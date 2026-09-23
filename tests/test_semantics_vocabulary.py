@@ -3,6 +3,10 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+<<<<<<< HEAD
+=======
+from unittest import mock
+>>>>>>> 07170a3 (完成实现cfg)
 
 from provenlattice.semantics import (
     LEVEL_0_EVENTS,
@@ -13,6 +17,10 @@ from provenlattice.semantics import (
     vocabulary_for_path,
 )
 from provenlattice.semantics import vocabulary as vocabulary_module
+<<<<<<< HEAD
+=======
+from provenlattice.semantics.vocabulary import DEFECT_PATTERN_FILE
+>>>>>>> 07170a3 (完成实现cfg)
 
 
 def load_cold(language: str):
@@ -206,6 +214,7 @@ class DefectPatternTests(unittest.TestCase):
         self.assertEqual(keys, sorted(keys))
         self.assertIn("4.1", keys)
 
+<<<<<<< HEAD
     def test_missing_events_separates_stage_2_coverage(self) -> None:
         by_key = {pattern.key: pattern for pattern in load_defect_patterns()}
 
@@ -214,6 +223,48 @@ class DefectPatternTests(unittest.TestCase):
         self.assertEqual(leak.requires, ("ALLOC", "RELEASE", "RETURN"))
         self.assertEqual(leak.missing_events(), ())
         self.assertTrue(leak.coverable_now())
+=======
+    def test_requirements_are_the_matrix_events_plus_the_matrix_relations(self) -> None:
+        """The two columns stage 4 finally copied out of the matrix.
+
+        Before the refresh these were seeded from design doc §9 and disagreed
+        with the matrix on 3.1 (`CHECK`/`DEREFERENCE` vs `CALL`/`RETURN`/...)
+        and 4.2 (`RELEASE` vs `ALLOC`/`RELEASE`/`THROW`). Asserting the matrix's
+        own values is what makes a later divergence a test failure rather than
+        a silent drift.
+        """
+        by_key = {pattern.key: pattern for pattern in load_defect_patterns()}
+        self.assertEqual(
+            by_key["4.1"].requires, ("ALLOC", "RELEASE", "RETURN", "THROW")
+        )
+        self.assertEqual(
+            by_key["4.1"].relations,
+            ("CONSUMES", "CONTROL_REACHES", "PRODUCES", "RELEASES", "RETURNS"),
+        )
+        self.assertEqual(
+            by_key["3.1"].requires, ("CALL", "READ", "RETURN", "THROW", "WRITE")
+        )
+        self.assertEqual(by_key["4.2"].requires, ("ALLOC", "RELEASE", "THROW"))
+
+    def test_missing_events_separates_stage_2_coverage(self) -> None:
+        by_key = {pattern.key: pattern for pattern in load_defect_patterns()}
+
+        # Every event this one needs is level 0, and CONTROL_REACHES is built.
+        leak = by_key["4.1"]
+        self.assertEqual(leak.missing_events(), ())
+        self.assertEqual(leak.missing_relations(), ("CONSUMES", "PRODUCES", "RELEASES", "RETURNS"))
+        self.assertFalse(leak.coverable_now())
+
+        # Stage 3's CFG walker produces CHECK and DEREFERENCE structurally
+        # (matched_via="structural"), so the null-dereference pattern's events
+        # are all producible -- it is the DFG relations that are still missing,
+        # and it has no query yet, which is its own third value.
+        null_deref = by_key["3.1"]
+        self.assertEqual(null_deref.missing_events(), ("READ", "WRITE"))
+        self.assertEqual(null_deref.missing_relations(), ())
+        self.assertFalse(null_deref.expanded)
+        self.assertFalse(null_deref.coverable_now())
+>>>>>>> 07170a3 (完成实现cfg)
 
         # Race needs READ and WRITE, which are level 1 by design.
         race = by_key["1.1"]
@@ -228,15 +279,89 @@ class DefectPatternTests(unittest.TestCase):
         self.assertEqual(resource.missing_events(), ("CLOSE", "OPEN"))
         self.assertFalse(resource.coverable_now())
 
+<<<<<<< HEAD
+=======
+    def test_candidate_requirements_answer_the_falsifiability_question(self) -> None:
+        """1.1 is the case the whole two-column split exists for.
+
+        The pattern is not coverable now -- confirming a race needs READ/WRITE
+        and four relations -- and its candidate generation *is*, from events
+        and CONTROL_REACHES alone. Both answers are true at once, and that pair
+        is stage 4's acceptance answer ③ in mechanical form. Before the split
+        `coverable_now()` could only say "no", which read as "cannot attack".
+        """
+        by_key = {pattern.key: pattern for pattern in load_defect_patterns()}
+        race = by_key["1.1"]
+        self.assertFalse(race.coverable_now())
+        self.assertTrue(race.candidate_coverable_now())
+        self.assertEqual(race.candidate_missing_events(), ())
+        self.assertEqual(race.candidate_missing_relations(), ())
+
+        # The same for the leak family: candidates from ALLOC/RELEASE/RETURN,
+        # confirmation from relations the DFG will have to supply.
+        leak = by_key["4.1"]
+        self.assertTrue(leak.candidate_coverable_now())
+        self.assertFalse(leak.coverable_now())
+
+        # An unexpanded pattern is false on both counts, and that is not a
+        # contradiction -- there is no query to run.
+        unexpanded = by_key["4.2"]
+        self.assertFalse(unexpanded.expanded)
+        self.assertFalse(unexpanded.coverable_now())
+        self.assertFalse(unexpanded.candidate_coverable_now())
+
+    def test_expanded_patterns_name_a_query_that_exists(self) -> None:
+        from provenlattice.defect import QUERY_NAMES
+
+        expanded = {pattern.key: pattern.query for pattern in load_defect_patterns() if pattern.expanded}
+        self.assertEqual(
+            expanded,
+            {
+                "1.1": "race_condition", "1.3": "lock_order", "1.4": "lock_order",
+                "4.1": "resource_lifetime", "4.6": "resource_lifetime",
+            },
+        )
+        for query in expanded.values():
+            self.assertIn(query, QUERY_NAMES)
+
+>>>>>>> 07170a3 (完成实现cfg)
     def test_grade_is_carried_from_the_matrix(self) -> None:
         by_key = {pattern.key: pattern for pattern in load_defect_patterns()}
         self.assertEqual(by_key["4.2"].grade, "B")
         self.assertEqual(by_key["9.1"].grade, "A")
 
+<<<<<<< HEAD
     def test_missing_events_is_sorted_for_every_pattern(self) -> None:
         for pattern in load_defect_patterns():
             self.assertEqual(list(pattern.missing_events()), sorted(pattern.missing_events()))
             self.assertEqual(list(pattern.requires), sorted(pattern.requires))
+=======
+    def test_an_unknown_relation_is_rejected_not_reported_as_a_gap(self) -> None:
+        """A typo must fail loudly. If it were tolerated, `MAY_PARALELL` would
+        sit in `missing_relations()` forever looking like unfinished work."""
+        original = DEFECT_PATTERN_FILE.read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as holder:
+            path = Path(holder) / "defect_patterns.toml"
+            path.write_text(
+                original.replace('relations = ["EXECUTES_IN"', 'relations = ["EXECUTES_INN"'),
+                encoding="utf-8",
+            )
+            with mock.patch.object(vocabulary_module, "DEFECT_PATTERN_FILE", path):
+                with self.assertRaises(VocabularyError) as caught:
+                    load_defect_patterns()
+        self.assertIn("unknown relations", str(caught.exception))
+        self.assertIn("EXECUTES_INN", str(caught.exception))
+
+    def test_every_list_is_sorted_for_every_pattern(self) -> None:
+        for pattern in load_defect_patterns():
+            for name in ("requires", "relations", "candidate_requires", "candidate_relations"):
+                value = getattr(pattern, name)
+                self.assertEqual(list(value), sorted(value), f"{pattern.key}.{name}")
+            for name in ("missing_events", "missing_relations",
+                         "candidate_missing_events", "candidate_missing_relations"):
+                value = getattr(pattern, name)()
+                self.assertEqual(list(value), sorted(value), f"{pattern.key}.{name}()")
+>>>>>>> 07170a3 (完成实现cfg)
 
 
 if __name__ == "__main__":
