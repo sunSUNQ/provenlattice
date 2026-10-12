@@ -8,7 +8,7 @@ from contextlib import closing
 from pathlib import Path
 
 from provenlattice.analysis_ast import analyze_ast_scope
-from provenlattice.analysis_cfg import analyze_cfg_scope
+from provenlattice.analysis_cfg import PYTHON_CFG_CONTRACT, analyze_cfg_scope
 from provenlattice.graph import full_index
 from provenlattice.identity import path_id
 from provenlattice.incremental import incremental_update
@@ -460,7 +460,7 @@ class CFGAnalysisTests(unittest.TestCase):
         metadata = json.loads(cfg_state(self.database, unsupported_file)["metadata"])
         self.assertEqual(metadata["functions_built"], 0)
         self.assertEqual(metadata["functions_skipped_unsupported_construct"], 3)
-        self.assertEqual(metadata["contract"], "python-cfg-v1")
+        self.assertEqual(metadata["contract"], PYTHON_CFG_CONTRACT)
         self.assertEqual(metadata["analyzer"], "cfg:python")
 
     def test_g11_base_graph_zero_impact(self) -> None:

@@ -20,3 +20,9 @@ provenlattice = "provenlattice.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+# The vocabularies are data, not code: without this a wheel installs the
+# semantics package and then fails to load any language at runtime (same
+# package-data declaration PR #1 carries).
+[tool.setuptools.package-data]
+"provenlattice.semantics" = ["*.toml", "vocabularies/*.toml"]

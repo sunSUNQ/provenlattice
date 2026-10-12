@@ -5,21 +5,32 @@ from __future__ import annotations
 import json
 from pathlib import Path, PurePosixPath
 
+from .analysis import capability_record, selectable_features
 from .analysis_ast import analyze_ast_scope, normalize_scope, scoped_sources
 from .analysis_c_ast import analyze_c_ast_scope
 from .analysis_c_cfg import ANALYZER as C_CFG_ANALYZER, analyze_c_cfg_scope
+from .analysis_c_events import EVENTS_SUFFIXES, analyze_c_events_scope
+from .analysis_c_dfg import analyze_c_dfg_scope
+from .analysis_c_scfg import analyze_c_scfg_scope
 from .analysis_cfg import ANALYZER as CFG_ANALYZER, analyze_cfg_scope
 from .identity import path_id
 from .scanner import IGNORED_DIRS, SUPPORTED_EXTENSIONS
 from .storage import SQLiteStorage
 
-SUPPORTED_FEATURES = ("ast", "cfg")
-FEATURE_DEPENDENCIES = {"cfg": ("ast",)}
+# Implemented optional-analysis capabilities (analysis.py contract is the
+# single source of truth; this tuple stays the literal subset so the per-file
+# reporting loop is stable).
+SUPPORTED_FEATURES = ("ast", "cfg", "events", "sparse_cfg", "sparse_dfg")
+FEATURE_DEPENDENCIES = {"cfg": ("ast",), "sparse_dfg": ("sparse_cfg",)}
 C_SOURCE_SUFFIXES = frozenset({".c", ".h"})
 REASON_PREFIX = "skipped_"
 
 
 def _supports_feature(entry: dict, feature: str) -> bool:
+    if feature in ("events", "sparse_cfg", "sparse_dfg"):
+        # The semantic analyzers cover the whole C/C++ family (the cpp.toml
+        # extension list), not just the .c/.h pair.
+        return PurePosixPath(entry["path"]).suffix.lower() in EVENTS_SUFFIXES
     return (
         entry["language"] == "python"
         or PurePosixPath(entry["path"]).suffix.lower() in C_SOURCE_SUFFIXES
@@ -87,6 +98,20 @@ def _parse_features(features) -> list[str]:
         raise AnalysisRequestError("invalid_features", "no features requested")
     unique: list[str] = []
     for feature in requested:
+        record = capability_record(feature)
+        if record is not None and feature not in selectable_features():
+            # Registered-but-not-implemented capability (I0 contract): fail
+            # closed before planning or any mutation -- never a partial run,
+            # never a fake success. Distinct from unknown_feature so callers
+            # can tell a future capability from a typo. Partially-implemented
+            # capabilities (I1-A `events`) are selectable and run their
+            # declared subset.
+            raise AnalysisRequestError(
+                "capability_not_available",
+                f"capability '{feature}' is registered but not implemented in this "
+                f"build (planned integration: {record['planned_integration']}); "
+                "nothing was materialized",
+            )
         if feature not in SUPPORTED_FEATURES:
             raise AnalysisRequestError("unknown_feature", f"unsupported feature: {feature}")
         if feature not in unique:
@@ -163,6 +188,15 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
         cfg_runs = [analyze_cfg_scope(root, scope_path.as_posix(), database)]
         cfg_runs.append(analyze_c_cfg_scope(root, scope_path.as_posix(), database))
         results["cfg"] = _merge_feature_results(cfg_runs)
+    if "events" in plan:
+        results["events"] = _merge_feature_results(
+            [analyze_c_events_scope(root, scope_path.as_posix(), database)])
+    if "sparse_cfg" in plan:
+        results["sparse_cfg"] = _merge_feature_results(
+            [analyze_c_scfg_scope(root, scope_path.as_posix(), database)])
+    if "sparse_dfg" in plan:
+        results["sparse_dfg"] = _merge_feature_results(
+            [analyze_c_dfg_scope(root, scope_path.as_posix(), database)])
     categories: dict[str, dict[str, tuple[str, str | None]]] = {}
     for feature, result in results.items():
         mapping: dict[str, tuple[str, str | None]] = {}

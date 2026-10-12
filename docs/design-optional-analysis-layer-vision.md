@@ -2,39 +2,49 @@
 
 > 版本定位：在保持 V1.2 Foundation Graph 能力与契约不变的前提下，引入可选的函数内分析层（Analysis Layer），面向代码检测、漏洞检测、安全分析与高级 Agent 任务。
 >
-> **文档地位：项目当前最终目标（North Star）。** §1–§9 为目标设计原文；§10 为 2026-09 的实现状态对照（D0–D8 已实证交付部分与设计差异），实现层命名以已冻结的 D0–D8 契约为准。
+> **文档地位：L2 分析层的权威设计文档（North Star 之于分析层）。** §1–§9 为目标设计原文；§10 为 2026-09 的实现状态对照（D0–D8 已实证交付部分与设计差异），实现层命名以已冻结的 D0–D8 契约为准。
+> 2026-10-12 起，项目整体产品定位由 [docs/roadmap.md](roadmap.md) 的
+> **Gold Target V2**（双能力域：Agent Development + Code Inspection）作为
+> canonical planning entry；本文所述 Analysis Layer 归入 V2 的
+> **L2 Unified Optional Analysis**，是其中 Agent Development 侧已交付的部分。
 
-## 0. Gold Target 设计原则同步（2026-10-10）
+## 0. Gold Target 设计原则同步（2026-10-10；2026-10-12 更新为 V2 口径）
 
-长期产品化目标已在 `docs/roadmap.md` 的 **Gold Target** 节冻结为 canonical
-planning entry（本节为同步摘要，细节以该节为准）：
+长期产品化目标已在 `docs/roadmap.md` 的 **Gold Target V2** 节冻结为 canonical
+planning entry（本节为同步摘要，细节以该节为准）。V2 将产品定位升级为
+**统一程序知识和语义分析平台**，由两大能力域共享同一基础事实与分析引擎：
 
-```text
-Always-on lightweight foundation
-            +
-On-demand advanced capabilities
-            +
-Task-scoped context delivery
-```
+- **Agent Development**（默认核心）——即本文原有服务对象：日常编码辅助、
+  代码理解、检索定位、影响分析与任务上下文；
+- **Code Inspection**（可选高级）——缺陷候选检测、语义分析、Typed Defect
+  Query 与证据复核（当前由 PR #1 分支承载，未集成 main；整合审计见
+  [docs/design-dual-capability-integration.md](design-dual-capability-integration.md)）。
 
-与本设计直接相关的三条原则：
+与本设计直接相关的原则（V2 表述）：
 
 1. **L1（本文所称 Base Graph / Foundation Graph）= 默认开启、低成本、长期
    常驻的基础服务**——即使用户不启用任何高级分析，ProvenLattice 仍是可用的
-   基础代码/工程知识服务；
-2. **L2+ 高级能力按 capability × scope 双维按需启用**（即本文 §2 设计原则
-   1/2 的产品化表述），且 L2 是 extensible **Analyzer Capability Registry**
-   而非单个总开关——**新增 analyzer 不新增 architecture layer**；通过渐进
-   增强（而非默认全量分析）平衡能力、延迟、存储与上下文成本；
-3. **Layer ≠ Maturity Level**：五层架构（L1 Foundation → L2 Analysis →
-   L3 Task Context → L4 Evidence → L5 Exposure）表示数据生命周期 pipeline
-   stages，不是功能复杂度等级。**本文 §3 的 L0–L4 是分析能力阶梯的历史
-   命名**（函数结构 → CFG → Def-Use → 安全分析），全部映射到五层架构的
-   L2 Analysis，不构成独立架构层。
+   基础代码/工程知识服务；两大能力域共享同一份 L1 事实；
+2. **L2（V2 更名 Unified Optional Analysis）高级能力按 capability × scope
+   双维按需启用**（即本文 §2 设计原则 1/2 的产品化表述），且 L2 是 extensible
+   **Analyzer Capability Registry** 而非单个总开关——**新增 analyzer 不新增
+   architecture layer**；通过渐进增强（而非默认全量分析）平衡能力、延迟、
+   存储与上下文成本。统一 IR / Canonical CFG / Full-Sparse 双视图 /
+   Semantic Events / DFG / Defect Analyzers 的归属与依赖关系见 V2 G2 与
+   integration 文档 §7；
+3. **Layer ≠ Maturity Level**：五层架构（L1 Foundation → L2 Unified Optional
+   Analysis → L3 Task Services → L4 Evidence/Results → L5 Exposure）表示数据
+   生命周期 pipeline stages，不是功能复杂度等级。**本文 §3 的 L0–L4 是分析
+   能力阶梯的历史命名**（函数结构 → CFG → Def-Use → 安全分析），全部映射到
+   五层架构的 L2 Analysis，不构成独立架构层；
+4. **统一证据契约**：所有分析事实与缺陷候选统一支持 stable identity、source
+   span、provenance、三态引用、analyzer version、freshness、missing evidence、
+   truncation/coverage；严格区分 Candidate / Uncertain / Verified Finding，
+   不确定的推断不自动升级为已确认事实（V2 G4）。
 
 未来新增层的严格判据、L6 判定标准、Capability Profiles（future
-productization candidate，未实现）与当前实现对照，见 roadmap Gold Target
-节 G4–G7。
+productization candidate，未实现）与当前实现对照，见 roadmap Gold Target V2
+节 G0 与 G4–G7。
 
 ## 1. 目标
 

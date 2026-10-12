@@ -650,6 +650,12 @@ def analyze_c_cfg_scope(repo: str | Path, scope: str, database: str | Path | Non
                 state is not None
                 and state.get("metadata", {}).get("contract") == C_CFG_CONTRACT
                 and state.get("metadata", {}).get("analyzer") == ANALYZER
+                # Dependency gate (I1-A): the cached CFG is only as good as
+                # the ast generation it was built from. A cache stamped with a
+                # stale ast contract (e.g. pre-alignment-fix, where a
+                # span-collision function was silently absent) must rebuild,
+                # never reuse.
+                and state.get("metadata", {}).get("ast_contract") == C_AST_CONTRACT
                 and store.is_analysis_fresh(file_id, ANALYZER, base_hash, C_CFG_VERSION)
             ):
                 reused.append(source.relative_path)
@@ -673,6 +679,11 @@ def analyze_c_cfg_scope(repo: str | Path, scope: str, database: str | Path | Non
                         "scope": scope_path.as_posix(),
                         "node_count": len(nodes), "edge_count": len(edges),
                         "ast_contract": C_AST_CONTRACT,
+                        # dependency attestation (I1-B): the read paths apply
+                        # analysis.dependency_staleness to this dict, so an
+                        # ast upgrade invalidates the CFG cache everywhere,
+                        # not only on the rebuild path.
+                        "dependencies": {"ast:c": C_AST_CONTRACT},
                         **file_counters, **file_diagnostics,
                         **parse_diagnostics,
                         "analysis_status": "degraded" if degraded else "complete",

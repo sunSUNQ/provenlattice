@@ -154,6 +154,125 @@ class ParsedFile:
     parser: str = "tree-sitter"
 
 
+@dataclass(frozen=True, slots=True)
+class ParsedEvent:
+    """One defect-relevant operation found in a method body (I1-A, from PR #1).
+
+    The `owner_*` fields repeat the enclosing symbol's identity instead of
+    pointing at it, because the enclosing symbol's id cannot be computed until
+    the repository id is known. Repeating the identity also lets the event
+    layer be checked against the symbol layer by construction rather than by
+    convention -- a mismatch is visible rather than silent.
+    """
+
+    event_type: str
+    owner_kind: str
+    owner_qualified_name: str
+    owner_signature: str
+    ordinal: int
+    start_line: int
+    end_line: int
+    matched_name: str
+    matched_via: str
+    flags: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True, order=True)
+class PointKey:
+    """Identity of one CFG point before the repository id is known (I1-B).
+
+    Exactly the inputs `identity.event_id` consumes (appendix B.2.1): the
+    owner triple locates the method, the event type and ordinal locate the
+    operation within it. Edges carry these keys instead of indices into a
+    points list so that the publisher resolves endpoints through a dict of
+    published ids -- never through list position, which a second ordering
+    pass could silently shuffle.
+    """
+
+    owner_kind: str
+    owner_qualified_name: str
+    owner_signature: str
+    event_type: str
+    ordinal: int
+
+
+@dataclass(slots=True)
+class ParsedPoint:
+    """One structurally-produced CFG point (I1-B: CHECK/BRANCH/DEREFERENCE).
+
+    Only the points the vocabulary cannot produce appear here -- vocabulary
+    events keep their own `ParsedEvent` rows and are referenced from edges by
+    key alone, so no operation is ever represented twice.
+    """
+
+    event_type: str
+    owner_kind: str
+    owner_qualified_name: str
+    owner_signature: str
+    ordinal: int
+    start_line: int
+    end_line: int
+    matched_name: str
+    matched_via: str = "structural"
+    flags: tuple[str, ...] = ()
+
+    def key(self) -> PointKey:
+        return PointKey(
+            self.owner_kind,
+            self.owner_qualified_name,
+            self.owner_signature,
+            self.event_type,
+            self.ordinal,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class ParsedEdge:
+    """One `CONTROL_REACHES` edge between two CFG points (I1-B).
+
+    `dst is None` is the method's synthetic exit: not an event, published as
+    `identity.cfg_exit_id(repo_id, owner_symbol_id)` of the *source* point's
+    owner. Flags are stored sorted; the sorted set is the id discriminator.
+    """
+
+    src: PointKey
+    dst: PointKey | None
+    flags: tuple[str, ...] = ()
+
+
+@dataclass(slots=True)
+class ParsedCfg:
+    """The compressed control-flow of one parsed file (I1-B, from PR #1).
+
+    `annotations` maps a point key to the subject metadata that makes the
+    pattern queries pair operations across events (`RELEASE`'s matched_name is
+    the keyword `free`, not the freed variable). It covers vocabulary events
+    too -- those annotations have nowhere else to travel, and `metadata` is a
+    JSON column that takes them without a schema change.
+    """
+
+    points: list[ParsedPoint] = field(default_factory=list)
+    edges: list[ParsedEdge] = field(default_factory=list)
+    annotations: dict[PointKey, dict[str, str]] = field(default_factory=dict)
+
+
+# Storage classes of a declared name (I1-B, from PR #1). The vocabulary lives
+# here because two modules that must not import each other need it:
+# `parsing.declarations` produces it and `sparsecfg` consumes it, and
+# `sparsecfg` cannot import from `parsing` without a cycle (`parsing.cpp`
+# already imports `sparsecfg`).
+STORAGE_LOCAL = "local"
+STORAGE_PARAMETER = "parameter"
+STORAGE_FUNCTION_STATIC = "function_static"
+STORAGE_FIELD = "field"
+STORAGE_FILE_STATIC = "file_static"
+STORAGE_GLOBAL = "global"
+# Not a storage class: the name has no declaration in this file. Kept as a
+# first-class value so a consumer can tell "declared elsewhere" from "the index
+# failed to find it", and so neither is silently dropped.
+STORAGE_UNKNOWN = "unknown"
+
+
 @dataclass(slots=True)
 class RawReference:
     id: str

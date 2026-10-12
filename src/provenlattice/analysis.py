@@ -35,11 +35,143 @@ CREATE INDEX IF NOT EXISTS idx_analysis_edges_file_feature
 """
 
 ANALYSIS_TABLES = frozenset({"analysis_state", "analysis_nodes", "analysis_edges"})
-KNOWN_FEATURES = frozenset({"ast", "cfg"})
+KNOWN_FEATURES = frozenset({"ast", "cfg", "events", "sparse_cfg", "sparse_dfg"})
 LANGUAGE_PATTERN = re.compile(r"[a-z0-9_\-]+")
-ANALYZER_VERSIONS = {"ast:python": 1, "cfg:python": 1, "ast:c": 2, "cfg:c": 2}
+ANALYZER_VERSIONS = {
+    "ast:python": 1, "cfg:python": 2, "ast:c": 3, "cfg:c": 3, "events:cpp": 1,
+    "sparse_cfg:cpp": 1, "sparse_dfg:cpp": 2,
+}
 STATUS_CURRENT = "current"
 MAX_ANALYSIS_NODE_PAYLOAD_BYTES = 4096
+
+# ---------------------------------------------------------------------------
+# Capability contract (I0 freeze, 2026-10-12; I1-A updates the events row) --
+# single source of truth for optional-analysis capability selection.
+#
+# status="implemented" capabilities are the only ones KNOWN_FEATURES admits
+# into this store as fully-delivered: they own analyzer ids in
+# ANALYZER_VERSIONS and real materializers behind the orchestrator.
+#
+# status="partially_implemented" (I1-A: `events`) owns real analyzer ids and
+# runs on explicit request, but delivers a declared subset -- the events row
+# records its `level`. The orchestrator accepts it; the contract must not
+# present the subset as the whole capability.
+#
+# status="registered" capabilities are *named but not implemented* in this
+# build (selective PR #1 integration phases per
+# docs/pr1-selective-integration-plan.md). They have no analyzer id, no store
+# tables and no code here; the orchestrator rejects them fail-closed before
+# any mutation (capability_not_available) and the read-only query surface
+# reports them unavailable (capability_not_implemented) -- never a fake
+# success. Admitting one into the store starts by flipping its status and
+# registering real analyzer ids; nothing else in this file needs to change.
+#
+# Full CFG (`cfg`) and Sparse CFG (`sparse_cfg`) are deliberately separate
+# capabilities: no unified CFG implementation exists in this build, and the
+# contract must not pretend otherwise (Gold Target V2 keeps Full/Sparse as two
+# views of a future canonical model).
+#
+# `defect` additionally consumes the ownership-contract TOML data files of the
+# future defect chain; that is an input of its analyzers, not a capability of
+# its own, so it is recorded here as prose and not as a contract row.
+CAPABILITY_CONTRACT: dict[str, dict] = {
+    "ast": {
+        "status": "implemented", "domain": "agent",
+        "languages": ("python", "c"), "depends_on": (), "cost_class": "low",
+        "analyzer_ids": ("ast:python", "ast:c"), "planned_integration": None,
+    },
+    "cfg": {
+        "status": "implemented", "domain": "agent",
+        "languages": ("python", "c"), "depends_on": ("ast",), "cost_class": "medium",
+        "analyzer_ids": ("cfg:python", "cfg:c"), "planned_integration": None,
+    },
+    "events": {
+        # I1-A: level-0 vocabulary events only (CALL/RETURN/THROW/ALLOC/
+        # RELEASE/LOCK/UNLOCK/ATOMIC/THREAD_SPAWN/THREAD_JOIN via
+        # semantics/vocabularies/cpp.toml). The structural CHECK/BRANCH/
+        # DEREFERENCE and READ/WRITE access events are sparse-CFG-walker
+        # products and stay unported (I1-B) -- hence partially_implemented,
+        # never a full "implemented" claim.
+        "status": "partially_implemented", "domain": "inspection",
+        "languages": ("c", "cpp"), "depends_on": (), "cost_class": "high",
+        "analyzer_ids": ("events:cpp",), "planned_integration": "I1-B (level 1)",
+        "level": "level0",
+    },
+    "sparse_cfg": {
+        # I1-B: the sparse CFG walker is delivered -- CONTROL_REACHES edges
+        # plus the walker's structural (CHECK/BRANCH/DEREFERENCE) and access
+        # (READ/WRITE) points, on demand. The Sparse DFG (DATA_FLOW_TO /
+        # CONSUMES) and the Defect Queries that consume it stay in later
+        # phases; the contract must not read this row as more than the CFG.
+        "status": "implemented", "domain": "inspection",
+        "languages": ("c", "cpp"), "depends_on": ("events",), "cost_class": "high",
+        "analyzer_ids": ("sparse_cfg:cpp",), "planned_integration": None,
+        "level": "level0+structural+access",
+    },
+    "sparse_dfg": {
+        # I1-C: the method-local sparse DFG is delivered -- DATA_FLOW_TO
+        # (def->use under the annotation flow identity, with alias chains and
+        # via intermediates) and CONSUMES (allocation handed through its own
+        # acquiring expression). Registered approximations travel with it: no
+        # SSA / reaching-definitions, no points-to, no interprocedural edges
+        # (the cross-function join stays a defect-layer query, I2). The grade
+        # field carries that scope honestly.
+        "status": "implemented", "domain": "inspection",
+        "languages": ("c", "cpp"),
+        "depends_on": ("events", "sparse_cfg"), "cost_class": "high",
+        "analyzer_ids": ("sparse_dfg:cpp",), "planned_integration": None,
+        "level": "level0+structural+access+dfg",
+        "grade": "local-only, diagnostic",
+    },
+    "defect": {
+        "status": "registered", "domain": "inspection",
+        "languages": ("c", "cpp"),
+        "depends_on": ("events", "sparse_cfg", "sparse_dfg"),
+        "cost_class": "high", "analyzer_ids": (), "planned_integration": "I2",
+    },
+}
+
+
+def implemented_features() -> frozenset:
+    """Features this build fully delivers (subset of KNOWN_FEATURES)."""
+    return frozenset(
+        feature for feature, record in CAPABILITY_CONTRACT.items()
+        if record["status"] == "implemented"
+    )
+
+
+def selectable_features() -> frozenset:
+    """Features analyze may materialize: fully implemented + partial subsets."""
+    return frozenset(
+        feature for feature, record in CAPABILITY_CONTRACT.items()
+        if record["status"] in {"implemented", "partially_implemented"}
+    )
+
+
+def capability_record(feature: str) -> dict | None:
+    """The contract row for `feature`, or None for an unknown name."""
+    return CAPABILITY_CONTRACT.get(str(feature).strip().lower())
+
+
+def dependency_staleness(metadata: dict | None) -> str | None:
+    """Unified dependency-freshness check over a cached analyzer's metadata.
+
+    A build that consumes another analyzer's output records the dependency
+    contracts it was built under (``metadata["dependencies"]``). This is the
+    single rule both read paths (AnalysisStore and the query surface) apply:
+    if any recorded dependency contract no longer matches the current
+    registry, the cache is stale no matter how fresh its own version and
+    source hash are -- the I1-A/I1-B cfg:c lesson, applied once instead of
+    once per reader.
+    """
+    for analyzer, contract in sorted(((metadata or {}).get("dependencies") or {}).items()):
+        version = ANALYZER_VERSIONS.get(analyzer)
+        if version is None:
+            return f"dependency_unregistered:{analyzer}"
+        feature, _, language = analyzer.partition(":")
+        if analyzer_contract(feature, language, version) != contract:
+            return f"dependency_changed:{analyzer}"
+    return None
 
 
 class PayloadTooLargeError(ValueError):
@@ -167,6 +299,7 @@ class AnalysisStore:
             state["status"] == STATUS_CURRENT
             and state["source_hash"] == source_hash
             and state["feature_version"] == int(feature_version)
+            and dependency_staleness(state["metadata"]) is None
         )
 
     def base_source_hash(self, file_id: str) -> str | None:
@@ -195,6 +328,9 @@ class AnalysisStore:
             reasons.append("source_hash_changed")
         if state["feature_version"] != current_version:
             reasons.append("feature_version_changed")
+        dependency_reason = dependency_staleness(state["metadata"])
+        if dependency_reason is not None:
+            reasons.append(dependency_reason)
         return {
             "fresh": not reasons,
             "reason": "+".join(reasons) if reasons else None,
