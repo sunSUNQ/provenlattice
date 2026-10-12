@@ -104,9 +104,8 @@ class UafCoreTests(UafTestBase):
 
     def test_free_then_sink_address(self) -> None:
         # scenario 3: `free(p); sink(&p)` — the address-of reads the pointer
-        # slot, not the pointee; PR semantics may or may not flag this. The
-        # honest assertion is that the query completes and any candidate
-        # carries proper evidence.
+        # slot, not the pointee; PR baseline: 1 candidate (the call binds the
+        # released pointer as an argument root)
         self.build(
             "#include <stdlib.h>\n"
             "void sink02(char **p);\n"
@@ -118,12 +117,11 @@ class UafCoreTests(UafTestBase):
             "    return n;\n"
             "}\n")
         cands = self.uaf()
-        for cand in cands:
-            self.assertIn(cand["resolution_status"],
-                          ("resolved", "ambiguous", "unresolved"))
-
+        self.assertEqual(len(cands), 1)
+        self.assertEqual(cands[0]["resolution_status"], "ambiguous")
     def test_exclusive_branch_free_and_use(self) -> None:
         # scenario 4: free in one arm, use in the other — they are exclusive
+        # PR baseline on this fixture: 0 candidates (exclusive arms)
         self.build(
             "#include <stdlib.h>\n"
             "int f04(int n) {\n"
@@ -134,12 +132,8 @@ class UafCoreTests(UafTestBase):
             "    return n;\n"
             "}\n")
         cands = self.uaf()
-        # the PR linear model may or may not eliminate this — the honest
-        # assertion is that any candidate carries proper evidence fields
-        for cand in cands:
-            self.assertIn(cand["resolution_status"],
-                          ("resolved", "ambiguous", "unresolved"))
-            self.assertTrue(cand["anchor"].startswith("event:"))
+        # the PR linear model eliminates exclusive-branch pairs
+        self.assertEqual(cands, [])
 
     def test_realloc_then_use_new_object(self) -> None:
         # scenario 5: free then realloc — the new allocation redefines the
@@ -209,8 +203,11 @@ class UafCoreTests(UafTestBase):
                           ("resolved", "ambiguous", "unresolved"))
 
     def test_free_then_alias_access(self) -> None:
-        # scenario 8: alias q = p before free; use q after free — the
-        # alias_source annotation extends the free chain
+        # scenario 8: alias q = p before free; use q after free
+        # PR baseline: 0 candidates — the alias q = p creates a NEW identity
+        # in the access layer (STORAGE_LOCAL for q), and the DFG's
+        # subject_decl-based chain does not link q's deref back to p's free.
+        # This is a registered PR limitation (alias precision gap).
         self.build(
             "#include <stdlib.h>\n"
             "int f08(int n) {\n"
@@ -222,7 +219,26 @@ class UafCoreTests(UafTestBase):
             "    return n;\n"
             "}\n")
         cands = self.uaf()
-        self.assertGreaterEqual(len(cands), 0)  # PR model may or may not fire
+        self.assertEqual(cands, [])
+
+    def test_free_then_sink_address(self) -> None:
+        # scenario 3: `free(p); sink(&p)` — the address-of reads the pointer
+        # slot, not the pointee; PR baseline: 1 ambiguous candidate (the call
+        # binds the released pointer as an argument root, and the model can't
+        # distinguish "reads the pointer value" from "reads the pointee")
+        self.build(
+            "#include <stdlib.h>\n"
+            "void sink02(char **p);\n"
+            "int f03(int n) {\n"
+            "    char *p = malloc(64);\n"
+            "    if (!p) return -1;\n"
+            "    free(p);\n"
+            "    sink02(&p);\n"
+            "    return n;\n"
+            "}\n")
+        cands = self.uaf()
+        self.assertEqual(len(cands), 1)
+        self.assertEqual(cands[0]["resolution_status"], "ambiguous")
 
     def test_different_objects_never_link(self) -> None:
         # scenario 9: two different allocations, each freed once — no UAF
@@ -244,6 +260,8 @@ class UafCoreTests(UafTestBase):
         # scenario 10: goto creates an incomplete control path — the DFG's
         # control_reachable is unknown/false, and the candidate must carry
         # missing evidence rather than a deterministic claim
+        # PR baseline: 1 candidate (the linear DFG still binds the deref
+        # to the free through the goto-broken path)
         self.build(
             "#include <stdlib.h>\n"
             "int f10(int n) {\n"
@@ -258,6 +276,7 @@ class UafCoreTests(UafTestBase):
             "    return n;\n"
             "}\n")
         cands = self.uaf()
+        self.assertGreaterEqual(len(cands), 1)
         for cand in cands:
             self.assertIn(cand["resolution_status"],
                           ("resolved", "ambiguous", "unresolved"))
@@ -280,6 +299,8 @@ class UafCoreTests(UafTestBase):
 
     def test_cpp_delete_and_use(self) -> None:
         # scenario 11: C++ delete + use (RELEASE via delete_expression)
+        # PR baseline on identical fixture: 1 candidate (delete_expression
+        # is a RELEASE, and the dereference after it is a use)
         write(self.root, "src/t.cc",
               "struct node11 { int val; };\n"
               "int f12(int n) {\n"
@@ -291,7 +312,8 @@ class UafCoreTests(UafTestBase):
         full_index(self.root, self.database)
         analyze_scope(self.root, "src", ("defect",), database=self.database)
         cands = self.uaf("src/t.cc")
-        self.assertGreaterEqual(len(cands), 0)
+        self.assertEqual(len(cands), 1)
+        self.assertEqual(cands[0]["resolution_status"], "resolved")
 
     def test_stale_upstream_fails_closed(self) -> None:
         # scenario 12: stale upstream → fail-closed, no candidates
