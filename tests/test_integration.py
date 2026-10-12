@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import json
 import shutil
 import sqlite3
@@ -8,9 +9,14 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 
+from provenlattice import storage
 from provenlattice.graph import full_index
+from provenlattice.identity import repository_id
 from provenlattice.incremental import incremental_update
+from provenlattice.models import RawReference
 from provenlattice.query import GraphQuery
+from provenlattice.resolver import ReferenceResolver
+from provenlattice.storage import SQLiteStorage, cold_path_for, copy_database
 
 
 REVISION_A = """from module_b.util import helper
@@ -59,25 +65,30 @@ def write(path: Path, text: str) -> None:
 
 
 def snapshot(database: Path) -> dict:
-    connection = sqlite3.connect(database)
-    connection.row_factory = sqlite3.Row
-    result = {}
-    for table in ("nodes", "edges", "shards", "raw_references"):
-        rows = []
-        for row in connection.execute(f"SELECT * FROM {table} ORDER BY 1"):
-            item = dict(row)
-            item.pop("generation", None)
-            if "boundary_dirty" in item:
-                item.pop("boundary_dirty")
-            rows.append(item)
-        result[table] = rows
-    result["boundary_edges"] = [
-        dict(row) for row in connection.execute(
-            "SELECT id, src_id, dst_id, type, metadata FROM edges "
-            "WHERE json_extract(metadata, '$.scope') = 'boundary' ORDER BY id"
-        )
-    ]
-    connection.close()
+    """Every compared table, the cold reference layer included.
+
+    Opened through `SQLiteStorage` on purpose: a split layout (stage 7A) keeps
+    `raw_references` in its cold store, and a bare connection would read the
+    table as absent -- comparing two empty lists as equal.
+    """
+    with SQLiteStorage(database) as storage:
+        connection = storage.connection
+        result = {}
+        for table in ("nodes", "edges", "shards", "raw_references"):
+            rows = []
+            for row in connection.execute(f"SELECT * FROM {table} ORDER BY 1"):
+                item = dict(row)
+                item.pop("generation", None)
+                if "boundary_dirty" in item:
+                    item.pop("boundary_dirty")
+                rows.append(item)
+            result[table] = rows
+        result["boundary_edges"] = [
+            dict(row) for row in connection.execute(
+                "SELECT id, src_id, dst_id, type, metadata FROM edges "
+                "WHERE json_extract(metadata, '$.scope') = 'boundary' ORDER BY id"
+            )
+        ]
     return result
 
 
@@ -120,6 +131,24 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(updated["delta"]["boundary_dirty"], [])
         self.assertEqual(len(updated["delta"]["shards_updated"]), 1)
         self.assertGreater(updated["delta"]["references_reused"], 0)
+
+    def test_subgraph_parity_across_id_binding_strategies(self) -> None:
+        """Above ID_BIND_LIMIT ids, traversal switches from bound placeholders to
+        a temp-table join. No other test reaches that branch — the fixtures are
+        all far below the limit — so force it and require identical results."""
+        database = Path(self.temp.name) / "graph.db"
+        full_index(self.root, database)
+        with GraphQuery(database) as query:
+            bound = query.get_subgraph("module_a.service.run", max_hops=2, max_nodes=50)
+        original = storage.ID_BIND_LIMIT
+        storage.ID_BIND_LIMIT = 1
+        try:
+            with GraphQuery(database) as query:
+                joined = query.get_subgraph("module_a.service.run", max_hops=2, max_nodes=50)
+        finally:
+            storage.ID_BIND_LIMIT = original
+        self.assertTrue(bound["data"]["nodes"])
+        self.assertEqual(bound["data"], joined["data"])
 
     def test_full_incremental_parity_for_required_changes(self) -> None:
         incremental_db = Path(self.temp.name) / "incremental.db"
@@ -200,10 +229,15 @@ class IntegrationTests(unittest.TestCase):
         self.assertIsNone(missing[0]["resolved_symbol_id"])
         self.assertEqual(ambiguous[0]["status"], "ambiguous")
         self.assertEqual(len(ambiguous[0]["candidate_symbols"]), 2)
-        with closing(sqlite3.connect(database)) as connection:
+        with SQLiteStorage(database) as storage:
+            connection = storage.connection
+            # The reference table lives in the cold schema on a split layout,
+            # so the index list is read through the table-valued pragma with
+            # the schema the storage actually opened.
             indexes = {
                 row[0] for row in connection.execute(
-                    "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='raw_references'"
+                    "SELECT name FROM pragma_index_list('raw_references', ?)",
+                    (storage.reference_schema,),
                 )
             }
             ambiguous_edges = connection.execute(
@@ -257,6 +291,472 @@ class IntegrationTests(unittest.TestCase):
             boundary_refs = query.get_boundary_references("module_b.util.helper")
         self.assertTrue(any(item["path"] == "module_b" for item in dependencies["data"]))
         self.assertTrue(boundary_refs["data"])
+
+
+class TargetedLoaderTests(unittest.TestCase):
+    """The 0.3 loaders (appendix A) must return exactly what the old full-table
+    dumps returned after Python filtering. Each test pins one loader against
+    that ground truth, computed from the same database."""
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "repo"
+        write(self.root / "module_a" / "service.py", REVISION_A)
+        write(
+            self.root / "module_b" / "util.py",
+            "def helper(value: int) -> int:\n    return value + 1\n\n"
+            "def second() -> int:\n    return helper(1)\n",
+        )
+        write(self.root / "module_c" / "api.py", "def extra(value: int) -> int:\n    return value - 1\n")
+        self.database = Path(self.temp.name) / "graph.db"
+        full_index(self.root, self.database)
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def test_snapshot_columns_reads_exactly_the_named_columns(self) -> None:
+        with SQLiteStorage(self.database) as store:
+            full = store.snapshot_ids("nodes")
+            slim = store.snapshot_columns("nodes", ("id", "kind", "source_hash"))
+        self.assertEqual(set(slim), set(full))
+        for node_id, row in slim.items():
+            self.assertEqual(set(row), {"id", "kind", "source_hash"})
+            self.assertEqual(row["kind"], full[node_id]["kind"])
+
+    def test_nodes_for_files_equals_the_full_scan_filtered(self) -> None:
+        with SQLiteStorage(self.database) as store:
+            full = store.snapshot_ids("nodes")
+            wanted = {row["id"] for row in full.values() if row["kind"] == "File"}
+            changed = set(list(wanted)[:2])  # two arbitrary files
+            targeted = store.nodes_for_files(changed)
+        shared = ("file_id", "shard_id", "kind", "name", "qualified_name")
+        expected = {
+            row["id"]: {key: row[key] for key in shared}
+            for row in full.values() if row["file_id"] in changed
+        }
+        self.assertTrue(targeted)
+        self.assertEqual(
+            expected,
+            {row["id"]: {key: row[key] for key in shared} for row in targeted},
+        )
+        # Slim: no fat metadata column tags along.
+        self.assertTrue(all("metadata" not in row for row in targeted))
+
+    def test_nodes_metadata_covers_every_non_file_node_and_no_file_node(self) -> None:
+        with SQLiteStorage(self.database) as store:
+            full = store.snapshot_ids("nodes")
+            metadata = store.nodes_metadata()
+        file_ids = {row["id"] for row in full.values() if row["kind"] == "File"}
+        symbol_ids = set(full) - file_ids
+        self.assertTrue(file_ids.isdisjoint(metadata))
+        self.assertEqual(set(metadata), symbol_ids)
+        for node_id, raw in metadata.items():
+            self.assertEqual(json.loads(raw), json.loads(full[node_id]["metadata"]))
+
+    def test_boundary_edges_equals_the_full_scan_filtered(self) -> None:
+        with SQLiteStorage(self.database) as store:
+            full = store.snapshot_ids("edges")
+            boundary = store.boundary_edges()
+        shared = ("src_id", "dst_id", "metadata")
+        expected = {
+            edge_id: {key: row[key] for key in shared} for edge_id, row in full.items()
+            if json.loads(row["metadata"]).get("scope") == "boundary"
+        }
+        self.assertEqual(
+            {edge_id: {key: row[key] for key in shared} for edge_id, row in boundary.items()},
+            expected,
+        )
+        self.assertEqual(set(boundary), set(expected))
+
+
+    def test_boundary_edges_matches_the_old_substring_check(self) -> None:
+        with SQLiteStorage(self.database) as store:
+            full = store.snapshot_ids("edges")
+            boundary = store.boundary_edges()
+        substring_ids = {
+            edge_id for edge_id, row in full.items()
+            if '"scope": "boundary"' in row.get("metadata", "")
+            or '"scope":"boundary"' in row.get("metadata", "")
+        }
+        self.assertEqual(set(boundary), substring_ids)
+
+    def test_reference_survivor_stream_equals_full_then_filtered(self) -> None:
+        repo_id = repository_id(self.root)
+        with SQLiteStorage(self.database) as store:
+            all_rows = [dict(row) for row in store.iter_reference_survivors(repo_id)]
+        self.assertGreater(len(all_rows), 1)
+        excluded_files = {all_rows[0]["file_id"]}
+        excluded_ids = {all_rows[1]["id"]}
+        with SQLiteStorage(self.database) as store:
+            targeted = [
+                dict(row) for row in store.iter_reference_survivors(
+                    repo_id, exclude_file_ids=excluded_files, exclude_ids=excluded_ids
+                )
+            ]
+        expected = [
+            row for row in all_rows
+            if row["file_id"] not in excluded_files and row["id"] not in excluded_ids
+        ]
+        # Sorted rather than in stream order: the exclusions change the plan the
+        # query is evaluated under, and only membership is promised here.
+        self.assertEqual(
+            sorted(targeted, key=lambda row: row["id"]),
+            sorted(expected, key=lambda row: row["id"]),
+        )
+
+    def test_reference_survivors_are_streamed_not_collected(self) -> None:
+        """The point of the method: a caller that stops early has not paid for
+        the rest of the table (stage 7A-2 -- update memory used to hold every
+        reusable row at once)."""
+        repo_id = repository_id(self.root)
+        with SQLiteStorage(self.database) as store:
+            stream = store.iter_reference_survivors(repo_id)
+            self.assertTrue(inspect.isgenerator(stream))
+            self.assertEqual(next(stream)["repo_id"], repo_id)
+            stream.close()
+
+
+def to_legacy_layout(database: Path) -> None:
+    """Rewrite a split database into the pre-7A single-file layout.
+
+    The DDL is read back out of the cold schema rather than copied here: the
+    fixture has to be the real old shape, and a second copy of the DDL in a
+    test is a copy that drifts.
+    """
+    with SQLiteStorage(database) as storage:
+        connection = storage.connection
+        statements = [
+            row[0] for row in connection.execute(
+                "SELECT sql FROM cold.sqlite_master "
+                "WHERE tbl_name = 'raw_references' AND sql IS NOT NULL"
+            )
+        ]
+        # The parse cache goes back into the File nodes' metadata, where every
+        # pre-7A-3 database kept it. Without this the fixture would be a shape
+        # that never existed -- split-era nodes with a legacy reference table --
+        # and an update on it would find no cache and fail (or, worse, rebuild
+        # those files as empty).
+        for row in connection.execute("SELECT file_id, payload FROM cold.parse_cache"):
+            connection.execute(
+                "UPDATE main.nodes SET metadata = json_set(metadata, '$.parsed', json(?)) "
+                "WHERE id = ?",
+                (row["payload"], row["file_id"]),
+            )
+        # The TEMP VIEW shadows the main schema for unqualified names, and the
+        # DDL read back above is unqualified -- drop the view first so the
+        # table and its indexes land in the main file.
+        connection.execute("DROP VIEW temp.raw_references")
+        for statement in statements:
+            connection.execute(statement)
+        connection.execute("INSERT INTO main.raw_references SELECT * FROM cold.raw_references")
+        connection.commit()
+    cold_path_for(database).unlink()
+
+
+class ColdSplitTests(unittest.TestCase):
+    """Stage 7A: `raw_references` in a sibling file, hot facts in the main one."""
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "repo"
+        write(self.root / "module_a" / "service.py", REVISION_A)
+        write(
+            self.root / "module_b" / "util.py",
+            "def helper(value: int) -> int:\n    return value + 1\n",
+        )
+        self.database = Path(self.temp.name) / "graph.db"
+        full_index(self.root, self.database)
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def test_the_reference_layer_lives_in_a_sibling_file(self) -> None:
+        cold = cold_path_for(self.database)
+        self.assertTrue(cold.is_file())
+        with SQLiteStorage(self.database) as storage:
+            self.assertEqual(storage.reference_schema, "cold")
+            self.assertEqual(storage.reference_table, "cold.raw_references")
+            self.assertIsNone(
+                storage.connection.execute(
+                    "SELECT type FROM sqlite_master WHERE name = 'raw_references'"
+                ).fetchone()
+            )
+            self.assertGreater(storage.cold_database_size, 0)
+            self.assertEqual(
+                storage.connection.execute("SELECT COUNT(*) FROM raw_references").fetchone()[0],
+                storage.connection.execute(
+                    "SELECT COUNT(*) FROM cold.raw_references").fetchone()[0],
+            )
+        with GraphQuery(self.database) as query:
+            self.assertTrue(query.get_raw_references(raw_name="helper")["data"])
+            self.assertEqual(query.status()["data"]["cold_database_size"], cold.stat().st_size)
+
+    def test_a_connection_without_the_cold_store_fails_loudly(self) -> None:
+        """A bare `sqlite3.connect` cannot see the cold layer, and that is the
+        point: the failure is a missing table, not a silently empty one."""
+        connection = sqlite3.connect(self.database)
+        try:
+            with self.assertRaises(sqlite3.OperationalError):
+                connection.execute("SELECT COUNT(*) FROM raw_references").fetchone()
+        finally:
+            connection.close()
+
+    def test_a_missing_cold_store_is_an_error_not_an_empty_table(self) -> None:
+        cold_path_for(self.database).unlink()
+        with self.assertRaises(RuntimeError):
+            SQLiteStorage(self.database)
+
+    def test_a_legacy_single_file_database_still_reads_and_updates(self) -> None:
+        to_legacy_layout(self.database)
+        with SQLiteStorage(self.database) as storage:
+            self.assertEqual(storage.reference_schema, "main")
+            self.assertEqual(storage.reference_table, "raw_references")
+            self.assertEqual(storage.cold_database_size, 0)
+            rows = storage.connection.execute("SELECT COUNT(*) FROM raw_references").fetchone()[0]
+            # The cache is read out of `nodes.metadata.parsed`, as it always
+            # was: the legacy branch is the pre-7A-3 read path, unchanged.
+            repo_id = storage.connection.execute("SELECT repo_id FROM repositories").fetchone()[0]
+            self.assertEqual(
+                sorted(storage.parser_cache(repo_id)),
+                ["module_a/service.py", "module_b/util.py"],
+            )
+        self.assertGreater(rows, 0)
+        write(self.root / "module_c" / "api.py", "def extra(value: int) -> int:\n    return value - 1\n")
+        update = incremental_update(self.root, self.database)
+        self.assertTrue(update["changed"])
+        self.assertEqual(update["metrics"]["cold_database_size"], 0)
+        with SQLiteStorage(self.database) as storage:
+            self.assertGreater(
+                storage.connection.execute("SELECT COUNT(*) FROM raw_references").fetchone()[0], 0
+            )
+        self.assertFalse(cold_path_for(self.database).exists())
+        # The update has to rebuild the whole graph, not just the file it was
+        # handed: unchanged files come back from the parse cache, so a cache
+        # that reads as empty would quietly drop their symbols. Comparing the
+        # node and edge sets against a fresh index of the same tree is what
+        # makes that failure visible instead of vacuous.
+        fresh = Path(self.temp.name) / "legacy-fresh.db"
+        full_index(self.root, fresh)
+        with SQLiteStorage(self.database) as updated, SQLiteStorage(fresh) as rebuilt:
+            self.assertEqual(
+                {row["id"] for row in updated.rows("SELECT id FROM nodes")},
+                {row["id"] for row in rebuilt.rows("SELECT id FROM nodes")},
+            )
+            self.assertEqual(
+                {row["id"] for row in updated.rows("SELECT id FROM edges")},
+                {row["id"] for row in rebuilt.rows("SELECT id FROM edges")},
+            )
+
+    def test_copy_takes_the_cold_store_along(self) -> None:
+        target = Path(self.temp.name) / "copy.db"
+        copied = copy_database(self.database, target)
+        self.assertEqual([path.name for path in copied], ["copy.db", "copy.cold.db"])
+        with SQLiteStorage(target) as storage:
+            self.assertGreater(
+                storage.connection.execute("SELECT COUNT(*) FROM raw_references").fetchone()[0], 0
+            )
+
+    def test_an_update_carries_untouched_reference_rows_in_place(self) -> None:
+        """Only the rows the update re-derives are written; every other row
+        keeps its stored content and advances its generation (stage 7A-2)."""
+        with SQLiteStorage(self.database) as storage:
+            before = {row["id"]: row for row in storage.rows("SELECT * FROM raw_references")}
+        write(
+            self.root / "module_c" / "api.py",
+            "def extra(value: int) -> int:\n    return value - 1\n",
+        )
+        update = incremental_update(self.root, self.database)
+        self.assertTrue(update["changed"])
+        with SQLiteStorage(self.database) as storage:
+            after = {row["id"]: row for row in storage.rows("SELECT * FROM raw_references")}
+        # Nothing dropped, nothing duplicated: the count the update reports is
+        # the count the table holds, and the split it reports covers it.
+        self.assertEqual(update["metrics"]["raw_references"], len(after))
+        self.assertGreaterEqual(len(after), len(before))
+        self.assertGreater(update["metrics"]["references_reused"], 0)
+        self.assertEqual(
+            update["metrics"]["references_reused"] + update["metrics"]["references_reprocessed"],
+            len(after),
+        )
+        carried = set(before) & set(after)
+        self.assertTrue(carried)
+        for reference_id in carried:
+            old, new = dict(before[reference_id]), dict(after[reference_id])
+            self.assertEqual(old.pop("generation"), update["graph_generation"] - 1)
+            self.assertEqual(new.pop("generation"), update["graph_generation"])
+            self.assertEqual(old, new)
+
+    def test_the_parse_cache_lives_in_the_cold_store(self) -> None:
+        """Stage 7A-3: `parsed` is a cache, no query reads it, and it was 94.8%
+        of the nodes table -- so it is a cold table now, and the File node keeps
+        only what other code reads out of its metadata."""
+        repo_id = repository_id(self.root)
+        with SQLiteStorage(self.database) as storage:
+            cold_rows = storage.rows("SELECT * FROM cold.parse_cache")
+            file_metadata = [
+                json.loads(row["metadata"])
+                for row in storage.rows("SELECT metadata FROM nodes WHERE kind = 'File'")
+            ]
+            cache = storage.parser_cache(repo_id)
+        self.assertEqual(
+            sorted(row["relative_path"] for row in cold_rows),
+            ["module_a/service.py", "module_b/util.py"],
+        )
+        self.assertEqual(len(cold_rows), len(file_metadata))
+        for metadata in file_metadata:
+            self.assertNotIn("parsed", metadata)
+            # What is left is what has a reader: `knowledge.py` looks files up
+            # by `relative_path`, and `shard_path` is part of the File node's
+            # published metadata.
+            self.assertIn("relative_path", metadata)
+            self.assertIn("shard_path", metadata)
+        # The cache is keyed by path and holds the payload the writer built.
+        self.assertEqual(sorted(cache), ["module_a/service.py", "module_b/util.py"])
+        self.assertEqual(
+            sorted(cache["module_b/util.py"]),
+            ["imports", "parser", "references", "symbols"],
+        )
+        self.assertEqual(
+            [symbol["name"] for symbol in cache["module_b/util.py"]["symbols"]], ["helper"]
+        )
+
+    def test_an_update_keeps_the_cache_for_files_it_did_not_reparse(self) -> None:
+        """The cache is rewritten whole on every update, out of the File nodes
+        the graph build produced -- unchanged files included, since their
+        payload came out of the cache in the first place."""
+        repo_id = repository_id(self.root)
+        with SQLiteStorage(self.database) as storage:
+            before = storage.parser_cache(repo_id)
+        write(
+            self.root / "module_c" / "api.py",
+            "def extra(value: int) -> int:\n    return value - 1\n",
+        )
+        incremental_update(self.root, self.database)
+        with SQLiteStorage(self.database) as storage:
+            after = storage.parser_cache(repo_id)
+            rows = storage.rows("SELECT file_id, relative_path FROM cold.parse_cache")
+        self.assertEqual(sorted(after), ["module_a/service.py", "module_b/util.py", "module_c/api.py"])
+        for path, payload in before.items():
+            self.assertEqual(after[path], payload)
+        self.assertEqual(len(rows), len(after))
+
+    def test_a_split_database_without_a_parse_cache_fails_loudly(self) -> None:
+        """A database split before stage 7A-3 keeps its cache in the nodes
+        table; under this code the cold table reads empty and the update must
+        say so rather than rebuild every unchanged file as empty."""
+        write(
+            self.root / "module_c" / "api.py",
+            "def extra(value: int) -> int:\n    return value - 1\n",
+        )
+        with SQLiteStorage(self.database) as storage:
+            storage.connection.execute("DELETE FROM cold.parse_cache")
+            storage.connection.commit()
+        with self.assertRaises(RuntimeError) as caught:
+            incremental_update(self.root, self.database)
+        self.assertIn("missing parser cache", str(caught.exception))
+
+
+class CarriedEdgeTests(unittest.TestCase):
+    """A carried row is never rewritten, so its edge is rebuilt from the stored
+    columns -- and has to come out field-for-field what a rebuild would build."""
+
+    def test_carried_edge_matches_the_rebuilt_one(self) -> None:
+        source_id, target_id = "symbol-owner", "symbol-target"
+        record = RawReference(
+            "reference-1", "repo", "file-1", source_id, "helper", "CALLS", None,
+            3, 4, "resolved", [target_id], target_id,
+            "same_file_resolution", "same_file_resolution", 0.98, 7,
+        )
+        row = {
+            "id": record.id, "repo_id": record.repo_id, "file_id": record.file_id,
+            "owner_symbol_id": record.owner_symbol_id, "raw_name": record.raw_name,
+            "reference_type": record.reference_type, "target_module": record.target_module,
+            "start_line": record.start_line, "end_line": record.end_line,
+            "status": record.status,
+            "candidate_symbols": json.dumps(record.candidate_symbols),
+            "resolved_symbol_id": record.resolved_symbol_id,
+            "resolution_strategy": record.resolution_strategy,
+            "provenance": record.provenance, "confidence": record.confidence,
+            "generation": record.generation, "metadata": "{}",
+        }
+        self.assertEqual(
+            ReferenceResolver._edge_from_row(row, 9),
+            ReferenceResolver._edge_from_record(record, source_id, 9),
+        )
+
+    def test_a_row_without_a_resolution_carries_no_edge(self) -> None:
+        row = {
+            "id": "reference-2", "status": "ambiguous", "resolved_symbol_id": None,
+            "owner_symbol_id": "symbol-owner", "reference_type": "CALLS",
+            "provenance": "tree_sitter_syntax", "confidence": 0.0,
+            "resolution_strategy": "ambiguous",
+        }
+        self.assertIsNone(ReferenceResolver._edge_from_row(row, 9))
+
+
+class ExpressionIndexTests(unittest.TestCase):
+    """Stage 0.4 (appendix A): `layer` lives inside the metadata JSON but is
+    queried as a column, so the SCHEMA carries expression indexes. These tests
+    pin the planner, not just the DDL: the knowledge layer's exact spellings
+    must be answered by the indexes without reading the fat metadata blobs.
+    Every EXPLAIN opens a fresh connection -- a cached statement keeps the
+    plan it was compiled with even after the schema changed."""
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "repo"
+        write(self.root / "module_a" / "service.py", REVISION_A)
+        write(
+            self.root / "module_b" / "util.py",
+            "def helper(value: int) -> int:\n    return value + 1\n\n"
+            "def second() -> int:\n    return helper(1)\n",
+        )
+        write(self.root / "module_c" / "api.py", "def extra(value: int) -> int:\n    return value - 1\n")
+        self.database = Path(self.temp.name) / "graph.db"
+        full_index(self.root, self.database)
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def plans(self, sql: str) -> list[str]:
+        with closing(sqlite3.connect(self.database)) as connection:
+            return [row[3] for row in connection.execute("EXPLAIN QUERY PLAN " + sql)]
+
+    def test_bare_layer_predicate_searches_instead_of_scanning(self) -> None:
+        # knowledge.py spells the predicate without whitespace; the planner
+        # matches on the parsed expression, so this must share the index.
+        plan = self.plans(
+            "SELECT id FROM nodes WHERE json_extract(metadata,'$.layer')='knowledge'"
+        )
+        self.assertTrue(any(
+            p.startswith("SEARCH nodes USING INDEX idx_nodes_layer (") for p in plan
+        ), plan)
+        spaced = self.plans(
+            "SELECT id FROM nodes WHERE json_extract(metadata, '$.layer') = 'knowledge'"
+        )
+        self.assertTrue(any(
+            p.startswith("SEARCH nodes USING INDEX idx_nodes_layer (") for p in spaced
+        ), spaced)
+
+    def test_edges_layer_predicate_searches_instead_of_scanning(self) -> None:
+        plan = self.plans(
+            "SELECT id FROM edges WHERE json_extract(metadata,'$.layer')='knowledge'"
+        )
+        self.assertTrue(any(
+            p.startswith("SEARCH edges USING INDEX idx_edges_layer (") for p in plan
+        ), plan)
+
+    def test_coalesced_count_is_answered_by_the_index_alone(self) -> None:
+        # The != predicate cannot do an equality lookup, but the COALESCE
+        # index covers the expression, so the COUNT must still be answered
+        # from the index -- never by scanning the ~95%-of-the-table metadata.
+        plan = self.plans(
+            "SELECT COUNT(*) FROM nodes "
+            "WHERE COALESCE(json_extract(metadata, '$.layer'), 'code') != 'knowledge'"
+        )
+        self.assertTrue(any(
+            "USING COVERING INDEX idx_nodes_layer_coalesced" in p for p in plan
+        ), plan)
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ from typing import Any, Iterable
 EVIDENCE_KINDS = {
     "CODE_DEFINITION", "CALL_RELATION", "REFERENCE", "DEPENDENCY",
     "SHARD_RELATION", "DOCUMENT_SECTION", "CROSS_LAYER_LINK",
+    "DEFECT_CANDIDATE",
 }
 BUNDLE_PROFILES = {
     "generic", "document_to_code", "code_to_document", "module_understanding",
@@ -17,7 +18,7 @@ EVIDENCE_ROLES = {"PRIMARY", "SUPPORTING", "CONTEXTUAL", "SUPPRESSED_CANDIDATE"}
 PREFIXES = {
     "CODE_DEFINITION": "CODE", "CALL_RELATION": "CALL", "REFERENCE": "REF",
     "DEPENDENCY": "DEP", "SHARD_RELATION": "SHARD", "DOCUMENT_SECTION": "DOC",
-    "CROSS_LAYER_LINK": "XLINK",
+    "CROSS_LAYER_LINK": "XLINK", "DEFECT_CANDIDATE": "DEFECT",
 }
 
 
@@ -68,7 +69,38 @@ class Evidence:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        """The row as a plain dict, without `dataclasses.asdict`.
+
+        `asdict` introspects the fields and dispatches per value, and the
+        multi-hop queries call this tens of thousands of times per query --
+        once per evidence item, and until stage 8 twice over. The shape is
+        fixed here, so writing it out is both clearer and about twelve times
+        faster. The keys are in declaration order deliberately: `bundle_size`
+        is a `json.dumps` with no `sort_keys`, so key order is part of the
+        byte count it reports.
+
+        `source_range` and `metadata` are copied one level deep. `asdict`
+        copies nested containers all the way down; nothing reads the returned
+        dict for anything but serialisation, so one level is enough to keep
+        the frozen instance from being aliased at the level callers touch.
+        """
+        source_range = self.source_range
+        return {
+            "evidence_id": self.evidence_id,
+            "kind": self.kind,
+            "source_id": self.source_id,
+            "relation": self.relation,
+            "target_id": self.target_id,
+            "repository": self.repository,
+            "commit": self.commit,
+            "generation": self.generation,
+            "provenance": self.provenance,
+            "confidence": self.confidence,
+            "source_path": self.source_path,
+            "source_range": dict(source_range) if source_range is not None else None,
+            "summary": self.summary,
+            "metadata": dict(self.metadata),
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -144,9 +176,15 @@ def rank_evidence(values: Iterable[Evidence], *, profile: str = "generic",
     status_rank = {"resolved": 2, "ambiguous": 1, "unresolved": 0}
     normalized_focus = tuple(str(term).strip() for term in focus_terms if str(term).strip())
 
-    def key(item: Evidence) -> tuple:
+    # The role is a pure function of the item and the profile, and both the sort
+    # key and the annotation below need it. Asking for it in each place did the
+    # work twice per item -- 127,552 calls for one 63,776-item subgraph -- so it
+    # is computed once here and carried through the sort.
+    decorated = [(item, _role_for(item, profile, normalized_focus)) for item in values]
+
+    def key(pair: tuple[Evidence, str]) -> tuple:
+        item, role = pair
         metadata = item.metadata
-        role = _role_for(item, profile, normalized_focus)
         return (
             -({"PRIMARY": 3, "SUPPORTING": 2, "CONTEXTUAL": 1,
                 "SUPPRESSED_CANDIDATE": 0}[role]),
@@ -159,10 +197,10 @@ def rank_evidence(values: Iterable[Evidence], *, profile: str = "generic",
             item.evidence_id,
         )
 
-    ranked = sorted(values, key=key)
-    return [replace(item, metadata={**item.metadata,
-                                    "bundle_role": _role_for(item, profile, normalized_focus),
-                                    "bundle_profile": profile}) for item in ranked]
+    ranked = sorted(decorated, key=key)
+    return [replace(item, metadata={**item.metadata, "bundle_role": role,
+                                    "bundle_profile": profile})
+            for item, role in ranked]
 
 
 @dataclass(frozen=True, slots=True)
@@ -253,7 +291,59 @@ class EvidenceBundle:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class DefectEvidenceBundle:
+    """One defect candidate's evidence, in the shape design doc §15 froze.
+
+    The first eight members are §15's verbatim -- `facts` are what the graph
+    proved, `uncertain_facts` what it could not, and `missing_evidence` names
+    what a stronger analysis would have to add. The bookkeeping keys follow,
+    because a reader comparing a bundle against §15 should meet the same block
+    first.
+
+    This is a parallel type, not a subclass of `EvidenceBundle`. That one is a
+    *retrieval* bundle: it ranks and truncates heterogeneous evidence under a
+    `QueryBudget`. Here the evidence is one candidate and its path, the
+    truncation already happened inside the query (`max_candidates`,
+    `max_paths`), and inheriting would force §15's members into fields that
+    mean something else.
+    """
+
+    defect_type: str
+    defect_key: str
+    subject: dict[str, Any]
+    facts: tuple[dict[str, Any], ...]
+    uncertain_facts: tuple[dict[str, Any], ...]
+    paths: tuple[dict[str, Any], ...]
+    source_evidence: tuple[str, ...]
+    missing_evidence: tuple[str, ...]
+    candidate_id: str
+    anchor: str
+    resolution_status: str
+    confidence: float
+    generation: int
+
+    def to_dict(self) -> dict[str, Any]:
+        """JSON-native throughout: this goes straight into a query result's
+        `data` and out through the CLI's `json.dumps` without a second pass."""
+        return {
+            "defect_type": self.defect_type,
+            "defect_key": self.defect_key,
+            "subject": dict(self.subject),
+            "facts": [dict(fact) for fact in self.facts],
+            "uncertain_facts": [dict(fact) for fact in self.uncertain_facts],
+            "paths": [dict(path) for path in self.paths],
+            "source_evidence": list(self.source_evidence),
+            "missing_evidence": list(self.missing_evidence),
+            "candidate_id": self.candidate_id,
+            "anchor": self.anchor,
+            "resolution_status": self.resolution_status,
+            "confidence": self.confidence,
+            "generation": self.generation,
+        }
+
+
 def parse_evidence_citations(text: str) -> list[str]:
     import re
-    pattern = r"\bE-(?:CODE|CALL|REF|DEP|SHARD|DOC|XLINK)-[0-9a-f]{24}\b"
+    pattern = r"\bE-(?:CODE|CALL|REF|DEP|SHARD|DOC|XLINK|DEFECT)-[0-9a-f]{24}\b"
     return list(dict.fromkeys(re.findall(pattern, text)))
