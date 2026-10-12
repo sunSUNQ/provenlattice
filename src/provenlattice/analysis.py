@@ -148,7 +148,7 @@ CAPABILITY_CONTRACT: dict[str, dict] = {
         "depends_on": ("events", "sparse_cfg", "sparse_dfg"),
         "cost_class": "high", "analyzer_ids": (),
         "planned_integration": "I2-B (remaining six queries)",
-        "supported_queries": ("null_flow", "double_free"),
+        "supported_queries": ("null_flow", "use_after_free", "double_free"),
         "query_time": True,
     },
 }

@@ -58,7 +58,8 @@ class CapabilityContractTests(unittest.TestCase):
     def test_defect_capability_is_partially_implemented(self) -> None:
         record = CAPABILITY_CONTRACT["defect"]
         self.assertEqual(record["status"], "partially_implemented")
-        self.assertEqual(record["supported_queries"], ("null_flow", "double_free"))
+        self.assertEqual(record["supported_queries"],
+                         ("null_flow", "use_after_free", "double_free"))
         self.assertEqual(record["analyzer_ids"], ())
         self.assertTrue(record.get("query_time"))
 

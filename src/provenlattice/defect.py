@@ -99,8 +99,9 @@ TAINT_PATH = "taint_path"
 ERROR_HANDLING = "error_handling"
 # I2A: two of the eight queries are ported; QUERY_NAMES is the honest
 # dispatch surface until the rest join in later phases.
+# I2B1 adds use_after_free (three of eight).
 QUERY_NAMES = (
-    NULL_FLOW, DOUBLE_FREE,
+    NULL_FLOW, USE_AFTER_FREE, DOUBLE_FREE,
 )
 
 # The matrix keys the stage 6 queries answer. `taint_path` has no matrix family:
@@ -110,7 +111,10 @@ QUERY_NAMES = (
 # row for it -- a key that looks like `3.1` and is not one would be worse than
 # no key at all, so the query is addressed by its query name and nothing else.
 NULL_FLOW_KEY = "3.1"
+USE_AFTER_FREE_KEY = "4.3"
 DOUBLE_FREE_KEY = "4.2"
+
+USE_AFTER_FREE_CONFIDENCE = {RESOLVED: 0.5, AMBIGUOUS: 0.3, UNRESOLVED: 0.1}
 
 # Confidence is a *band*, not a measurement: it says which of the three states
 # the candidate landed in and how much of the pattern's decisive predicate the
@@ -237,6 +241,68 @@ _MISSING_ALIAS_PRECISION = (
     "same-statement copy fact, so a pair joined through it is a candidate and "
     "not an identity"
 )
+_MISSING_ALIASING = (
+    "aliasing and reassignment: `q = p; free(q)`, `free(p); p = NULL` and "
+    "`p = realloc(p, n)` are all invisible without a data-flow graph"
+)
+_MISSING_FREE_WRAPPER = (
+    "what a release wrapper does: whether it nulls the caller's pointer, "
+    "whether it releases the whole object, and whether it releases at all"
+)
+_MISSING_USE_KIND = (
+    "whether the use reads the pointer value or the pointee: `if (p)` after a "
+    "release compares a dangling value, and the graph does not separate the "
+    "two readings"
+)
+# UAF composition elimination records (I2B1, from PR #1 stage 5B)
+_CALL_INTERVENING_DEF = {
+    "reason": "CALL_INTERVENING_DEF",
+    "provenance": "graph:flow_key",
+    "detail": (
+        "the identity is defined again between the release and the call, so the "
+        "value the call uses is not the released one"
+    ),
+}
+_CALL_MEMBER_MISMATCH = {
+    "reason": "CALL_MEMBER_MISMATCH",
+    "provenance": "graph:subject_member",
+    "detail": (
+        "the released object is a member path and the call's first argument is a "
+        "provably different member of the same root, which is a different object"
+    ),
+}
+_CALL_PATH_DISJOINT = {
+    "reason": "CALL_PATH_DISJOINT",
+    "provenance": "graph:control_reaches",
+    "detail": (
+        "the release cannot reach the call on the control-flow graph, so the call "
+        "does not execute after the release on any path"
+    ),
+}
+_USE_IS_RELEASE = {
+    "reason": "USE_IS_RELEASE",
+    "provenance": "graph:control_reaches",
+    "detail": (
+        "the call releases an object aliasing the one already released, which is "
+        "matrix 4.2's question rather than this one"
+    ),
+}
+_USE_READS_POINTER_VALUE = {
+    "reason": "USE_READS_POINTER_VALUE",
+    "provenance": "graph:event_type",
+    "detail": (
+        "the use is a null comparison, which reads the pointer's value rather "
+        "than the object it pointed at"
+    ),
+}
+
+
+def _statement_key(info: Mapping[str, Any]) -> tuple[str, str, int]:
+    return (
+        str(info.get("file_id", "")),
+        str(info.get("owner_symbol_id", "")),
+        int(info.get("start_line", 0) or 0),
+    )
 # Matrix 9.1's own "AI-required Semantics" column says this one out loud: which
 # APIs must have their return value checked is API semantics, not a graph fact.
 # It is also what keeps the candidate population honest -- a call whose result
@@ -363,10 +429,12 @@ def run(
     them `None` and that query builds its own pair, which is what a test
     driving a single query directly has always done.
     """
-    # I2A: two of the eight queries are ported; the rest join in later
-    # phases and must never be dispatched before they exist.
+    # I2A: two of the eight queries are ported; I2B1 adds use_after_free
+    # (three of eight). The rest join in later phases and must never be
+    # dispatched before they exist.
     functions: dict[str, Callable[..., DefectQueryResult]] = {
         NULL_FLOW: null_flow,
+        USE_AFTER_FREE: use_after_free,
         DOUBLE_FREE: double_free,
     }
     try:
@@ -1754,6 +1822,351 @@ def _double_free_candidate(
 # into spurious candidates that the frozen rule eliminates. Callers may raise
 # the ceiling; they may not lower it.
 
+
+
+
+def use_after_free(
+    events: Iterable[Any],
+    edges: Iterable[Any],
+    *,
+    subject: str | None = None,
+    max_hops: int = 64,
+    max_paths: int = 8,
+    max_candidates: int = 20,
+    names: Mapping[str, str] | None = None,
+    identity: bool = True,
+    defect_keys: Collection[str] | None = None,
+    points: Points | None = None,
+    adjacency: Adjacency | None = None,
+) -> DefectQueryResult:
+    """Matrix 4.3: a use of an object after the same identity was released.
+
+    Two halves, and the second exists because the first is nearly empty.
+    Stage 5B's `free_to_use` edges are minted in *source order* and are
+    path-blind -- `live_free` is never cleared, so a release on one arm pairs
+    with a use on another -- and on the acceptance corpora almost every such
+    edge connects no path at all: 11 of 11 on redis-50, 46 of 47 on
+    llama.cpp-69, and the two sampled by hand were `free(x); return;` cleanup
+    arms. The reachability test is therefore not a refinement here; it is what
+    separates the flow class from a UAF.
+
+    The second half is the shape 5B does not mint an edge for at all:
+    `free(p); sink(p)`. A CALL is not a USE event (stage 3's registered gap), so
+    the release kills the live definition and the argument path finds nothing.
+    The composition here closes that at query time: for every release, every
+    call in the same method whose argument roots include a spelling the copy
+    annotation ties to the released root, positioned after it, reachable from
+    it, with no redefinition of the identity in between.
+
+    Every candidate from that composition is `ambiguous`, and the reason is
+    structural: `_root_identifier` strips `&`, so `f(p)` and `f(&p)` are the
+    same fact here, and one of them passes the object out while the other only
+    reads it. On redis-50 this composition is not a corner case -- it is the
+    bulk of the result, because the corpus's dominant shape is a callee that
+    re-allocates through a pointer argument (`len = redisFormatCommand(&cmd,
+    ...)`), which no fact in the graph distinguishes from a use.
+    """
+    points, adjacency = _published_graph(events, edges, points, adjacency)
+    reach = _Reachability(adjacency, points)
+    population: Counter = Counter()
+    states: Counter = Counter()
+    by_reason: Counter = Counter()
+    records: list[dict[str, Any]] = []
+    candidates: list[Candidate] = []
+    wanted = _wanted(USE_AFTER_FREE_KEY, defect_keys)
+
+    for source_id, target_id, metadata in _flow_edges(edges):
+        if str(metadata.get("flow_class", "")) != FREE_TO_USE:
+            continue
+        target = points.get(target_id)
+        if target is None:
+            continue
+        population["edge"] += 1
+        if not wanted or (subject is not None and _identity_display(target) != subject):
+            continue
+        state = reach.state(source_id, target_id)
+        if state == DISJOINT:
+            _record_elimination(
+                _PATH_DISJOINT, USE_AFTER_FREE_KEY, target_id, target, names, by_reason, records
+            )
+            continue
+        if target["event_type"] == "CHECK":
+            _record_elimination(
+                _USE_READS_POINTER_VALUE, USE_AFTER_FREE_KEY, target_id, target,
+                names, by_reason, records,
+            )
+            continue
+        status = _use_status(
+            target, metadata, state, identity=identity, escaping=target["event_type"] == "RETURN"
+        )
+        candidate = _use_candidate(
+            source_id, target_id, target, points, names, status, identity=identity,
+            reach=reach, max_hops=max_hops, max_paths=max_paths,
+            flow_class=FREE_TO_USE, composition=False,
+        )
+        states[status] += 1
+        candidates.append(candidate)
+
+    # The query-time composition: `free(p); sink(p)`, which 5B mints no edge
+    # for. Grouped per owner because the alias annotation and the point ids are
+    # method-local, and built in one pass for the reason `_alias_groups` gives.
+    by_owner = _by_owner(points)
+    alias_groups = _alias_groups(points)
+    releases_by_statement: dict[tuple[str, str, int], list[str]] = {}
+    for point_id in sorted(points):
+        info = points[point_id]
+        if info["event_type"] == "RELEASE" and info.get("subject"):
+            releases_by_statement.setdefault(_statement_key(info), []).append(point_id)
+    for owner in sorted(by_owner):
+        point_ids = by_owner[owner]
+        groups = alias_groups.get(owner, {})
+        releases = [
+            point_id for point_id in point_ids
+            if points[point_id]["event_type"] == "RELEASE" and points[point_id].get("subject")
+        ]
+        if not releases:
+            continue
+        calls_by_root: dict[str, list[tuple[str, int]]] = {}
+        definitions: dict[tuple[str, ...], list[tuple[int, str, int]]] = {}
+        for point_id in point_ids:
+            info = points[point_id]
+            if info["event_type"] == "CALL" and info.get("arguments"):
+                for index, argument in enumerate(str(info["arguments"]).split(ARGUMENT_SEPARATOR)):
+                    if argument:
+                        calls_by_root.setdefault(argument, []).append((point_id, index))
+            elif info["event_type"] in DEF_EVENTS:
+                definitions.setdefault(_flow_key(info), []).append(_position(info))
+        for positions in definitions.values():
+            positions.sort()
+        for release_id in releases:
+            release = points[release_id]
+            roots = _alias_closure(groups, str(release["subject"]))
+            release_position = _position(release)
+            release_member = str(release.get("subject_member", ""))
+            between = definitions.get(_flow_key(release), ())
+            matching: dict[str, list[int]] = {}
+            for root in sorted(roots):
+                for call_id, index in calls_by_root.get(root, ()):
+                    matching.setdefault(call_id, []).append(index)
+            for call_id in sorted(matching):
+                call = points[call_id]
+                call_position = _position(call)
+                if call_position <= release_position:
+                    continue
+                population["call-composition"] += 1
+                if not wanted or (subject is not None and _identity_display(call) != subject):
+                    continue
+                # A member-expression release is eliminated only when the one
+                # argument whose member is recoverable proves a different
+                # object. `subject_member` describes the true first argument
+                # exactly when `subject_from` is `argument` -- for an assignment
+                # right-hand side the subject is the *target*, so
+                # `len = redisFormatCommand(&cmd, ...)` has subject `len`.
+                if (release_member and sorted(matching[call_id]) == [0]
+                        and call.get("subject_from") == "argument"
+                        and str(call.get("subject_member", "")) != release_member):
+                    _record_elimination(
+                        _CALL_MEMBER_MISMATCH, USE_AFTER_FREE_KEY, call_id, call,
+                        names, by_reason, records,
+                    )
+                    continue
+                # `free(p); free(q)` with `q` aliasing `p` is matrix 4.2's
+                # question. The test is graph-only: a release call has a RELEASE
+                # point on its own statement, so a call that shares a statement
+                # with a release of an aliasing root is a release and not a use.
+                if any(
+                    str(points[other].get("subject", "")) in roots
+                    for other in releases_by_statement.get(_statement_key(call), ())
+                ):
+                    _record_elimination(
+                        _USE_IS_RELEASE, USE_AFTER_FREE_KEY, call_id, call,
+                        names, by_reason, records,
+                    )
+                    continue
+                if reach.state(release_id, call_id) == DISJOINT:
+                    _record_elimination(
+                        _CALL_PATH_DISJOINT, USE_AFTER_FREE_KEY, call_id, call,
+                        names, by_reason, records,
+                    )
+                    continue
+                index_after = bisect.bisect_right(between, release_position)
+                if index_after < len(between) and between[index_after] < call_position:
+                    _record_elimination(
+                        _CALL_INTERVENING_DEF, USE_AFTER_FREE_KEY, call_id, call,
+                        names, by_reason, records,
+                    )
+                    continue
+                candidates.append(_use_candidate(
+                    release_id, call_id, call, points, names, AMBIGUOUS,
+                    identity=identity, reach=reach, max_hops=max_hops,
+                    max_paths=max_paths, flow_class=FREE_TO_USE,
+                    composition=True, reach_state=reach.state(release_id, call_id),
+                ))
+                states[AMBIGUOUS] += 1
+
+    candidates.sort(key=Candidate.sort_key)
+    truncated = len(candidates) > max_candidates
+    coverage = {
+        "population": dict(sorted(population.items())),
+        "states": dict(sorted(states.items())),
+        "candidates": len(candidates),
+        "candidates_by_key": _count_by_key(candidates),
+        "call_composition_candidates": sum(
+            1 for candidate in candidates
+            if candidate.metadata.get("use_from") == "call-composition"
+        ),
+        "max_hops": max_hops,
+        "semantic_points": len(points),
+        "semantic_edges": sum(len(item) for item in adjacency.values()),
+        "points_by_type": _points_by_type(points),
+        **_disqualification_coverage(by_reason, records),
+    }
+    return DefectQueryResult(
+        query=USE_AFTER_FREE, candidates=tuple(candidates[:max_candidates]),
+        coverage=coverage, truncated=truncated,
+    )
+
+
+def _use_status(
+    target: Mapping[str, Any],
+    metadata: Mapping[str, Any],
+    state: str,
+    *,
+    identity: bool,
+    escaping: bool,
+) -> str:
+    """The state a use can carry, given what the graph answered about it.
+
+    `escaping` is the RETURN case: a method that returns a dangling pointer has
+    handed the decision to its caller, which is a real finding and not one this
+    graph can call resolved. The copy hop and the unanswerable reachability
+    question are the same caps the null-flow query applies, for the same
+    reason: both are name-level joins rather than proofs of one object.
+    """
+    if not _identity(target, identity=identity):
+        return UNRESOLVED
+    if _identity_cap(target, identity=identity) is not None:
+        return AMBIGUOUS
+    if tuple(metadata.get("via_copies", ()) or ()):
+        return AMBIGUOUS
+    if state == REACH_UNKNOWN or escaping:
+        return AMBIGUOUS
+    return RESOLVED
+
+
+def _use_candidate(
+    release_id: str,
+    use_id: str,
+    use: Mapping[str, Any],
+    points: Mapping[str, Mapping[str, Any]],
+    names: Mapping[str, str] | None,
+    status: str,
+    *,
+    identity: bool,
+    reach: _Reachability,
+    max_hops: int,
+    max_paths: int,
+    flow_class: str,
+    composition: bool,
+    reach_state: str = "",
+) -> Candidate:
+    """One UAF candidate, from either half of the query.
+
+    The subject is the *use*, because that is where the defect happens: the
+    release is a legitimate operation and the finding is that something ran
+    after it. The release is carried in the facts and the metadata so a reader
+    can see both ends without opening the graph.
+    """
+    identity_key = _identity(use, identity=identity)
+    owner = str(use.get("owner_symbol_id", ""))
+    release = points.get(release_id, {})
+    paths, truncated = _flow_path(reach, points, release_id, use_id, max_hops, max_paths)
+    uncertain: list[dict[str, Any]] = []
+    if not identity_key:
+        uncertain.append(_uncertain(
+            "SUBJECT_UNRESOLVED", decisive=True,
+            detail="the use names no target, so the candidate cannot be attributed",
+        ))
+    else:
+        cap = _identity_cap(use, identity=identity)
+        if cap is not None:
+            uncertain.append(_uncertain(
+                cap["fact"], decisive=True, detail=cap["detail"],
+                point=use_id, source=_span(use),
+            ))
+    if composition:
+        uncertain.append(_uncertain(
+            "USE_KIND_UNKNOWN", decisive=True,
+            detail=(
+                "the use is a call argument, and the graph does not distinguish "
+                "passing the pointer (`f(p)`) from passing its address (`f(&p)`)"
+            ),
+            point=use_id, source=_span(use),
+        ))
+    elif use["event_type"] == "RETURN":
+        uncertain.append(_uncertain(
+            "ESCAPING_USE", decisive=True,
+            detail="the use returns the released pointer to the caller",
+            point=use_id, source=_span(use),
+        ))
+    if reach_state == REACH_UNKNOWN:
+        uncertain.append(_uncertain(
+            "REACH_UNKNOWN", decisive=True,
+            detail=(
+                "the release has no position in the control-flow graph, so the "
+                "graph cannot say the use runs after it"
+            ),
+            point=release_id,
+            source=_span(release) if release else "",
+        ))
+    steps = [release_id, use_id]
+    return Candidate(
+        defect_key=USE_AFTER_FREE_KEY,
+        query=USE_AFTER_FREE,
+        subject={
+            "kind": "use-after-release",
+            "name": _identity_display(use),
+            "identity": identity_key,
+            "storage": use.get("subject_storage", ""),
+            "type": use.get("subject_type", ""),
+            "member": use.get("subject_member", ""),
+            "method": _method_name(use, names),
+            "owner_symbol_id": owner,
+        },
+        anchor=use_id,
+        discriminator=(
+            f"{identity_key or 'anonymous'}|{owner}|{_step(release)}|{_step(use)}"
+        ),
+        resolution_status=status,
+        confidence=USE_AFTER_FREE_CONFIDENCE[status],
+        facts=tuple(
+            _point_fact(point_id, points[point_id], names)
+            for point_id in steps if _citable(point_id, points)
+        ),
+        uncertain_facts=tuple(uncertain),
+        paths=paths,
+        source_evidence=_source_evidence(steps, points),
+        missing_evidence=(_MISSING_USE_KIND, _MISSING_FREE_WRAPPER, _MISSING_ALIASING),
+        metadata={
+            "flow_class": flow_class,
+            "use_from": "call-composition" if composition else "flow-edge",
+            "release": {
+                "point": release_id,
+                "source": _span(release) if release else "",
+                "subject": release.get("subject", ""),
+            },
+            "reach": reach_state,
+            "path_recorded": bool(paths),
+            "paths_truncated": truncated,
+            "anchor_span": {
+                "relative_path": use.get("relative_path", ""),
+                "start_line": use.get("start_line", 0),
+                "end_line": use.get("end_line", 0),
+            },
+            "methods": [item for item in [_method_name(use, names)] if item],
+            "exit_point": "",
+        },
+    )
 
 
 
