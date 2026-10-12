@@ -12,6 +12,11 @@ from .storage import SQLiteStorage
 
 
 ANALYSIS_SCHEMA = """
+-- Schema note (I2A): the node/edge primary keys are (id, feature) because
+-- two analyzers may publish the SAME derived fact under different features
+-- by design -- events:cpp and sparse_cfg:cpp share identity.event_id for the
+-- same operation, and the shared id IS the cross-analyzer consistency
+-- guarantee.
 CREATE TABLE IF NOT EXISTS analysis_state (
     file_id TEXT NOT NULL, feature TEXT NOT NULL,
     source_hash TEXT NOT NULL, feature_version INTEGER NOT NULL,
@@ -20,13 +25,15 @@ CREATE TABLE IF NOT EXISTS analysis_state (
     PRIMARY KEY(file_id, feature)
 );
 CREATE TABLE IF NOT EXISTS analysis_nodes (
-    analysis_node_id TEXT PRIMARY KEY, file_id TEXT NOT NULL,
-    feature TEXT NOT NULL, kind TEXT NOT NULL, payload TEXT NOT NULL
+    analysis_node_id TEXT NOT NULL, file_id TEXT NOT NULL,
+    feature TEXT NOT NULL, kind TEXT NOT NULL, payload TEXT NOT NULL,
+    PRIMARY KEY(analysis_node_id, feature)
 );
 CREATE TABLE IF NOT EXISTS analysis_edges (
-    analysis_edge_id TEXT PRIMARY KEY, file_id TEXT NOT NULL,
+    analysis_edge_id TEXT NOT NULL, file_id TEXT NOT NULL,
     feature TEXT NOT NULL, src_id TEXT NOT NULL, dst_id TEXT NOT NULL,
-    kind TEXT NOT NULL, payload TEXT NOT NULL
+    kind TEXT NOT NULL, payload TEXT NOT NULL,
+    PRIMARY KEY(analysis_edge_id, feature)
 );
 CREATE INDEX IF NOT EXISTS idx_analysis_nodes_file_feature
     ON analysis_nodes(file_id, feature);
@@ -124,10 +131,19 @@ CAPABILITY_CONTRACT: dict[str, dict] = {
         "grade": "local-only, diagnostic",
     },
     "defect": {
-        "status": "registered", "domain": "inspection",
+        # I2A: the defect QUERY layer is delivered for two of the eight
+        # patterns (null_flow, double_free) -- a query-time reader over the
+        # events/sparse_cfg/sparse_dfg rows, not a materializing analyzer.
+        # The other six patterns stay unported; resolved is an evidence
+        # state, never a Verified Finding, and confidence is the PR
+        # heuristic score.
+        "status": "partially_implemented", "domain": "inspection",
         "languages": ("c", "cpp"),
         "depends_on": ("events", "sparse_cfg", "sparse_dfg"),
-        "cost_class": "high", "analyzer_ids": (), "planned_integration": "I2",
+        "cost_class": "high", "analyzer_ids": (),
+        "planned_integration": "I2-B (remaining six queries)",
+        "supported_queries": ("null_flow", "double_free"),
+        "query_time": True,
     },
 }
 

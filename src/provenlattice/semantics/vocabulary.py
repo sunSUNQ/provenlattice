@@ -14,9 +14,17 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Mapping
 
-from .events import KNOWN_EVENTS, event_level
+from .events import (
+    ACCESS_EVENTS,
+    KNOWN_EVENTS,
+    LEVEL_0_EVENTS,
+    LEVEL_1_EVENTS,
+    STRUCTURAL_EVENTS,
+    event_level,
+)
 
 VOCABULARY_DIR = Path(__file__).with_name("vocabularies")
+DEFECT_PATTERN_FILE = Path(__file__).with_name("defect_patterns.toml")
 
 MATCHER_AXES = ("syntax", "calls", "qualified")
 # Not a matcher: a veto on one. The `calls` axis reads the last component of a
@@ -41,6 +49,104 @@ GRAMMAR_AXES = ("call_syntax", "declaration_syntax")
 # no such event" as a reasoned claim that a coverage report can quote, instead
 # of leaving an empty table that reads like an unfinished one.
 ABSENCE_KEY = "absent"
+
+# Every event the pipeline can emit today: the level 0 extraction (stage 2),
+# the structural CHECK/BRANCH/DEREFERENCE points the CFG walker adds (stage 3),
+# and the READ/WRITE accesses it adds (stage 5A). A defect requirement outside
+# this set is a gap, and naming the set once is what keeps `missing_events` and
+# `candidate_missing_events` from drifting apart.
+#
+# This set is a claim about the *pipeline*, not about every occurrence, and not
+# about every language: the walker emits these for the languages whose
+# LanguageProfile is implemented (C and C++ today; Python's profile is a
+# registered gap of stage 3), and an access is emitted only for subjects whose
+# storage class says the object outlives the method. Both are narrower than
+# "READ exists", and neither narrows to nothing.
+PRODUCIBLE_EVENTS = LEVEL_0_EVENTS | STRUCTURAL_EVENTS | ACCESS_EVENTS
+
+# Every Defect Semantic Relation design doc §5.3 defines. A pattern may name
+# any of them -- that is how a requirement is recorded before the analysis
+# that builds it exists -- but a name outside this set is a typo, not a gap.
+KNOWN_RELATIONS = frozenset({
+    "ACQUIRES", "CALLS", "CHECKS", "CONSUMES", "CONTROL_REACHES", "DATA_FLOW_TO",
+    "DOMINATES_CHECK", "EXECUTES_IN", "MAY_ALIAS", "MAY_PARALLEL", "PRODUCES",
+    "PROTECTED_BY", "READS", "RELEASES", "RETURNS", "THROWS_TO", "WRITES",
+})
+# What the graph actually holds. Stage 3 built CONTROL_REACHES and nothing
+# else. Stage 5B adds DATA_FLOW_TO (the method-local def-use edges) and
+# CONSUMES (ALLOC -> same-line CALL, minted from the 5C `passed_to` fact).
+# The other names a stage-5 reading of the matrix could suggest stay absent
+# on purpose, and their implementation mapping is: MAY_ALIAS is candidate
+# metadata (the `alias` annotation), never a fact edge; DOMINATES_CHECK is
+# the set of CHECK entries on a DATA_FLOW_TO edge's `via` chain, not a
+# relation; and PRODUCES/RELEASES/RETURNS/READS/WRITES/ACQUIRES/EXECUTES_IN
+# remain event-subject identity facts -- so 4.1's `missing_relations()` does
+# not reach zero after 5B.
+#
+# Stage 6 leaves this set unchanged, and that is the honest outcome rather than
+# an omission: it adds four *consumers* of the relations above, and every place
+# a query looks like it is reading a missing relation it is reading something
+# weaker. `CHECKS` and `DOMINATES_CHECK` are implemented for 3.1 as a seeding of
+# the CFG walker's null arms and a reverse reachability test from a CHECK --
+# facts about control flow, which is what those relations were always a
+# shorthand for, and not new rows in a table. `PRODUCES` is implemented as the
+# `result_of` annotation stage 6 adds to a WRITE whose right-hand side is a call
+# (the query reads the annotation; nothing mints a PRODUCES edge). `RELEASES`
+# stays an event-subject identity fact in the double-free pairing. The
+# consequence is the one that matters for reporting: 3.1, 4.2, 4.3 and 4.6 all
+# generate candidates while their `missing_relations()` stays non-empty, so
+# "the pipeline proposes candidates for 3.1" and "the pipeline can confirm 3.1"
+# remain two different sentences.
+AVAILABLE_RELATIONS = frozenset({"CONTROL_REACHES", "DATA_FLOW_TO", "CONSUMES"})
+
+
+class VocabularyError(ValueError):
+    """A vocabulary file is malformed or declares something unknown."""
+
+
+@dataclass(frozen=True, slots=True)
+class EventSpec:
+    """What a single event type looks like in one language.
+
+    The keyword lists are candidate generators, not judges (design doc §8): a
+    hit proposes an event, and tree-sitter structure confirms its shape. A name
+    landing here never by itself asserts that a defect exists.
+    """
+
+    event_type: str
+    syntax: frozenset[str]
+    calls: frozenset[str]
+    qualified: frozenset[str]
+    # Qualified spellings of a listed bare name that name a *different*
+    # function. The `calls` axis matches the last component of the callee, so
+    # `std::getline` hits a table that lists POSIX `getline`; these entries are
+    # how the table says "that one is not me". Empty for every event whose bare
+    # names have no such twin, which is almost all of them.
+    qualified_exclude: frozenset[str] = frozenset()
+    # Listed callees that hand the object they create through their first
+    # argument instead of returning it. Empty for every event whose names
+    # return what they allocate, which is all of them but POSIX's aligned
+    # allocator. Read for ALLOC only: it is that event's subject decoding
+    # that would otherwise name the return code.
+    out_param: frozenset[str] = frozenset()
+    # Set only when this language has no such event. The text is the reason,
+    # and it is the whole payload -- a spec that is absent carries no matchers.
+    absent: str | None = None
+
+    @property
+    def level(self) -> int:
+        return event_level(self.event_type)
+
+    def keywords(self) -> tuple[str, ...]:
+        """Every literal this spec matches on. Sorted, so callers stay deterministic."""
+        return tuple(sorted(self.calls | self.qualified))
+
+    def has_matchers(self) -> bool:
+        return bool(self.syntax or self.calls or self.qualified)
+
+    def is_absent(self) -> bool:
+        return self.absent is not None
+
 
 
 class VocabularyError(ValueError):
@@ -284,3 +390,111 @@ def vocabulary_for_path(path: str) -> Vocabulary | None:
             "a file cannot be assigned to one language deterministically"
         )
     return load_vocabulary(matches[0])
+
+@dataclass(frozen=True, slots=True)
+class DefectPattern:
+    """One row of the defect matrix, as far as the pipeline can act on it.
+
+    Two pairs of requirements, because a defect is answered in two stages that
+    need different things. `requires` / `relations` are what *confirming* the
+    defect needs; `candidate_requires` / `candidate_relations` are what
+    *proposing* a candidate needs. Stage 4 is the reason they are separate: a
+    race candidate is proposable from events the pipeline already produces,
+    while confirming the race needs READ/WRITE and four relations the DFG has
+    not built. Collapsing the two made the coverage report say "not
+    attackable" about a pattern the query layer does attack.
+
+    `query` is the typed query that produces candidates, or None when the
+    pattern is not expanded yet -- an absent key, never an empty one, because
+    "unexpanded" and "expanded and needing nothing" are different claims.
+    """
+
+    key: str
+    name: str
+    grade: str
+    requires: tuple[str, ...]
+    relations: tuple[str, ...] = ()
+    candidate_requires: tuple[str, ...] = ()
+    candidate_relations: tuple[str, ...] = ()
+    query: str | None = None
+
+    @property
+    def expanded(self) -> bool:
+        return self.query is not None
+
+    def missing_events(self) -> tuple[str, ...]:
+        """Required events the pipeline cannot yet produce, sorted.
+
+        "Produce" covers the vocabulary's level 0 extraction (stage 2), the
+        structural CHECK/BRANCH/DEREFERENCE points the CFG walker emits
+        (stage 3), and the READ/WRITE access events the walker's positional
+        rule emits (stage 5A, matched_via="access"). What is still missing is
+        the DFG's event vocabulary -- OPEN/CLOSE and friends -- not READ or
+        WRITE.
+        """
+        return tuple(sorted(set(self.requires) - PRODUCIBLE_EVENTS))
+
+    def missing_relations(self) -> tuple[str, ...]:
+        return tuple(sorted(set(self.relations) - AVAILABLE_RELATIONS))
+
+    def candidate_missing_events(self) -> tuple[str, ...]:
+        return tuple(sorted(set(self.candidate_requires) - PRODUCIBLE_EVENTS))
+
+    def candidate_missing_relations(self) -> tuple[str, ...]:
+        return tuple(sorted(set(self.candidate_relations) - AVAILABLE_RELATIONS))
+
+    def coverable_now(self) -> bool:
+        """Can this pattern's *confirmation* be answered from the graph today?"""
+        return self.expanded and not self.missing_events() and not self.missing_relations()
+
+    def candidate_coverable_now(self) -> bool:
+        """Can this pattern's *candidate generation* run today?
+
+        True for 1.1 while `coverable_now()` is False, and that pair of answers
+        is the stage 4 falsifiability result stated mechanically rather than in
+        prose.
+        """
+        return (
+            self.expanded
+            and not self.candidate_missing_events()
+            and not self.candidate_missing_relations()
+        )
+
+
+def load_defect_patterns() -> tuple[DefectPattern, ...]:
+    payload = tomllib.loads(DEFECT_PATTERN_FILE.read_text(encoding="utf-8"))
+    patterns = []
+    for key, body in sorted(payload.get("patterns", {}).items()):
+        requires = tuple(sorted(body.get("requires", [])))
+        relations = tuple(sorted(body.get("relations", [])))
+        candidate_requires = tuple(sorted(body.get("candidate_requires", [])))
+        candidate_relations = tuple(sorted(body.get("candidate_relations", [])))
+        for label, names, known in (
+            ("events", requires + candidate_requires, KNOWN_EVENTS),
+            ("relations", relations + candidate_relations, KNOWN_RELATIONS),
+        ):
+            unknown = sorted(set(names) - known)
+            if unknown:
+                # A typo must not look like a gap: `MAY_PARALELL` would
+                # otherwise report as a missing relation forever.
+                raise VocabularyError(
+                    f"defect pattern {key}: unknown {label} {', '.join(unknown)}"
+                )
+        query = body.get("query")
+        if query is not None and (not isinstance(query, str) or not query.strip()):
+            raise VocabularyError(
+                f"defect pattern {key}: query must be a non-empty name, or absent"
+            )
+        patterns.append(
+            DefectPattern(
+                key=key,
+                name=str(body.get("name", key)),
+                grade=str(body.get("grade", "?")),
+                requires=requires,
+                relations=relations,
+                candidate_requires=candidate_requires,
+                candidate_relations=candidate_relations,
+                query=query,
+            )
+        )
+    return tuple(patterns)

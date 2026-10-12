@@ -11,6 +11,7 @@ from .graph import full_index
 from .incremental import incremental_update
 from .knowledge import index_knowledge
 from .analysis_query import query_analysis
+from .defect_query import query_defect_candidates
 from .orchestrator import AnalysisRequestError, analyze_scope
 from .query import GraphQuery
 from .shard import BuildAwareShardStrategy, DirectoryShardStrategy, StructuralShardStrategy
@@ -69,6 +70,18 @@ def build_parser() -> argparse.ArgumentParser:
     analysis_selectors = analysis_query.add_mutually_exclusive_group(required=True)
     analysis_selectors.add_argument("--symbol-id")
     analysis_selectors.add_argument("--file-path")
+    defect_query_cmd = command("defect")
+    defect_query_cmd.add_argument("repo")
+    defect_query_cmd.add_argument(
+        "--type", default="all",
+        help="defect query: all, null_flow, double_free, or a matrix key the "
+             "I2A surface answers (3.1, 4.2)")
+    defect_query_cmd.add_argument("--subject", default=None)
+    defect_query_cmd.add_argument("--max-hops", type=int, default=64)
+    defect_query_cmd.add_argument("--max-paths", type=int, default=8)
+    defect_query_cmd.add_argument(
+        "--max-candidates", type=int, default=20,
+        help="budget cap: truncation is reported, never hidden as an empty result")
     command("status")
     symbol = command("symbol")
     symbol.add_argument("name")
@@ -171,6 +184,19 @@ def run(args: argparse.Namespace) -> dict:
                 "error": {"code": error.code, "detail": error.detail},
                 "feature": args.feature,
                 "selector": {"symbol_id": args.symbol_id, "file_path": args.file_path},
+            }
+    if args.command == "defect":
+        try:
+            return query_defect_candidates(
+                args.repo, defect_type=args.type, subject=args.subject,
+                max_hops=args.max_hops, max_paths=args.max_paths,
+                max_candidates=args.max_candidates, database=database,
+            )
+        except AnalysisRequestError as error:
+            return {
+                "status": "failed",
+                "error": {"code": error.code, "detail": error.detail},
+                "defect_type": args.type,
             }
     if args.command == "task-context":
         if not database.exists():

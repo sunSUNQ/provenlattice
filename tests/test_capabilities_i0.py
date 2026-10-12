@@ -25,6 +25,7 @@ from provenlattice.analysis import (
     selectable_features,
 )
 from provenlattice.analysis_query import query_analysis
+from provenlattice.defect_query import query_defect_candidates
 from provenlattice.graph import full_index
 from provenlattice.orchestrator import AnalysisRequestError, analyze_scope
 
@@ -46,11 +47,20 @@ class CapabilityContractTests(unittest.TestCase):
         self.assertEqual(
             implemented_features(),
             {"ast", "cfg", "sparse_cfg", "sparse_dfg"})
+        # I2A: defect is partially_implemented (two of eight queries), so the
+        # registered set is now empty.
         self.assertEqual(
             {feature for feature, record in CAPABILITY_CONTRACT.items()
              if record["status"] == "registered"},
-            {"defect"},
+            set(),
         )
+
+    def test_defect_capability_is_partially_implemented(self) -> None:
+        record = CAPABILITY_CONTRACT["defect"]
+        self.assertEqual(record["status"], "partially_implemented")
+        self.assertEqual(record["supported_queries"], ("null_flow", "double_free"))
+        self.assertEqual(record["analyzer_ids"], ())
+        self.assertTrue(record.get("query_time"))
 
     def test_events_capability_is_partially_implemented(self) -> None:
         # I1-A: events runs on explicit request but only delivers the level-0
@@ -112,30 +122,20 @@ class DefaultIsolationTests(unittest.TestCase):
         full_index(self.root, self.database)
         self.assertEqual(self.tables(), BASE_TABLES)
 
-    def test_failed_capability_request_mutates_nothing(self) -> None:
+    def test_defect_request_materializes_upstream_only(self) -> None:
+        # I2A: defect is query-time -- requesting it materializes the
+        # upstream chain and nothing else; candidates come from the query.
         full_index(self.root, self.database)
-        for features in ("defect", "cfg,defect"):
-            with self.assertRaises(AnalysisRequestError) as caught:
-                analyze_scope(self.root, "src", features, database=self.database)
-            self.assertEqual(caught.exception.code, "capability_not_available")
-        # The failed requests must not have created the analysis tables.
-        self.assertEqual(self.tables(), BASE_TABLES)
+        analyze_scope(self.root, "src", "defect", database=self.database)
+        self.assertEqual(self.tables(), BASE_TABLES | {"analysis_state", "analysis_nodes", "analysis_edges"})
+        env = query_defect_candidates(self.root, defect_type="double_free",
+                                      database=self.database)
+        self.assertEqual(env["status"], "available")
 
     def test_analyze_unknown_feature_keeps_legacy_code(self) -> None:
         with self.assertRaises(AnalysisRequestError) as caught:
             analyze_scope(self.root, "src", "bogus", database=self.database)
         self.assertEqual(caught.exception.code, "unknown_feature")
-
-    def test_query_registered_capability_reports_unavailable(self) -> None:
-        full_index(self.root, self.database)
-        for feature in ("defect",):
-            env = query_analysis(self.root, feature,
-                                 file_path="src/a.c", database=self.database)
-            self.assertEqual(env["status"], "unavailable")
-            self.assertEqual(env["reason"], "capability_not_implemented")
-            self.assertEqual(env["nodes"], [])
-            self.assertEqual(env["edges"], [])
-            self.assertIsNone(env["analyzer"])
 
     def test_query_unknown_feature_still_unsupported(self) -> None:
         full_index(self.root, self.database)
@@ -186,26 +186,28 @@ class CliCompatTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def test_cli_analyze_reports_structured_capability_error(self) -> None:
+    def test_cli_analyze_defect_is_query_time(self) -> None:
         from provenlattice.cli import build_parser, run
         args = build_parser().parse_args([
             "analyze", str(self.root), "--scope", "src",
             "--features", "defect", "--database", str(self.database), "--json",
         ])
         result = run(args)
-        self.assertEqual(result["status"], "failed")
-        self.assertEqual(result["error"]["code"], "capability_not_available")
-        self.assertIn("I2", result["error"]["detail"])
+        self.assertEqual(result["status"], "complete")
+        self.assertIn("defect", result["executed_features"])
+        self.assertIn("defect_query_hint", result)
 
-    def test_cli_analysis_reports_unavailable_envelope(self) -> None:
+    def test_cli_analysis_defect_reports_unsupported(self) -> None:
+        # defect is not a feature of the analysis (feature/materialization)
+        # surface -- it answers through the defect query entry.
         from provenlattice.cli import build_parser, run
         args = build_parser().parse_args([
             "analysis", str(self.root), "--feature", "defect",
             "--file-path", "src/a.c", "--database", str(self.database), "--json",
         ])
         result = run(args)
-        self.assertEqual(result["status"], "unavailable")
-        self.assertEqual(result["reason"], "capability_not_implemented")
+        self.assertEqual(result["status"], "unsupported")
+        self.assertEqual(result["reason"], "unsupported_feature")
 
 
 if __name__ == "__main__":

@@ -158,6 +158,7 @@ def analyze_c_scfg_scope(
                 id_by_key[key] = node_id
                 payload = {
                     "owner_symbol_id": owner,
+                    "file_id": file_id,
                     "owner_kind": event.owner_kind,
                     "owner_qualified_name": event.owner_qualified_name,
                     "owner_signature": event.owner_signature,
@@ -186,6 +187,7 @@ def analyze_c_scfg_scope(
                 id_by_key[key] = node_id
                 payload = {
                     "owner_symbol_id": owner,
+                    "file_id": file_id,
                     "owner_kind": point.owner_kind,
                     "owner_qualified_name": point.owner_qualified_name,
                     "owner_signature": point.owner_signature,
