@@ -17,6 +17,12 @@ ANALYSIS_SCHEMA = """
 -- by design -- events:cpp and sparse_cfg:cpp share identity.event_id for the
 -- same operation, and the shared id IS the cross-analyzer consistency
 -- guarantee.
+-- Migration (I2A-R1): databases created before the composite-PK change carry
+-- the old single-column PK, which silently rejects the second analyzer's
+-- write of a shared id. AnalysisStore.__init__ detects the old PK and
+-- migrates the derived cache in place (create new, copy, drop old, rename) --
+-- the data is a rebuildable cache, so the migration preserves rows rather
+-- than destroying them.
 CREATE TABLE IF NOT EXISTS analysis_state (
     file_id TEXT NOT NULL, feature TEXT NOT NULL,
     source_hash TEXT NOT NULL, feature_version INTEGER NOT NULL,
@@ -190,6 +196,59 @@ def dependency_staleness(metadata: dict | None) -> str | None:
     return None
 
 
+def _pk_columns(connection, table: str) -> list[str]:
+    """The primary-key column names of `table`, in PK order (empty if absent)."""
+    info = connection.execute(f"PRAGMA table_info({table})").fetchall()
+    if not info:
+        return []
+    return [
+        row[1] for row in sorted(info, key=lambda r: r[5])
+        if row[5] > 0
+    ]
+
+
+def _migrate_pk_schema(connection) -> None:
+    """Migrate pre-composite-PK analysis tables to the (id, feature) shape.
+
+    Old databases (created before I2A) carry ``analysis_node_id TEXT PRIMARY
+    KEY`` -- a single-column PK that silently rejects the second analyzer's
+    write of a shared event id. The migration recreates the tables with the
+    composite PK and copies every row across; the data is a rebuildable
+    cache, so the copy preserves rows rather than destroying them. Tables
+    that don't exist yet are left for ``executescript(ANALYSIS_SCHEMA)``.
+    """
+    for table, id_column in (("analysis_nodes", "analysis_node_id"),
+                             ("analysis_edges", "analysis_edge_id")):
+        pk = _pk_columns(connection, table)
+        if not pk or pk == [id_column, "feature"]:
+            continue
+        # old single-column PK detected: migrate in place
+        columns = [row[1] for row in connection.execute(f"PRAGMA table_info({table})")]
+        col_list = ", ".join(columns)
+        connection.execute(f"ALTER TABLE {table} RENAME TO {table}_old_pk")
+        connection.execute(
+            f"CREATE TABLE {table} (\n"
+            f"    {id_column} TEXT NOT NULL, file_id TEXT NOT NULL,\n"
+            f"    feature TEXT NOT NULL, "
+            + ("kind TEXT NOT NULL, payload TEXT NOT NULL,\n"
+               if table == "analysis_nodes" else
+               "src_id TEXT NOT NULL, dst_id TEXT NOT NULL,\n"
+               "kind TEXT NOT NULL, payload TEXT NOT NULL,\n")
+            + f"    PRIMARY KEY({id_column}, feature)\n"
+            f")"
+        )
+        connection.execute(
+            f"INSERT OR IGNORE INTO {table} ({col_list}) "
+            f"SELECT {col_list} FROM {table}_old_pk"
+        )
+        connection.execute(f"DROP TABLE {table}_old_pk")
+        connection.execute(
+            f"CREATE INDEX IF NOT EXISTS idx_{table}_file_feature "
+            f"ON {table}(file_id, feature)"
+        )
+    connection.commit()
+
+
 class PayloadTooLargeError(ValueError):
     def __init__(
         self, *, analyzer: str, file_id: str, item_id: str, size: int, limit: int
@@ -290,6 +349,7 @@ class AnalysisStore:
 
     def __init__(self, storage: SQLiteStorage) -> None:
         self.storage = storage
+        _migrate_pk_schema(storage.connection)
         storage.connection.executescript(ANALYSIS_SCHEMA)
         storage.connection.commit()
 
