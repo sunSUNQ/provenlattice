@@ -41,7 +41,7 @@ use" by identity alone.
 from __future__ import annotations
 
 from bisect import bisect_left, bisect_right
-from collections import deque
+from collections import Counter, deque
 from dataclasses import dataclass
 from typing import Any, Iterable, Mapping
 
@@ -522,3 +522,173 @@ def _reachability(
 # ParameterBindingTable) is deliberately not ported -- it consumes the
 # ownership-contract table (I2) and exists to serve defect candidates.
 # DATA_FLOW_TO / CONSUMES minting above is the complete I1-C surface.
+
+class ParameterBindingTable:
+    """What a caller's argument root and a callee's parameter row share.
+
+    `bindings` maps a parameter-storage WRITE point id to every record that
+    composes it: one per call site that passed the argument at the ordinal
+    the callee's signature gives the parameter. The record carries the
+    caller-side root facts raw -- the composing identity is built by the
+    defect layer, which owns `_identity`; this table never assembles one.
+    """
+
+    bindings: dict[str, tuple[dict[str, Any], ...]]
+    coverage: dict[str, int]
+
+
+def bind_parameters(
+    points: Mapping[str, Mapping[str, Any]],
+    *,
+    callees: Any,
+    signatures: Mapping[str, str] | None = None,
+    names: Mapping[str, str] | None = None,
+) -> ParameterBindingTable:
+    """Join caller arguments to callee parameter rows, without new edges.
+
+    The 5B parameter WRITE rows exist so a callee's write side is in the
+    graph; this table is what lets a query compose them with the caller's
+    side of the same object. For every CALL point whose callee is known and
+    whose short name has one agreed parameter list, each argument root is
+    joined at its ordinal to the parameter name the signature gives, and
+    every parameter-storage WRITE of that name in the callee's own method
+    that goes *through* the parameter records the pair.
+
+    Only through-writes compose: a write with a member path (`p->flags`,
+    `cells[0]`) or a whole-object dereference (`*out = v`, read off the
+    left-hand spelling) reaches the caller's object, while a bare write to
+    the parameter slot rebinds the callee's own name and, parameters being
+    by-value, never touches the caller. Composing bare slot writes was the
+    first draft's over-claim and the probe caught it at +13k manufactured
+    candidates -- the 4.5 frame-local discipline, kept at the cross-method
+    boundary. Registered: a parenthesized deref `(*p) = v` does not compose
+    either (the left-hand spelling hides the deref), and a C++ reference
+    parameter's bare write is a true through-write this rule declines.
+
+    `callees` is the assembled contract table -- the callee join lives there
+    (`ContractTable.callee` answers a point, unknown stays `""`). The join is
+    registered as name-level throughout: the callee is matched by short
+    name, and only when every symbol spelling that way agrees on its
+    parameter list; a disagreement stays unbound rather than picking a
+    winner, the same discipline as the contracts join. Unnamed parameters
+    shift the ordinal mapping invisibly (`parameters` filters them), which
+    is the registered approximation this table inherits.
+    """
+    signatures = signatures or {}
+    names = names or {}
+
+    # (owner, subject) -> point ids in id order. Both halves read through
+    # this index: the caller's facts about an argument root, and the
+    # callee's parameter rows about the joined name.
+    by_owner_subject: dict[tuple[str, str], list[str]] = {}
+    for point_id, info in sorted(points.items()):
+        owner = str(info.get("owner_symbol_id", ""))
+        subject = info.get("subject", "")
+        if owner and subject:
+            by_owner_subject.setdefault((owner, subject), []).append(point_id)
+
+    param_lists: dict[str, set[tuple[str, ...]]] = {}
+    ids_by_short: dict[str, list[str]] = {}
+    for symbol_id, qualified in names.items():
+        signature = signatures.get(symbol_id)
+        if not signature:
+            continue
+        short = short_name(qualified)
+        ids_by_short.setdefault(short, []).append(symbol_id)
+        param_lists.setdefault(short, set()).add(_split_parameters(signature))
+    agreed = {
+        short: next(iter(lists))
+        for short, lists in param_lists.items() if len(lists) == 1
+    }
+
+    bindings: dict[str, list[dict[str, Any]]] = {}
+    coverage: dict[str, int] = {}
+    counted = Counter()
+
+    def note(name: str, amount: int = 1) -> None:
+        counted[name] += amount
+
+    for point_id, info in sorted(points.items()):
+        if info["event_type"] != "CALL":
+            continue
+        note("calls_seen")
+        callee = callees.callee(info)
+        if not callee:
+            note("calls_without_callee")
+            continue
+        param_list = agreed.get(short_name(callee))
+        if param_list is None:
+            note("callees_without_agreed_signature")
+            continue
+        arguments = [
+            name for name in info.get("arguments", "").split(ARGUMENT_SEPARATOR) if name
+        ]
+        caller_owner = str(info.get("owner_symbol_id", ""))
+        for ordinal, arg_root in enumerate(arguments):
+            note("arguments_seen")
+            if ordinal >= len(param_list):
+                note("arguments_beyond_arity")
+                continue
+            parameter = param_list[ordinal]
+            if not parameter:
+                note("arguments_unnamed_parameter")
+                continue
+            # The caller's facts about the root, best first: a declared
+            # identity outranks the spelling (`_by_root`, the weaker claim
+            # stage 4.5 registered), and the member path is stripped -- the
+            # composed identity adds the callee row's own member.
+            declared = None
+            first = None
+            for candidate_id in by_owner_subject.get((caller_owner, arg_root), ()):
+                candidate = points[candidate_id]
+                if first is None:
+                    first = candidate
+                if candidate.get("subject_decl"):
+                    declared = candidate
+                    break
+            root = declared if declared is not None else first
+            join = "declared" if declared is not None else "spelling"
+            if root is None:
+                note("arguments_without_caller_facts")
+                continue
+            facts = {
+                "subject_decl": root.get("subject_decl", ""),
+                "subject_storage": root.get("subject_storage", ""),
+                "subject_type": root.get("subject_type", ""),
+                "subject": root.get("subject", "") or arg_root,
+                "subject_site": root.get("subject_site", ""),
+                "subject_member": "",
+                "owner_symbol_id": root.get("owner_symbol_id", ""),
+            }
+            bound = 0
+            for callee_id in ids_by_short.get(short_name(callee), ()):
+                for write_id in by_owner_subject.get((callee_id, parameter), ()):
+                    row = points[write_id]
+                    if row.get("subject_storage") != "parameter":
+                        continue
+                    member = row.get("subject_member", "")
+                    if not member and not str(row.get("matched_name", "")).lstrip("(").startswith("*"):
+                        note("parameter_slot_writes_skipped")
+                        continue
+                    bindings.setdefault(write_id, []).append({
+                        "callee": callee,
+                        "ordinal": ordinal,
+                        "parameter": parameter,
+                        "arg_root": arg_root,
+                        "join": join,
+                        "caller_owner": caller_owner,
+                        "caller_facts": facts,
+                        "call_site": point_id,
+                    })
+                    bound += 1
+            if bound:
+                note("arguments_bound")
+                note(f"join_{join}")
+            else:
+                note("arguments_without_parameter_writes")
+
+    coverage.update(sorted(counted.items()))
+    return ParameterBindingTable(
+        bindings={key: tuple(records) for key, records in bindings.items()},
+        coverage=coverage,
+    )

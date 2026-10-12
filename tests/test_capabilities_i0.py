@@ -46,22 +46,22 @@ class CapabilityContractTests(unittest.TestCase):
     def test_implemented_features_match_contract(self) -> None:
         self.assertEqual(
             implemented_features(),
-            {"ast", "cfg", "sparse_cfg", "sparse_dfg"})
-        # I2A: defect is partially_implemented (two of eight queries), so the
-        # registered set is now empty.
+            {"ast", "cfg", "sparse_cfg", "sparse_dfg", "defect"})
+        # I2A: defect was partially_implemented (two of eight queries);
+        # I2B1+overnight: all eight queries are ported (implemented).
         self.assertEqual(
             {feature for feature, record in CAPABILITY_CONTRACT.items()
              if record["status"] == "registered"},
             set(),
         )
 
-    def test_defect_capability_is_partially_implemented(self) -> None:
+    def test_defect_capability_is_fully_implemented(self) -> None:
         record = CAPABILITY_CONTRACT["defect"]
-        self.assertEqual(record["status"], "partially_implemented")
-        self.assertEqual(record["supported_queries"],
-                         ("null_flow", "use_after_free", "double_free"))
+        self.assertEqual(record["status"], "implemented")
+        self.assertEqual(len(record["supported_queries"]), 8)
         self.assertEqual(record["analyzer_ids"], ())
         self.assertTrue(record.get("query_time"))
+        self.assertEqual(record["grade"], "local-only, diagnostic")
 
     def test_events_capability_is_partially_implemented(self) -> None:
         # I1-A: events runs on explicit request but only delivers the level-0

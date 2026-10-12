@@ -321,8 +321,9 @@ class ServiceContractTests(DefectTestBase):
             "#include <stdlib.h>\n"
             "int r01(int n) { char *p = malloc(8); free(p); return n; }\n")
         from provenlattice.analysis_query import AnalysisRequestError
+        # all eight queries are now implemented; an unknown type still raises
         with self.assertRaises(AnalysisRequestError) as caught:
-            self.query("resource_lifetime")
+            self.query("nonexistent_query")
         self.assertEqual(caught.exception.code, "unknown_defect_query")
 
     def test_budget_limits_are_honoured(self) -> None:

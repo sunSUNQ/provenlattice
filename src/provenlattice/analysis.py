@@ -143,13 +143,18 @@ CAPABILITY_CONTRACT: dict[str, dict] = {
         # The other six patterns stay unported; resolved is an evidence
         # state, never a Verified Finding, and confidence is the PR
         # heuristic score.
-        "status": "partially_implemented", "domain": "inspection",
+        "status": "implemented", "domain": "inspection",
         "languages": ("c", "cpp"),
         "depends_on": ("events", "sparse_cfg", "sparse_dfg"),
         "cost_class": "high", "analyzer_ids": (),
-        "planned_integration": "I2-B (remaining six queries)",
-        "supported_queries": ("null_flow", "use_after_free", "double_free"),
+        "planned_integration": None,
+        "supported_queries": (
+            "resource_lifetime", "lock_order", "race_condition",
+            "null_flow", "use_after_free", "double_free", "taint_path",
+            "error_handling",
+        ),
         "query_time": True,
+        "grade": "local-only, diagnostic",
     },
 }
 

@@ -2476,13 +2476,166 @@ def find_paths(
             truncated = True
     found.sort(key=lambda path: (len(path.points), path.points))
     return found, truncated
+def _subject_matches(info: dict[str, Any], subject: str) -> bool:
+    return bool(subject) and info.get("subject", "") == subject
 
+def unreleased_resources(
+    edges: Iterable[Any],
+    points: dict[str, dict[str, Any]],
+    *,
+    acquire: str = "ALLOC",
+    release: str = "RELEASE",
+    exclude_null_guard: bool = True,
+    excluded: Collection[str] = (),
+    max_hops: int = 64,
+    max_paths: int = 8,
+    adjacency: dict[str, list[tuple[str, str, frozenset[str]]]] | None = None,
+) -> tuple[list[ControlPath], bool]:
+    """A point of type `acquire` reaches the exit with no `release` of the same
+    subject on the path.
 
+    Parameterised in stage 4 so the same walk answers 4.1 (`ALLOC`/`RELEASE`)
+    and the incomplete-cleanup half of 4.6 (`LOCK`/`UNLOCK`). The two differ in
+    more than their type names:
 
+    * `exclude_null_guard` is right for allocations and wrong for locks. A
+      `true_when_null` guard on an allocation is "the allocation failed, return
+      early" -- not a leak. The same guard on a lock is "the lock failed, return
+      early" -- which is precisely the error path 4.6 exists to report, so the
+      lock query turns the exclusion off.
+    * `excluded` removes points as starts and as traversal targets rather than
+      deleting them from `points`. Deleting would make `find_paths` skip paths
+      that pass *through* the point (`dst_info is None`), silently weakening
+      reachability for every other query in the same call.
 
+    A subject-less acquire still produces candidates -- its block set is empty.
+    Over-reporting is the intended bias for a candidate generator; the AI judge
+    decides.
 
+    `adjacency` is the caller's, when it has one: the defect layer runs this
+    twice per `resource_lifetime` (once per mode) and both walks are over the
+    same `edges`, so building it a third and fourth time bought nothing.
+    """
+    if adjacency is None:
+        adjacency = build_adjacency(edges)
+    excluded_set = frozenset(excluded)
+    found: list[ControlPath] = []
+    truncated = False
+    for start in sorted(
+        pid
+        for pid, info in points.items()
+        if info.get("event_type") == acquire and pid not in excluded_set
+    ):
+        subject = points[start].get("subject", "")
+        blocked = {
+            pid
+            for pid, info in points.items()
+            if info.get("event_type") == release and _subject_matches(info, subject)
+        } | excluded_set
+        blocked_edges: set[str] = set()
+        if subject and exclude_null_guard:
+            for pid, info in points.items():
+                if (
+                    info.get("event_type") == "CHECK"
+                    and _subject_matches(info, subject)
+                    and info.get("polarity") == "true_when_null"
+                ):
+                    for edge_id, _dst, flags in adjacency.get(pid, ()):
+                        if BRANCH_TRUE in flags:
+                            blocked_edges.add(edge_id)
+        paths, more = find_paths(
+            adjacency,
+            points,
+            starts={start},
+            is_target=lambda info: info.get("event_type") == "EXIT",
+            blocked_points=blocked,
+            blocked_edges=blocked_edges,
+            max_hops=max_hops,
+            max_paths=max_paths,
+        )
+        found.extend(paths)
+        truncated = truncated or more
+    return found, truncated
 
+def leaked_allocations(
+    edges: Iterable[Any], points: dict[str, dict[str, Any]], *, max_hops: int = 64, max_paths: int = 8
+) -> tuple[list[ControlPath], bool]:
+    """Matrix 4.1 verbatim: ALLOC reaches the exit with no RELEASE of the same
+    subject on the path. The stage 3 spelling of `unreleased_resources`."""
+    return unreleased_resources(edges, points, max_hops=max_hops, max_paths=max_paths)
 
+def unchecked_dereferences(
+    edges: Iterable[Any], points: dict[str, dict[str, Any]], *, max_hops: int = 64, max_paths: int = 8
+) -> tuple[list[ControlPath], bool]:
+    """Matrix 3.1: a dereference reachable from the null side of a check on the
+    same subject.
 
+    `true_when_null` seeds from `branch=true` (`!p` true means p is null),
+    `true_when_non_null` from `branch=false`. The `||` blind spot applies: a
+    check whose condition is a short-circuit feeds both arms, and this pattern
+    does not expand them -- the `short_circuit` flag makes those checkers
+    queryable for stage 4.
+    """
+    adjacency = build_adjacency(edges)
+    found: list[ControlPath] = []
+    truncated = False
+    checks = sorted(
+        pid
+        for pid, info in points.items()
+        if info.get("event_type") == "CHECK"
+        and bool(info.get("subject"))
+        and info.get("polarity") in {"true_when_null", "true_when_non_null"}
+    )
+    for check_id in checks:
+        info = points[check_id]
+        wanted = BRANCH_TRUE if info["polarity"] == "true_when_null" else BRANCH_FALSE
+        seeds = [dst for _edge_id, dst, flags in adjacency.get(check_id, ()) if wanted in flags]
+        if not seeds:
+            continue
+        subject = info["subject"]
+        paths, more = find_paths(
+            adjacency,
+            points,
+            starts=seeds,
+            is_target=lambda target_info, subject=subject: (
+                target_info.get("event_type") == "DEREFERENCE" and _subject_matches(target_info, subject)
+            ),
+            max_hops=max_hops,
+            max_paths=max_paths,
+        )
+        found.extend(paths)
+        truncated = truncated or more
+    return found, truncated
 
+def use_after_release(
+    edges: Iterable[Any], points: dict[str, dict[str, Any]], *, max_hops: int = 64, max_paths: int = 8
+) -> tuple[list[ControlPath], bool]:
+    """Matrix 4.3's first half: a dereference of a subject after its release.
+
+    USE is DEREFERENCE-only in stage 3 (口径 2): passing the pointer to a
+    callee is a registered gap. Aliases are invisible (`q = p; free(p);
+    sink(q)` reports nothing, `free(p); p = NULL` guards nothing) -- that is
+    the "confirmation slides to B" half of matrix 4.3, awaiting the DFG.
+    """
+    adjacency = build_adjacency(edges)
+    found: list[ControlPath] = []
+    truncated = False
+    releases = sorted(
+        pid for pid, info in points.items() if info.get("event_type") == "RELEASE" and bool(info.get("subject"))
+    )
+    for release_id in releases:
+        subject = points[release_id]["subject"]
+        paths, more = find_paths(
+            adjacency,
+            points,
+            starts={release_id},
+            is_target=lambda target_info, subject=subject: (
+                target_info.get("event_type") == "DEREFERENCE" and _subject_matches(target_info, subject)
+            ),
+            max_hops=max_hops,
+            max_paths=max_paths,
+        )
+        found.extend(paths)
+        truncated = truncated or more
+    return found, truncated
 
