@@ -11,7 +11,6 @@ from provenlattice.cli import build_parser, run
 from provenlattice.graph import full_index
 from provenlattice.incremental import incremental_update
 from provenlattice.orchestrator import AnalysisRequestError, analyze_scope
-from provenlattice.storage import SQLiteStorage
 
 SRC_A_V1 = """def alpha():
     return 1
@@ -42,10 +41,7 @@ def write(path: Path, text: str) -> None:
 
 
 def base_snapshot(database: Path) -> dict:
-    # raw_references lives in the cold store (stage 7A); only a storage-open
-    # connection carries the TEMP VIEW that re-exposes it to readers.
-    storage = SQLiteStorage(database)
-    connection = storage.connection
+    connection = sqlite3.connect(database)
     connection.row_factory = sqlite3.Row
     result = {}
     for table in ("nodes", "edges", "shards", "raw_references"):
@@ -57,7 +53,7 @@ def base_snapshot(database: Path) -> dict:
                 item.pop("boundary_dirty")
             rows.append(item)
         result[table] = rows
-    storage.close()
+    connection.close()
     return result
 
 

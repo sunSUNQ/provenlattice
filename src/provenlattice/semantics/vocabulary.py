@@ -1,3 +1,10 @@
+"""Vocabulary loading for semantic events (ported from PR #1, I1-A).
+
+I1-A scope: the defect-pattern matrix (DefectPattern / load_defect_patterns)
+and the relation sets are deliberately not ported yet -- they belong to the
+Defect Queries phase (I2). Everything here is the level-0 event matcher data.
+"""
+
 from __future__ import annotations
 
 import tomllib
@@ -7,7 +14,14 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Mapping
 
-from .events import ACCESS_EVENTS, KNOWN_EVENTS, LEVEL_0_EVENTS, STRUCTURAL_EVENTS, event_level
+from .events import (
+    ACCESS_EVENTS,
+    KNOWN_EVENTS,
+    LEVEL_0_EVENTS,
+    LEVEL_1_EVENTS,
+    STRUCTURAL_EVENTS,
+    event_level,
+)
 
 VOCABULARY_DIR = Path(__file__).with_name("vocabularies")
 DEFECT_PATTERN_FILE = Path(__file__).with_name("defect_patterns.toml")
@@ -22,11 +36,9 @@ EXCLUSION_KEY = "qualified_exclude"
 # allocation; it does not say how the allocation comes back. Most allocators
 # return the pointer, so the name a declaration binds is the object (`p =
 # malloc(n)` allocates `p`). `posix_memalign` does not: it returns an error
-# code and writes the pointer through its first argument, so the object is
-# what that argument addresses (`int rc = posix_memalign(&p, ...)` allocates
-# `p`, not `rc` -- the return code, which is an int and never a resource).
-# This key is where a table names the callees of the second shape, and the
-# extractor decodes their subject from the argument instead of the call.
+# code and writes the pointer through its first argument. Subject decoding is
+# defect-chain machinery (I2); the vocabulary keeps declaring the axis so the
+# data stays faithful to the PR table.
 OUT_PARAM_KEY = "out_param"
 # Node types that carry a name the matchers can read. These are grammar facts,
 # so they live in the vocabulary file rather than in the extractor: `call` in
@@ -136,6 +148,53 @@ class EventSpec:
         return self.absent is not None
 
 
+
+class VocabularyError(ValueError):
+    """A vocabulary file is malformed or declares something unknown."""
+
+
+@dataclass(frozen=True, slots=True)
+class EventSpec:
+    """What a single event type looks like in one language.
+
+    The keyword lists are candidate generators, not judges (design doc §8): a
+    hit proposes an event, and tree-sitter structure confirms its shape. A name
+    landing here never by itself asserts that a defect exists.
+    """
+
+    event_type: str
+    syntax: frozenset[str]
+    calls: frozenset[str]
+    qualified: frozenset[str]
+    # Qualified spellings of a listed bare name that name a *different*
+    # function. The `calls` axis matches the last component of the callee, so
+    # `std::getline` hits a table that lists POSIX `getline`; these entries are
+    # how the table says "that one is not me". Empty for every event whose bare
+    # names have no such twin, which is almost all of them.
+    qualified_exclude: frozenset[str] = frozenset()
+    # Listed callees that hand the object they create through their first
+    # argument instead of returning it. Read for ALLOC only (subject decoding
+    # is I2); declared here so the ported TOML data validates unchanged.
+    out_param: frozenset[str] = frozenset()
+    # Set only when this language has no such event. The text is the reason,
+    # and it is the whole payload -- a spec that is absent carries no matchers.
+    absent: str | None = None
+
+    @property
+    def level(self) -> int:
+        return event_level(self.event_type)
+
+    def keywords(self) -> tuple[str, ...]:
+        """Every literal this spec matches on. Sorted, so callers stay deterministic."""
+        return tuple(sorted(self.calls | self.qualified))
+
+    def has_matchers(self) -> bool:
+        return bool(self.syntax or self.calls or self.qualified)
+
+    def is_absent(self) -> bool:
+        return self.absent is not None
+
+
 @dataclass(frozen=True, slots=True)
 class Vocabulary:
     language: str
@@ -156,13 +215,7 @@ class Vocabulary:
         return self.events.get(event_type)
 
     def out_param_names(self, event_type: str) -> frozenset[str]:
-        """The callees whose object arrives through argument 1, as last names.
-
-        Last components, because that is the axis the `calls` list itself
-        matches on: a hit's `matched_name` is the callee's last component on
-        the bare axis and the full spelling on the qualified one, and the two
-        have to be compared on one of them.
-        """
+        """The callees whose object arrives through argument 1, as last names."""
         spec = self.events.get(event_type)
         if spec is None:
             return frozenset()
@@ -261,11 +314,6 @@ def _parse(path: Path) -> Vocabulary:
             out_param=_string_list(body, OUT_PARAM_KEY, path, event_type),
             absent=absent,
         )
-        # An `out_param` entry that names nothing in the table's own `calls`
-        # can never fire, for the same reason a `qualified_exclude` entry that
-        # names nothing there cannot: the extractor matches it against what the
-        # `calls` axis matched. A key that silently does nothing is the one
-        # failure mode neither key is allowed to have.
         if spec.out_param:
             if spec.event_type != "ALLOC":
                 raise VocabularyError(
@@ -342,7 +390,6 @@ def vocabulary_for_path(path: str) -> Vocabulary | None:
             "a file cannot be assigned to one language deterministically"
         )
     return load_vocabulary(matches[0])
-
 
 @dataclass(frozen=True, slots=True)
 class DefectPattern:

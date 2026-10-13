@@ -4,23 +4,12 @@ import hashlib
 import json
 import subprocess
 import time
-from collections.abc import Collection, Mapping
 from pathlib import Path
 
 from .analysis_query import ANALYSIS_RESPONSE_NODE_LIMIT, query_analysis
-from . import contracts, defect
 from .evidence import Evidence, EvidenceBundle, QueryBudget, evidence_id, rank_evidence
 from .orchestrator import AnalysisRequestError as _AnalysisRequestError
 from .overlay import GraphView
-from .sparsecfg import (
-    build_adjacency,
-    find_paths,
-    leaked_allocations,
-    materialize_points,
-    unchecked_dereferences,
-    use_after_release,
-)
-from .sparsedfg import bind_parameters
 from .storage import decode_row
 
 
@@ -75,7 +64,6 @@ class GraphQuery:
         )
         self.storage = self.view.base
         self._evidence_context: tuple[str, str] | None = None
-        self._file_paths: dict[str, str | None] = {}
 
     def close(self) -> None:
         self.view.close()
@@ -94,20 +82,15 @@ class GraphQuery:
                 *, query_type: str = "query", anchor: str = "") -> dict:
         evidence = rank_evidence(evidence or [])
         query_seed = json.dumps([query_type, anchor, self.graph_generation], separators=(",", ":"))
-        # Serialised once. The envelope reports both the rows and their byte
-        # count, and asking each evidence item for its dict twice to get both
-        # was pure duplication -- on a five-hop subgraph that is 63,776 extra
-        # conversions. `bundle_size` still measures the same bytes it always
-        # did: the same `json.dumps` of the same payload, in the same order.
-        payload = [item.to_dict() for item in evidence]
         return {"graph_generation": self.graph_generation,
                 "query_time_ms": (time.perf_counter() - started) * 1000, "data": data,
                 "query_id": f"Q-{hashlib.sha256(query_seed.encode()).hexdigest()[:20]}",
                 "query_type": query_type, "anchor": anchor,
-                "evidence": payload,
+                "evidence": [item.to_dict() for item in evidence],
                 "returned_evidence_ids": [item.evidence_id for item in evidence],
                 "returned_evidence_count": len(evidence),
-                "bundle_size": len(json.dumps(payload, ensure_ascii=False))}
+                "bundle_size": len(json.dumps([item.to_dict() for item in evidence],
+                                               ensure_ascii=False))}
 
     def _context(self) -> tuple[str, str]:
         if self._evidence_context is not None:
@@ -132,27 +115,16 @@ class GraphQuery:
         return self._evidence_context
 
     def _source_path(self, node: dict | None) -> str | None:
-        """The path to cite for a node: its own metadata, or its file's row.
-
-        The fallback is memoised by `file_id` because the same question is asked
-        over and over -- a five-hop subgraph on the acceptance corpus issued
-        62,793 of these lookups, one per evidence item, against a few thousand
-        distinct files. Only the fallback is cached: a node carrying its own
-        `metadata.path` keeps answering with that, so the fast path's answer is
-        never displaced by another node's file row.
-        """
         if not node:
             return None
         metadata = node.get("metadata") or {}
         if metadata.get("path"):
             return str(metadata["path"])
-        file_id = node.get("file_id")
-        if not file_id:
-            return None
-        if file_id not in self._file_paths:
-            row = self.storage.row("SELECT path FROM files WHERE file_id=?", (file_id,))
-            self._file_paths[file_id] = str(row["path"]) if row else None
-        return self._file_paths[file_id]
+        if node.get("file_id"):
+            row = self.storage.row("SELECT path FROM files WHERE file_id=?", (node["file_id"],))
+            if row:
+                return str(row["path"])
+        return None
 
     def _node_evidence(self, node: dict) -> Evidence:
         repository, commit = self._context()
@@ -666,419 +638,6 @@ class GraphQuery:
         return self._result(data, started, [self._raw_reference_evidence(row) for row in data],
                             query_type="boundary_references", anchor=symbol)
 
-    # ------------------------------------------------------------------
-    # semantic control paths (stage 3)
-
-    def _semantic_layer(self) -> tuple[list, list]:
-        """The two cold semantic tables, read straight from storage.
-
-        The semantic layer does not participate in the overlay yet -- that is
-        the Typed Query stage's work (plan §六). The pattern functions in
-        `sparsecfg` are pure and consume these objects directly.
-        """
-        repository = self.storage.repository()
-        repo_id = str(decode_row(repository)["repo_id"]) if repository else ""
-        return self.storage.semantic_events(repo_id), self.storage.semantic_edges(repo_id)
-
-    def _contracts(
-        self, events: list, edges: list, names: Mapping[str, str],
-        points: dict | None = None,
-    ) -> contracts.ContractTable:
-        """Assemble the ownership contracts from the cold tables.
-
-        Three reads, all of them keyed by repo_id like every other reader here:
-        the CALLS rows of `raw_references` (where a call's callee name lives),
-        the symbols' signatures (where a parameter's ordinal comes from), and
-        the declared table on disk. The assembly itself is pure and lives in
-        `contracts`, so this stays a reader.
-
-        A missing or unreadable declared table is an empty one rather than an
-        error: the inferred sources carry the layer on their own, and failing a
-        query because a data file is absent would make the whole query layer
-        depend on an optional table.
-
-        `points` is passed through to `contracts.build`: the defect queries
-        materialise the same graph a few lines later, and a second copy of a
-        read-only structure is a second copy.
-        """
-        repository = self.storage.repository()
-        repo_id = str(decode_row(repository)["repo_id"]) if repository else ""
-        references = [
-            decode_row(row)
-            for row in self.storage.connection.execute(
-                "SELECT file_id, owner_symbol_id, start_line, raw_name FROM raw_references "
-                "WHERE repo_id = ? AND reference_type = 'CALLS'",
-                (repo_id,),
-            )
-        ]
-        signatures = self._signatures()
-        return contracts.build(
-            events, edges, references=references, names=names, signatures=signatures,
-            declared=contracts.load_declared(), points=points,
-        )
-
-    def _taint_references(self) -> list[dict]:
-        """The CALLS rows two queries resolve names through.
-
-        The same table `_contracts` reads, with one column more: `target_module`
-        is what separates a global call from a method that happens to end in the
-        same word. `platform.system()` arrives with the attribute in `raw_name`
-        and the module in `target_module`, so matching the bare word would read
-        a platform query as shell execution. The contracts layer does not need
-        the column; the taint query cannot do without it, and a second reader is
-        cheaper than widening a shared one for a caller that ignores it.
-
-        The taint query resolves its two ends through these rows; the error
-        query reads the same rows to ask whether every name on a line is a
-        compiler builtin. Neither has a cheaper source -- a CALL point carries
-        `matched_name`, which is the node type, not the callee.
-
-        Read only when one of those two queries runs: it is a scan of the
-        largest table in the graph, and no other query touches it. `all` runs
-        both, so the caller loads it once and hands the same list to each.
-        """
-        repository = self.storage.repository()
-        repo_id = str(decode_row(repository)["repo_id"]) if repository else ""
-        return [
-            decode_row(row)
-            for row in self.storage.connection.execute(
-                "SELECT file_id, owner_symbol_id, start_line, raw_name, target_module "
-                "FROM raw_references WHERE repo_id = ? AND reference_type = 'CALLS'",
-                (repo_id,),
-            )
-        ]
-
-    def _signatures(self) -> dict[str, str]:
-        """Symbol id to signature, for the layers that split parameter lists."""
-        repository = self.storage.repository()
-        repo_id = str(decode_row(repository)["repo_id"]) if repository else ""
-        return {
-            row["id"]: row["signature"]
-            for row in self.storage.connection.execute(
-                "SELECT id, signature FROM nodes WHERE repo_id = ? "
-                "AND signature IS NOT NULL AND signature != ''",
-                (repo_id,),
-            )
-        }
-
-    def _symbol_names(self) -> dict[str, str]:
-        """Symbol id to qualified name, for the defect layer's method labels.
-
-        Events carry `owner_symbol_id` and not the name -- identity is a hash
-        by design (appendix B.2.1) -- so a query that wants to print "which
-        method" has to look the name up. Kept here rather than in `defect` so
-        that module stays a pure function of `(events, edges)`.
-        """
-        repository = self.storage.repository()
-        repo_id = str(decode_row(repository)["repo_id"]) if repository else ""
-        return {
-            row["id"]: row["qualified_name"]
-            for row in self.storage.connection.execute(
-                "SELECT id, qualified_name FROM nodes WHERE repo_id = ?", (repo_id,)
-            )
-        }
-
-    def get_control_paths(
-        self, *, source_type: str, target_type: str, avoid_types: Collection[str] = (),
-        subject: str | None = None, require_flags: Collection[str] = (),
-        max_hops: int = 32, max_paths: int = 8,
-    ) -> dict:
-        """Control paths between two event types, `subject`-paired when given.
-
-        Like `_neighbors`, a miss returns an empty result rather than raising:
-        "no such path" is an answer, not an error. The result is deterministic
-        for a given generation (`find_paths` orders everything it walks).
-        """
-        started = time.perf_counter()
-        events, edges = self._semantic_layer()
-        points = materialize_points(events, edges)
-        adjacency = build_adjacency(edges)
-
-        def is_blocked(info: dict) -> bool:
-            return info["event_type"] in avoid_types
-
-        starts = sorted(
-            point_id for point_id, info in points.items()
-            if info["event_type"] == source_type
-            and (subject is None or info["subject"] == subject)
-        )
-        paths, truncated = find_paths(
-            adjacency, points, starts=starts,
-            is_target=lambda info: info["event_type"] == target_type,
-            is_blocked=is_blocked, require_flags=require_flags,
-            max_hops=max_hops, max_paths=max_paths,
-        )
-        data = {"paths": [path.to_dict() for path in paths], "truncated": truncated}
-        return self._result(data, started, query_type="control_paths",
-                            anchor=f"{source_type}->{target_type}")
-
-    def _pattern_result(self, pattern, *, query_type: str, max_hops: int, max_paths: int) -> dict:
-        started = time.perf_counter()
-        events, edges = self._semantic_layer()
-        points = materialize_points(events, edges)
-        paths, truncated = pattern(edges, points, max_hops=max_hops, max_paths=max_paths)
-        data = {"paths": [path.to_dict() for path in paths], "truncated": truncated}
-        return self._result(data, started, query_type=query_type)
-
-    def get_leaked_allocations(self, *, max_hops: int = 64, max_paths: int = 8) -> dict:
-        return self._pattern_result(leaked_allocations, query_type="leaked_allocations",
-                                    max_hops=max_hops, max_paths=max_paths)
-
-    def get_unchecked_dereferences(self, *, max_hops: int = 64, max_paths: int = 8) -> dict:
-        return self._pattern_result(unchecked_dereferences, query_type="unchecked_dereferences",
-                                    max_hops=max_hops, max_paths=max_paths)
-
-    def get_use_after_release(self, *, max_hops: int = 64, max_paths: int = 8) -> dict:
-        return self._pattern_result(use_after_release, query_type="use_after_release",
-                                    max_hops=max_hops, max_paths=max_paths)
-
-    def get_semantic_events(
-        self, *, event_type: str | None = None, owner: str | None = None,
-        file: str | None = None, limit: int = 200, include_edges: bool = False,
-    ) -> dict:
-        """The raw semantic layer, filtered. Events are what the defect queries
-        read, so this is the view that answers "why did the query say that?".
-
-        `evidence` is empty on purpose: a raw event is an *input* to a
-        candidate, not evidence for one. Attaching `E-CODE-` ids to events
-        would let a citation point at a fact that asserts nothing.
-
-        Filters are exact matches on the persisted columns, and the result is
-        sorted by event id -- deterministic for a generation, like everything
-        else here.
-        """
-        started = time.perf_counter()
-        events, edges = self._semantic_layer()
-        selected = [
-            event for event in sorted(events, key=lambda item: item.event_id)
-            if (event_type is None or event.event_type == event_type)
-            and (owner is None or owner in (event.owner_symbol_id, event.matched_name))
-            and (file is None or event.metadata.get("relative_path") == file)
-        ]
-        truncated = len(selected) > limit
-        selected = selected[:limit]
-        data: dict = {
-            "events": [
-                {
-                    "event_id": event.event_id, "event_type": event.event_type,
-                    "owner_symbol_id": event.owner_symbol_id, "file_id": event.file_id,
-                    "ordinal": event.ordinal, "start_line": event.start_line,
-                    "end_line": event.end_line, "matched_name": event.matched_name,
-                    "matched_via": event.matched_via, "flags": list(event.flags),
-                    "metadata": dict(event.metadata),
-                }
-                for event in selected
-            ],
-            "truncated": truncated,
-        }
-        if include_edges:
-            ids = {event.event_id for event in selected}
-            data["edges"] = [
-                {
-                    "edge_id": edge.edge_id, "src_event_id": edge.src_event_id,
-                    "dst_event_id": edge.dst_event_id, "relation": edge.relation,
-                    "owner_symbol_id": edge.owner_symbol_id, "flags": list(edge.flags),
-                }
-                for edge in sorted(edges, key=lambda item: item.edge_id)
-                if edge.src_event_id in ids or edge.dst_event_id in ids
-            ]
-        return self._result(data, started, query_type="semantic_events",
-                            anchor=event_type or "")
-
-    def _semantic_gap_missing(self) -> tuple[str, ...]:
-        """The one gap the query layer knows about and the query cannot see.
-
-        The semantic tables are read from the base snapshot, so an active
-        overlay means every candidate was computed against a graph that does
-        not include the uncommitted work. That is a real limit on the answer,
-        and it travels with the answer rather than living in a docstring.
-        """
-        if not self.view.layers:
-            return ()
-        return (
-            "the semantic layer is read from the base snapshot only: an active "
-            "overlay's changes are not reflected in these events or edges",
-        )
-
-    def _defect_result(self, result: "defect.DefectQueryResult", started: float, *,
-                       anchor: str) -> dict:
-        """One typed-query result, in the same envelope every other query uses.
-
-        `data["candidates"]` and `evidence` are positionally aligned, and by
-        construction rather than by agreement: the candidates are ordered *by*
-        the ranked evidence list, so a change to `rank_evidence` moves both.
-        Re-deriving the same order here would make the invariant a coincidence
-        that a future edit could quietly break.
-        """
-        repository, commit = self._context()
-        missing = self._semantic_gap_missing()
-        coverage = dict(result.coverage)
-        if missing:
-            # The counts below were computed against the base snapshot, and a
-            # reader who only looks at coverage has to be able to learn that
-            # without reading the bundles. Same caveat, next to the numbers it
-            # qualifies.
-            coverage = {
-                name: {**value, "semantic_overlay": "base_snapshot_only"}
-                for name, value in coverage.items()
-            }
-        pairs = [
-            (
-                defect.candidate_evidence(
-                    candidate, repository=repository, commit=commit,
-                    generation=self.graph_generation,
-                ),
-                candidate,
-            )
-            for candidate in result.candidates
-        ]
-        by_id = {evidence.evidence_id: candidate for evidence, candidate in pairs}
-        ranked = rank_evidence([evidence for evidence, _ in pairs])
-        data = {
-            "defect_keys": list(result.keys),
-            "candidates": [
-                defect.candidate_bundle(
-                    by_id[evidence.evidence_id], evidence_id=evidence.evidence_id,
-                    generation=self.graph_generation, extra_missing=missing,
-                ).to_dict()
-                for evidence in ranked
-            ],
-            "coverage": coverage,
-            "truncated": result.truncated,
-        }
-        return self._result(data, started, ranked, query_type=result.query, anchor=anchor)
-
-    def get_defect_candidates(
-        self, *, defect_type: str = "all", subject: str | None = None,
-        max_hops: int = 64, max_paths: int = 8, max_candidates: int = 20,
-        identity: bool = True, use_contracts: bool = True,
-    ) -> dict:
-        """Run the typed query behind a matrix key, or all of them.
-
-        `defect_type` is a matrix key (`4.1`), a query name (`resource_lifetime`)
-        or `all`. A key with no query raises rather than returning nothing:
-        asking for a pattern the pipeline cannot attack is a bad request, while
-        a query that ran and found nothing is an answer, and a caller that
-        cannot tell them apart cannot report coverage honestly.
-
-        `identity=False` joins on the subject's spelling, which is what stage 4
-        did. It exists so the extraction changes and the identity changes can be
-        measured apart from each other: on an old database it must reproduce the
-        old numbers exactly.
-
-        `use_contracts=False` turns the ownership layer off and is the control
-        column for stage 5C: the same code and the same database, with the
-        elimination rules disabled, has to reproduce the pre-5C numbers exactly.
-        """
-        started = time.perf_counter()
-        events, edges = self._semantic_layer()
-        names = self._symbol_names()
-        # One materialisation per call, not one per query. `points` and
-        # `adjacency` are pure functions of `(events, edges)` and no query
-        # writes into either, so all eight queries of an `all` run share this
-        # pair -- contracts and the race bindings included. Built per query
-        # they were ten of each, and on the acceptance corpora that redundancy
-        # was the bulk of the run's wall clock.
-        points = materialize_points(events, edges)
-        adjacency = build_adjacency(edges)
-        contracts = self._contracts(
-            events, edges, names, points=points
-        ) if use_contracts else None
-
-        if defect_type in defect.QUERY_NAMES:
-            queries = (defect_type,)
-            keep: set[str] | None = None
-        elif defect_type == "all":
-            queries = defect.QUERY_NAMES
-            keep = None
-        else:
-            query = defect.query_for(defect_type)
-            queries = (query,)
-            # A query can serve more than one key -- `resource_lifetime` is both
-            # 4.1 and 4.6 -- so a specific key has to name itself to the query.
-            # It is handed *down* rather than filtered here, because the query
-            # truncates to `max_candidates` before it returns: filtering the
-            # twenty rows it happened to keep is not filtering the population.
-            # On `llama.cpp` this asked for 4.6 and got zero candidates while
-            # the coverage block for the same database said thirty existed.
-            keep = {defect_type}
-
-        candidates: list[defect.Candidate] = []
-        coverage: dict = {}
-        truncated = False
-        calls_references: list | None = None
-        for query in queries:
-            # The stage 5B parameter join rides the contracts switch: one
-            # control column (`use_contracts=False`) turns off both the
-            # ownership rulings and the composition, which is a column, not
-            # two. `run` passes each query only the parameters its signature
-            # accepts -- `race_condition` walks nothing, so it has no
-            # `max_paths`, and it is the only query that takes `bindings`.
-            bindings = None
-            if contracts is not None and query == defect.RACE_CONDITION:
-                bindings = bind_parameters(
-                    points,
-                    callees=contracts, signatures=self._signatures(), names=names,
-                )
-            # The taint query's two ends are callee names, and a CALL event does
-            # not carry one -- it carries the node type. The error query reads
-            # the same table for the same reason: whether every name on a line
-            # is a compiler builtin is a fact about the reference layer, and the
-            # point has no field for it. Same discipline as the bindings above:
-            # read the extra table only for the queries that need it, and let
-            # `run` hand it to nobody else. `all` runs both, so the scan is done
-            # once and shared rather than once per query.
-            references: list = []
-            taint = None
-            if query in (defect.TAINT_PATH, defect.ERROR_HANDLING):
-                if calls_references is None:
-                    calls_references = self._taint_references()
-                references = calls_references
-            if query == defect.TAINT_PATH:
-                taint = defect.load_taint()
-            result = defect.run(
-                query, events, edges, points=points, adjacency=adjacency,
-                subject=subject, names=names,
-                max_hops=max_hops, max_paths=max_paths, max_candidates=max_candidates,
-                identity=identity, defect_keys=keep, contracts=contracts,
-                bindings=bindings, references=references, taint=taint,
-            )
-            coverage[query] = result.coverage
-            truncated = truncated or result.truncated
-            candidates.extend(result.candidates)
-
-        selected = sorted(candidates, key=defect.Candidate.sort_key)
-        truncated = truncated or len(selected) > max_candidates
-        combined = defect.DefectQueryResult(
-            query=defect_type, candidates=tuple(selected[:max_candidates]),
-            coverage=coverage, truncated=truncated,
-        )
-        return self._defect_result(combined, started, anchor=defect_type)
-
-    def get_resource_lifetime(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.RESOURCE_LIFETIME, **kwargs)
-
-    def get_lock_order(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.LOCK_ORDER, **kwargs)
-
-    def get_races(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.RACE_CONDITION, **kwargs)
-
-    def get_null_flow(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.NULL_FLOW, **kwargs)
-
-    def get_use_after_free(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.USE_AFTER_FREE, **kwargs)
-
-    def get_double_free(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.DOUBLE_FREE, **kwargs)
-
-    def get_taint_path(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.TAINT_PATH, **kwargs)
-
-    def get_error_handling(self, **kwargs) -> dict:
-        return self.get_defect_candidates(defect_type=defect.ERROR_HANDLING, **kwargs)
-
     def get_subgraph(self, anchor: str, max_hops: int = 2, max_nodes: int = 100) -> dict:
         if max_hops < 0 or max_nodes < 1:
             raise ValueError("max_hops must be >= 0 and max_nodes must be >= 1")
@@ -1091,12 +650,13 @@ class GraphQuery:
         for _ in range(max_hops):
             if not frontier or len(seen) >= max_nodes:
                 break
-            with self.view.id_filter(frontier) as (sql, params):
-                edges = self.view.query(
-                    "Edge", f"SELECT * FROM edges WHERE src_id IN ({sql}) "
-                    f"OR dst_id IN ({sql})", (*params, *params),
-                    lambda row: row.get("src_id") in frontier or row.get("dst_id") in frontier,
-                )
+            placeholders = ",".join("?" for _ in frontier)
+            values = tuple(sorted(frontier))
+            edges = self.view.query(
+                "Edge", f"SELECT * FROM edges WHERE src_id IN ({placeholders}) "
+                f"OR dst_id IN ({placeholders})", (*values, *values),
+                lambda row: row.get("src_id") in frontier or row.get("dst_id") in frontier,
+            )
             next_frontier: set[str] = set()
             for edge in sorted(edges, key=lambda row: row["id"]):
                 for other in (edge["src_id"], edge["dst_id"]):
@@ -1555,15 +1115,15 @@ class GraphQuery:
         documents: list[dict] = []
         document_links: list[Evidence] = []
         if node_ids:
+            node_placeholders = ",".join("?" for _ in node_ids)
             relations = sorted(CROSS_RELATIONS)
             relation_placeholders = ",".join("?" for _ in relations)
-            with self.view.id_filter(node_ids) as (sql, params):
-                edges = self.view.query(
-                    "Edge", f"SELECT * FROM edges WHERE dst_id IN ({sql}) "
-                    f"AND type IN ({relation_placeholders})",
-                    (*params, *relations),
-                    lambda row: row.get("dst_id") in node_ids and row.get("type") in CROSS_RELATIONS,
-                )
+            edges = self.view.query(
+                "Edge", f"SELECT * FROM edges WHERE dst_id IN ({node_placeholders}) "
+                f"AND type IN ({relation_placeholders})",
+                (*sorted(node_ids), *relations),
+                lambda row: row.get("dst_id") in node_ids and row.get("type") in CROSS_RELATIONS,
+            )
             source_rows = self.view.by_ids("Node", [edge["src_id"] for edge in edges])
             sources = {row["id"]: decode_row(row) for row in source_rows}
             node_map = {node["id"]: node for node in nodes} | sources
@@ -1634,38 +1194,6 @@ class GraphQuery:
                     if candidate == requested_id:
                         item = self._raw_link_evidence(row)
                         found, related = item, [row]; break
-        elif requested_id.startswith("E-DEFECT-"):
-            # Closes the citation loop: an `E-DEFECT-` id in a report has to
-            # resolve back to the candidate that produced it. The queries are
-            # pure and fast, so re-running them is cheaper and far less
-            # error-prone than persisting candidates that would then need
-            # invalidating on every semantic change.
-            events, edges = self._semantic_layer()
-            names = self._symbol_names()
-            for query in defect.QUERY_NAMES:
-                result = defect.run(
-                    query, events, edges, names=names, max_paths=8, max_candidates=200
-                )
-                for candidate in result.candidates:
-                    item = defect.candidate_evidence(
-                        candidate, repository=repository, commit=commit,
-                        generation=self.graph_generation,
-                    )
-                    if item.evidence_id != requested_id:
-                        continue
-                    found = item
-                    # Facts pass through verbatim. Each query shapes its own
-                    # -- a leak fact carries `event`/`subject`, a lock-order
-                    # fact carries `lock`/`side`/`holding_confirmed` -- and
-                    # projecting a common subset would silently drop whichever
-                    # keys the reader of that particular query needs.
-                    related = [
-                        {"kind": "defect_candidate", **candidate.subject},
-                        *candidate.facts,
-                    ]
-                    break
-                if found is not None:
-                    break
         elif requested_id.startswith("E-REF-"):
             for raw in self.view.all("RawReference"):
                 row = decode_row(raw)
@@ -1739,5 +1267,4 @@ class GraphQuery:
                              "counts": counts,
                              "latest_generation": decode_row(latest) if latest else None,
                              "database_size": self.storage.database_size,
-                             "cold_database_size": self.storage.cold_database_size,
                              "overlay_size": sum(item.database_size for item in self.view.layers)}, started)

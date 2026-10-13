@@ -1,3 +1,12 @@
+"""Semantic event levels and the event row model (ported from PR #1, I1-A).
+
+I1-A scope note: only the level-0 vocabulary events are produced on main.
+The structural CHECK/BRANCH/DEREFERENCE points and the READ/WRITE access
+events belong to the sparse CFG walker (stage 3 / 5A) and stay unported until
+I1-B; the constants below are kept so the level taxonomy -- and what is
+deliberately not produced yet -- stays nameable and testable.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -18,10 +27,9 @@ LEVEL_0_EVENTS = frozenset({
 #   READ / WRITE are level 1 by design -- they wait for the DFG (stage 5) and
 #   are only extracted for symbols a defect rule has already flagged.
 #
-#   CHECK / BRANCH / DEREFERENCE stopped being "not yet extracted" in stage 3:
-#   the sparse CFG walker produces them structurally (no keyword can name them,
-#   which is exactly why they are not vocabulary events) and publishes them as
-#   `matched_via="structural"` event rows.
+#   CHECK / BRANCH / DEREFERENCE are produced structurally by the sparse CFG
+#   walker (no keyword can name them, which is exactly why they are not
+#   vocabulary events) -- not ported to main until I1-B.
 #
 #   OPEN / CLOSE / ACQUIRE / WAIT / SIGNAL / CREATE / DESTROY are level 1 by
 #   omission. The design doc §23 lists them as node types, but the stage 2
@@ -36,23 +44,46 @@ LEVEL_1_EVENTS = frozenset({
 
 KNOWN_EVENTS = LEVEL_0_EVENTS | LEVEL_1_EVENTS
 
-# The level 1 event types the pipeline already produces today, structurally.
-# `DefectPattern.missing_events` consults this set, so a coverage report says
-# "attackable now" for a pattern the CFG actually supports.
+# The level-1 event types the PR pipeline produces structurally. On main none
+# of them are produced yet (I1-B scope); the set is ported for the taxonomy.
 STRUCTURAL_EVENTS = frozenset({"BRANCH", "CHECK", "DEREFERENCE"})
 
-# The access events (stage 5A). A third category rather than an addition to
-# STRUCTURAL_EVENTS, and the split is load-bearing: the publication test pins
-# `matched_via == "structural"` to membership in STRUCTURAL_EVENTS, and an
-# access is published as `matched_via == "access"` -- it is a different kind of
-# finding and the evidence bundle has to be able to say which one it is.
-#
-# They are also not vocabulary events in the way CHECK and DEREFERENCE are not:
-# no keyword names a read, only position does, so the walker produces them from
-# the assignment target it already computes. Unlike the structural three they
-# are *published and never connected* -- see `_EDGELESS_EVENT_TYPES` in
-# `sparsecfg.py` for why, and for what that protects.
+# The access events (stage 5A) -- PR-only, not ported (I1-B).
 ACCESS_EVENTS = frozenset({"READ", "WRITE"})
+
+
+@dataclass(frozen=True, slots=True)
+class SemanticEdge:
+    """One typed relation between two semantic events (I1-C, from PR #1).
+
+    I1-A/I1-B produced only CONTROL_REACHES via the sparse_cfg analyzer; the
+    table and id are relation-generic because the DFG relations (I1-C:
+    DATA_FLOW_TO / CONSUMES) land in the same analysis_edges rows.
+    `dst_event_id` may be a synthetic exit id (`identity.cfg_exit_id`), which
+    has no event row -- consumers that need the exit as a node materialise it
+    from the edge rows.
+    """
+
+    edge_id: str
+    src_event_id: str
+    dst_event_id: str
+    relation: str
+    owner_symbol_id: str
+    file_id: str
+    flags: tuple[str, ...] = field(default=())
+    metadata: dict = field(default_factory=dict)
+
+    def to_dict(self) -> dict:
+        return {
+            "edge_id": self.edge_id,
+            "src_event_id": self.src_event_id,
+            "dst_event_id": self.dst_event_id,
+            "relation": self.relation,
+            "owner_symbol_id": self.owner_symbol_id,
+            "file_id": self.file_id,
+            "flags": list(self.flags),
+            "metadata": dict(self.metadata),
+        }
 
 
 def event_level(event_type: str) -> int:
@@ -98,41 +129,6 @@ class SemanticEvent:
             "end_line": self.end_line,
             "matched_name": self.matched_name,
             "matched_via": self.matched_via,
-            "flags": list(self.flags),
-            "metadata": dict(self.metadata),
-        }
-
-
-@dataclass(frozen=True, slots=True)
-class SemanticEdge:
-    """One typed relation between two semantic events (stage 3).
-
-    Stage 3 produces only `CONTROL_REACHES`; the table and id are relation-
-    generic because the DFG relations of stage 5 land in the same two tables.
-    `dst_event_id` may be a synthetic exit id (`identity.cfg_exit_id`), which
-    has no `semantic_events` row -- consumers that need the exit as a node
-    materialise it from the edge rows. The flag set (`branch=true`, ...,
-    sorted) is the id discriminator: two edges between the same pair of points
-    are a real possibility, and equal flag sets are the same reachability fact.
-    """
-
-    edge_id: str
-    src_event_id: str
-    dst_event_id: str
-    relation: str
-    owner_symbol_id: str
-    file_id: str
-    flags: tuple[str, ...] = field(default=())
-    metadata: dict = field(default_factory=dict)
-
-    def to_dict(self) -> dict:
-        return {
-            "edge_id": self.edge_id,
-            "src_event_id": self.src_event_id,
-            "dst_event_id": self.dst_event_id,
-            "relation": self.relation,
-            "owner_symbol_id": self.owner_symbol_id,
-            "file_id": self.file_id,
             "flags": list(self.flags),
             "metadata": dict(self.metadata),
         }

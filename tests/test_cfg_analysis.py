@@ -8,12 +8,11 @@ from contextlib import closing
 from pathlib import Path
 
 from provenlattice.analysis_ast import analyze_ast_scope
-from provenlattice.analysis_cfg import analyze_cfg_scope
+from provenlattice.analysis_cfg import PYTHON_CFG_CONTRACT, analyze_cfg_scope
 from provenlattice.graph import full_index
 from provenlattice.identity import path_id
 from provenlattice.incremental import incremental_update
 from provenlattice.query import GraphQuery
-from provenlattice.storage import SQLiteStorage
 
 SRC_FLOWS = """def seq():
     a()
@@ -95,10 +94,7 @@ def write(path: Path, text: str) -> None:
 
 
 def base_snapshot(database: Path) -> dict:
-    # raw_references lives in the cold store (stage 7A); only a storage-open
-    # connection carries the TEMP VIEW that re-exposes it to readers.
-    storage = SQLiteStorage(database)
-    connection = storage.connection
+    connection = sqlite3.connect(database)
     connection.row_factory = sqlite3.Row
     result = {}
     for table in ("nodes", "edges", "shards", "raw_references"):
@@ -110,7 +106,7 @@ def base_snapshot(database: Path) -> dict:
                 item.pop("boundary_dirty")
             rows.append(item)
         result[table] = rows
-    storage.close()
+    connection.close()
     return result
 
 
@@ -464,7 +460,7 @@ class CFGAnalysisTests(unittest.TestCase):
         metadata = json.loads(cfg_state(self.database, unsupported_file)["metadata"])
         self.assertEqual(metadata["functions_built"], 0)
         self.assertEqual(metadata["functions_skipped_unsupported_construct"], 3)
-        self.assertEqual(metadata["contract"], "python-cfg-v1")
+        self.assertEqual(metadata["contract"], PYTHON_CFG_CONTRACT)
         self.assertEqual(metadata["analyzer"], "cfg:python")
 
     def test_g11_base_graph_zero_impact(self) -> None:

@@ -2476,11 +2476,8 @@ def find_paths(
             truncated = True
     found.sort(key=lambda path: (len(path.points), path.points))
     return found, truncated
-
-
 def _subject_matches(info: dict[str, Any], subject: str) -> bool:
     return bool(subject) and info.get("subject", "") == subject
-
 
 def unreleased_resources(
     edges: Iterable[Any],
@@ -2560,14 +2557,12 @@ def unreleased_resources(
         truncated = truncated or more
     return found, truncated
 
-
 def leaked_allocations(
     edges: Iterable[Any], points: dict[str, dict[str, Any]], *, max_hops: int = 64, max_paths: int = 8
 ) -> tuple[list[ControlPath], bool]:
     """Matrix 4.1 verbatim: ALLOC reaches the exit with no RELEASE of the same
     subject on the path. The stage 3 spelling of `unreleased_resources`."""
     return unreleased_resources(edges, points, max_hops=max_hops, max_paths=max_paths)
-
 
 def unchecked_dereferences(
     edges: Iterable[Any], points: dict[str, dict[str, Any]], *, max_hops: int = 64, max_paths: int = 8
@@ -2612,7 +2607,6 @@ def unchecked_dereferences(
         truncated = truncated or more
     return found, truncated
 
-
 def use_after_release(
     edges: Iterable[Any], points: dict[str, dict[str, Any]], *, max_hops: int = 64, max_paths: int = 8
 ) -> tuple[list[ControlPath], bool]:
@@ -2644,3 +2638,4 @@ def use_after_release(
         found.extend(paths)
         truncated = truncated or more
     return found, truncated
+

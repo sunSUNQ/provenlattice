@@ -10,16 +10,25 @@ from __future__ import annotations
 import json
 from pathlib import Path, PurePosixPath
 
-from .analysis import ANALYZER_VERSIONS
+from .analysis import ANALYZER_VERSIONS, capability_record, dependency_staleness, selectable_features
 from .orchestrator import AnalysisRequestError
+from .semantics.events import KNOWN_EVENTS
 from .storage import SQLiteStorage
 
-SUPPORTED_QUERY_FEATURES = frozenset({"ast", "cfg"})
+SUPPORTED_QUERY_FEATURES = frozenset(
+    {"ast", "cfg", "events", "sparse_cfg", "sparse_dfg"})
 QUERY_ANALYZERS = {
     ("ast", "python"): "ast:python",
     ("cfg", "python"): "cfg:python",
     ("ast", "c"): "ast:c",
     ("cfg", "c"): "cfg:c",
+    # one analyzer covers the whole C/C++ family (cpp.toml extensions)
+    ("events", "c"): "events:cpp",
+    ("events", "cpp"): "events:cpp",
+    ("sparse_cfg", "c"): "sparse_cfg:cpp",
+    ("sparse_cfg", "cpp"): "sparse_cfg:cpp",
+    ("sparse_dfg", "c"): "sparse_dfg:cpp",
+    ("sparse_dfg", "cpp"): "sparse_dfg:cpp",
 }
 FUNCTION_KINDS = frozenset({
     "function_definition", "async_function_definition", "FUNCTION",
@@ -55,7 +64,7 @@ def _coverage(state) -> dict:
         metadata = state.get("metadata", {})
         for key in (
             "analysis_status", "partial", "parse_coverage",
-            "error_node_count", "missing_node_count",
+            "error_node_count", "missing_node_count", "level", "grade",
         ):
             if key in metadata:
                 coverage[key] = metadata[key]
@@ -94,6 +103,9 @@ def _read_state(storage, file_id: str, analyzer: str) -> dict:
     reasons = _stale_reasons(storage, file_id, state)
     if state["feature_version"] != ANALYZER_VERSIONS[analyzer]:
         reasons.append("feature_version_changed")
+    dependency_reason = dependency_staleness(state.get("metadata"))
+    if dependency_reason is not None:
+        reasons.append(dependency_reason)
     if reasons:
         return {"status": "stale", "reason": "+".join(reasons), "state": state}
     nodes = [
@@ -156,6 +168,57 @@ def _check_cfg_integrity(nodes, edges) -> str | None:
     return None
 
 
+def _check_events_integrity(nodes, require_points: bool = False) -> str | None:
+    ids = {node["analysis_node_id"] for node in nodes}
+    if len(ids) != len(nodes):
+        return "duplicate_event_ids"
+    for node in nodes:
+        if not node["analysis_node_id"].startswith("event:"):
+            return "event_id_prefix_missing"
+        if node["kind"] not in KNOWN_EVENTS:
+            return "unknown_event_type"
+        payload = node["payload"]
+        if not payload.get("owner_symbol_id"):
+            return "event_owner_missing"
+        if require_points and payload.get("level") != "level0+structural+access":
+            return "event_level_missing"
+        if not require_points and payload.get("level") != "level0":
+            return "event_level_missing"
+    return None
+
+
+def _check_sparse_cfg_integrity(nodes, edges) -> str | None:
+    event_integrity = _check_events_integrity(nodes, require_points=True)
+    if event_integrity is not None:
+        return event_integrity
+    known = set(ids) if (ids := {node["analysis_node_id"] for node in nodes}) else set()
+    for edge in edges:
+        if edge["kind"] != "CONTROL_REACHES":
+            return "unknown_sparse_relation"
+        if edge["src_id"] not in known:
+            return "sparse_edge_endpoint_missing"
+        # dst may be the synthetic exit (cfg-exit:...), which has no node row
+        dst = edge["dst_id"]
+        if not dst.startswith("cfg-exit:") and dst not in known:
+            return "sparse_edge_endpoint_missing"
+    return None
+
+
+def _check_dfg_integrity(edges) -> str | None:
+    ids = {edge["analysis_edge_id"] for edge in edges}
+    if len(ids) != len(edges):
+        return "duplicate_dfg_edge_ids"
+    for edge in edges:
+        if edge["kind"] not in ("DATA_FLOW_TO", "CONSUMES"):
+            return "unknown_dfg_relation"
+        if not edge["src_id"].startswith("event:"):
+            return "dfg_endpoint_missing"
+        dst = edge["dst_id"]
+        if not dst.startswith("event:") and not dst.startswith("cfg-exit:"):
+            return "dfg_endpoint_missing"
+    return None
+
+
 def _build_ast_tree(nodes, root_id: str) -> dict:
     children_map: dict[str | None, list[dict]] = {}
     for node in nodes:
@@ -191,6 +254,16 @@ def query_analysis(repo: str | Path, feature: str, *, file_path=None,
                    symbol_id=None, database: str | Path | None = None) -> dict:
     root = Path(repo).resolve()
     feature_key = str(feature).strip().lower()
+    record = capability_record(feature_key)
+    if record is not None and feature_key not in selectable_features():
+        # Registered-but-not-implemented capability (I0 contract): the honest
+        # answer is "unavailable", never a fake success and never a bare
+        # "unsupported" that would hide the capability's existence from
+        # callers probing the contract. Partially-implemented capabilities
+        # (I1-A `events`) are selectable and answer below.
+        return _envelope(feature, None, _selector(file_path, symbol_id),
+                         "unavailable", "capability_not_implemented",
+                         {"type": "none"})
     if feature_key not in SUPPORTED_QUERY_FEATURES:
         return _envelope(feature, None, _selector(file_path, symbol_id),
                          "unsupported", "unsupported_feature", {"type": "none"})
@@ -247,14 +320,27 @@ def _query_file(storage, repo_id: str, feature_key: str, relative: str) -> dict:
         return _envelope(feature_key, analyzer, selector, read["status"],
                          read["reason"], _coverage(read["state"]))
     nodes, edges = read["nodes"], read["edges"]
-    integrity = (_check_cfg_integrity(nodes, edges) if feature_key == "cfg"
-                 else _check_ast_integrity(nodes))
+    if feature_key == "events":
+        integrity = _check_events_integrity(nodes)
+    elif feature_key == "sparse_cfg":
+        integrity = _check_sparse_cfg_integrity(nodes, edges)
+    elif feature_key == "sparse_dfg":
+        integrity = _check_dfg_integrity(edges)
+    else:
+        integrity = (_check_cfg_integrity(nodes, edges) if feature_key == "cfg"
+                     else _check_ast_integrity(nodes))
     if integrity is not None:
         return _envelope(feature_key, analyzer, selector, "corrupt",
                          integrity, _coverage(read["state"]))
     result = _envelope(feature_key, analyzer, selector, "available", None,
                        _coverage(read["state"]))
     result.update({"file_id": file_id, "nodes": nodes, "edges": edges})
+    if feature_key in ("events", "sparse_cfg"):
+        result["events"] = [
+            {"event_id": node["analysis_node_id"], "event_type": node["kind"],
+             **node["payload"]}
+            for node in nodes
+        ]
     if feature_key == "ast":
         roots = [node for node in nodes if node["payload"].get("parent_id") is None]
         result["root_id"] = roots[0]["analysis_node_id"] if len(roots) == 1 else None
@@ -315,6 +401,63 @@ def _query_symbol(storage, repo_id: str, feature_key: str, symbol_id: str) -> di
             "entry_id": entries[0]["analysis_node_id"],
             "exit_id": exits[0]["analysis_node_id"],
             "nodes": nodes, "edges": edges,
+        })
+        return result
+    if feature_key == "events":
+        events = [node for node in read["nodes"]
+                  if node["payload"].get("owner_symbol_id") == symbol_id]
+        if not events:
+            return _envelope(feature_key, analyzer, selector, "not_available",
+                             "analysis_not_available", _coverage(read["state"]))
+        result = _envelope(feature_key, analyzer, selector, "available", None,
+                           _coverage(read["state"]))
+        result.update({
+            "file_id": file_id,
+            "symbol": {"id": symbol["id"], "kind": symbol["kind"],
+                       "name": symbol["name"], "qualified_name": symbol["qualified_name"]},
+            "nodes": events, "edges": [],
+            "events": [
+                {"event_id": node["analysis_node_id"], "event_type": node["kind"],
+                 **node["payload"]}
+                for node in events
+            ],
+        })
+        return result
+    if feature_key == "sparse_cfg":
+        events = [node for node in read["nodes"]
+                  if node["payload"].get("owner_symbol_id") == symbol_id]
+        edges = [edge for edge in read["edges"]
+                 if edge["payload"].get("owner_symbol_id") == symbol_id]
+        if not events:
+            return _envelope(feature_key, analyzer, selector, "not_available",
+                             "analysis_not_available", _coverage(read["state"]))
+        result = _envelope(feature_key, analyzer, selector, "available", None,
+                           _coverage(read["state"]))
+        result.update({
+            "file_id": file_id,
+            "symbol": {"id": symbol["id"], "kind": symbol["kind"],
+                       "name": symbol["name"], "qualified_name": symbol["qualified_name"]},
+            "nodes": events, "edges": edges,
+            "events": [
+                {"event_id": node["analysis_node_id"], "event_type": node["kind"],
+                 **node["payload"]}
+                for node in events
+            ],
+        })
+        return result
+    if feature_key == "sparse_dfg":
+        edges = [edge for edge in read["edges"]
+                 if edge["payload"].get("owner_symbol_id") == symbol_id]
+        if not edges:
+            return _envelope(feature_key, analyzer, selector, "not_available",
+                             "analysis_not_available", _coverage(read["state"]))
+        result = _envelope(feature_key, analyzer, selector, "available", None,
+                           _coverage(read["state"]))
+        result.update({
+            "file_id": file_id,
+            "symbol": {"id": symbol["id"], "kind": symbol["kind"],
+                       "name": symbol["name"], "qualified_name": symbol["qualified_name"]},
+            "nodes": [], "edges": edges,
         })
         return result
     owner_nodes = [node for node in read["nodes"]

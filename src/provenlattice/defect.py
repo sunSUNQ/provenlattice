@@ -942,24 +942,6 @@ def _closure(
     return reached
 
 
-def _ancestors(
-    start: str, reverse: Mapping[str, list[str]], max_hops: int
-) -> set[str]:
-    """Every point that can reach `start`, breadth-first, capped at `max_hops`."""
-    reached: set[str] = set()
-    queue: deque[tuple[str, int]] = deque([(start, 0)])
-    seen = {start}
-    while queue:
-        current, hops = queue.popleft()
-        if hops >= max_hops:
-            continue
-        for src in reverse.get(current, ()):
-            if src in seen:
-                continue
-            seen.add(src)
-            reached.add(src)
-            queue.append((src, hops + 1))
-    return reached
 
 
 def _holds_before(

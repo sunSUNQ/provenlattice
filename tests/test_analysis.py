@@ -51,10 +51,7 @@ def synthetic_edges(tag: str) -> list[AnalysisEdge]:
 
 
 def base_snapshot(database: Path) -> dict:
-    # raw_references lives in the cold store (stage 7A); only a storage-open
-    # connection carries the TEMP VIEW that re-exposes it to readers.
-    storage = SQLiteStorage(database)
-    connection = storage.connection
+    connection = sqlite3.connect(database)
     connection.row_factory = sqlite3.Row
     result = {}
     for table in ("nodes", "edges", "shards", "raw_references"):
@@ -72,7 +69,7 @@ def base_snapshot(database: Path) -> dict:
             "WHERE json_extract(metadata, '$.scope') = 'boundary' ORDER BY id"
         )
     ]
-    storage.close()
+    connection.close()
     return result
 
 

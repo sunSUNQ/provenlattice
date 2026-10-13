@@ -5,21 +5,38 @@ from __future__ import annotations
 import json
 from pathlib import Path, PurePosixPath
 
+from .analysis import capability_record, selectable_features
 from .analysis_ast import analyze_ast_scope, normalize_scope, scoped_sources
 from .analysis_c_ast import analyze_c_ast_scope
 from .analysis_c_cfg import ANALYZER as C_CFG_ANALYZER, analyze_c_cfg_scope
+from .analysis_c_events import EVENTS_SUFFIXES, analyze_c_events_scope
+from .analysis_c_dfg import analyze_c_dfg_scope
+from .analysis_c_scfg import analyze_c_scfg_scope
 from .analysis_cfg import ANALYZER as CFG_ANALYZER, analyze_cfg_scope
 from .identity import path_id
 from .scanner import IGNORED_DIRS, SUPPORTED_EXTENSIONS
 from .storage import SQLiteStorage
 
-SUPPORTED_FEATURES = ("ast", "cfg")
-FEATURE_DEPENDENCIES = {"cfg": ("ast",)}
+# Implemented optional-analysis capabilities (analysis.py contract is the
+# single source of truth; this tuple stays the literal subset so the per-file
+# reporting loop is stable).
+SUPPORTED_FEATURES = ("ast", "cfg", "events", "sparse_cfg", "sparse_dfg")
+FEATURE_DEPENDENCIES = {
+    "cfg": ("ast",),
+    "sparse_dfg": ("sparse_cfg",),
+    # defect is a query-time capability: requesting it materializes its
+    # upstream chain and nothing else (the queries read, never build).
+    "defect": ("events", "sparse_cfg", "sparse_dfg"),
+}
 C_SOURCE_SUFFIXES = frozenset({".c", ".h"})
 REASON_PREFIX = "skipped_"
 
 
 def _supports_feature(entry: dict, feature: str) -> bool:
+    if feature in ("events", "sparse_cfg", "sparse_dfg"):
+        # The semantic analyzers cover the whole C/C++ family (the cpp.toml
+        # extension list), not just the .c/.h pair.
+        return PurePosixPath(entry["path"]).suffix.lower() in EVENTS_SUFFIXES
     return (
         entry["language"] == "python"
         or PurePosixPath(entry["path"]).suffix.lower() in C_SOURCE_SUFFIXES
@@ -87,7 +104,22 @@ def _parse_features(features) -> list[str]:
         raise AnalysisRequestError("invalid_features", "no features requested")
     unique: list[str] = []
     for feature in requested:
-        if feature not in SUPPORTED_FEATURES:
+        record = capability_record(feature)
+        if record is not None and feature not in selectable_features():
+            # Registered-but-not-implemented capability (I0 contract): fail
+            # closed before planning or any mutation -- never a partial run,
+            # never a fake success. Distinct from unknown_feature so callers
+            # can tell a future capability from a typo. Partially-implemented
+            # capabilities (I1-A `events`, I2A `defect`) are selectable:
+            # events materializes its subset, defect materializes its
+            # upstream chain and answers through the query entry.
+            raise AnalysisRequestError(
+                "capability_not_available",
+                f"capability '{feature}' is registered but not implemented in this "
+                f"build (planned integration: {record['planned_integration']}); "
+                "nothing was materialized",
+            )
+        if feature not in SUPPORTED_FEATURES and feature != "defect":
             raise AnalysisRequestError("unknown_feature", f"unsupported feature: {feature}")
         if feature not in unique:
             unique.append(feature)
@@ -163,6 +195,25 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
         cfg_runs = [analyze_cfg_scope(root, scope_path.as_posix(), database)]
         cfg_runs.append(analyze_c_cfg_scope(root, scope_path.as_posix(), database))
         results["cfg"] = _merge_feature_results(cfg_runs)
+    if "events" in plan:
+        results["events"] = _merge_feature_results(
+            [analyze_c_events_scope(root, scope_path.as_posix(), database)])
+    if "sparse_cfg" in plan:
+        results["sparse_cfg"] = _merge_feature_results(
+            [analyze_c_scfg_scope(root, scope_path.as_posix(), database)])
+    if "sparse_dfg" in plan:
+        results["sparse_dfg"] = _merge_feature_results(
+            [analyze_c_dfg_scope(root, scope_path.as_posix(), database)])
+    if "defect" in plan:
+        # query-time capability: the upstream chain above is the whole
+        # materialization; candidates are answered by the defect query entry.
+        results["defect"] = {
+            "repo_id": next(iter(results.values()))["repo_id"],
+            "database": str(database), "scope": scope_path.as_posix(),
+            "materialized": [], "reused": [], "nodes_written": 0,
+            "analyze_time_ms": 0.0, "analyzers": [], "contracts": [],
+            "query_time": True,
+        }
     categories: dict[str, dict[str, tuple[str, str | None]]] = {}
     for feature, result in results.items():
         mapping: dict[str, tuple[str, str | None]] = {}
@@ -223,6 +274,14 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
         per_file.append(record)
     features_out = {}
     for feature in plan:
+        if feature == "defect":
+            # query-time capability: there is no per-file materialization to
+            # report; the candidates come from the defect query entry.
+            features_out["defect"] = {
+                "query_time": True,
+                "materialized": [], "reused": [], "skipped": {}, "failures": [],
+            }
+            continue
         mapping = categories[feature]
         materialized, reused, failures = [], [], []
         skipped_grouped: dict[str, list[str]] = {}
@@ -275,9 +334,13 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
                 "skipped": sum(1 for status, _ in mapping.values() if status == "skipped"),
             },
         }
+    # defect is query-time: its run status comes from the materializing
+    # features (itself excluded, its deps standing in when it is alone)
+    materializing = [f for f in requested if f != "defect"] or \
+        list(FEATURE_DEPENDENCIES.get("defect", ()))
     eligible = [
         entry for entry in inventory
-        if any(_supports_feature(entry, feature) for feature in requested)
+        if any(_supports_feature(entry, feature) for feature in materializing)
     ]
     if not eligible:
         status = "failed"
@@ -285,7 +348,7 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
         produced_any = False
         all_good = True
         for entry in eligible:
-            for feature in requested:
+            for feature in materializing:
                 if not _supports_feature(entry, feature):
                     continue
                 status, reason = categories[feature].get(
@@ -312,4 +375,7 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
         "features": features_out,
         "dependencies": dependencies,
         "per_file": per_file,
+        **({"defect_query_hint": "defect is query-time; run the `defect` command "
+            "or defect_query.query_defect_candidates for candidates"}
+           if "defect" in plan else {}),
     }
