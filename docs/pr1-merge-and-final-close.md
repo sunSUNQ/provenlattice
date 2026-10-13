@@ -2,6 +2,8 @@
 
 > 任务:PL-PR1-PR2-MERGE-AND-FINAL-CLOSE(2026-10-13)
 > 判定:**PR1_CLOSED_AND_VALIDATED**
+>
+> **勘误(2026-10-13)**：本文撰写时引用的 "最终 main HEAD: a35cae0" 为**报告文档提交时的 HEAD**（含收口报告文件），非合并产物 HEAD。合并产物 HEAD 为 `922b834`（GitHub PR #2 merge commit），后续 `c6795a1`（本地 main 同步）和 `a35cae0`（含收口报告）为其后代。当前 main 远程 HEAD 为 `a35cae0`。
 
 ---
 

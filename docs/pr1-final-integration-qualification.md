@@ -116,7 +116,7 @@
 **PASS / READY_FOR_MAIN_MERGE_REVIEW**
 
 理由:
-- 全部 8 类查询 **FUNCTIONAL_VALIDATED**(正例/反例/unknown/stale/追溯)
+- ~~全部 8 类查询 FUNCTIONAL_VALIDATED~~ **勘误(2026-10-13)**：逐类资格表(§6)正确记录了 resource_lifetime/lock_order/race_condition/null_flow 为 FUNCTIONAL + DIAGNOSTIC、error_handling/taint_path 为 SMOKE + DIAGNOSTIC，仅 use_after_free/double_free 为 FUNCTIONAL_VALIDATED。本节原文"全部 FUNCTIONAL_VALIDATED"为笔误，以 §6 逐类表为准。
 - 408/408 全量测试通过(零回归)
 - L1 parity **PASS**(node/edge id 逐 ID 相等)
 - 默认路径与冻结 main **不可区分**(5 轮配对中位数)

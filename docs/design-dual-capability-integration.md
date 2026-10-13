@@ -1,5 +1,7 @@
 # Dual-Capability Integration Design：main 与 PR #1 的统一架构与整合规划
 
+> **状态（2026-10-13 更新）：本文为 2026-10-12 的历史整合规划。选择性集成已通过 PR #2 合并至 main 并完成验收（MERGED_AND_VALIDATED，408/408 tests, L1 parity PASS）。当前状态以 [docs/capability-matrix.md](capability-matrix.md)、[docs/v1.4-integration-overview.md](v1.4-integration-overview.md) 和 [docs/pr1-merge-and-final-close.md](pr1-merge-and-final-close.md) 为准。本文保留为决策过程的历史记录。**
+>
 > 版本：V1（2026-10-12）
 > 文档地位：Gold Target V2 的**整合设计附件**。权威规划入口仍是
 > [docs/roadmap.md](roadmap.md) 的 Gold Target V2 节；本文记录两条开发线的

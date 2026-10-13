@@ -206,55 +206,56 @@ validation / remediation state / regression tracking）时，才重新评估是�
 > 逐层实现状态见 G7；PR #1 能力映射、语义差异矩阵与整合路线见
 > [docs/design-dual-capability-integration.md](design-dual-capability-integration.md)。
 
-### G7. 当前实现 vs Gold Target V2
+### G7. 当前实现 vs Gold Target V2（V1.4，2026-10-13 更新）
 
 **Already implemented（main 已集成）**：
 
 - L1 Foundation Graph 默认基础能力
 - optional AST / CFG materialization（Python AST/CFG；C normalized AST + 函数内
-  CFG + 短路 + 调用语义分类）
+  CFG + 短路 + 调用语义分类 + I0R1 对齐修复）
 - scoped analysis（`analyze --scope`）
-- analysis cache / freshness
+- analysis cache / freshness + dependency_staleness 统一规则
 - Python / C analyzer dispatch
 - task-context request-time 入口
 - core provenance
 - normalization-v2
-- CLI
+- CLI（含 defect 命令）
 - native MCP
+- Capability Contract（8 查询 + 3 analyzer 统一注册）
+- Semantic Events（15 类，词汇表驱动，按需）
+- Sparse CFG / Sparse DFG（按需）
+- 8 类 Typed Defect Query + Evidence Bundle（按需）
+- Ownership Contracts（TOML 数据，按需）
+- 三态可达性证据（true/false/unknown）
+- 复合主键 (id, feature) + 旧库自动迁移
+- Query grade/level/provenance（local-only, diagnostic）
 
 **Partially implemented**：
 
-- 整体 optional capability model 已存在，但尚未形成统一配置模型
 - L3 已按调用使用，但尚无完整 profile-driven policy
-- Analyzer Capability Registry 仅有雏形（`ANALYZER_VERSIONS` 注册表 +
-  feature/scope 校验），尚无依赖/成本/语言覆盖的统一管理面
-
-**Available on PR #1 branch（未集成 main，整合状态见
-[design-dual-capability-integration.md](design-dual-capability-integration.md) §9）**：
-
-- Semantic Events（15 类，词汇表驱动）+ Sparse CFG / Sparse DFG
-- Ownership Contracts + 8 类 Typed Defect Query（`defect` CLI 入口）+
-  Evidence Bundle / Missing Evidence
-- cold/hot 存储分离（`codegraph.cold.db`）与流式 update、缺陷查询性能优化
-- 语言边界：CFG/DFG 仅 C/C++ 语料验证；输出全部为 Candidate（PR 自报
-  stage-6 precision 基线 1/32，stage-9 后部分收敛，逐条归因在案）
+- Analyzer Capability Registry 已有依赖/成本/语言管理，尚无 profile system
+- resource_lifetime / lock_order / race_condition 为 FUNCTIONAL + DIAGNOSTIC
+- error_handling / taint_path 为 SMOKE + DIAGNOSTIC
+- taint_path 仅 4 source/3 sink 最小集
 
 **Not implemented（统一架构目标，当前无实现）**：
 
-- 统一 Normalized Program IR / Canonical Control-Flow Model（Full/Sparse
-  双视图收敛）
-- Analyzer Capability Registry 完整版（依赖/成本/语言/失效统一管理）
+- 统一 Normalized Program IR / Canonical Control-Flow Model（Full/Sparse 双视图收敛）
 - unified capability config / profile system / automatic capability planning
-- def-use / points-to / taint / Clang（main 侧均未启动；PR 分支的 taint_path
-  属检测链组成部分，随 PR 整合决策走）
+- def-use / points-to / 精确 taint / Clang
 - Plugin / SDK
 - distributed / cross-repo infrastructure
-- Code Inspection 的正式 qualification（三臂实验未执行，见
-  design-dual-capability-integration.md §8）
+- Code Inspection 的正式 qualification（三臂实验未执行）
+
+**Deferred（PR #1 归档于 archive/pr1-full-merge，可通过 Capability Contract 后续启用）**：
+
+- 冷/热存储分离（查询加速 2×，但改变默认布局）
+- 流式增量（update 峰值内存 -23%）
+- declarations 重构替换 L1 符号抽取（RQ1 资格口径失效）
 
 > Gold Target 是方向声明，**不等于当前已全部实现**；实现状态以 §1–§2 的
-> 冻结证据、§3 的 pending 项与 PR #1 整合决策为准。PR #1 的任何能力在
-> 合并并取得对应证据之前，一律不得在对外文档中表述为已交付能力。
+> 冻结证据、§3 的 pending 项与 V1.4 集成验收为准。全部缺陷查询输出为
+> Candidate（local-only, diagnostic），`resolved` ≠ Verified Finding。
 
 ## Version line（2026-10-10 reconciliation）
 

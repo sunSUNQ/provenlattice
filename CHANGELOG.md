@@ -3,6 +3,89 @@
 所有已发布里程碑按时间倒序记录。tag 命名遵循 `provenlattice-*` 前缀约定；
 各阶段的"已完成 / 明确未包含"以对应发布文档为准（`docs/releases/`）。
 
+## ProvenLattice V1.4 — Selective PR1 Integration（2026-10-13）
+
+**V1.4 = Agent Development 基础平台 + 按需 Code Inspection（八类缺陷候选查询）**
+
+### Added
+
+- **Semantic Events**：15 类词汇表驱动的操作事件（CALL/ALLOC/RELEASE/LOCK/UNLOCK/
+  RETURN/THROW/READ/WRITE/DEREFERENCE/CHECK/BRANCH/ATOMIC/THREAD_SPAWN/THREAD_JOIN），
+  TOML 词汇表驱动（cpp.toml + python.toml），按需物化到 AnalysisStore。
+- **Sparse CFG**：CONTROL_REACHES 控制可达边 + 结构事件（CHECK/BRANCH/DEREFERENCE）
+  + 访问事件（READ/WRITE），事件点级稀疏图，按需物化。
+- **Sparse DFG**：DATA_FLOW_TO（方法内 def→use）+ CONSUMES（分配直接传入调用），
+  别名链 + via 中间体，按需物化。
+- **八类 Typed Defect Query**：double_free、use_after_free、null_flow、
+  resource_lifetime、lock_order、race_condition、taint_path、error_handling。
+  每个候选携带 E-DEFECT-* 证据链、missing_evidence、三态可达性。
+- **Evidence Bundle**：candidate_id、defect_type、subject、facts、uncertain_facts、
+  paths、source_evidence、missing_evidence、resolution_status、confidence（heuristic）。
+- **Ownership Contract Engine**：ContractTable + declared/inferred ownership rules
+  （TOML 配置），供 resource_lifetime 和 race_condition 消费。
+- **Capability Contract**：统一能力注册（八类查询 + events + sparse_cfg + sparse_dfg），
+  按 Capability × Scope 双维控制，dependency freshness 统一管理。
+- **统一 dependency freshness**：`dependency_staleness()` 单一规则，存储层和查询层
+  共用，上游分析版本变化自动失效下游缓存。
+- **复合主键 (id, feature)**：analysis_nodes/edges 支持跨 analyzer 同 ID 共存，
+  旧库自动迁移。
+- **三态可达性证据**：true（路径存在）/ false（连接端点无路径）/ unknown（端点
+  为 edgeless 访问点或 parse partial）——不把 unknown 当作确定性不可达。
+- **查询 grade/level/provenance**：每个查询结果标注 `local-only, diagnostic` 等级
+  和 `resolved ≠ Verified Finding` 语义。
+
+### Changed
+
+- **analysis_nodes/edges 主键**从 `id` 单列扩展为 `(id, feature)`——支持跨 analyzer
+  同 ID 共存，旧库自动迁移（derived cache，行数保留）。
+- **analysis_query.py** 六态查询面扩展：events/sparse_cfg/sparse_dfg/defect feature
+  支持，events flat view，integrity checks。
+- **orchestrator.py**：`defect` 作为 query-time capability，请求时物化上游链并返回
+  `defect_query_hint`。
+- **CLI**：新增 `defect` 命令（纯查询），`--type` 支持 8 类 + matrix keys + all；
+  help text 更新为完整查询列表。
+- **pyproject.toml**：version 1.4.0，semantics 包 TOML 数据文件 package-data。
+- **test_cfg_analysis.py**：硬编码 contract 字符串改为 `PYTHON_CFG_CONTRACT` 常量。
+
+### Preserved
+
+- **L1 Foundation Graph** 完全不变（graph.py/scanner.py/resolver.py/shard.py/
+  overlay.py/mcp_server.py 零 diff），L1 parity 逐 ID 验证通过。
+- Python AST/CFG 分析层、task-context、normalization-v2、native MCP 全部保留。
+- RQ1/RQ2/SQI 资格口径不变。
+
+### Deferred
+
+以下 PR #1 能力已归档于 `archive/pr1-full-merge` 分支，可通过 Capability Contract
+按需启用：
+
+- **冷/热存储分离**（查询加速 2×，但改变默认布局）
+- **流式增量**（update 峰值内存 -23%，但需冷存储配套）
+- **declarations 重构**（L1 符号集合变化，RQ1 口径失效，需重新资格）
+- **事件提取嵌入 index**（默认路径 +157%，改为按需触发）
+
+### Validation
+
+- 全量测试 **408/408 PASS**（254 main 回归 + 154 新增）
+- L1 parity **PASS**（node/edge id 逐 ID 相等）
+- 八类 CLI smoke **8/8 available**
+- 旧库 PK 迁移 **8/8 PASS**
+- 默认 index 零检测产物 **CONFIRMED**
+- 默认性能 index 6.94s / RSS 218.1MB（aria2 1,393 文件，5 轮配对中位数）
+
+### Known Limitations
+
+- 全部输出为 **Candidate**（resolved ≠ Verified Finding）；confidence 为 heuristic score
+- `error_handling`/`taint_path` 仅 SMOKE + DIAGNOSTIC 级
+- 别名精度有限（q=p 拷贝后 deref 不与 p 的 free 配对）
+- CONSUMES 仅覆盖直接传递形状
+- goto 目标不建模；短路坍缩为单 BRANCH
+- 无 SSA / points-to / 跨函数数据流边
+- Python 缺陷检测链未验证
+- `if(p){*p=1}` null_flow 已知误报保留
+
+---
+
 ## Post-V1.2 C Analysis Development（2026-10-10，codex/c-analysis-a1 → 已集成 main）
 
 **Post-V1.2 development checkpoint**：开发分支 `codex/c-analysis-a1` 的完整
