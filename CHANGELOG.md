@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 所有已发布里程碑按时间倒序记录。tag 命名遵循 `provenlattice-*` 前缀约定；
 各阶段的"已完成 / 明确未包含"以对应发布文档为准（`docs/releases/`）。
@@ -73,7 +73,7 @@
 - 八类 CLI smoke **8/8 available**
 - 旧库 PK 迁移 **8/8 PASS**
 - 默认 index 零检测产物 **CONFIRMED**
-- 默认性能 index **6.80s** / RSS **218.0MB**（5 轮配对中位数；合并后单次验证 = 6.94s / 218.1MB）
+- 默认性能 index **6.77s** / RSS **218.0MB**（5 轮配对中位数；合并后单次验证 = 6.94s / 218.1MB）
 
 ### Known Limitations
 

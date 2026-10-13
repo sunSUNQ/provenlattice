@@ -1,4 +1,4 @@
-# ProvenLattice V1.4
+﻿# ProvenLattice V1.4
 
 **A Provenance-aware Code Knowledge and Analysis Platform for AI Agents**
 
@@ -106,7 +106,7 @@ provenlattice defect /path/to/repo --type all --json
 | 八类 defect CLI | **8/8 available** |
 | 旧库 PK 迁移 | **8/8 PASS** |
 | 默认 index 零检测产物 | **CONFIRMED** |
-| 默认 index 耗时 | **6.80s**（5 轮配对中位，aria2，冻结 main 基线 = 6.80s） |
+| 默认 index 耗时 | **6.77s**（5 轮配对中位，aria2，冻结 main 基线 = 6.77s） |
 | 默认 RSS | **218.0MB**（中位数；合并后单次验证 = 6.94s / 218.1MB） |
 
 > 性能数据基于特定测试语料和环境，不代表所有仓库的通用表现。
