@@ -11,7 +11,7 @@
 
 - **Semantic Events**：15 类词汇表驱动的操作事件（CALL/ALLOC/RELEASE/LOCK/UNLOCK/
   RETURN/THROW/READ/WRITE/DEREFERENCE/CHECK/BRANCH/ATOMIC/THREAD_SPAWN/THREAD_JOIN），
-  TOML 词汇表驱动（cpp.toml + python.toml），按需物化到 AnalysisStore。
+  TOML 词汇表驱动（cpp.toml；Python 词汇表 python.toml 未迁入），按需物化到 AnalysisStore。
 - **Sparse CFG**：CONTROL_REACHES 控制可达边 + 结构事件（CHECK/BRANCH/DEREFERENCE）
   + 访问事件（READ/WRITE），事件点级稀疏图，按需物化。
 - **Sparse DFG**：DATA_FLOW_TO（方法内 def→use）+ CONSUMES（分配直接传入调用），
