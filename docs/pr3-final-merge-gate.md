@@ -14,7 +14,7 @@
 | mergeable | MERGEABLE |
 | mergeStateStatus | CLEAN |
 | base | main @ `a35cae0` |
-| head | docs/v1.4-documentation-reconciliation @ `79201aa` |
+| head | docs/v1.4-documentation-reconciliation @ `48fef88`（勘误提交后 rebase；审查快照为 `79201aa`，勘误仅修改文档文字） |
 | files | 14 (700+/427-) |
 | CI | [] (未配置，既有状态) |
 | review | FINAL_DOCS_REVIEW_PASS (独立确认) |
