@@ -8,13 +8,11 @@ from .events import (
     event_level,
 )
 from .vocabulary import (
-    DefectPattern,
     EventSpec,
     Vocabulary,
     VocabularyError,
     available_languages,
     clear_vocabulary_cache,
-    load_defect_patterns,
     load_vocabulary,
     vocabulary_for_path,
 )
@@ -24,16 +22,13 @@ __all__ = [
     "LEVEL_0_EVENTS",
     "LEVEL_1_EVENTS",
     "STRUCTURAL_EVENTS",
-    "DefectPattern",
-    "EventSpec",
     "SemanticEdge",
     "SemanticEvent",
+    "EventSpec",
     "Vocabulary",
     "VocabularyError",
     "available_languages",
     "clear_vocabulary_cache",
-    "load_defect_patterns",
     "load_vocabulary",
-    "event_level",
     "vocabulary_for_path",
 ]

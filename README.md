@@ -6,6 +6,13 @@ ProvenLattice 是一个面向 Code Agent 的研究型工程上下文与证据图
 
 项目希望探索：如何将代码仓库中的结构信息，与规范、文档、开发历史和运行时信息进行关联，为 Code Agent 提供更加结构化、可追溯、面向任务的工程上下文。
 
+**产品定位（Gold Target V2，2026-10-12）**：统一程序知识和语义分析平台——以轻量、确定性、可增量的代码知识图谱为基础，支持两大能力域：
+
+* **Agent Development（日常开发辅助，默认核心）**：代码理解、调用关系与影响分析、Agent 编码/修复辅助、需求-代码关联、任务上下文生成；
+* **Code Inspection（深度代码检测，可选高级）**：资源生命周期、空指针/UAF/Double Free、锁与竞态、Def-use/Data Flow/Ownership/Taint、Typed Defect Query 与 Evidence Bundle 复核。
+
+两大能力域共享底层事实、分析引擎和证据体系，不发展成两套独立的 CodeGraph。长期规划见 [docs/roadmap.md](docs/roadmap.md) Gold Target V2 节；main 与 PR #1 的整合审计见 [docs/design-dual-capability-integration.md](docs/design-dual-capability-integration.md)。
+
 ## Motivation
 
 当前 Code Agent 主要通过文件读取、代码搜索和工具调用理解大型代码仓库。
@@ -50,6 +57,13 @@ Clang/compile_commands 增强与跨过程 CFG 仍不支持。ContextBench zstd 1
 2 case 因验证环境限制排除**（详见 `experiments/analysis_layer/d8/results/`
 与 `benchmark-contextbench-zstd/` 外部批目录）。
 
+> **整合线（2026-10-12，规划冻结）**：PR #1（缺陷导向稀疏语义程序图——
+> Semantic Events、Sparse CFG/DFG、Ownership Contracts、8 类 Typed Defect
+> Query、Evidence Bundle 与冷存储分离）**尚未合并**；其能力映射、与 main
+> 分析层的语义差异审计、三臂对照实验设计与渐进整合路线见
+> [docs/design-dual-capability-integration.md](docs/design-dual-capability-integration.md)。
+> 在合并并取得对应证据之前，上述能力不作为已交付能力表述。
+
 ## Qualification & Development Evidence（基座 → Agent 证据链）
 
 ProvenLattice 的能力不是 demo 叙事，而是按
@@ -86,39 +100,43 @@ QPS、10M+ LOC、跨仓统一索引、向量索引、分布式同步 = 未测/�
 当前开发态（已集成 main）把系统组织为五层，逐层可选、逐层有证据：
 
 ```text
-L1 基础图层 Foundation Graph（默认，常驻）
+L1 基础图层 Foundation Graph（默认，常驻；双能力域共享唯一事实）
 │   index/update → Repository/File/Symbol/Call/Reference/Impact/Knowledge
 │   确定性解析：Python + C/C++，resolved/ambiguous/unresolved 三态引用
 │
-L2 分析层 Analysis Layer（可选，按 scope 物化）
+L2 统一可选分析层 Unified Optional Analysis（可选，按 Capability × Scope 物化）
 │   analyze --scope <dir> --features ast,cfg
 │   Function IR + 局部 CFG（真回边、return/break/continue、callsite 不跨函数）
 │   six-state 只读查询（available/not_built/stale/unsupported/…）
 │   Python: AST + CFG；C (.c/.h): normalized AST + function-local CFG（含 &&/||/?: 短路）+ 调用语义分类（direct/indirect/unresolved）；C++ deep analysis: unsupported
+│   [PR #1 未合并] Semantic Events + Sparse CFG/DFG + Ownership Contracts + 8 类 Typed Defect Query（C/C++）
 │
-L3 上下文层 Context Bundle
-│   task-context <symbols> --json → task-context-v0 事实包
-│   primary_targets / source_spans / relations / candidates / unresolved
-│   每条 fact 带 fact_id + evidence_ids（可追溯，无合成 ID）
+L3 任务服务层 Task Services / Orchestration（统一编排，双业务入口）
+│   Agent Development：task-context <symbols> --json → task-context-v0 事实包
+│     primary_targets / source_spans / relations / candidates / unresolved
+│     每条 fact 带 fact_id + evidence_ids（可追溯，无合成 ID）
+│   Code Inspection：defect 查询与候选复核组织（随 PR #1 整合交付，未合并）
 │
-L4 证据与规范化 Evidence & Normalization
+L4 证据与结果层 Evidence & Results（统一证据契约）
 │   evidence 链（E-CALL-*/E-REF-*）、SQI citation closure
 │   normalization-v2：Agent trace → 事实级观测（raw≡normalized 校验）
+│   [PR #1 未合并] Evidence Bundle / Missing Evidence；Candidate ≠ Verified Finding
 │
 L5 暴露层 Exposure
 │   CLI：python -m provenlattice <command>（见下表）
 │   MCP：native 单工具暴露 mcp__provenlattice__query（透明桥接，C8-A 冻结合约）
+│   Agent Query 与 Code Inspection 统一入口（Inspection 入口随整合交付）
 ```
 
 ### 五层架构全景图（实现状态 × 任务覆盖）
 
 ![ProvenLattice 五层架构全景图](docs/images/provenlattice-five-layer-panorama.png)
 
-*ProvenLattice 五层架构全景图（Gold Target 口径，2026-10-10）*
+*ProvenLattice 五层架构全景图（Gold Target V2 双能力域口径，2026-10-12）*
 
-> 注：图片为示意版；各层实现状态与证据等级**以下方文字版为准**（文字版统一口径：L3 / L4 = 核心能力已实现，L5 = 部分实现）。
+> 注：图片为示意版；各层实现状态与证据等级**以下方文字版为准**（文字版统一口径：L3 / L4 = 核心能力已实现，L5 = 部分实现）。图中 PR #1 相关能力为规划整合目标，未合并前不视为已交付。
 
-图例：✅ 已实现　◐ 部分实现　⬜ 未实现（future candidate，见 roadmap §4）
+图例：✅ 已实现　◐ 部分实现　⬜ 未实现（future candidate，见 roadmap §4）　🔀 PR #1 分支可用、未合并（整合状态见 [docs/design-dual-capability-integration.md](docs/design-dual-capability-integration.md)）
 
 > 实现状态与证据等级是两个维度：`已实现` 表示代码能力已存在；`formal / controlled / diagnostic` 表示该能力目前拥有的验证证据等级。
 
@@ -133,7 +151,7 @@ L1 Foundation / Knowledge      ✅ 已实现
 │      repository-level canonical index → L1；
 │      task-context retrieval accelerator → L3
 │
-L2 Optional Analysis           ◐ 部分实现
+L2 Unified Optional Analysis    ◐ 部分实现
 │   ✅ Python AST + CFG（formal QUALIFIED）
 │   ✅ C normalized AST + function-local CFG（含 && / || / ?: 短路）
 │      + 调用语义分类（direct / indirect / unresolved）
@@ -141,12 +159,15 @@ L2 Optional Analysis           ◐ 部分实现
 │   ⬜ def-use / local data flow（当前真实任务尚未证明必须，A4_DEFUSE_NOT_YET_JUSTIFIED）
 │   ⬜ points-to / 精确 function-pointer target
 │      （当前只识别 indirect call，不解析 concrete target）
-│   ⬜ taint / security analysis
+│   ⬜ 统一 Normalized IR / Canonical CFG / Full-Sparse 双视图收敛（Gold Target V2）
+│   ⬜ taint / security analysis（main 侧未启动）
 │   ⬜ C++ deep analysis
 │   ⬜ Clang / compile_commands-aware semantic enrichment
 │   ⬜ interprocedural CFG
+│   🔀 PR #1（未合并）：Semantic Events（15 类）+ Sparse CFG/DFG +
+│      Ownership Contracts + 8 类 Typed Defect Query（C/C++，Candidate 输出）
 │
-L3 Task Context                ✅ 核心能力已实现
+L3 Task Services / Orchestration ✅ 核心能力已实现（Agent Development 侧）
 │   ✅ task-context-v0
 │   ✅ primary targets / source spans / relations / candidates / unresolved
 │   ✅ definition-preference、symbol-scoped compact analysis summary、预算有界
@@ -154,11 +175,14 @@ L3 Task Context                ✅ 核心能力已实现
 │   ⬜ profile-driven capability policy
 │   ⬜ semantic/vector retrieval accelerator
 │   ⬜ automatic capability planning
+│   🔀 PR #1（未合并）：Code Inspection 任务服务（defect 查询入口与复核组织）
 │
-L4 Evidence & Normalization    ✅ 核心能力已实现
+L4 Evidence & Results           ✅ 核心能力已实现
 │   ✅ Core provenance：fact_id / evidence_ids / source span / 三态引用
 │   ✅ SQI citation closure
 │   ✅ normalization-v2 + raw≡normalized 校验
+│   🔀 PR #1（未合并）：Evidence Bundle / Missing Evidence 分类；
+│      Candidate / Uncertain / Verified Finding 区分契约
 │   ⬜ Runtime evidence provenance
 │   ⬜ Validation-result evidence
 │   ⬜ richer normalization / audit extensions
@@ -166,6 +190,7 @@ L4 Evidence & Normalization    ✅ 核心能力已实现
 L5 Exposure                    ◐ 部分实现
 │   ✅ CLI（baseline，全命令面）
 │   ✅ native MCP（可按配置启用）
+│   ⬜ Code Inspection 统一入口（随整合交付）
 │   ⬜ Plugin
 │   ⬜ SDK
 │   ⬜ REST / API service
@@ -184,6 +209,9 @@ L5 Exposure                    ◐ 部分实现
 **未实现能力及其潜在任务价值**
 
 > 以下均为 future candidates，不表示已排期或已证明必须；是否启动仍遵循 evidence-driven 原则。
+> 本表只描述 **main 已集成范围**；PR #1 分支已有的检测类能力（Semantic Events /
+> Sparse CFG/DFG / Defect Queries）属整合决策范围，见
+> [docs/design-dual-capability-integration.md](docs/design-dual-capability-integration.md)。
 
 | 未实现能力 | 潜在任务价值 |
 | --- | --- |
@@ -199,7 +227,7 @@ L5 Exposure                    ◐ 部分实现
 
 > **架构原则：** 五层表示数据生命周期阶段，而不是能力成熟度等级（Layer ≠ Maturity Level）。\
 > AST、CFG、def-use、points-to、taint 等即使复杂度逐步提高，仍属于 L2 Analysis；新增 analyzer 不意味着新增架构层。\
-> 长期产品化目标见 [docs/roadmap.md](docs/roadmap.md) 的 Gold Target 节。
+> 长期产品化目标见 [docs/roadmap.md](docs/roadmap.md) 的 Gold Target V2 节（双能力域：Agent Development + Code Inspection）。
 
 ### 支持的操作（CLI 命令面）
 
@@ -267,6 +295,9 @@ Normalization-v2（D9-C9）                                       ✅ raw≡norm
 D9-C10 P2 受控能力稳定性（6 case × 2 arm）                       ✅ PASS（2026-10-09）
 ContextBench zstd 16-case 重验                                  ✅ 14/16、0 真实失败、2 infra-excluded
 C 分析链 A1–A3.6（AST/CFG/短路/调用语义/紧凑上下文）              ✅ 已集成 main（diagnostic）
+Gold Target V2 双能力域统一架构（Agent Dev + Code Inspection）   📋 规划冻结（2026-10-12，docs/roadmap.md）
+PR #1 缺陷语义层（Events/Sparse CFG/DFG/Defect/冷存储）          🔀 PR 分支可用、未合并（整合路线见 design-dual-capability-integration.md）
+三臂对照实验（main / PR #1 / 统一原型）                          planned，未执行（design doc §8）
 Colleague 16-case rerun（R1 revalidation）                      next experiment（结果不预写）
 V1.3 正式 qualification 汇总 + tag                              pending（revalidation 之后收敛）
 V1.4      Def-Use / Local Data Flow / Finding Enrichment       not justified yet（A4_DEFUSE_NOT_YET_JUSTIFIED）
@@ -283,13 +314,22 @@ S3+ scale bands / concurrency                                  not started
 MCP / Plugin / SDK        MCP 已落地（native exposure）；Plugin/SDK  evidence-driven decision
 ```
 
-## Current Goal: Optional Function Analysis Layer
+## Current Goal: Dual-Capability Integration（Gold Target V2）
 
-当前最终目标：在 V1.2 Foundation Graph 契约不变的前提下，引入**可选的函数内分析层**（AST / CFG / 后续 Def-Use、Data Flow、安全分析），面向代码检测、安全分析与高级 Agent 任务。目标设计全文见
-[docs/design-optional-analysis-layer-vision.md](docs/design-optional-analysis-layer-vision.md)。
+当前目标（2026-10-12 冻结）：将 main（Agent Development 线）与 PR #1（Code
+Inspection 线）统一到 **Gold Target V2** 的长期产品架构——**统一程序知识和
+语义分析平台**：Shared Foundation + Unified Analysis Engine + Dual Task
+Domains。权威规划见 [docs/roadmap.md](docs/roadmap.md) Gold Target V2 节；
+实现差异审计、能力映射、语义差异矩阵、三臂对照实验与 Phase 1–5 整合路线见
+[docs/design-dual-capability-integration.md](docs/design-dual-capability-integration.md)。**PR #1 未合并；Phase 1（基线审计）尚未启动。**
 
-该方向已冻结为 **Gold Target**（canonical planning entry 见
-[docs/roadmap.md](docs/roadmap.md) Gold Target 节）：**L1 默认常驻；L2 高成本
+此前的 Optional Function Analysis Layer 目标（分析层设计全文见
+[docs/design-optional-analysis-layer-vision.md](docs/design-optional-analysis-layer-vision.md)）已作为 V2 的 L2 Unified Optional Analysis 在
+Agent Development 侧的已交付部分继续有效：
+
+在 V1.2 Foundation Graph 契约不变的前提下，引入**可选的函数内分析层**
+（AST / CFG / 后续 Def-Use、Data Flow、安全分析），面向代码检测、安全分析
+与高级 Agent 任务。**L1 默认常驻；L2 高成本
 分析按 Capability × Scope 按需物化；L3 按任务调用；L4 Core Provenance 与
 L5 CLI 保持 baseline，其余增强能力/adapter 按需启用。**通过渐进增强平衡
 能力、延迟、存储与上下文成本；五层 = 数据生命周期阶段（Layer ≠ Maturity
@@ -321,6 +361,14 @@ def-use 真实 case 未证明必要（not justified yet），C++ deep analysis�
 接口路线：SQI 契约已冻结（byte-identical envelope + citation closure）；
 **MCP 已落地**（D9-C8 native 单工具暴露，透明桥接 `python -m provenlattice`）；
 Plugin / SDK 由后续使用证据决定。
+
+**PR #1（Code Inspection 线，未合并）**：缺陷导向稀疏语义程序图——三层图模型
+（Structural KG → Semantic Events → Defect Relations）、Sparse CFG/DFG、
+Ownership Contracts、8 类 Typed Defect Query（`provenlattice defect`）、
+Evidence Bundle 与冷/热存储分离。其与 main 分析层的重叠与差异（goto、短路、
+indirect call、READ/WRITE identity、ownership/alias 等）已逐项审计并纳入
+统一架构规划；**在 Phase 1/2 门槛通过并合并之前，上述能力不作为已交付能力**，
+三臂对照实验（main / PR #1 / 统一原型）未执行，历史数字不可跨线直接比较。
 
 ## V1.0 Knowledge Layer
 
@@ -369,6 +417,11 @@ Context Bundle/`task-context` + native MCP 暴露 + normalization-v2 已合入�
 D9-C10 受控稳定性 PASS；ContextBench zstd 16-case 重验无回归（14/16，0 真实失败）。
 正式 V1.3 qualification 待 colleague 16-case rerun 后收敛，尚未宣称。
 
+🔀 **Dual-Capability Integration（Gold Target V2，2026-10-12 规划冻结）**：
+PR #1（Code Inspection 线）能力已审计并纳入统一架构规划，**未合并**；
+三臂对照实验未执行；整合路线 Phase 1–5 见
+[docs/design-dual-capability-integration.md](docs/design-dual-capability-integration.md)。
+
 当前实现覆盖 Python/C/C++ CodeGraph，以及 Markdown Spec/Requirement/Document 到代码的可追溯确定性证据；RQ1 图保真度与 RQ2 系统规模资格已闭合，SQI 已完成 V1 → V1.1 → V1.2 三代 Agent 侧资格。Runtime Log、Commit History、Validation Result、Embedding、Vector DB、LLM linker、UI、TASCO、Plugin/SDK/REST 产品层尚未引入。
 
 关键文档索引：
@@ -377,7 +430,8 @@ D9-C10 受控稳定性 PASS；ContextBench zstd 16-case 重验无回归（14/16�
 | --- | --- |
 | V1.2 历史汇报 | [docs/report-v1.2.md](docs/report-v1.2.md) |
 | Post-V1.2 综合报告 | [docs/report-post-v1.2.md](docs/report-post-v1.2.md) |
-| 长期目标 Gold Target | docs/roadmap.md（Gold Target 节，canonical planning entry） |
+| 长期目标 Gold Target V2 | docs/roadmap.md（Gold Target V2 节，canonical planning entry） |
+| Dual-capability 整合设计（main × PR #1 审计/映射/三臂实验/路线） | [docs/design-dual-capability-integration.md](docs/design-dual-capability-integration.md) |
 | 基座能力证据链 | [experiments/foundation_analysis/reviews/provenlattice-foundation-evidence-review.md](experiments/foundation_analysis/reviews/provenlattice-foundation-evidence-review.md) |
 | RQ1 图保真度综合 | experiments/fidelity_v1/results/rq1-graph-fidelity-evidence-synthesis-v1.md |
 | RQ2 系统与规模综合 | experiments/systems_v1/results/rq2-cross-system-synthesis-v1.json |

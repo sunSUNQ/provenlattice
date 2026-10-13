@@ -2,18 +2,18 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import sqlite3
 import tempfile
 import time
 import uuid
-from contextlib import AbstractContextManager
 from pathlib import Path
 from typing import Callable, Iterable
 
 from .models import OverlayConflict, OverlayDelta, OverlayMetadata
 from .incremental import incremental_update
 from .shard import ShardStrategy
-from .storage import SQLiteStorage, copy_database
+from .storage import SQLiteStorage
 
 
 ENTITY_TABLES = {
@@ -202,18 +202,13 @@ class OverlayStore:
 
 
 def _snapshot(database: str | Path, entity_type: str) -> dict[str, dict]:
-    """Every row of one entity table, the cold layer included.
-
-    Opened through `SQLiteStorage` on purpose: on a split layout (stage 7A) a
-    bare connection has no `raw_references` table to read, and a delta built
-    from that would report every reference as deleted.
-    """
     table, key = ENTITY_TABLES[entity_type]
-    with SQLiteStorage(database) as storage:
-        return {
-            row[key]: dict(row)
-            for row in storage.connection.execute(f"SELECT * FROM {table}")
-        }
+    connection = sqlite3.connect(database)
+    connection.row_factory = sqlite3.Row
+    try:
+        return {row[key]: dict(row) for row in connection.execute(f"SELECT * FROM {table}")}
+    finally:
+        connection.close()
 
 
 def capture_snapshot_delta(
@@ -274,9 +269,7 @@ def apply_repository_overlay(
     started = time.perf_counter()
     with tempfile.TemporaryDirectory(prefix="pl-overlay-apply-") as temp:
         working_database = Path(temp) / "working.db"
-        # The cold store travels with the main file; copying one half would
-        # hand the update an empty reference layer.
-        copy_database(base_database, working_database)
+        shutil.copy2(Path(base_database).resolve(), working_database)
         update = incremental_update(
             repository, working_database, strategy=strategy,
             repository_id_override=overlay.metadata.repository_id,
@@ -376,20 +369,17 @@ class GraphView:
                     effective[delta.entity_id] = dict(delta.new_value or {})
         return list(effective.values())
 
-    def id_filter(self, values: Iterable[str]) -> AbstractContextManager[tuple[str, tuple]]:
-        return self.base.id_filter(values)
-
     def by_ids(self, entity_type: str, ids: Iterable[str]) -> list[dict]:
         values = sorted(set(ids))
         if not values:
             return []
         table, key = ENTITY_TABLES[entity_type]
+        placeholders = ",".join("?" for _ in values)
         wanted = set(values)
-        with self.id_filter(values) as (sql, params):
-            return self.query(
-                entity_type, f"SELECT * FROM {table} WHERE {key} IN ({sql})", params,
-                lambda row: row.get(key) in wanted,
-            )
+        return self.query(
+            entity_type, f"SELECT * FROM {table} WHERE {key} IN ({placeholders})", tuple(values),
+            lambda row: row.get(key) in wanted,
+        )
 
     def all(self, entity_type: str) -> list[dict]:
         table, _ = ENTITY_TABLES[entity_type]

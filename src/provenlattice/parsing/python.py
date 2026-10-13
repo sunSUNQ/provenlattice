@@ -6,8 +6,6 @@ from pathlib import PurePosixPath
 from typing import Any
 
 from ..models import ParsedFile, ParsedImport, ParsedReference, ParsedSymbol
-from ..semantics.vocabulary import Vocabulary
-from .events import EventExtractor, OwnerIndex, OwnerSpan
 
 
 def module_name(relative_path: str) -> str:
@@ -20,7 +18,7 @@ def module_name(relative_path: str) -> str:
 class PythonExtractor:
     """Normalize Python Tree-sitter CST nodes into parser facts."""
 
-    def __init__(self, source: bytes, relative_path: str, vocabulary: Vocabulary | None = None) -> None:
+    def __init__(self, source: bytes, relative_path: str) -> None:
         self.source = source
         self.line_starts = [0, *(index + 1 for index, value in enumerate(source) if value == 10)]
         self.module = module_name(relative_path)
@@ -29,9 +27,6 @@ class PythonExtractor:
         self.references: list[ParsedReference] = []
         self.imports: list[ParsedImport] = []
         self.import_aliases: dict[str, tuple[str, str | None]] = {}
-        self.vocabulary = vocabulary
-        self.owner_spans: list[OwnerSpan] = []
-        self.skipped_events = 0
 
     def text(self, node: Any | None) -> str:
         if node is None:
@@ -58,20 +53,7 @@ class PythonExtractor:
 
     def extract(self, root: Any) -> ParsedFile:
         self._walk(root)
-        events = []
-        if self.vocabulary is not None:
-            extractor = EventExtractor(
-                self.source,
-                self.vocabulary,
-                OwnerIndex(self.owner_spans),
-                lambda offset, end: bisect_right(self.line_starts, offset),
-            )
-            events = extractor.extract(root)
-            self.skipped_events = extractor.skipped_outside_owner
-        return ParsedFile(
-            self.symbols, self.references, self.imports,
-            events=events, unowned_events=self.skipped_events,
-        )
+        return ParsedFile(self.symbols, self.references, self.imports)
 
     def _walk(self, node: Any) -> None:
         if node.type in {"function_definition", "async_function_definition"}:
@@ -110,7 +92,6 @@ class PythonExtractor:
                 {"async": any(child.type == "async" for child in node.children)},
             )
         )
-        self.owner_spans.append(OwnerSpan(node.start_byte, node.end_byte, kind, qualified, signature))
         self.scope.append((name, kind))
         body = node.child_by_field_name("body")
         if body:

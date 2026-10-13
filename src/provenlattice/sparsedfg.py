@@ -45,8 +45,6 @@ from collections import Counter, deque
 from dataclasses import dataclass
 from typing import Any, Iterable, Mapping
 
-from .contracts import parameters as _split_parameters
-from .contracts import short_name
 from .identity import semantic_edge_id, symbol_id
 from .models import PointKey
 from .semantics.events import SemanticEdge
@@ -520,11 +518,11 @@ def _reachability(
     return reach
 
 
-# ----------------------------------------------------------------------
-# stage 5B: the query-time parameter join
+# NOTE (I1-C): PR's stage-5B query-time parameter join (bind_parameters /
+# ParameterBindingTable) is deliberately not ported -- it consumes the
+# ownership-contract table (I2) and exists to serve defect candidates.
+# DATA_FLOW_TO / CONSUMES minting above is the complete I1-C surface.
 
-
-@dataclass(frozen=True, slots=True)
 class ParameterBindingTable:
     """What a caller's argument root and a callee's parameter row share.
 

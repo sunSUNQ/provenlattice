@@ -12,6 +12,17 @@ from .storage import SQLiteStorage
 
 
 ANALYSIS_SCHEMA = """
+-- Schema note (I2A): the node/edge primary keys are (id, feature) because
+-- two analyzers may publish the SAME derived fact under different features
+-- by design -- events:cpp and sparse_cfg:cpp share identity.event_id for the
+-- same operation, and the shared id IS the cross-analyzer consistency
+-- guarantee.
+-- Migration (I2A-R1): databases created before the composite-PK change carry
+-- the old single-column PK, which silently rejects the second analyzer's
+-- write of a shared id. AnalysisStore.__init__ detects the old PK and
+-- migrates the derived cache in place (create new, copy, drop old, rename) --
+-- the data is a rebuildable cache, so the migration preserves rows rather
+-- than destroying them.
 CREATE TABLE IF NOT EXISTS analysis_state (
     file_id TEXT NOT NULL, feature TEXT NOT NULL,
     source_hash TEXT NOT NULL, feature_version INTEGER NOT NULL,
@@ -20,13 +31,15 @@ CREATE TABLE IF NOT EXISTS analysis_state (
     PRIMARY KEY(file_id, feature)
 );
 CREATE TABLE IF NOT EXISTS analysis_nodes (
-    analysis_node_id TEXT PRIMARY KEY, file_id TEXT NOT NULL,
-    feature TEXT NOT NULL, kind TEXT NOT NULL, payload TEXT NOT NULL
+    analysis_node_id TEXT NOT NULL, file_id TEXT NOT NULL,
+    feature TEXT NOT NULL, kind TEXT NOT NULL, payload TEXT NOT NULL,
+    PRIMARY KEY(analysis_node_id, feature)
 );
 CREATE TABLE IF NOT EXISTS analysis_edges (
-    analysis_edge_id TEXT PRIMARY KEY, file_id TEXT NOT NULL,
+    analysis_edge_id TEXT NOT NULL, file_id TEXT NOT NULL,
     feature TEXT NOT NULL, src_id TEXT NOT NULL, dst_id TEXT NOT NULL,
-    kind TEXT NOT NULL, payload TEXT NOT NULL
+    kind TEXT NOT NULL, payload TEXT NOT NULL,
+    PRIMARY KEY(analysis_edge_id, feature)
 );
 CREATE INDEX IF NOT EXISTS idx_analysis_nodes_file_feature
     ON analysis_nodes(file_id, feature);
@@ -35,11 +48,210 @@ CREATE INDEX IF NOT EXISTS idx_analysis_edges_file_feature
 """
 
 ANALYSIS_TABLES = frozenset({"analysis_state", "analysis_nodes", "analysis_edges"})
-KNOWN_FEATURES = frozenset({"ast", "cfg"})
+KNOWN_FEATURES = frozenset({"ast", "cfg", "events", "sparse_cfg", "sparse_dfg"})
 LANGUAGE_PATTERN = re.compile(r"[a-z0-9_\-]+")
-ANALYZER_VERSIONS = {"ast:python": 1, "cfg:python": 1, "ast:c": 2, "cfg:c": 2}
+ANALYZER_VERSIONS = {
+    "ast:python": 1, "cfg:python": 2, "ast:c": 3, "cfg:c": 3, "events:cpp": 1,
+    "sparse_cfg:cpp": 1, "sparse_dfg:cpp": 2,
+}
 STATUS_CURRENT = "current"
 MAX_ANALYSIS_NODE_PAYLOAD_BYTES = 4096
+
+# ---------------------------------------------------------------------------
+# Capability contract (I0 freeze, 2026-10-12; I1-A updates the events row) --
+# single source of truth for optional-analysis capability selection.
+#
+# status="implemented" capabilities are the only ones KNOWN_FEATURES admits
+# into this store as fully-delivered: they own analyzer ids in
+# ANALYZER_VERSIONS and real materializers behind the orchestrator.
+#
+# status="partially_implemented" (I1-A: `events`) owns real analyzer ids and
+# runs on explicit request, but delivers a declared subset -- the events row
+# records its `level`. The orchestrator accepts it; the contract must not
+# present the subset as the whole capability.
+#
+# status="registered" capabilities are *named but not implemented* in this
+# build (selective PR #1 integration phases per
+# docs/pr1-selective-integration-plan.md). They have no analyzer id, no store
+# tables and no code here; the orchestrator rejects them fail-closed before
+# any mutation (capability_not_available) and the read-only query surface
+# reports them unavailable (capability_not_implemented) -- never a fake
+# success. Admitting one into the store starts by flipping its status and
+# registering real analyzer ids; nothing else in this file needs to change.
+#
+# Full CFG (`cfg`) and Sparse CFG (`sparse_cfg`) are deliberately separate
+# capabilities: no unified CFG implementation exists in this build, and the
+# contract must not pretend otherwise (Gold Target V2 keeps Full/Sparse as two
+# views of a future canonical model).
+#
+# `defect` additionally consumes the ownership-contract TOML data files of the
+# future defect chain; that is an input of its analyzers, not a capability of
+# its own, so it is recorded here as prose and not as a contract row.
+CAPABILITY_CONTRACT: dict[str, dict] = {
+    "ast": {
+        "status": "implemented", "domain": "agent",
+        "languages": ("python", "c"), "depends_on": (), "cost_class": "low",
+        "analyzer_ids": ("ast:python", "ast:c"), "planned_integration": None,
+    },
+    "cfg": {
+        "status": "implemented", "domain": "agent",
+        "languages": ("python", "c"), "depends_on": ("ast",), "cost_class": "medium",
+        "analyzer_ids": ("cfg:python", "cfg:c"), "planned_integration": None,
+    },
+    "events": {
+        # I1-A: level-0 vocabulary events only (CALL/RETURN/THROW/ALLOC/
+        # RELEASE/LOCK/UNLOCK/ATOMIC/THREAD_SPAWN/THREAD_JOIN via
+        # semantics/vocabularies/cpp.toml). The structural CHECK/BRANCH/
+        # DEREFERENCE and READ/WRITE access events are sparse-CFG-walker
+        # products and stay unported (I1-B) -- hence partially_implemented,
+        # never a full "implemented" claim.
+        "status": "partially_implemented", "domain": "inspection",
+        "languages": ("c", "cpp"), "depends_on": (), "cost_class": "high",
+        "analyzer_ids": ("events:cpp",), "planned_integration": "I1-B (level 1)",
+        "level": "level0",
+    },
+    "sparse_cfg": {
+        # I1-B: the sparse CFG walker is delivered -- CONTROL_REACHES edges
+        # plus the walker's structural (CHECK/BRANCH/DEREFERENCE) and access
+        # (READ/WRITE) points, on demand. The Sparse DFG (DATA_FLOW_TO /
+        # CONSUMES) and the Defect Queries that consume it stay in later
+        # phases; the contract must not read this row as more than the CFG.
+        "status": "implemented", "domain": "inspection",
+        "languages": ("c", "cpp"), "depends_on": ("events",), "cost_class": "high",
+        "analyzer_ids": ("sparse_cfg:cpp",), "planned_integration": None,
+        "level": "level0+structural+access",
+    },
+    "sparse_dfg": {
+        # I1-C: the method-local sparse DFG is delivered -- DATA_FLOW_TO
+        # (def->use under the annotation flow identity, with alias chains and
+        # via intermediates) and CONSUMES (allocation handed through its own
+        # acquiring expression). Registered approximations travel with it: no
+        # SSA / reaching-definitions, no points-to, no interprocedural edges
+        # (the cross-function join stays a defect-layer query, I2). The grade
+        # field carries that scope honestly.
+        "status": "implemented", "domain": "inspection",
+        "languages": ("c", "cpp"),
+        "depends_on": ("events", "sparse_cfg"), "cost_class": "high",
+        "analyzer_ids": ("sparse_dfg:cpp",), "planned_integration": None,
+        "level": "level0+structural+access+dfg",
+        "grade": "local-only, diagnostic",
+    },
+    "defect": {
+        # I2A: the defect QUERY layer is delivered for two of the eight
+        # patterns (null_flow, double_free) -- a query-time reader over the
+        # events/sparse_cfg/sparse_dfg rows, not a materializing analyzer.
+        # The other six patterns stay unported; resolved is an evidence
+        # state, never a Verified Finding, and confidence is the PR
+        # heuristic score.
+        "status": "implemented", "domain": "inspection",
+        "languages": ("c", "cpp"),
+        "depends_on": ("events", "sparse_cfg", "sparse_dfg"),
+        "cost_class": "high", "analyzer_ids": (),
+        "planned_integration": None,
+        "supported_queries": (
+            "resource_lifetime", "lock_order", "race_condition",
+            "null_flow", "use_after_free", "double_free", "taint_path",
+            "error_handling",
+        ),
+        "query_time": True,
+        "grade": "local-only, diagnostic",
+    },
+}
+
+
+def implemented_features() -> frozenset:
+    """Features this build fully delivers (subset of KNOWN_FEATURES)."""
+    return frozenset(
+        feature for feature, record in CAPABILITY_CONTRACT.items()
+        if record["status"] == "implemented"
+    )
+
+
+def selectable_features() -> frozenset:
+    """Features analyze may materialize: fully implemented + partial subsets."""
+    return frozenset(
+        feature for feature, record in CAPABILITY_CONTRACT.items()
+        if record["status"] in {"implemented", "partially_implemented"}
+    )
+
+
+def capability_record(feature: str) -> dict | None:
+    """The contract row for `feature`, or None for an unknown name."""
+    return CAPABILITY_CONTRACT.get(str(feature).strip().lower())
+
+
+def dependency_staleness(metadata: dict | None) -> str | None:
+    """Unified dependency-freshness check over a cached analyzer's metadata.
+
+    A build that consumes another analyzer's output records the dependency
+    contracts it was built under (``metadata["dependencies"]``). This is the
+    single rule both read paths (AnalysisStore and the query surface) apply:
+    if any recorded dependency contract no longer matches the current
+    registry, the cache is stale no matter how fresh its own version and
+    source hash are -- the I1-A/I1-B cfg:c lesson, applied once instead of
+    once per reader.
+    """
+    for analyzer, contract in sorted(((metadata or {}).get("dependencies") or {}).items()):
+        version = ANALYZER_VERSIONS.get(analyzer)
+        if version is None:
+            return f"dependency_unregistered:{analyzer}"
+        feature, _, language = analyzer.partition(":")
+        if analyzer_contract(feature, language, version) != contract:
+            return f"dependency_changed:{analyzer}"
+    return None
+
+
+def _pk_columns(connection, table: str) -> list[str]:
+    """The primary-key column names of `table`, in PK order (empty if absent)."""
+    info = connection.execute(f"PRAGMA table_info({table})").fetchall()
+    if not info:
+        return []
+    return [
+        row[1] for row in sorted(info, key=lambda r: r[5])
+        if row[5] > 0
+    ]
+
+
+def _migrate_pk_schema(connection) -> None:
+    """Migrate pre-composite-PK analysis tables to the (id, feature) shape.
+
+    Old databases (created before I2A) carry ``analysis_node_id TEXT PRIMARY
+    KEY`` -- a single-column PK that silently rejects the second analyzer's
+    write of a shared event id. The migration recreates the tables with the
+    composite PK and copies every row across; the data is a rebuildable
+    cache, so the copy preserves rows rather than destroying them. Tables
+    that don't exist yet are left for ``executescript(ANALYSIS_SCHEMA)``.
+    """
+    for table, id_column in (("analysis_nodes", "analysis_node_id"),
+                             ("analysis_edges", "analysis_edge_id")):
+        pk = _pk_columns(connection, table)
+        if not pk or pk == [id_column, "feature"]:
+            continue
+        # old single-column PK detected: migrate in place
+        columns = [row[1] for row in connection.execute(f"PRAGMA table_info({table})")]
+        col_list = ", ".join(columns)
+        connection.execute(f"ALTER TABLE {table} RENAME TO {table}_old_pk")
+        connection.execute(
+            f"CREATE TABLE {table} (\n"
+            f"    {id_column} TEXT NOT NULL, file_id TEXT NOT NULL,\n"
+            f"    feature TEXT NOT NULL, "
+            + ("kind TEXT NOT NULL, payload TEXT NOT NULL,\n"
+               if table == "analysis_nodes" else
+               "src_id TEXT NOT NULL, dst_id TEXT NOT NULL,\n"
+               "kind TEXT NOT NULL, payload TEXT NOT NULL,\n")
+            + f"    PRIMARY KEY({id_column}, feature)\n"
+            f")"
+        )
+        connection.execute(
+            f"INSERT OR IGNORE INTO {table} ({col_list}) "
+            f"SELECT {col_list} FROM {table}_old_pk"
+        )
+        connection.execute(f"DROP TABLE {table}_old_pk")
+        connection.execute(
+            f"CREATE INDEX IF NOT EXISTS idx_{table}_file_feature "
+            f"ON {table}(file_id, feature)"
+        )
+    connection.commit()
 
 
 class PayloadTooLargeError(ValueError):
@@ -142,6 +354,7 @@ class AnalysisStore:
 
     def __init__(self, storage: SQLiteStorage) -> None:
         self.storage = storage
+        _migrate_pk_schema(storage.connection)
         storage.connection.executescript(ANALYSIS_SCHEMA)
         storage.connection.commit()
 
@@ -167,6 +380,7 @@ class AnalysisStore:
             state["status"] == STATUS_CURRENT
             and state["source_hash"] == source_hash
             and state["feature_version"] == int(feature_version)
+            and dependency_staleness(state["metadata"]) is None
         )
 
     def base_source_hash(self, file_id: str) -> str | None:
@@ -195,6 +409,9 @@ class AnalysisStore:
             reasons.append("source_hash_changed")
         if state["feature_version"] != current_version:
             reasons.append("feature_version_changed")
+        dependency_reason = dependency_staleness(state["metadata"])
+        if dependency_reason is not None:
+            reasons.append(dependency_reason)
         return {
             "fresh": not reasons,
             "reason": "+".join(reasons) if reasons else None,

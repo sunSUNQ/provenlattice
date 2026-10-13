@@ -189,7 +189,10 @@ def analyze_cfg_scope(repo: str | Path, scope: str, database: str | Path | None 
                         "analyzer": ANALYZER, "contract": PYTHON_CFG_CONTRACT,
                         "language": "python", "scope": scope_path.as_posix(),
                         "node_count": len(nodes), "edge_count": len(edges),
-                        "ast_contract": PYTHON_AST_CONTRACT, **file_counters,
+                        "ast_contract": PYTHON_AST_CONTRACT,
+                        # dependency attestation (I1-B, unified freshness)
+                        "dependencies": {"ast:python": PYTHON_AST_CONTRACT},
+                        **file_counters,
                     },
                 )
             except PayloadTooLargeError:

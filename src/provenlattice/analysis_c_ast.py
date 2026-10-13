@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import time
 from pathlib import Path
 
@@ -127,13 +128,59 @@ def analyze_c_ast_scope(
 def _symbol_spans(store: AnalysisStore, file_id: str) -> dict:
     spans: dict[tuple[int, int], list[dict]] = {}
     for row in store.storage.rows(
-        "SELECT id, kind, start_line, end_line FROM nodes WHERE file_id=?", (file_id,)
+        "SELECT id, kind, name, start_line, end_line, metadata FROM nodes WHERE file_id=?",
+        (file_id,),
     ):
         if row["start_line"] is not None:
+            definition = None
+            if row["metadata"]:
+                try:
+                    definition = json.loads(row["metadata"]).get("definition")
+                except ValueError:
+                    definition = None
             spans.setdefault((row["start_line"], row["end_line"]), []).append(
-                {"id": row["id"], "kind": row["kind"]}
+                {"id": row["id"], "kind": row["kind"], "name": row["name"],
+                 "definition": definition}
             )
     return spans
+
+
+def _resolve_alignment(candidates: list[dict], expected: frozenset, node: NormalizedCNode):
+    """Pick the base symbol a normalized node aligns to, or None.
+
+    Line-span alignment assumed base symbols never shared a (start_line,
+    end_line) span. That breaks when a function's span collapses onto one
+    physical line together with another Function-kind symbol -- the base graph
+    records every C declaration as a Function/Method-kind symbol
+    (``definition: false``), so a single-line ``for (int i = 0; ...)`` puts the
+    for-initializer symbol on exactly the same span as the enclosing function
+    (I0R1 root cause). Disambiguate in two strictly-tightening steps and stay
+    unmatched (conservative: a wrong owner is worse than no CFG) when both
+    fail:
+
+    1. same ``name`` as the normalized node;
+    2. same definition kind -- a ``function_definition`` node aligns to a
+       ``definition: true`` symbol, a ``declaration`` node to ``definition:
+       false``.
+    """
+    candidates = [item for item in candidates if item["kind"] in expected]
+    if len(candidates) == 1:
+        return candidates[0]
+    if len(candidates) > 1 and node.name:
+        named = [item for item in candidates if item["name"] == node.name]
+        if len(named) == 1:
+            return named[0]
+        if named:
+            candidates = named
+    if len(candidates) > 1 and node.parser_kind in {"function_definition", "declaration"}:
+        # Definition-kind preference is only meaningful for FUNCTION-aligned
+        # nodes; TYPE_DECL alignment keeps its previous ambiguous => unmatched
+        # behaviour.
+        want = node.parser_kind == "function_definition"
+        defined = [item for item in candidates if item["definition"] is want]
+        if len(defined) == 1:
+            return defined[0]
+    return None
 
 
 def _materialize(
@@ -149,9 +196,9 @@ def _materialize(
         expected = ALIGNABLE.get((node.kind, node.parser_kind))
         if expected is not None:
             key = (node.start_point[0] + 1, node.end_point[0] + 1)
-            candidates = [item for item in spans.get(key, []) if item["kind"] in expected]
-            if len(candidates) == 1:
-                owner_symbol_id, alignment = candidates[0]["id"], "resolved"
+            chosen = _resolve_alignment(spans.get(key, []), expected, node)
+            if chosen is not None:
+                owner_symbol_id, alignment = chosen["id"], "resolved"
         nodes.append(AnalysisNode(node_id, node.kind, {
             "parent_id": parent_id,
             "structural_path": path,
