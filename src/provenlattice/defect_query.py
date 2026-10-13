@@ -28,6 +28,7 @@ from .storage import SQLiteStorage
 
 SUPPORTED_DEFECT_QUERIES = tuple(defect.QUERY_NAMES)
 UPSTREAM_FEATURES = ("events:cpp", "sparse_cfg:cpp", "sparse_dfg:cpp")
+CAPABILITY_GRADE = "local-only, diagnostic"
 
 
 def _upstream_state(store: AnalysisStore) -> dict:
@@ -264,6 +265,8 @@ def query_defect_candidates(
         "evidence_bundles": [pair[1] for pair in evidence_pairs],
         "coverage": coverage,
         "truncated": truncated,
+        "grade": CAPABILITY_GRADE,
+        "level": "level0+structural+access+dfg",
         "matrix_keys": {
             key: {"query": pattern.query, "expanded": pattern.expanded,
                   "missing_events": list(pattern.missing_events()),
