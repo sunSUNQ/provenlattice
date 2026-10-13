@@ -71,7 +71,7 @@
 
 | 指标 | main 中位数 | I1-C 中位数 | 差值 | 判定 |
 |---|---|---|---|---|
-| index wall | 6.80s | 6.67s | -0.13s | 噪声带 |
+| index wall | **6.77s** | **6.70s** | -0.07s | 噪声带 |
 | peak RSS | 218.0MB | 219.1MB | +1.1MB | 噪声带 |
 | DB size | 152,948,736B | 152,903,680B | -45KB | 页方差 |
 | incremental | 6.58s | 6.41s | -0.17s | 噪声带 |
@@ -79,6 +79,8 @@
 | L1 parity | — | — | — | **PASS** |
 
 各轮详细数据(index s):main 6.80/6.77/6.85/6.76/6.72;i1c 6.74/6.70/6.64/6.56/6.73。
+
+> **勘误(2026-10-13)**：上表原始中位数曾写为 6.80s/6.67s，经追溯 q1-q5 原始数据重新计算，正确中位数分别为 **6.77s**(main)和 **6.70s**(I1-C)。差异源于中位数计算误差(排序后取第 3 值应为 6.77 而非 6.80)。不影响"零回归"结论。
 
 ## 6. 逐类资格判定
 
@@ -116,7 +118,7 @@
 **PASS / READY_FOR_MAIN_MERGE_REVIEW**
 
 理由:
-- 全部 8 类查询 **FUNCTIONAL_VALIDATED**(正例/反例/unknown/stale/追溯)
+- ~~全部 8 类查询 FUNCTIONAL_VALIDATED~~ **勘误(2026-10-13)**：逐类资格表(§6)正确记录了 resource_lifetime/lock_order/race_condition/null_flow 为 FUNCTIONAL + DIAGNOSTIC、error_handling/taint_path 为 SMOKE + DIAGNOSTIC，仅 use_after_free/double_free 为 FUNCTIONAL_VALIDATED。本节原文"全部 FUNCTIONAL_VALIDATED"为笔误，以 §6 逐类表为准。
 - 408/408 全量测试通过(零回归)
 - L1 parity **PASS**(node/edge id 逐 ID 相等)
 - 默认路径与冻结 main **不可区分**(5 轮配对中位数)

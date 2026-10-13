@@ -88,7 +88,7 @@ L2+ = 按需增强
 | 层 | 运行模型 | 内容与要求 |
 | --- | --- | --- |
 | **L1 Foundation / Knowledge** | **默认开启，Always-on** | Repository/File/Symbol、Definition/Reference/Call、Dependency/Impact、Knowledge/Requirement/Document、基础 provenance。即使不启用任何高级分析，ProvenLattice 仍是可用的基础代码/工程知识服务（symbol / definition / callers / callees / references / related code / impact / knowledge）。必须保持：stable、deterministic、相对低成本、可增量维护、适合默认部署。**两大能力域共享同一份基础事实，不因检测能力重复建图。** |
-| **L2 Unified Optional Analysis** | **按需；Analyzer Capability Registry（非单开关）** | 双能力域共享的统一可插拔分析引擎。规划支持：Normalized AST/IR、Canonical CFG、**Full CFG View 与 Sparse CFG View 双视图**、Semantic Events、Def-use / Data Flow、Alias / Points-to、Ownership / Resource Semantics、Taint Analysis、Defect / Security Analyzers。已有 analyzer（main）：Python AST、Python CFG、C AST、C CFG、C 短路 CFG、C 调用语义；PR #1 分支已有（未集成）：Semantic Events、Sparse CFG/DFG、Ownership Contracts、8 类 Typed Defect Query（整合状态见 G7 与 design-dual-capability-integration.md）。必须清楚标记**已实现 / 部分实现 / 未来目标**及 formal / diagnostic 证据等级。**新增 analyzer 不新增 architecture layer。**Full 与 Sparse 是同一控制流语义的不同用途**视图**，不设计为两套长期独立的事实来源；语言专属语义由独立 frontend / 语言适配器承载；不强制每次生成 Sparse CFG 先完整持久化 Full CFG。 |
+| **L2 Unified Optional Analysis** | **按需；Analyzer Capability Registry（非单开关）** | 双能力域共享的统一可插拔分析引擎。规划支持：Normalized AST/IR、Canonical CFG、**Full CFG View 与 Sparse CFG View 双视图**、Semantic Events、Def-use / Data Flow、Alias / Points-to、Ownership / Resource Semantics、Taint Analysis、Defect / Security Analyzers。已有 analyzer（main）：Python AST、Python CFG、C AST、C CFG、C 短路 CFG、C 调用语义、Semantic Events、Sparse CFG/DFG、Ownership Contracts、8 类 Typed Defect Query（整合状态见 G7 与 capability-matrix.md）。必须清楚标记**已实现 / 部分实现 / 未来目标**及 formal / diagnostic 证据等级。**新增 analyzer 不新增 architecture layer。**Full 与 Sparse 是同一控制流语义的不同用途**视图**，不设计为两套长期独立的事实来源；语言专属语义由独立 frontend / 语言适配器承载；不强制每次生成 Sparse CFG 先完整持久化 Full CFG。 |
 | **L3 Task Services / Orchestration** | **request-time / task-time；统一编排、双业务入口** | 由 Task Context 扩展为统一任务服务层，内含 **Agent Development Task Services**（task-context 事实包）与 **Code Inspection Task Services**（defect 查询入口、候选复核组织）。负责分析能力选择、执行范围规划、分析结果组合、任务上下文生成和检测结果组织。**实际分析算法仍归 L2。**检测入口默认不隐式触发高成本分析；普通 task-context 不无限制触发昂贵 analyzer。 |
 | **L4 Evidence / Results** | **Core Provenance = baseline；Advanced Evidence = optional；统一证据契约** | 统一管理代码分析证据和结果表示：基础代码证据、分析路径、Evidence Bundle、Missing Evidence、**Candidate Finding 与 Verified Finding 区分**、Agent 任务引用与验证证据。统一契约要素：stable identity、source span、provenance、resolved/ambiguous/unresolved、analyzer version、freshness/staleness、missing evidence、truncation/coverage。Core provenance 默认保留、不关闭；Advanced evidence（Agent trace normalization-v2、runtime/validation evidence、formal experiment telemetry）可选。**不把 Finding 直接变成新的架构层**（见 G4 Finding 特别说明）。 |
 | **L5 Exposure** | **Adapter 层；CLI = baseline** | 至少保留一个基础访问面（CLI 已实现），长期统一提供 Agent Query 与 Code Inspection 的访问能力。已有：CLI（baseline）、native MCP（可按配置启用）；Plugin / SDK 尚未实现；REST/API 为候选。**Plugin、SDK、REST 等属未来扩展，不因新能力域而额外增加一层。**"L5 optional" ≠ 系统可以没有任何访问入口。 |
@@ -206,55 +206,56 @@ validation / remediation state / regression tracking）时，才重新评估是�
 > 逐层实现状态见 G7；PR #1 能力映射、语义差异矩阵与整合路线见
 > [docs/design-dual-capability-integration.md](design-dual-capability-integration.md)。
 
-### G7. 当前实现 vs Gold Target V2
+### G7. 当前实现 vs Gold Target V2（V1.4，2026-10-13 更新）
 
 **Already implemented（main 已集成）**：
 
 - L1 Foundation Graph 默认基础能力
 - optional AST / CFG materialization（Python AST/CFG；C normalized AST + 函数内
-  CFG + 短路 + 调用语义分类）
+  CFG + 短路 + 调用语义分类 + I0R1 对齐修复）
 - scoped analysis（`analyze --scope`）
-- analysis cache / freshness
+- analysis cache / freshness + dependency_staleness 统一规则
 - Python / C analyzer dispatch
 - task-context request-time 入口
 - core provenance
 - normalization-v2
-- CLI
+- CLI（含 defect 命令）
 - native MCP
+- Capability Contract（8 查询 + 3 analyzer 统一注册）
+- Semantic Events（15 类，词汇表驱动，按需）
+- Sparse CFG / Sparse DFG（按需）
+- 8 类 Typed Defect Query + Evidence Bundle（按需）
+- Ownership Contracts（TOML 数据，按需）
+- 三态可达性证据（true/false/unknown）
+- 复合主键 (id, feature) + 旧库自动迁移
+- Query grade/level/provenance（local-only, diagnostic）
 
 **Partially implemented**：
 
-- 整体 optional capability model 已存在，但尚未形成统一配置模型
 - L3 已按调用使用，但尚无完整 profile-driven policy
-- Analyzer Capability Registry 仅有雏形（`ANALYZER_VERSIONS` 注册表 +
-  feature/scope 校验），尚无依赖/成本/语言覆盖的统一管理面
-
-**Available on PR #1 branch（未集成 main，整合状态见
-[design-dual-capability-integration.md](design-dual-capability-integration.md) §9）**：
-
-- Semantic Events（15 类，词汇表驱动）+ Sparse CFG / Sparse DFG
-- Ownership Contracts + 8 类 Typed Defect Query（`defect` CLI 入口）+
-  Evidence Bundle / Missing Evidence
-- cold/hot 存储分离（`codegraph.cold.db`）与流式 update、缺陷查询性能优化
-- 语言边界：CFG/DFG 仅 C/C++ 语料验证；输出全部为 Candidate（PR 自报
-  stage-6 precision 基线 1/32，stage-9 后部分收敛，逐条归因在案）
+- Analyzer Capability Registry 已有依赖/成本/语言管理，尚无 profile system
+- resource_lifetime / lock_order / race_condition 为 FUNCTIONAL + DIAGNOSTIC
+- error_handling / taint_path 为 SMOKE + DIAGNOSTIC
+- taint_path 仅 4 source/3 sink 最小集
 
 **Not implemented（统一架构目标，当前无实现）**：
 
-- 统一 Normalized Program IR / Canonical Control-Flow Model（Full/Sparse
-  双视图收敛）
-- Analyzer Capability Registry 完整版（依赖/成本/语言/失效统一管理）
+- 统一 Normalized Program IR / Canonical Control-Flow Model（Full/Sparse 双视图收敛）
 - unified capability config / profile system / automatic capability planning
-- def-use / points-to / taint / Clang（main 侧均未启动；PR 分支的 taint_path
-  属检测链组成部分，随 PR 整合决策走）
+- def-use / points-to / 精确 taint / Clang
 - Plugin / SDK
 - distributed / cross-repo infrastructure
-- Code Inspection 的正式 qualification（三臂实验未执行，见
-  design-dual-capability-integration.md §8）
+- Code Inspection 的正式 qualification（三臂实验未执行）
+
+**Deferred（PR #1 归档于 archive/pr1-full-merge，可通过 Capability Contract 后续启用）**：
+
+- 冷/热存储分离（查询加速 2×，但改变默认布局）
+- 流式增量（update 峰值内存 -23%）
+- declarations 重构替换 L1 符号抽取（RQ1 资格口径失效）
 
 > Gold Target 是方向声明，**不等于当前已全部实现**；实现状态以 §1–§2 的
-> 冻结证据、§3 的 pending 项与 PR #1 整合决策为准。PR #1 的任何能力在
-> 合并并取得对应证据之前，一律不得在对外文档中表述为已交付能力。
+> 冻结证据、§3 的 pending 项与 V1.4 集成验收为准。全部缺陷查询输出为
+> Candidate（local-only, diagnostic），`resolved` ≠ Verified Finding。
 
 ## Version line（2026-10-10 reconciliation）
 

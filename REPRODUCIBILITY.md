@@ -1,8 +1,26 @@
-# ProvenLattice Reproducibility Baseline
+﻿# ProvenLattice Reproducibility Baseline
 
 > Tag: `provenlattice-sqi-v1-repro`（2026-09-17）。
 > 本文件是研究证据的**总入口**：当前证明了什么、没证明什么、如何验证、如何复现。
 > 详细实验治理见 `docs/provenlattice-research-validation-framework-v1.md` 与各线 README。
+
+## 0. V1.4 PR1 Integration Evidence（2026-10-13）
+
+```text
+Selective Integration (PR1 → main)     = MERGED_AND_VALIDATED
+  全量测试                              = 408/408 PASS
+  L1 node/edge identity parity         = PASS (逐 ID 相等)
+  八类 defect CLI smoke                = 8/8 available
+  旧库 PK 迁移                         = 8/8 PASS
+  默认 index 零检测产物                 = CONFIRMED
+  默认 index 性能                      = 6.77s median (aria2, 5-round paired)
+  默认 RSS                             = 218.0MB median
+  最终 main HEAD                       = a35cae0 (含报告)
+  集成 HEAD                            = 3c3f2d1 → 合并 → 922b834 → a35cae0
+```
+
+> 以上为 V1.4 集成工程验收，**不是**八类检测的正式产品精度认证。
+> 八类查询当前资格和限制见 `docs/capability-matrix.md`。
 
 ## 1. 当前结论（全部限各自冻结 scope）
 
