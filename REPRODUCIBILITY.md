@@ -1,4 +1,4 @@
-# ProvenLattice Reproducibility Baseline
+﻿# ProvenLattice Reproducibility Baseline
 
 > Tag: `provenlattice-sqi-v1-repro`（2026-09-17）。
 > 本文件是研究证据的**总入口**：当前证明了什么、没证明什么、如何验证、如何复现。
@@ -13,7 +13,7 @@ Selective Integration (PR1 → main)     = MERGED_AND_VALIDATED
   八类 defect CLI smoke                = 8/8 available
   旧库 PK 迁移                         = 8/8 PASS
   默认 index 零检测产物                 = CONFIRMED
-  默认 index 性能                      = 6.80s median (aria2, 5-round paired)
+  默认 index 性能                      = 6.77s median (aria2, 5-round paired)
   默认 RSS                             = 218.0MB median
   最终 main HEAD                       = a35cae0 (含报告)
   集成 HEAD                            = 3c3f2d1 → 合并 → 922b834 → a35cae0

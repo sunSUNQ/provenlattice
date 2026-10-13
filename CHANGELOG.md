@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 所有已发布里程碑按时间倒序记录。tag 命名遵循 `provenlattice-*` 前缀约定；
 各阶段的"已完成 / 明确未包含"以对应发布文档为准（`docs/releases/`）。
@@ -11,7 +11,7 @@
 
 - **Semantic Events**：15 类词汇表驱动的操作事件（CALL/ALLOC/RELEASE/LOCK/UNLOCK/
   RETURN/THROW/READ/WRITE/DEREFERENCE/CHECK/BRANCH/ATOMIC/THREAD_SPAWN/THREAD_JOIN），
-  TOML 词汇表驱动（cpp.toml + python.toml），按需物化到 AnalysisStore。
+  TOML 词汇表驱动（cpp.toml；Python 词汇表 python.toml 未迁入），按需物化到 AnalysisStore。
 - **Sparse CFG**：CONTROL_REACHES 控制可达边 + 结构事件（CHECK/BRANCH/DEREFERENCE）
   + 访问事件（READ/WRITE），事件点级稀疏图，按需物化。
 - **Sparse DFG**：DATA_FLOW_TO（方法内 def→use）+ CONSUMES（分配直接传入调用），
@@ -21,8 +21,9 @@
   每个候选携带 E-DEFECT-* 证据链、missing_evidence、三态可达性。
 - **Evidence Bundle**：candidate_id、defect_type、subject、facts、uncertain_facts、
   paths、source_evidence、missing_evidence、resolution_status、confidence（heuristic）。
-- **Ownership Contract Engine**：ContractTable + declared/inferred ownership rules
-  （TOML 配置），供 resource_lifetime 和 race_condition 消费。
+- **Ownership Contract Engine**：ContractTable + inferred ownership rules（代码中
+  实现）；declared TOML 数据文件（`semantics/contracts.toml`）未迁入，declared
+  路径暂不可用。供 resource_lifetime 和 race_condition 消费。
 - **Capability Contract**：统一能力注册（八类查询 + events + sparse_cfg + sparse_dfg），
   按 Capability × Scope 双维控制，dependency freshness 统一管理。
 - **统一 dependency freshness**：`dependency_staleness()` 单一规则，存储层和查询层
@@ -59,9 +60,10 @@
 以下 PR #1 能力已归档于 `archive/pr1-full-merge` 分支，可通过 Capability Contract
 按需启用：
 
-- **冷/热存储分离**（查询加速 2×，但改变默认布局）
-- **流式增量**（update 峰值内存 -23%，但需冷存储配套）
-- **declarations 重构**（L1 符号集合变化，RQ1 口径失效，需重新资格）
+- **冷/热存储分离**（查询加速 2×，但改变默认布局，影响备份/status/工具链）
+- **流式增量**（update 峰值内存 -23%；可在 legacy 单库布局下独立移植，待独立
+  A/B 验证；不依赖冷存储）
+- **declarations 重构**（L1 符号集合变化，RQ1 资格口径失效，需重新资格）
 - **事件提取嵌入 index**（默认路径 +157%，改为按需触发）
 
 ### Validation
@@ -71,7 +73,7 @@
 - 八类 CLI smoke **8/8 available**
 - 旧库 PK 迁移 **8/8 PASS**
 - 默认 index 零检测产物 **CONFIRMED**
-- 默认性能 index 6.94s / RSS 218.1MB（aria2 1,393 文件，5 轮配对中位数）
+- 默认性能 index **6.77s** / RSS **218.0MB**（5 轮配对中位数；合并后单次验证 = 6.94s / 218.1MB）
 
 ### Known Limitations
 

@@ -1,4 +1,4 @@
-# ProvenLattice V1.4
+﻿# ProvenLattice V1.4
 
 **A Provenance-aware Code Knowledge and Analysis Platform for AI Agents**
 
@@ -75,8 +75,9 @@ provenlattice defect /path/to/repo --type use_after_free --json
 provenlattice defect /path/to/repo --type null_flow --json
 provenlattice defect /path/to/repo --type all --json
 
-# 6. MCP
-provenlattice mcp__provenlattice__query  # Claude Code 等客户端原生使用
+# 6. MCP（透明桥接，需 MCP 客户端配置后使用；见 Limitations）
+#    mcp__provenlattice__query 为 MCP 协议内工具名，
+#    不是 CLI 子命令。正式 MCP 客户端端到端验证待完成。
 ```
 
 ## V1.4 New Capabilities
@@ -88,7 +89,7 @@ provenlattice mcp__provenlattice__query  # Claude Code 等客户端原生使用
 | Sparse DFG | PR #1 | 方法内 def→use（DATA_FLOW_TO）+ 别名链 + via 中间体 |
 | 8 类 Defect Query | PR #1 | double_free/use_after_free/null_flow/resource_lifetime/lock_order/race_condition/taint_path/error_handling |
 | Evidence Bundle | PR #1 | E-DEFECT-* id、facts、uncertain_facts、source_evidence、missing_evidence |
-| Ownership Contracts | PR #1 | TOML 配置驱动的 declared/inferred ownership rules |
+| Ownership Contracts | PR #1 | ContractTable + inferred ownership rules；declared TOML 数据未迁入 |
 | Capability Contract | V1.4 | 统一能力注册（8 查询 + 3 analyzer），按 Capability × Scope 控制 |
 | Dependency Freshness | V1.4 | `dependency_staleness()` 统一规则，上游变化自动失效下游缓存 |
 | Composite PK (id, feature) | V1.4 | 跨 analyzer 同 ID 共存，旧库自动迁移 |
@@ -105,8 +106,8 @@ provenlattice mcp__provenlattice__query  # Claude Code 等客户端原生使用
 | 八类 defect CLI | **8/8 available** |
 | 旧库 PK 迁移 | **8/8 PASS** |
 | 默认 index 零检测产物 | **CONFIRMED** |
-| 默认 index 耗时 | 6.80s（中位数，与冻结 main 不可区分） |
-| 默认 RSS | 218.0MB |
+| 默认 index 耗时 | **6.77s**（5 轮配对中位，aria2，冻结 main 基线 = 6.77s） |
+| 默认 RSS | **218.0MB**（中位数；合并后单次验证 = 6.94s / 218.1MB） |
 
 > 性能数据基于特定测试语料和环境，不代表所有仓库的通用表现。
 
@@ -120,8 +121,10 @@ provenlattice mcp__provenlattice__query  # Claude Code 等客户端原生使用
 - 无 SSA / points-to / 跨函数数据流边
 - Python 缺陷检测链未验证
 - `if(p){*p=1}` null_flow 已知误报
-- Cold Store / Streaming Incremental / declarations 重构未纳入 V1.4（归档于 `archive/pr1-full-merge`）
-- MCP defect 查询未做端到端客户端验证（桥接透传可用）
+- Cold Store / declarations 重构未纳入 V1.4（归档于 `archive/pr1-full-merge`）
+- Streaming Incremental 可在 legacy 单库布局下独立移植（不依赖 Cold Store），待独立 A/B 验证
+- MCP defect 查询未做端到端客户端验证（桥接透传可用；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）
+- `semantics/contracts.toml`（declared 所有权规则数据）和 `semantics/vocabularies/python.toml`（Python 事件词汇表）未迁入
 
 ## Documentation
 
