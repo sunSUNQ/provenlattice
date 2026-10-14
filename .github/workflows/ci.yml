@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install tree-sitter==0.26.0 tree-sitter-c==0.24.2 tree-sitter-cpp==0.23.4 tree-sitter-python==0.25.0
+
+      - name: Verify version
+        run: |
+          python -c "import importlib.metadata; v = importlib.metadata.version('provenlattice'); print(f'version: {v}'); assert v == '1.4.0', f'unexpected version: {v}'"
+
+      - name: Verify package-data (TOML vocabularies)
+        shell: python
+        run: |
+          import provenlattice, pathlib
+          pkg_dir = pathlib.Path(provenlattice.__file__).parent / "semantics"
+          tomls = list(pkg_dir.rglob("*.toml"))
+          assert len(tomls) >= 4, f"expected >=4 TOML files, got {len(tomls)}"
+          print(f"TOML vocabularies found: {[t.name for t in tomls]}")
+
+      - name: CLI help smoke
+        run: |
+          provenlattice --help
+          provenlattice defect --help
+
+      - name: Run full test suite
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -v
+
+  test-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install tree-sitter==0.26.0 tree-sitter-c==0.24.2 tree-sitter-cpp==0.23.4 tree-sitter-python==0.25.0
+
+      - name: Verify version
+        run: |
+          python -c "import importlib.metadata; v = importlib.metadata.version('provenlattice'); print(f'version: {v}'); assert v == '1.4.0', f'unexpected version: {v}'"
+
+      - name: CLI help smoke
+        run: |
+          provenlattice --help
+          provenlattice defect --help
+
+      - name: Run full test suite
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests -v
