@@ -41,8 +41,10 @@ jobs:
           import provenlattice, pathlib
           pkg_dir = pathlib.Path(provenlattice.__file__).parent / "semantics"
           tomls = list(pkg_dir.rglob("*.toml"))
-          assert len(tomls) >= 4, f"expected >=4 TOML files, got {len(tomls)}"
-          print(f"TOML vocabularies found: {[t.name for t in tomls]}")
+          expected = {"defect_patterns.toml", "taint.toml", "cpp.toml"}
+          names = {t.name for t in tomls}
+          assert expected <= names, f"missing vocabularies: {sorted(expected - names)}"
+          print(f"TOML vocabularies found: {sorted(names)}")
 
       - name: CLI help smoke
         run: |
@@ -73,6 +75,17 @@ jobs:
       - name: Verify version
         run: |
           python -c "import importlib.metadata; v = importlib.metadata.version('provenlattice'); print(f'version: {v}'); assert v == '1.4.0', f'unexpected version: {v}'"
+
+      - name: Verify package-data (TOML vocabularies)
+        shell: python
+        run: |
+          import provenlattice, pathlib
+          pkg_dir = pathlib.Path(provenlattice.__file__).parent / "semantics"
+          tomls = list(pkg_dir.rglob("*.toml"))
+          expected = {"defect_patterns.toml", "taint.toml", "cpp.toml"}
+          names = {t.name for t in tomls}
+          assert expected <= names, f"missing vocabularies: {sorted(expected - names)}"
+          print(f"TOML vocabularies found: {sorted(names)}")
 
       - name: CLI help smoke
         run: |
