@@ -54,6 +54,11 @@ class GroundTruthV2Tests(unittest.TestCase):
             root = Path(directory)
             self.assertEqual(evaluator.canonicalize_path(str(root / "src" / "a.cpp"), root), "src/a.cpp")
             self.assertEqual(evaluator.canonicalize_path("src\\a.cpp", root), "src/a.cpp")
+        # synthetic cross-platform repo-root stripping (exposed by the first Linux CI run)
+        self.assertEqual(evaluator.canonicalize_path("C:\\repo\\file.py", Path("C:\\repo")), "file.py")
+        self.assertEqual(evaluator.canonicalize_path("/repo/file.py", Path("/repo")), "file.py")
+        self.assertEqual(evaluator.canonicalize_path("/repo/file.py", Path("/other")), "repo/file.py")
+        self.assertEqual(evaluator.canonicalize_path("repo/file.py"), "repo/file.py")
 
     def test_e8_multiple_valid_paths_any_of(self):
         a, b = "E-CODE-000000000000000000000007", "E-CODE-000000000000000000000008"

@@ -18,6 +18,10 @@ def canonicalize_path(value: str, repo_root: str | Path | None = None) -> str:
             value = value[len(root) + 1:]
         else:
             value = value[3:]
+    elif value.startswith("/"):
+        root = str(repo_root or "").replace("\\", "/").rstrip("/")
+        if root and value.casefold().startswith(root.casefold() + "/"):
+            value = value[len(root):]
     value = re.sub(r"^/+(?:[A-Za-z]:/)?", "", value)
     parts = []
     for part in value.split("/"):
