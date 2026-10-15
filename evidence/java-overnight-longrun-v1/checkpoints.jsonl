@@ -1,3 +1,6 @@
 {"stage": "P0", "ended": "2026-10-15", "head": "dec0272", "status": "COMPLETE", "baseline": "442 OK", "commits": ["d36e088 T1-T3", "d5aa6e7 P1 fix", "dec0272 T6"], "next": "P1"}
 {"stage": "P1", "ended": "2026-10-15", "head": "dec0272", "status": "COMPLETE", "verdict": "P1_FINAL_REVIEW_PASS", "next": "P2"}
 {"stage": "P2", "ended": "2026-10-15", "head": "dec0272", "status": "COMPLETE", "outputs": ["bench/t9a-summary.json", "bench-raw-*.json x3", "bench-stats-*.json x3", "runner: run_bench.py + bench_child.py"], "repos_outside_repo": "TEMP/opencode/longrun/repos (hikaricp a4d93f4, gson e2292f9, jgit 6e68739)", "next": "P3"}
+{"stage": "P3", "ended": "2026-10-15", "head": "dec0272", "status": "COMPLETE", "verdict": "JDT 20/21 CORRECT (1 recovered-binding caveat), JavaParser 17/21 with 2 WRONG (JLS ambiguity), SCIP INFRA_BLOCKED (official Windows launcher drop)", "next": "P4"}
+{"stage": "P4", "ended": "2026-10-15", "status": "COMPLETE", "decision": "JDT as optional Phase 2 analyzer; JavaParser excluded (2/21 WRONG); SCIP excluded (official Windows drop)", "next": "P5"}
+{"stage": "P5", "ended": "2026-10-15", "status": "COMPLETE", "result": "L1 wrong=0, JDT-prototype wrong=0 (recovered filtered), 7/21 L1-improvable points proven; prototype lives in evidence/ only (no L1 code path touched)", "next": "P6"}
