@@ -10,7 +10,15 @@ from .models import Edge, Node, ParsedFile, ParsedReference, RawReference
 # Bump when reference metadata semantics change: cached rows whose metadata
 # lacks the current version are re-resolved so full and incremental index
 # runs converge on identical classification.
-CALL_KIND_VERSION = 1
+CALL_KIND_VERSION = 2
+
+# Reference syntaxes that can only ever bind to a type-shaped target. Emitted
+# by the Java extractor (type usages and `new` constructions); no other
+# frontend emits these values, so the guard below is inert for them.
+_TYPE_TARGET_SYNTAXES = frozenset({"type_usage", "object_creation"})
+# Callable node kinds: a type-target reference must never bind to these
+# (P1: a same-file method named like an imported class captured type usages).
+_CALLABLE_KINDS = frozenset({"Function", "Method"})
 
 
 @dataclass(slots=True)
@@ -222,7 +230,12 @@ class ReferenceResolver:
             return [], None, "indirect_call_shape", 0.0
         target = reference.target.strip(".")
         short = target.rsplit(".", 1)[-1]
+        wants_type_target = (reference.metadata or {}).get("syntax") in _TYPE_TARGET_SYNTAXES
         same_file = [candidate for candidate in by_name.get(short, []) if candidate.file_id == source.file_id]
+        if wants_type_target:
+            # A type usage or `new` construction can only bind to a type node;
+            # a same-file member with the same name must not capture it (P1).
+            same_file = [c for c in same_file if c.kind not in _CALLABLE_KINDS]
         if len(same_file) == 1:
             return same_file, same_file[0], "same_file_resolution", 0.98
         if len(same_file) > 1:
@@ -250,6 +263,9 @@ class ReferenceResolver:
         if len(imported_candidates) > 1:
             return imported_candidates, None, "unique_imported_symbol_resolution", 0.0
         candidates = by_name.get(short, [])
+        if wants_type_target:
+            # Mirror the same-file guard for the bare global-name ladder (P1).
+            candidates = [c for c in candidates if c.kind not in _CALLABLE_KINDS]
         if len(candidates) == 1:
             return candidates, candidates[0], "unique_symbol_resolution", 0.75
         return candidates, None, "ambiguous" if candidates else "unresolved", 0.0

@@ -599,5 +599,163 @@ class JavaNoRegressionTests(unittest.TestCase):
         for row in java_files:
             self.assertEqual(row["bucket"], "skipped")
 
+
+# P1 regression fixtures (T8 review Exp6): a member whose name collides with a
+# type must never capture type_usage / object_creation references.
+SAME_NAME_IMPORTED = {
+    "src/a/Helper.java": "package a;\n\npublic class Helper { }\n",
+    "src/b/Caller.java": (
+        "package b;\n\n"
+        "import a.Helper;\n\n"
+        "public class Caller {\n"
+        "    public void Helper() { }\n\n"
+        "    public Helper make() {\n"
+        "        return new Helper();\n"
+        "    }\n"
+        "}\n"
+    ),
+}
+
+SAME_NAME_LOCAL = {
+    "src/b/Helper.java": (
+        "package b;\n\n"
+        "public class Helper {\n"
+        "    public void Helper() { }\n\n"
+        "    public Helper make() {\n"
+        "        return new Helper();\n"
+        "    }\n"
+        "}\n"
+    ),
+}
+
+SAME_NAME_CROSS_PACKAGE = {
+    "src/a/Helper.java": "package a;\n\npublic class Helper { }\n",
+    "src/b/Caller.java": (
+        "package b;\n\n"
+        "public class Caller {\n"
+        "    public void Helper() { }\n\n"
+        "    public Helper make() { return null; }\n"
+        "}\n"
+    ),
+}
+
+
+def resolved_targets(database: Path, relative_path: str) -> list[dict]:
+    sql = (
+        "SELECT r.raw_name, r.reference_type, r.status, r.resolution_strategy, r.confidence, "
+        "n.kind AS target_kind, n.qualified_name AS target_qname "
+        "FROM raw_references r LEFT JOIN nodes n ON r.resolved_symbol_id = n.id "
+        "JOIN files f ON r.file_id = f.file_id "
+        "WHERE f.path = ? AND r.raw_name = 'Helper' ORDER BY r.id"
+    )
+    with closing(sqlite3.connect(database)) as connection:
+        connection.row_factory = sqlite3.Row
+        return [dict(row) for row in connection.execute(sql, (relative_path,))]
+
+
+@unittest.skipUnless(HAS_JAVA_GRAMMAR, "tree-sitter-java is required")
+class JavaTypeTargetGuardTests(unittest.TestCase):
+    """P1: type_usage / new references must only bind type-kind candidates."""
+
+    def index(self, fixture: dict[str, str]) -> Path:
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        root = Path(temp.name) / "repo"
+        database = Path(temp.name) / "codegraph.db"
+        write_fixture(root, fixture)
+        full_index(root, database)
+        return database
+
+    # java22
+    def test_java22_imported_type_not_captured_by_same_name_method(self) -> None:
+        database = self.index(SAME_NAME_IMPORTED)
+        rows = resolved_targets(database, "src/b/Caller.java")
+        self.assertEqual(len(rows), 3)  # IMPORTS + return type REFERENCES + new CALLS
+        for row in rows:
+            self.assertEqual(row["status"], "resolved", row)
+            self.assertEqual(row["target_kind"], "Class", row)
+            self.assertEqual(row["target_qname"], "a.Helper", row)
+        type_ref = [r for r in rows if r["reference_type"] == "REFERENCES"][0]
+        self.assertEqual(type_ref["resolution_strategy"], "import_resolution")
+        self.assertEqual(type_ref["confidence"], 1.0)
+
+    # java23
+    def test_java23_same_file_class_wins_over_same_name_member(self) -> None:
+        database = self.index(SAME_NAME_LOCAL)
+        rows = resolved_targets(database, "src/b/Helper.java")
+        self.assertEqual(len(rows), 2)  # return type REFERENCES + new CALLS
+        for row in rows:
+            self.assertEqual(row["status"], "resolved", row)
+            self.assertEqual(row["target_kind"], "Class", row)
+            self.assertEqual(row["target_qname"], "b.Helper", row)
+            self.assertEqual(row["resolution_strategy"], "same_file_resolution")
+            self.assertEqual(row["confidence"], 0.98)
+
+    # java24
+    def test_java24_cross_file_type_preferred_over_same_name_member(self) -> None:
+        database = self.index(SAME_NAME_CROSS_PACKAGE)
+        rows = resolved_targets(database, "src/b/Caller.java")
+        self.assertEqual(len(rows), 1)  # return type REFERENCES only
+        row = rows[0]
+        self.assertEqual(row["status"], "resolved")
+        self.assertEqual(row["target_kind"], "Class")
+        self.assertEqual(row["target_qname"], "a.Helper")
+        self.assertEqual(row["resolution_strategy"], "unique_symbol_resolution")
+        self.assertEqual(row["confidence"], 0.75)
+
+
+@unittest.skipUnless(HAS_JAVA_GRAMMAR, "tree-sitter-java is required")
+class CrossLanguageGuardPinTests(unittest.TestCase):
+    """Negative tests: the type-target guard is metadata-gated to Java facts.
+
+    Python/C/C++ extractors do not emit the guarded syntax markers, so their
+    resolution behavior must stay byte-identical (T8 Exp7 documents the shared
+    underlying mechanism; any Python fix requires a separate decision).
+    """
+
+    def test_python_same_name_call_binding_unchanged(self) -> None:
+        # Python emits no type-usage references (return annotations are not
+        # walked by parsing/python.py), so the shared bare-name same-file
+        # mechanism only shows on CALLS here; the guard is metadata-gated and
+        # must not change this pre-fix behavior (T8 Exp7 attribution note:
+        # the "annotation" binding was actually the call site).
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        root = Path(temp.name) / "repo"
+        database = Path(temp.name) / "codegraph.db"
+        write_fixture(root, {
+            "pkg/helper.py": "class Helper:\n    pass\n",
+            "pkg/mod.py": (
+                "from pkg.helper import Helper\n\n\n"
+                "def Helper():\n    return 1\n\n\n"
+                "def make() -> Helper:\n    return Helper()\n"
+            ),
+            "pkg/__init__.py": "",
+        })
+        full_index(root, database)
+        sql = (
+            "SELECT r.raw_name, r.reference_type, r.status, r.resolution_strategy, "
+            "n.kind AS target_kind, n.qualified_name AS target_qname "
+            "FROM raw_references r LEFT JOIN nodes n ON r.resolved_symbol_id = n.id "
+            "JOIN files f ON r.file_id = f.file_id "
+            "WHERE f.path = 'pkg/mod.py' AND r.raw_name = 'Helper' ORDER BY r.id"
+        )
+        with closing(sqlite3.connect(database)) as connection:
+            connection.row_factory = sqlite3.Row
+            rows = [dict(row) for row in connection.execute(sql)]
+        self.assertEqual(len(rows), 2)
+        imports_row = [r for r in rows if r["reference_type"] == "IMPORTS"][0]
+        # pre-existing from-import behavior in this fixture shape: module file
+        # node and class both match -> ambiguous (unchanged, pinned)
+        self.assertEqual(imports_row["status"], "ambiguous")
+        self.assertEqual(imports_row["resolution_strategy"], "import_resolution")
+        call_row = [r for r in rows if r["reference_type"] == "CALLS"][0]
+        # pinned pre-fix behavior: bare-name same-file binding, no kind filter
+        self.assertEqual(call_row["status"], "resolved")
+        self.assertEqual(call_row["resolution_strategy"], "same_file_resolution")
+        self.assertEqual(call_row["target_kind"], "Function")
+        self.assertEqual(call_row["target_qname"], "pkg.mod.Helper")
+
+
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
