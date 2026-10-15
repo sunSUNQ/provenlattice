@@ -30,7 +30,7 @@ ProvenLattice 探索一种新的工程上下文组织方式：
 ```text
 L1 Foundation Graph（默认启用，零检测开销）
 │   index/update → Repository/File/Symbol/Call/Reference/Impact/Knowledge
-│   Python + C/C++ 确定性解析，resolved/ambiguous/unresolved 三态引用
+│   Python + C/C++ + Java 确定性解析，resolved/ambiguous/unresolved 三态引用
 │
 L2 Unified Optional Analysis（按 Capability × Scope 按需物化）
 │
@@ -95,6 +95,22 @@ provenlattice defect /path/to/repo --type all --json
 | Composite PK (id, feature) | V1.4 | 跨 analyzer 同 ID 共存，旧库自动迁移 |
 | Three-state Reachability | V1C-R1 | true / false / unknown — unknown 不当作不可达 |
 
+## Java Support (P0, Foundation Graph)
+
+Java 以 **tree-sitter 语法事实**接入默认 Foundation Graph（T1–T3，2026-10-15）：
+
+```bash
+provenlattice index /path/to/java-repo --json   # .java 文件自动识别
+provenlattice symbol Helper --database /path/to/java-repo/.provenlattice/codegraph.db --json
+provenlattice callers com.example.core.Helper.build --database ... --json
+```
+
+* **节点**：`Class`（class/enum/record）、`Interface`（interface/annotation）、`Method`（method/constructor/field/enum_constant）——全部复用既有冻结 kind，metadata 判别（`java_kind` / `java_member`）；包不建节点。
+* **边**：`DEFINES` / `CONTAINS` / `IMPORTS` / `CALLS` / `REFERENCES` / `IMPLEMENTS`（extends/implements/throws 以 `java_relation` 区分）。
+* **三态边界**：import/限定名/同文件/全局唯一 → `resolved`（0.75–1.0）；重载调用、跨包同名、通配 import 同名 → `ambiguous`（候选完整保留）；间接形状（`super.x()`、复杂 receiver、`Type::method`）、JDK/第三方类型、隐式默认构造 → `unresolved`。**不做重载判定与继承层级绑定**。
+* **已记录提取 gap**：record 组件、注解元素、匿名类体、隐式默认构造不产出符号；局部变量/参数/lambda/模式变量不产出引用。
+* **边界**：这是 Foundation Graph 阶段，**不等同于** JDT 语义绑定、完整 CFG/DFG 或缺陷查询；`analyze` 对 `.java` 全部 fail-closed 上报 skipped。语义后端（JDT 候选 / SCIP 对照）未实测、未集成。详细矩阵见 [docs/capability-matrix.md](docs/capability-matrix.md) Java 边界注。
+
 ## Validation
 
 以下结果基于 aria2 语料（1,393 文件 / 165k LOC）在 5 轮交错配对运行中测量：
@@ -125,6 +141,7 @@ provenlattice defect /path/to/repo --type all --json
 - Streaming Incremental 可在 legacy 单库布局下独立移植（不依赖 Cold Store），待独立 A/B 验证
 - MCP defect 查询未做端到端客户端验证（桥接透传可用；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）
 - `semantics/contracts.toml`（declared 所有权规则数据）和 `semantics/vocabularies/python.toml`（Python 事件词汇表）未迁入
+- Java 为 Foundation Graph 阶段（tree-sitter 语法事实）：无重载判定/继承绑定/L2 分析器；record 组件、注解元素、匿名类体、隐式默认构造不提取；JDT/SCIP 语义后端未实测未集成
 
 ## Documentation
 
@@ -166,6 +183,7 @@ Composite PK (id, feature) + 旧库迁移                          ✅ 已交付
 三态可达性证据 (true/false/unknown)                            ✅ 已交付
 resource_lifetime / lock_order / race_condition                ◐ FUNCTIONAL + DIAGNOSTIC
 error_handling / taint_path                                    ◐ SMOKE + DIAGNOSTIC
+Java Foundation Graph (P0, T1–T3)                              ✅ L1 已交付（21 用例 + 金样回归；无 L2）
 ─── 未来 ───
 Canonical CFG / Full-Sparse 双视图收敛                          规划（Gold Target V2 Phase 3）
 精确 alias / points-to / 跨函数数据流                           future candidate
