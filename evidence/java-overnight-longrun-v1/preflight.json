@@ -1,0 +1,46 @@
+{
+  "task": "PL-JAVA-OVERNIGHT-LONGRUN-V1",
+  "started_at": "2026-10-15",
+  "baseline_head": "42c6d89",
+  "branch": "main",
+  "python": "3.12.10",
+  "os": "Windows",
+  "jdk_available": false,
+  "network_available": true,
+  "workspace_state": {
+    "tracked_modified": [
+      ".github/workflows/ci.yml",
+      "README.md",
+      "docs/capability-matrix.md",
+      "docs/roadmap.md",
+      "pyproject.toml",
+      "requirements.txt",
+      "src/provenlattice/parser.py",
+      "src/provenlattice/parsing/__init__.py",
+      "src/provenlattice/resolver.py",
+      "src/provenlattice/scanner.py"
+    ],
+    "untracked_task_files": [
+      "docs/java-support-implementation-plan.md",
+      "src/provenlattice/parsing/java.py",
+      "tests/test_java.py"
+    ],
+    "preexisting_untracked_untouched": [
+      "ContextBench zstd 基准分析报告.md",
+      "benchmark-analysis/", "benchmark-contextbench-zstd/", "dist/",
+      "docs/v1.4-*.md (12 files)", "opencode/", "provenlattice/", "proventlattice/"
+    ],
+    "stashes": 0
+  },
+  "baseline_tests": {"total": 442, "result": "OK", "duration_s": 43.7},
+  "sha256": {
+    "src/provenlattice/parsing/java.py": "D7934FF70F983DD58F06CA58E6A2C83C22A59823C4BB8C3E09F8B56FE0AEB958",
+    "src/provenlattice/resolver.py": "55D066B5C4B9865C62F79B362F12C4E4D322288A90754AD9F661022C01FFEA6F",
+    "tests/test_java.py": "8F9D73901D296BD5521D3CD492140B5C8A2BCADA9A317E44B2C180A570F2CD8B"
+  },
+  "notes": [
+    "Pre-existing untracked user files are protected: never staged, never modified.",
+    "JDK absent: P3 requires Temurin 21 download to repo-external temp path.",
+    "Baseline 442 = 417 main + 25 java tests (21 T1-T3 + 4 P1)."
+  ]
+}

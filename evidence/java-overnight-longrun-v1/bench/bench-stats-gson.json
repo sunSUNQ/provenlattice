@@ -1,0 +1,59 @@
+{
+  "manifest": {
+    "label": "gson",
+    "repo_path": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\gson",
+    "java_files": 264,
+    "java_bytes": 2079192
+  },
+  "cold_wall_ms": {
+    "median": 2829,
+    "min": 2230,
+    "max": 2852,
+    "spread": 622
+  },
+  "cold_peak_rss_mb": {
+    "median": 131.7,
+    "min": 131.6,
+    "max": 132.0,
+    "spread": 0.4000000000000057
+  },
+  "warm_wall_ms": {
+    "median": 2820,
+    "min": 2779,
+    "max": 2881,
+    "spread": 102
+  },
+  "warm_peak_rss_mb": {
+    "median": 131.8,
+    "min": 131.7,
+    "max": 132.2,
+    "spread": 0.5
+  },
+  "incremental_wall_ms": {
+    "median": 2897,
+    "min": 2868,
+    "max": 3132,
+    "spread": 264
+  },
+  "delete_wall_ms": {
+    "median": 2844,
+    "min": 2844,
+    "max": 2844,
+    "spread": 0
+  },
+  "reference_profile_last_cold": {
+    "files_scanned": 264,
+    "files_parsed": 264,
+    "nodes_created": 5479,
+    "edges_created": 16573,
+    "raw_references": 43340,
+    "resolved_references": 15297,
+    "ambiguous_references": 7017,
+    "unresolved_references": 21026,
+    "parse_failures": 0,
+    "syntax_error_files": 0,
+    "index_time_ms": 2804.9208000011276,
+    "shards_created": 7
+  },
+  "db_size_last_cold_bytes": 80764928
+}

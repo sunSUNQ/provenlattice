@@ -1,0 +1,3 @@
+{"stage": "P0", "ended": "2026-10-15", "head": "dec0272", "status": "COMPLETE", "baseline": "442 OK", "commits": ["d36e088 T1-T3", "d5aa6e7 P1 fix", "dec0272 T6"], "next": "P1"}
+{"stage": "P1", "ended": "2026-10-15", "head": "dec0272", "status": "COMPLETE", "verdict": "P1_FINAL_REVIEW_PASS", "next": "P2"}
+{"stage": "P2", "ended": "2026-10-15", "head": "dec0272", "status": "COMPLETE", "outputs": ["bench/t9a-summary.json", "bench-raw-*.json x3", "bench-stats-*.json x3", "runner: run_bench.py + bench_child.py"], "repos_outside_repo": "TEMP/opencode/longrun/repos (hikaricp a4d93f4, gson e2292f9, jgit 6e68739)", "next": "P3"}

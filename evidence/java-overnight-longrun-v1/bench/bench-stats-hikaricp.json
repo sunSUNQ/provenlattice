@@ -1,0 +1,59 @@
+{
+  "manifest": {
+    "label": "hikaricp",
+    "repo_path": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\hikaricp",
+    "java_files": 113,
+    "java_bytes": 712826
+  },
+  "cold_wall_ms": {
+    "median": 649,
+    "min": 647,
+    "max": 663,
+    "spread": 16
+  },
+  "cold_peak_rss_mb": {
+    "median": 60.2,
+    "min": 60.0,
+    "max": 60.5,
+    "spread": 0.5
+  },
+  "warm_wall_ms": {
+    "median": 764,
+    "min": 759,
+    "max": 785,
+    "spread": 26
+  },
+  "warm_peak_rss_mb": {
+    "median": 60.4,
+    "min": 60.3,
+    "max": 60.7,
+    "spread": 0.4000000000000057
+  },
+  "incremental_wall_ms": {
+    "median": 804,
+    "min": 799,
+    "max": 830,
+    "spread": 31
+  },
+  "delete_wall_ms": {
+    "median": 780,
+    "min": 780,
+    "max": 780,
+    "spread": 0
+  },
+  "reference_profile_last_cold": {
+    "files_scanned": 113,
+    "files_parsed": 113,
+    "nodes_created": 2077,
+    "edges_created": 5778,
+    "raw_references": 13451,
+    "resolved_references": 4899,
+    "ambiguous_references": 1962,
+    "unresolved_references": 6590,
+    "parse_failures": 0,
+    "syntax_error_files": 0,
+    "index_time_ms": 641.0475999873597,
+    "shards_created": 2
+  },
+  "db_size_last_cold_bytes": 25325568
+}
