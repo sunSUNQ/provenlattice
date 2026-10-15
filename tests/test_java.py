@@ -600,6 +600,168 @@ class JavaNoRegressionTests(unittest.TestCase):
             self.assertEqual(row["bucket"], "skipped")
 
 
+@unittest.skipUnless(HAS_JAVA_GRAMMAR, "tree-sitter-java is required")
+class JavaAdversarialTests(unittest.TestCase):
+    """P6 hardening: interface defaults, static imports, varargs, anonymous
+    bodies, nested generics, delete/re-add convergence, default package."""
+
+    def index(self, fixture: dict[str, str]) -> tuple[Path, Path]:
+        temp = tempfile.TemporaryDirectory()
+        self.addCleanup(temp.cleanup)
+        root = Path(temp.name) / "repo"
+        database = Path(temp.name) / "codegraph.db"
+        write_fixture(root, fixture)
+        full_index(root, database)
+        return root, database
+
+    # java25
+    def test_java25_interface_default_method_is_extracted_and_callable(self) -> None:
+        root, database = self.index({
+            "src/a/W.java": (
+                "package a;\n"
+                "public interface W {\n"
+                "    default boolean ready() { return true; }\n"
+                "}\n"
+            ),
+            "src/a/Impl.java": (
+                "package a;\n"
+                "public class Impl implements W {\n"
+                "    public boolean use() { return ready(); }\n"
+                "}\n"
+            ),
+        })
+        names = {row["qualified_name"] for row in symbols(database)}
+        self.assertIn("a.W.ready", names)
+        refs = file_references(database, "src/a/Impl.java")
+        call = [r for r in refs if r["raw_name"] == "ready" and r["reference_type"] == "CALLS"]
+        self.assertEqual(len(call), 1)
+        self.assertEqual(call[0]["status"], "resolved")
+        self.assertEqual(call[0]["resolution_strategy"], "unique_symbol_resolution")
+
+    # java26
+    def test_java26_static_import_member_resolves(self) -> None:
+        root, database = self.index({
+            "src/a/Const.java": (
+                "package a;\n"
+                "public class Const {\n"
+                "    public static final int MAX = 9;\n"
+                "    public static int clamp(int v) { return v; }\n"
+                "}\n"
+            ),
+            "src/b/User.java": (
+                "package b;\n"
+                "import static a.Const.MAX;\n"
+                "import static a.Const.clamp;\n"
+                "public class User {\n"
+                "    public int go(int v) { return clamp(MAX + v); }\n"
+                "}\n"
+            ),
+        })
+        refs = file_references(database, "src/b/User.java")
+        clamp_call = [r for r in refs if r["raw_name"] == "clamp" and r["reference_type"] == "CALLS"]
+        self.assertEqual(clamp_call[0]["status"], "resolved")
+        self.assertEqual(clamp_call[0]["confidence"], 1.0)
+        # bare MAX reads are rewritten through the static-import alias ladder
+        max_refs = [r for r in refs if r["raw_name"] == "MAX"]
+        self.assertTrue(all(r["status"] == "resolved" for r in max_refs), max_refs)
+
+    # java27
+    def test_java27_varargs_signature_and_call(self) -> None:
+        root, database = self.index({
+            "src/a/Sums.java": (
+                "package a;\n"
+                "public class Sums {\n"
+                "    public static int sum(int... values) { return 0; }\n"
+                "    public int total() { return sum(1, 2, 3); }\n"
+                "}\n"
+            ),
+        })
+        nodes = [row for row in symbols(database) if row["qualified_name"] == "a.Sums.sum"]
+        self.assertEqual(len(nodes), 1)
+        self.assertEqual(nodes[0]["signature"], "(int...) -> int")
+        refs = file_references(database, "src/a/Sums.java")
+        call = [r for r in refs if r["raw_name"] == "sum" and r["reference_type"] == "CALLS"]
+        self.assertEqual(call[0]["status"], "resolved")
+
+    # java28
+    def test_java28_anonymous_body_is_skipped(self) -> None:
+        root, database = self.index({
+            "src/a/Lat.java": (
+                "package a;\n"
+                "public class Lat {\n"
+                "    public Runnable make() {\n"
+                "        return new Runnable() {\n"
+                "            public void run() { helper(); }\n"
+                "        };\n"
+                "    }\n"
+                "    public void helper() { }\n"
+                "}\n"
+            ),
+        })
+        # R5 gap (documented): anonymous bodies produce no symbols/refs
+        names = {row["qualified_name"] for row in symbols(database)}
+        self.assertIn("a.Lat", names)
+        self.assertNotIn("a.Lat.make.run", names)
+        refs = file_references(database, "src/a/Lat.java")
+        self.assertEqual(
+            [r for r in refs if r["raw_name"] == "run" and r["reference_type"] == "CALLS"],
+            [],
+        )
+
+    # java29
+    def test_java29_nested_generics_emit_inner_type_refs(self) -> None:
+        root, database = self.index({
+            "src/a/Container.java": (
+                "package a;\n"
+                "import java.util.List;\n"
+                "public class Container {\n"
+                "    private java.util.Map<String, List<Integer>> index;\n"
+                "}\n"
+            ),
+        })
+        refs = file_references(database, "src/a/Container.java")
+        targets = {r["raw_name"] for r in refs if r["reference_type"] == "REFERENCES"}
+        # outer qualified type + inner generic arguments all surface
+        self.assertIn("java.util.Map", targets)
+        self.assertIn("List", targets)
+        self.assertIn("Integer", targets)
+
+    # java30
+    def test_java30_delete_and_readd_file_converges(self) -> None:
+        root, database = self.index({
+            "src/a/A.java": "package a;\npublic class A { void m() { } }\n",
+            "src/a/B.java": "package a;\npublic class B { void n() { A v; } }\n",
+        })
+        with closing(sqlite3.connect(database)) as connection:
+            before = connection.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
+        (root / "src/a/B.java").unlink()
+        update = incremental_update(root, database)
+        self.assertEqual(update["changes"]["deleted"], ["src/a/B.java"])
+        with closing(sqlite3.connect(database)) as connection:
+            b_nodes = connection.execute(
+                "SELECT COUNT(*) FROM nodes WHERE name = 'B'").fetchone()[0]
+            after_delete = connection.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
+        self.assertEqual(b_nodes, 0)
+        write(root, "src/a/B.java", "package a;\npublic class B { void n() { A v; } }\n")
+        incremental_update(root, database)
+        with closing(sqlite3.connect(database)) as connection:
+            restored = connection.execute("SELECT COUNT(*) FROM nodes").fetchone()[0]
+        self.assertEqual(restored, before)
+        self.assertLess(after_delete, restored)
+
+    # java31
+    def test_java31_default_package_file_still_indexes(self) -> None:
+        root, database = self.index({
+            "src/Bare.java": "public class Bare {\n    void go() { }\n}\n",
+        })
+        nodes = [row for row in symbols(database) if row["kind"] == "Class"]
+        self.assertEqual(len(nodes), 1)
+        # no package declaration -> base falls back to the path module
+        self.assertEqual(nodes[0]["qualified_name"], "src.Bare.Bare")
+        refs = file_references(database, "src/Bare.java")
+        self.assertEqual(refs, [])
+
+
 # P1 regression fixtures (T8 review Exp6): a member whose name collides with a
 # type must never capture type_usage / object_creation references.
 SAME_NAME_IMPORTED = {
