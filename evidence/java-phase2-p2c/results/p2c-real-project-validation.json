@@ -1,0 +1,71 @@
+{
+  "A_empty_hikaricp": {
+    "status": "empty",
+    "usable": true,
+    "fingerprint": "cp:empty"
+  },
+  "A_empty_gson": {
+    "status": "empty",
+    "usable": true,
+    "fingerprint": "cp:empty"
+  },
+  "A_empty_jgit": {
+    "status": "empty",
+    "usable": true,
+    "fingerprint": "cp:empty"
+  },
+  "B_full_hikaricp": {
+    "status": "valid",
+    "usable": true,
+    "roots": 7,
+    "deps": 1,
+    "fingerprint": "cp:7326be31f7a46948ec6337aa30d6e1bc37179fddfdfdb5e8b0a002e5a6029081"
+  },
+  "B_full_gson": {
+    "status": "valid",
+    "usable": true,
+    "roots": 21,
+    "deps": 1,
+    "fingerprint": "cp:3c66223124085928b8dd817a7d50ffc27c681311713829c74b11f4ebeef29b2f"
+  },
+  "B_full_jgit": {
+    "status": "valid",
+    "usable": true,
+    "roots": 51,
+    "deps": 1,
+    "fingerprint": "cp:2c6b815fe328fdadbbf627edb02166f050d7cdc0675b03e48b36d30c909f3e38"
+  },
+  "C_partial_hikaricp": {
+    "status": "invalid",
+    "usable": false,
+    "issues": [
+      "NOT_FOUND"
+    ],
+    "fingerprint": null
+  },
+  "D_wrong_gson": {
+    "status": "invalid",
+    "usable": false,
+    "issues": [
+      "NOT_FOUND",
+      "BAD_KIND"
+    ]
+  },
+  "E_update": {
+    "fp_before": "cp:d78a8582b21fc91fcdaf19fb4a136937942a19eb41a873c909f43e363cf8e91a",
+    "fp_after": "cp:3cf176548125986fe796570576afa394187c89c2a4c13daca666f6cdc53b020a",
+    "changed": true
+  },
+  "F_dup_order": {
+    "deps": 2,
+    "duplicates": 1,
+    "order_preserved": true
+  },
+  "jdt_consumption_isolated_prototype": {
+    "rc": 0,
+    "classpath_from_contract": "C:/Users/sunqinghw/AppData/Local/Temp/opencode/longrun/tools/jars/slf4j-api.jar",
+    "calls_resolved": 4021,
+    "types_recovered": 242,
+    "problems": 1898
+  }
+}
