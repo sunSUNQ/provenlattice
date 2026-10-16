@@ -111,6 +111,39 @@ provenlattice callers com.example.core.Helper.build --database ... --json
 * **已记录提取 gap**：record 组件、注解元素、匿名类体、隐式默认构造不产出符号；局部变量/参数/lambda/模式变量不产出引用。
 * **边界**：这是 Foundation Graph 阶段，**不等同于** JDT 语义绑定、完整 CFG/DFG 或缺陷查询；`analyze` 对 `.java` 全部 fail-closed 上报 skipped。语义后端（JDT 候选 / SCIP 对照）未实测、未集成。详细矩阵见 [docs/capability-matrix.md](docs/capability-matrix.md) Java 边界注。
 
+### 可选精确解析：`java-semantic`（Eclipse JDT Analyzer）
+
+在 L1 之上提供一个**可选的**查询时精确解析增强（Eclipse JDT，独立 JVM 进程，
+按需启动，用完即退；**默认 index 永不启动 JVM**）。经 P2-A/P2-D 集成与 P2-E
+工程资格验证（G1–G6，`docs/java-phase2-p2e-final-qualification-report.md`）。
+
+```bash
+# 1. 环境要求（可选能力，未配置时 L1 完全不受影响）
+set PL_JAVA_JDK=C:\path\to\jdk-21            # 需要 JDK（javac + java）
+set PL_JAVA_JDT_CLASSPATH=C:\jars\org.eclipse.jdt.core.jar;C:\jars\...  # JDT 及其依赖 jar
+
+# 2. 查看能力状态（fail-closed：缺 JDK/JDT 时明确报告 unavailable 及原因）
+provenlattice java-semantic <repo> --status-only --json
+
+# 3. 手工 Classpath 清单（P2-C 契约；一行一条，project:/dep: 角色，# 注释）
+#    classpath.txt:
+#    project: C:\repos\my-app\src\main\java
+#    dep: C:\libs\slf4j-api.jar
+provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
+
+# 4. 查询结果：每个调用站点给出 L1 状态与 JDT 精确绑定对照
+#    provenance=semantic:jdt-v1 + classpath 指纹可追溯；
+#    recovered（依赖缺失伪造）绑定被过滤，歧义不会被升级为确定。
+```
+
+* **资源**：JVM `-Xmx1g`（默认）；实测 1.9k 文件仓库批处理 ~8s / 进程 RSS ~1.2GB
+  （预算：RSS ≤1.6GB、批处理 ≤15s——已验证，正式预算批准待人工）。
+* **限制**：外部依赖 jar 未入 classpath 的类型绑定被过滤（不伪造）；跨文件类型流
+  样本中 147/225 无法建立独立真值（诚实边界）；query-time 结果**不持久化到 L1 图谱**；
+  Maven/Gradle 不会被执行（classpath 手工提供）。
+* **已验证**：475+ 项测试、三真实仓库端到端、8/8 历史错误绑定修正、168 冲突抽样
+  0 JDT 错误。**未取得** RQ1 formal qualification。
+
 ## Validation
 
 以下结果基于 aria2 语料（1,393 文件 / 165k LOC）在 5 轮交错配对运行中测量：
