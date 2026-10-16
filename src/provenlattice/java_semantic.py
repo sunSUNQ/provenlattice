@@ -22,6 +22,7 @@ without any frozen-contract change).
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -120,17 +121,34 @@ def availability() -> dict:
     }
 
 
+def driver_cache_key(driver_source: Path = DRIVER_SOURCE, jdt_cp: str = "") -> str:
+    """Content fingerprint of the driver inputs (source + compile classpath).
+
+    The compile-cache marker must be keyed on this: an existence-only marker
+    made a wheel upgrade execute a STALE compiled driver from a previous
+    install (confirmed by experiment in the post-merge validation)."""
+    digest = hashlib.sha256()
+    digest.update(driver_source.read_bytes())
+    digest.update(b"\x1f")
+    digest.update(jdt_cp.encode("utf-8"))
+    return digest.hexdigest()
+
+
 def _ensure_driver_classes(cache_dir: Path, jdk: str, jdt_cp: str) -> Path:
-    """Compile the bundled driver once into the cache dir (javac, offline)."""
-    marker = cache_dir / "compiled.marker"
+    """Compile the bundled driver into the cache dir (javac, offline).
+
+    The marker carries the driver-input fingerprint: any change to the
+    driver source or the JDT classpath forces a recompile, so a wheel
+    upgrade never executes a stale driver."""
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    marker = cache_dir / f"compiled.{driver_cache_key(DRIVER_SOURCE, jdt_cp)}.marker"
     if marker.exists():
         return cache_dir
-    cache_dir.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         [Path(jdk) / "bin" / ("javac.exe" if os.name == "nt" else "javac"),
          "-cp", jdt_cp, "-d", str(cache_dir), str(DRIVER_SOURCE)],
         capture_output=True, text=True, timeout=300, check=True)
-    marker.write_text("ok\n", encoding="utf-8")
+    marker.write_text(driver_cache_key(DRIVER_SOURCE, jdt_cp) + "\n", encoding="utf-8")
     return cache_dir
 
 
