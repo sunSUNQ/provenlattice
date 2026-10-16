@@ -39,14 +39,14 @@ for label in ("hikaricp", "gson", "jgit"):
             "r.resolution_strategy, r.confidence, n.qualified_name AS target "
             "FROM raw_references r JOIN nodes n ON r.resolved_symbol_id=n.id "
             "JOIN files f ON r.file_id=f.file_id WHERE r.reference_type='CALLS'"):
-            bulk.setdefault(row["line"], []).append(dict(row))
+            bulk.setdefault((row["file"], row["line"]), []).append(dict(row))
     conflicts = []
     for (file, line, root), b in detail_rows.items():
         jdt_state = ("recovered_filtered" if b.get("recovered")
                      else ("ambiguous" if not b.get("decl") else "resolved"))
         if jdt_state != "resolved":
             continue
-        l1rows = [r for r in bulk.get(line, [])
+        l1rows = [r for r in bulk.get((file, line), [])
                   if r["raw_name"].lower().endswith(root.lower())]
         l1_resolved = [r for r in l1rows if r["status"] == "resolved"]
         if not l1_resolved:

@@ -1,5 +1,5 @@
 {
-  "identical": true,
+  "identical": false,
   "counts_old": {
     "jdt_ambiguous": 1379,
     "recovered_by_jdt": 3084,
@@ -8,9 +8,9 @@
   },
   "counts_new": {
     "jdt_ambiguous": 1379,
-    "recovered_by_jdt": 3084,
-    "conflict_conservative": 38,
-    "l1_and_jdt_agree": 716
+    "recovered_by_jdt": 3097,
+    "l1_and_jdt_agree": 714,
+    "conflict_conservative": 27
   },
   "sites": 5217,
   "frozen_oracle_counts": {

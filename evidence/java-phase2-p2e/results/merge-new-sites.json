@@ -1,9 +1,9 @@
 {
  "counts": {
   "jdt_ambiguous": 1379,
-  "recovered_by_jdt": 3084,
-  "conflict_conservative": 38,
-  "l1_and_jdt_agree": 716
+  "recovered_by_jdt": 3097,
+  "l1_and_jdt_agree": 714,
+  "conflict_conservative": 27
  },
  "sites": [
   {
@@ -58,10 +58,8 @@
    "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
    "line": 54,
    "expr": "toMillis",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.toMillis"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.util.concurrent.TimeUnit"
   },
   {
@@ -2157,9 +2155,7 @@
    "line": 71,
    "expr": "name",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.PropertyElf.propertyNameFromGetterName"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -2175,9 +2171,7 @@
    "line": 74,
    "expr": "name",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.PropertyElf.capitalizedPropertyName"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -2321,9 +2315,7 @@
    "line": 90,
    "expr": "name",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.PropertyElf.capitalizedPropertyName"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -2555,9 +2547,7 @@
    "line": 71,
    "expr": "name",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.PropertyElf.propertyNameFromGetterName"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -2785,9 +2775,7 @@
    "line": 71,
    "expr": "name",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.PropertyElf.propertyNameFromGetterName"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -2803,9 +2791,7 @@
    "line": 74,
    "expr": "name",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.PropertyElf.capitalizedPropertyName"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -2949,9 +2935,7 @@
    "line": 90,
    "expr": "name",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.PropertyElf.capitalizedPropertyName"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -4602,7 +4586,6 @@
    "expr": "currentTime",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.currentTime",
     "com.zaxxer.hikari.util.ClockSource.currentTime"
    ],
    "jdt_decl": "com.zaxxer.hikari.util.ClockSource"
@@ -6851,10 +6834,8 @@
    "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
    "line": 146,
    "expr": "toMillis",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.toMillis"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.util.concurrent.TimeUnit"
   },
   {
@@ -8619,10 +8600,8 @@
    "file": "src/main/java/com/zaxxer/hikari/pool/ProxyConnection.java",
    "line": 179,
    "expr": "getPoolName",
-   "state": "l1_and_jdt_agree",
-   "l1_targets": [
-    "com.zaxxer.hikari.pool.PoolEntry.getPoolName"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "com.zaxxer.hikari.pool.PoolEntry"
   },
   {
@@ -14319,10 +14298,8 @@
    "file": "src/main/java/com/zaxxer/hikari/util/UtilityElf.java",
    "line": 80,
    "expr": "sleep",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.lang.Thread"
   },
   {
@@ -14773,8 +14750,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -14987,8 +14962,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -15097,7 +15070,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -15180,7 +15152,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -15329,10 +15300,8 @@
    "file": "src/test/java/com/zaxxer/hikari/db/BasicPoolTest.java",
    "line": 94,
    "expr": "sleep",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.util.concurrent.TimeUnit"
   },
   {
@@ -15485,10 +15454,8 @@
    "file": "src/test/java/com/zaxxer/hikari/db/BasicPoolTest.java",
    "line": 123,
    "expr": "sleep",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.util.concurrent.TimeUnit"
   },
   {
@@ -15497,7 +15464,6 @@
    "expr": "getPool",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.getPool",
     "com.zaxxer.hikari.pool.TestElf.getPool"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -16414,7 +16380,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -16922,9 +16887,7 @@
    "line": 111,
    "expr": "is",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.toMillis"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -17002,9 +16965,7 @@
    "line": 114,
    "expr": "is",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.toMillis"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -17268,9 +17229,7 @@
    "line": 162,
    "expr": "is",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.toMillis"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -17835,8 +17794,7 @@
    "expr": "assertHikariMetricsArePresent",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.metrics.prometheus.PrometheusHistogramMetricsTrackerFactoryTest.assertHikariMetricsArePresent",
-    "com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactoryTest.assertHikariMetricsArePresent"
+    "com.zaxxer.hikari.metrics.prometheus.PrometheusHistogramMetricsTrackerFactoryTest.assertHikariMetricsArePresent"
    ],
    "jdt_decl": "com.zaxxer.hikari.metrics.prometheus.PrometheusHistogramMetricsTrackerFactoryTest"
   },
@@ -18294,10 +18252,8 @@
    "file": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusHistogramMetricsTrackerTest.java",
    "line": 100,
    "expr": "setMetricsTrackerFactory",
-   "state": "l1_and_jdt_agree",
-   "l1_targets": [
-    "com.zaxxer.hikari.pool.HikariPool.setMetricsTrackerFactory"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "com.zaxxer.hikari.HikariConfig"
   },
   {
@@ -18452,7 +18408,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -18669,7 +18624,6 @@
    "expr": "assertHikariMetricsArePresent",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.metrics.prometheus.PrometheusHistogramMetricsTrackerFactoryTest.assertHikariMetricsArePresent",
     "com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactoryTest.assertHikariMetricsArePresent"
    ],
    "jdt_decl": "com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactoryTest"
@@ -18950,7 +18904,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -19040,9 +18993,7 @@
    "line": 77,
    "expr": "is",
    "state": "jdt_ambiguous",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.toMillis"
-   ],
+   "l1_targets": [],
    "jdt_decl": null
   },
   {
@@ -19081,7 +19032,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -21642,7 +21592,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -22337,7 +22286,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -22594,7 +22542,6 @@
    "expr": "quietlySleep",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep",
     "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
    ],
    "jdt_decl": "com.zaxxer.hikari.util.UtilityElf"
@@ -23275,10 +23222,8 @@
    "file": "src/test/java/com/zaxxer/hikari/pool/ConnectionStateTest.java",
    "line": 78,
    "expr": "getTransactionIsolation",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.getTransactionIsolation"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.sql.Connection"
   },
   {
@@ -23339,7 +23284,6 @@
    "expr": "newHikariDataSource",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariDataSource",
     "com.zaxxer.hikari.pool.TestElf.newHikariDataSource"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -23946,7 +23890,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -24117,7 +24060,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -24176,7 +24118,6 @@
    "expr": "quietlySleep",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep",
     "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
    ],
    "jdt_decl": "com.zaxxer.hikari.util.UtilityElf"
@@ -24781,8 +24722,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -24923,7 +24862,6 @@
    "expr": "newHikariDataSource",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariDataSource",
     "com.zaxxer.hikari.pool.TestElf.newHikariDataSource"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -25120,7 +25058,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -25227,7 +25164,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -25424,8 +25360,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -25744,7 +25678,6 @@
    "expr": "quietlySleep",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep",
     "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
    ],
    "jdt_decl": "com.zaxxer.hikari.util.UtilityElf"
@@ -26207,10 +26140,8 @@
    "file": "src/test/java/com/zaxxer/hikari/pool/PostgresTest.java",
    "line": 120,
    "expr": "toMillis",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.toMillis"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.util.concurrent.TimeUnit"
   },
   {
@@ -26865,7 +26796,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -27242,7 +27172,6 @@
    "expr": "setSlf4jLogLevel",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel",
     "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -27273,7 +27202,6 @@
    "expr": "setSlf4jLogLevel",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel",
     "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -27362,7 +27290,6 @@
    "expr": "getPool",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.getPool",
     "com.zaxxer.hikari.pool.TestElf.getPool"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -28843,10 +28770,8 @@
    "file": "src/test/java/com/zaxxer/hikari/pool/StatementTest.java",
    "line": 94,
    "expr": "isClosed",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.HikariDataSource.isClosed"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.sql.Statement"
   },
   {
@@ -29445,7 +29370,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -30078,7 +30002,6 @@
    "expr": "currentTime",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.util.ClockSource.currentTime",
     "com.zaxxer.hikari.util.ClockSource.currentTime"
    ],
    "jdt_decl": "com.zaxxer.hikari.util.ClockSource"
@@ -30581,7 +30504,6 @@
    "expr": "setSlf4jLogLevel",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel",
     "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -30618,7 +30540,6 @@
    "expr": "setSlf4jLogLevel",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel",
     "com.zaxxer.hikari.pool.TestElf.setSlf4jLogLevel"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -30629,7 +30550,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -30738,7 +30658,6 @@
    "expr": "getPool",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.getPool",
     "com.zaxxer.hikari.pool.TestElf.getPool"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -30933,7 +30852,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -35246,10 +35164,8 @@
    "file": "src/test/java/com/zaxxer/hikari/pool/TestElf.java",
    "line": 149,
    "expr": "get",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.FastList.get"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.lang.reflect.Field"
   },
   {
@@ -35580,7 +35496,6 @@
    "expr": "newHikariDataSource",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariDataSource",
     "com.zaxxer.hikari.pool.TestElf.newHikariDataSource"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -35733,7 +35648,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -36636,7 +36550,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -36701,10 +36614,8 @@
    "file": "src/test/java/com/zaxxer/hikari/pool/TestMBean.java",
    "line": 70,
    "expr": "sleep",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.util.concurrent.TimeUnit"
   },
   {
@@ -37521,7 +37432,6 @@
    "expr": "newHikariDataSource",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariDataSource",
     "com.zaxxer.hikari.pool.TestElf.newHikariDataSource"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -38394,7 +38304,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -38871,7 +38780,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -39406,8 +39314,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -39714,7 +39620,6 @@
    "expr": "getPool",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.getPool",
     "com.zaxxer.hikari.pool.TestElf.getPool"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -39817,7 +39722,6 @@
    "expr": "quietlySleep",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.util.UtilityElf.quietlySleep",
     "com.zaxxer.hikari.util.UtilityElf.quietlySleep"
    ],
    "jdt_decl": "com.zaxxer.hikari.util.UtilityElf"
@@ -39872,7 +39776,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -40289,8 +40192,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -41155,7 +41056,6 @@
    "expr": "newHikariConfig",
    "state": "l1_and_jdt_agree",
    "l1_targets": [
-    "com.zaxxer.hikari.pool.TestElf.newHikariConfig",
     "com.zaxxer.hikari.pool.TestElf.newHikariConfig"
    ],
    "jdt_decl": "com.zaxxer.hikari.pool.TestElf"
@@ -42976,10 +42876,8 @@
    "file": "src/test/java/com/zaxxer/hikari/util/TomcatConcurrentBagLeakTest.java",
    "line": 204,
    "expr": "get",
-   "state": "conflict_conservative",
-   "l1_targets": [
-    "com.zaxxer.hikari.util.FastList.get"
-   ],
+   "state": "recovered_by_jdt",
+   "l1_targets": [],
    "jdt_decl": "java.lang.reflect.Field"
   },
   {
