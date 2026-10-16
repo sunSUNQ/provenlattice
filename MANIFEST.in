@@ -1,0 +1,4 @@
+# Include the Java semantic driver source in sdists (mirrors package-data
+# for wheels; the optional java-semantic analyzer compiles it on demand).
+recursive-include src/provenlattice/java_semantic_driver *.java
+include src/provenlattice/java_semantic_driver/__init__.py

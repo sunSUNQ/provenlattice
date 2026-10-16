@@ -29,22 +29,61 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e .
-          pip install tree-sitter==0.26.0 tree-sitter-c==0.24.2 tree-sitter-cpp==0.23.4 tree-sitter-python==0.25.0
+          pip install tree-sitter==0.26.0 tree-sitter-c==0.24.2 tree-sitter-cpp==0.23.4 tree-sitter-python==0.25.0 tree-sitter-java==0.23.5
 
       - name: Verify version
         run: |
           python -c "import importlib.metadata; v = importlib.metadata.version('provenlattice'); print(f'version: {v}'); assert v == '1.4.0', f'unexpected version: {v}'"
 
-      - name: Verify package-data (TOML vocabularies)
+      - name: Verify package-data (TOML vocabularies + Java driver source)
         shell: python
         run: |
           import provenlattice, pathlib
-          pkg_dir = pathlib.Path(provenlattice.__file__).parent / "semantics"
-          tomls = list(pkg_dir.rglob("*.toml"))
+          pkg_dir = pathlib.Path(provenlattice.__file__).parent
+          tomls = list((pkg_dir / "semantics").rglob("*.toml"))
           expected = {"defect_patterns.toml", "taint.toml", "cpp.toml"}
           names = {t.name for t in tomls}
           assert expected <= names, f"missing vocabularies: {sorted(expected - names)}"
-          print(f"TOML vocabularies found: {sorted(names)}")
+          driver = pkg_dir / "java_semantic_driver" / "P2bDriver.java"
+          assert driver.exists(), "JDT driver source missing from the install"
+          print(f"TOML vocabularies found: {sorted(names)}; JDT driver present")
+
+      - name: Java L1 no-JVM smoke
+        shell: python
+        run: |
+          import tempfile
+          from pathlib import Path
+          from provenlattice.graph import full_index
+          from provenlattice.query import GraphQuery
+          repo = Path(tempfile.mkdtemp()) / "jrepo"
+          (repo / "src").mkdir(parents=True)
+          (repo / "src" / "A.java").write_text(
+              "package a;\npublic class A { void m() { helper(); }\n"
+              "    void helper() { }\n}\n", encoding="utf-8")
+          full_index(repo, repo / "db.sqlite")
+          with GraphQuery(repo / "db.sqlite") as q:
+              r = q.find_symbol("A")
+          assert r["returned_evidence_count"] >= 1
+          from provenlattice import java_semantic as jsem
+          info = jsem.availability()
+          assert info["status"] in ("available", "unavailable")
+          print("Java L1 smoke OK; analyzer:", info["status"], info["reason"])
+
+      - name: Wheel build carries the JDT driver source
+        run: |
+          pip wheel --no-deps -w dist/wheel .
+          python -c "import glob, zipfile; z = zipfile.ZipFile(glob.glob('dist/wheel/*.whl')[0]); assert any('P2bDriver' in n for n in z.namelist()), 'driver missing from wheel'"
+
+      - name: Optional JDT smoke (runs only when PL_JAVA_JDT_CLASSPATH is provided)
+        if: env.PL_JAVA_JDT_CLASSPATH != ''
+        run: |
+          provenlattice java-semantic . --mode stats --json
+
+      - name: CLI help smoke
+        run: |
+          provenlattice --help
+          provenlattice defect --help
+          provenlattice java-semantic --help
 
       - name: CLI help smoke
         run: |
@@ -70,22 +109,61 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e .
-          pip install tree-sitter==0.26.0 tree-sitter-c==0.24.2 tree-sitter-cpp==0.23.4 tree-sitter-python==0.25.0
+          pip install tree-sitter==0.26.0 tree-sitter-c==0.24.2 tree-sitter-cpp==0.23.4 tree-sitter-python==0.25.0 tree-sitter-java==0.23.5
 
       - name: Verify version
         run: |
           python -c "import importlib.metadata; v = importlib.metadata.version('provenlattice'); print(f'version: {v}'); assert v == '1.4.0', f'unexpected version: {v}'"
 
-      - name: Verify package-data (TOML vocabularies)
+      - name: Verify package-data (TOML vocabularies + Java driver source)
         shell: python
         run: |
           import provenlattice, pathlib
-          pkg_dir = pathlib.Path(provenlattice.__file__).parent / "semantics"
-          tomls = list(pkg_dir.rglob("*.toml"))
+          pkg_dir = pathlib.Path(provenlattice.__file__).parent
+          tomls = list((pkg_dir / "semantics").rglob("*.toml"))
           expected = {"defect_patterns.toml", "taint.toml", "cpp.toml"}
           names = {t.name for t in tomls}
           assert expected <= names, f"missing vocabularies: {sorted(expected - names)}"
-          print(f"TOML vocabularies found: {sorted(names)}")
+          driver = pkg_dir / "java_semantic_driver" / "P2bDriver.java"
+          assert driver.exists(), "JDT driver source missing from the install"
+          print(f"TOML vocabularies found: {sorted(names)}; JDT driver present")
+
+      - name: Java L1 no-JVM smoke
+        shell: python
+        run: |
+          import tempfile
+          from pathlib import Path
+          from provenlattice.graph import full_index
+          from provenlattice.query import GraphQuery
+          repo = Path(tempfile.mkdtemp()) / "jrepo"
+          (repo / "src").mkdir(parents=True)
+          (repo / "src" / "A.java").write_text(
+              "package a;\npublic class A { void m() { helper(); }\n"
+              "    void helper() { }\n}\n", encoding="utf-8")
+          full_index(repo, repo / "db.sqlite")
+          with GraphQuery(repo / "db.sqlite") as q:
+              r = q.find_symbol("A")
+          assert r["returned_evidence_count"] >= 1
+          from provenlattice import java_semantic as jsem
+          info = jsem.availability()
+          assert info["status"] in ("available", "unavailable")
+          print("Java L1 smoke OK; analyzer:", info["status"], info["reason"])
+
+      - name: Wheel build carries the JDT driver source
+        run: |
+          pip wheel --no-deps -w dist/wheel .
+          python -c "import glob, zipfile; z = zipfile.ZipFile(glob.glob('dist/wheel/*.whl')[0]); assert any('P2bDriver' in n for n in z.namelist()), 'driver missing from wheel'"
+
+      - name: Optional JDT smoke (runs only when PL_JAVA_JDT_CLASSPATH is provided)
+        if: env.PL_JAVA_JDT_CLASSPATH != ''
+        run: |
+          provenlattice java-semantic . --mode stats --json
+
+      - name: CLI help smoke
+        run: |
+          provenlattice --help
+          provenlattice defect --help
+          provenlattice java-semantic --help
 
       - name: CLI help smoke
         run: |

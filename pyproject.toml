@@ -13,6 +13,7 @@ dependencies = [
     "tree-sitter-python>=0.25,<0.26",
     "tree-sitter-c>=0.24,<0.25",
     "tree-sitter-cpp>=0.23,<0.24",
+    "tree-sitter-java>=0.23,<0.24",
 ]
 
 [project.scripts]
@@ -23,6 +24,9 @@ where = ["src"]
 
 # The vocabularies are data, not code: without this a wheel installs the
 # semantics package and then fails to load any language at runtime (same
-# package-data declaration PR #1 carries).
+# package-data declaration PR #1 carries). The Java semantic driver SOURCE
+# ships the same way: the optional java-semantic analyzer compiles it on
+# demand in user environments (requires an external JDK + JDT classpath).
 [tool.setuptools.package-data]
 "provenlattice.semantics" = ["*.toml", "vocabularies/*.toml"]
+"provenlattice.java_semantic_driver" = ["*.java"]

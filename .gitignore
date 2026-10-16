@@ -36,3 +36,9 @@ experiments/context_bundle_v0/source/
 # D8-RV1 per-run agent runtime homes (claude CLI session stores; over-long paths, raw stream already captured in agent-output.txt/events.ndjson)
 experiments/analysis_layer/d8/results/D8-RV1-*/runs/*/home/
 experiments/analysis_layer/d8/results/D8-RV1-*/runs/*/tmp/
+
+# Large raw evidence details (kept outside the repository)
+evidence/java-phase2-p2e/results/p2e-*-full-detail.jsonl
+evidence/java-phase2-p2b/results/p2b-*-full-detail-*.jsonl
+evidence/java-phase2-p2e/results/unadjudicated-attribution.json
+evidence/java-phase2-p2e/results/merge-*sites.json

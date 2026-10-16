@@ -4,10 +4,10 @@ from functools import lru_cache
 from pathlib import Path
 
 from .models import ParsedFile
-from .parsing import CppTreeSitterParser, ParserAdapter, TreeSitterParser
+from .parsing import CppTreeSitterParser, JavaTreeSitterParser, ParserAdapter, TreeSitterParser
 
 
-@lru_cache(maxsize=3)
+@lru_cache(maxsize=4)
 def parser_for_language(language: str) -> ParserAdapter:
     if language == "python":
         return TreeSitterParser()
@@ -15,6 +15,8 @@ def parser_for_language(language: str) -> ParserAdapter:
         return CppTreeSitterParser("c")
     if language == "cpp":
         return CppTreeSitterParser("cpp")
+    if language == "java":
+        return JavaTreeSitterParser()
     raise ValueError(f"unsupported language: {language}")
 
 
