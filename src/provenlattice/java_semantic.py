@@ -269,18 +269,20 @@ def merge_with_l1(result: SemanticResult, l1_db: str | Path) -> dict:
         root = (b.expr or "").split(".")[-1]
         sites.setdefault((b.file, b.line, root), {"jdt": b, "l1": []})
 
-    # one bulk query for all CALLS rows; in-memory matching replaces N+1
-    bulk: dict[int, list[dict]] = {}
+    # one bulk query for all CALLS rows; in-memory matching replaces N+1.
+    # Keyed by (file, line) -- line-only matching would mix rows from
+    # different files sharing a line number (P2-E closure finding).
+    bulk: dict[tuple[str, int], list[dict]] = {}
     with closing(sqlite3.connect(str(l1_db))) as conn:
         conn.row_factory = sqlite3.Row
         for row in conn.execute(
             "SELECT f.path AS file, r.start_line AS line, r.raw_name, r.status, "
             "r.resolution_strategy, r.confidence, n.qualified_name AS target "
-            "FROM raw_references r JOIN nodes n ON r.resolved_symbol_id=n.id "
+            "FROM raw_references r LEFT JOIN nodes n ON r.resolved_symbol_id=n.id "
             "JOIN files f ON r.file_id=f.file_id "
             "WHERE r.reference_type='CALLS'"
         ):
-            bulk.setdefault(row["line"], []).append(dict(row))
+            bulk.setdefault((row["file"], row["line"]), []).append(dict(row))
 
     merged = []
     for (file, line, root), bucket in sites.items():
@@ -290,7 +292,7 @@ def merge_with_l1(result: SemanticResult, l1_db: str | Path) -> dict:
         # frozen prototype (P2-E equivalence harness caught this).
         root_lower = root.lower()
         l1rows = [
-            r for r in bulk.get(line, [])
+            r for r in bulk.get((file, line), [])
             if r["raw_name"].lower().endswith(root_lower)
         ]
         state = "jdt_resolved"

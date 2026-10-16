@@ -70,6 +70,35 @@ class ClasspathRefusalTests(unittest.TestCase):
 
 
 class MergePolicyTests(unittest.TestCase):
+    def test_merge_is_file_scoped(self) -> None:
+        """P2-E closure fix: two files sharing a line number must not leak
+        L1 rows into each other's merge audit (line-only matching bug)."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "src" / "a").mkdir(parents=True)
+            (root / "src" / "a" / "One.java").write_text(
+                "package a;\npublic class One {\n"
+                "    public void go() { runner(); }\n"   # line 3
+                "    public void runner() { }\n}\n", encoding="utf-8")
+            (root / "src" / "a" / "Two.java").write_text(
+                "package a;\npublic class Two {\n"
+                "    public void go() { other(); }\n"    # line 3 (same!)
+                "    public void other() { }\n}\n", encoding="utf-8")
+            db = root / "db.sqlite"
+            full_index(root, db)
+            bindings = [jsem.SemanticBinding(
+                file="src/a/One.java", line=3, expr="runner",
+                decl="a.One", state="resolved")]
+            result = jsem.SemanticResult(status="available", bindings=bindings,
+                                         meta={"classpath_fingerprint": "cp:x"})
+            merged = jsem.merge_with_l1(result, db)
+            site = merged["sites"][0]
+            self.assertEqual(len(site["l1"]), 1)
+            # the file-scoped match returns One's own runner row, never
+            # Two.java's same-line row
+            self.assertIn("a.One.runner", site["l1"][0]["target"])
+            self.assertNotIn("Two.go", site["l1"][0]["target"])
+
     def _l1_db(self, root: Path) -> Path:
         db = root / "db.sqlite"
         full_index(root, db)
