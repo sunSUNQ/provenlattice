@@ -1,0 +1,12 @@
+{
+  "P0": "COMPLETE",
+  "P1": "COMPLETE (P1_FINAL_REVIEW_PASS)",
+  "P2": "COMPLETE (T9-A: 3 real repos, cold/warm/incr/delete measured)",
+  "P3": "COMPLETE (T9-B: JDT 20/21+filter, JavaParser 17/21 2-WRONG, SCIP INFRA_BLOCKED)",
+  "P4": "COMPLETE (ADR: JDT only Phase 2 candidate)",
+  "P5": "COMPLETE (prototype: L1 wrong=0, JDT wrong=0, 7 improvable)",
+  "P6": "COMPLETE (java25-31, no new defects)",
+  "P7": "COMPLETE (2 repos e2e + 60-sample audit 53/7, all wrong at heuristic confidence)",
+  "P8": "COMPLETE (449 tests OK, parity IDENTICAL except version stamp, clean install)",
+  "P9": "COMPLETE (this report + commits)"
+}

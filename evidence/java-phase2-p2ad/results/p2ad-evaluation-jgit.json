@@ -1,0 +1,34 @@
+{
+  "t1_sites": [],
+  "t3": {
+    "l1_tightened_jgit": {
+      "calls_total": 178362,
+      "resolved": 34633,
+      "ambiguous": 96643,
+      "unresolved": 47086,
+      "resolved_pct": 19.4
+    },
+    "jdt_jgit": {
+      "jdt_status": "available",
+      "reason": null,
+      "mode": "stats",
+      "summary": {
+        "files_parsed": 1891,
+        "calls_resolved": 138660,
+        "calls_recovered": 1,
+        "calls_ambiguous": 23625,
+        "types_recovered": 2216
+      }
+    }
+  },
+  "t5_failures": {
+    "no_jdk": {
+      "status": "unavailable",
+      "reason": "jdk_not_found"
+    },
+    "invalid_classpath": {
+      "usable": false,
+      "status": "invalid"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "median_wall_ms": 8130,
+  "runs_wall_ms": [
+    8130,
+    8015,
+    8245
+  ],
+  "budget": {
+    "xmx": "1g",
+    "rss_max_gb": 1.6,
+    "wall_max_s": 15
+  }
+}

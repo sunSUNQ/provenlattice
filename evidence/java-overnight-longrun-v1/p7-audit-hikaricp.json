@@ -1,0 +1,245 @@
+{
+  "denominator": 1990,
+  "sample": [
+    {
+      "path": "src/test/java/com/zaxxer/hikari/metrics/prometheus/HikariCPCollectorTest.java",
+      "start_line": 100,
+      "raw_name": "config.setDataSourceClassName",
+      "target": "com.zaxxer.hikari.HikariConfig.setDataSourceClassName",
+      "confidence": 0.75,
+      "source_line": "config.setDataSourceClassName(\"com.zaxxer.hikari.mocks.StubDataSource\");"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+      "start_line": 286,
+      "raw_name": "setConfigUnitTest",
+      "target": "com.zaxxer.hikari.pool.TestElf.setConfigUnitTest",
+      "confidence": 0.75,
+      "source_line": "setConfigUnitTest(false);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusMetricsTrackerTest.java",
+      "start_line": 145,
+      "raw_name": "configSecondPool.setJdbcUrl",
+      "target": "com.zaxxer.hikari.HikariConfig.setJdbcUrl",
+      "confidence": 0.75,
+      "source_line": "configSecondPool.setJdbcUrl(\"jdbc:h2:mem:\");"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+      "start_line": 336,
+      "raw_name": "DriverDataSource",
+      "target": "com.zaxxer.hikari.util.DriverDataSource",
+      "confidence": 1.0,
+      "source_line": "ds = new DriverDataSource(jdbcUrl, driverClassName, dataSourceProperties, credentials.getUsername(), credentials.getPass"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/pool/ProxyDatabaseMetaData.java",
+      "start_line": 324,
+      "raw_name": "ProxyFactory.getProxyResultSet",
+      "target": "com.zaxxer.hikari.pool.ProxyFactory.getProxyResultSet",
+      "confidence": 0.75,
+      "source_line": "return ProxyFactory.getProxyResultSet(connection, (ProxyStatement) statement, resultSet);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/util/ClockSourceTest.java",
+      "start_line": 47,
+      "raw_name": "MINUTES.toMillis",
+      "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+      "confidence": 0.75,
+      "source_line": "final long eTime2 = DAYS.toMillis(3) + HOURS.toMillis(8) + MINUTES.toMillis(24) + SECONDS.toMillis(23) + MILLISECONDS.to"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+      "start_line": 318,
+      "raw_name": "current.getPassword",
+      "target": "com.zaxxer.hikari.HikariConfig.getPassword",
+      "confidence": 0.98,
+      "source_line": "credentials.updateAndGet(current -> Credentials.of(username, current.getPassword()));"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/pool/ProxyConnection.java",
+      "start_line": 321,
+      "raw_name": "trackStatement",
+      "target": "com.zaxxer.hikari.pool.ProxyConnection.trackStatement",
+      "confidence": 0.98,
+      "source_line": "return ProxyFactory.getProxyCallableStatement(this, trackStatement(delegate.prepareCall(sql, resultSetType, concurrency,"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusMetricsTrackerFactoryTest.java",
+      "start_line": 30,
+      "raw_name": "StubPoolStats",
+      "target": "com.zaxxer.hikari.mocks.StubPoolStats",
+      "confidence": 1.0,
+      "source_line": "factory.create(\"testpool-1\", new StubPoolStats(0));"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+      "start_line": 1182,
+      "raw_name": "maskPasswordInJdbcUrl",
+      "target": "com.zaxxer.hikari.util.UtilityElf.maskPasswordInJdbcUrl",
+      "confidence": 0.75,
+      "source_line": "value = maskPasswordInJdbcUrl((String) value);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusMetricsTrackerTest.java",
+      "start_line": 84,
+      "raw_name": "checkSummaryMetricFamily",
+      "target": "com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerTest.checkSummaryMetricFamily",
+      "confidence": 0.98,
+      "source_line": "checkSummaryMetricFamily(\"hikaricp_connection_acquired_nanos\");"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusMetricsTrackerFactoryTest.java",
+      "start_line": 32,
+      "raw_name": "assertHikariMetricsArePresent",
+      "target": "com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactoryTest.assertHikariMetricsArePresent",
+      "confidence": 0.98,
+      "source_line": "assertHikariMetricsArePresent(collectorRegistry);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+      "start_line": 362,
+      "raw_name": "config.setDataSourceClassName",
+      "target": "com.zaxxer.hikari.HikariConfig.setDataSourceClassName",
+      "confidence": 0.75,
+      "source_line": "config.setDataSourceClassName(\"com.zaxxer.hikari.mocks.StubDataSource\");"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/pool/ProxyConnection.java",
+      "start_line": 314,
+      "raw_name": "trackStatement",
+      "target": "com.zaxxer.hikari.pool.ProxyConnection.trackStatement",
+      "confidence": 0.98,
+      "source_line": "return ProxyFactory.getProxyCallableStatement(this, trackStatement(delegate.prepareCall(sql, resultSetType, concurrency)"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/HouseKeeperCleanupTest.java",
+      "start_line": 62,
+      "raw_name": "config.setScheduledExecutor",
+      "target": "com.zaxxer.hikari.HikariConfig.setScheduledExecutor",
+      "confidence": 0.75,
+      "source_line": "config.setScheduledExecutor(executor);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/TestJNDI.java",
+      "start_line": 127,
+      "raw_name": "ds.setPoolName",
+      "target": "com.zaxxer.hikari.HikariConfig.setPoolName",
+      "confidence": 0.75,
+      "source_line": "ds.setPoolName(\"TestJNDI\");"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/PostgresTest.java",
+      "start_line": 134,
+      "raw_name": "exerciseConfig",
+      "target": "com.zaxxer.hikari.pool.PostgresTest.exerciseConfig",
+      "confidence": 0.98,
+      "source_line": "exerciseConfig(config, 3);"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+      "start_line": 323,
+      "raw_name": "config.getJdbcUrl",
+      "target": "com.zaxxer.hikari.HikariConfig.getJdbcUrl",
+      "confidence": 0.75,
+      "source_line": "final var jdbcUrl = config.getJdbcUrl();"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/util/ConcurrentBag.java",
+      "start_line": 305,
+      "raw_name": "sharedList.stream",
+      "target": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream",
+      "confidence": 0.75,
+      "source_line": "final var list = sharedList.stream().filter(e -> e.getState() == state).collect(Collectors.toList());"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+      "start_line": 161,
+      "raw_name": "getPool",
+      "target": "com.zaxxer.hikari.pool.TestElf.getPool",
+      "confidence": 1.0,
+      "source_line": "HikariPool pool = getPool(ds);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/db/BasicPoolTest.java",
+      "start_line": 116,
+      "raw_name": "config.addDataSourceProperty",
+      "target": "com.zaxxer.hikari.HikariConfig.addDataSourceProperty",
+      "confidence": 0.75,
+      "source_line": "config.addDataSourceProperty(\"url\", \"jdbc:h2:mem:test;DB_CLOSE_DELAY=-1\");"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+      "start_line": 262,
+      "raw_name": "config.setDataSourceClassName",
+      "target": "com.zaxxer.hikari.HikariConfig.setDataSourceClassName",
+      "confidence": 0.75,
+      "source_line": "config.setDataSourceClassName(\"com.zaxxer.hikari.mocks.StubDataSource\");"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/pool/ProxyDatabaseMetaData.java",
+      "start_line": 244,
+      "raw_name": "ProxyFactory.getProxyResultSet",
+      "target": "com.zaxxer.hikari.pool.ProxyFactory.getProxyResultSet",
+      "confidence": 0.75,
+      "source_line": "return ProxyFactory.getProxyResultSet(connection, (ProxyStatement) statement, resultSet);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusHistogramMetricsTrackerTest.java",
+      "start_line": 51,
+      "raw_name": "config.setJdbcUrl",
+      "target": "com.zaxxer.hikari.HikariConfig.setJdbcUrl",
+      "confidence": 0.75,
+      "source_line": "config.setJdbcUrl(\"jdbc:h2:mem:\");"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/Dropwizard5MetricsTest.java",
+      "start_line": 141,
+      "raw_name": "UtilityElf.quietlySleep",
+      "target": "com.zaxxer.hikari.util.UtilityElf.quietlySleep",
+      "confidence": 1.0,
+      "source_line": "UtilityElf.quietlySleep(250L);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/PostgresTest.java",
+      "start_line": 122,
+      "raw_name": "exerciseConfig",
+      "target": "com.zaxxer.hikari.pool.PostgresTest.exerciseConfig",
+      "confidence": 0.98,
+      "source_line": "exerciseConfig(config, 3);"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/TestPropertySetter.java",
+      "start_line": 46,
+      "raw_name": "config.validate",
+      "target": "com.zaxxer.hikari.HikariConfig.validate",
+      "confidence": 0.75,
+      "source_line": "config.validate();"
+    },
+    {
+      "path": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+      "start_line": 1029,
+      "raw_name": "field.get",
+      "target": "com.zaxxer.hikari.util.FastList.get",
+      "confidence": 0.75,
+      "source_line": "((AtomicReference) field.get(other)).set(((AtomicReference) field.get(this)).get());"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+      "start_line": 115,
+      "raw_name": "config.setConnectionTestQuery",
+      "target": "com.zaxxer.hikari.HikariConfig.setConnectionTestQuery",
+      "confidence": 0.75,
+      "source_line": "config.setConnectionTestQuery(\"VALUES 1\");"
+    },
+    {
+      "path": "src/test/java/com/zaxxer/hikari/pool/UnwrapTest.java",
+      "start_line": 47,
+      "raw_name": "config.setInitializationFailTimeout",
+      "target": "com.zaxxer.hikari.HikariConfig.setInitializationFailTimeout",
+      "confidence": 0.75,
+      "source_line": "config.setInitializationFailTimeout(0);"
+    }
+  ]
+}

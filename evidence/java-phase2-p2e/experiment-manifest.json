@@ -1,0 +1,47 @@
+{
+  "task": "PL-JAVA-PHASE2-P2E-FINAL-QUALIFICATION-V1",
+  "frozen_at": "2026-10-15",
+  "head": "a22a03a",
+  "tests": "475 OK",
+  "repos": {
+    "hikaricp": "a4d93f4f85517f90e632b795486d7102e933d7ff",
+    "gson": "e2292f9c9f2e07a4791827e8eea34aa7d80545d6",
+    "jgit": "6e68739fd9535672d5f1316d943a2107063617e0"
+  },
+  "frozen_oracle": {
+    "merge_equivalence_hikaricp": {
+      "recovered_by_jdt": 3215, "conflict_conservative": 38,
+      "l1_and_jdt_agree": 716, "jdt_ambiguous": 1248,
+      "note": "prototype merge output at a22a03a; the optimized implementation must reproduce these counts AND identical per-site states before scaling"
+    },
+    "l1_original_frozen": {
+      "hikaricp": {"calls_total": 1990, "resolved": 1990, "resolved_pct": 100.0, "note": "P7 audit sample DB (CALLS only; all sampled were resolved-by-definition)"},
+      "gson": {"calls_total": 5077},
+      "jgit": {"calls_total": 178362},
+      "baseline_note": "original-L1 per-site behavior will be reproduced via isolated git archive snapshot of commit 7ed0e8a (pre-P2-A) indexing the SAME repos, not from summary numbers"
+    }
+  },
+  "sampling_rules": {
+    "fresh_samples_per_repo": 60,
+    "frame": "all CALLS sites (post-P2-A L1 raw_references joined to files), deduplicated by (file, line, raw_name)",
+    "strata": [
+      "S1 exact-tier L1 resolved (confidence>=0.99)",
+      "S2 demoted (post-P2-A ambiguous with demote_reason)",
+      "S3 unresolved (post-P2-A)",
+      "S4 JDT-resolved site not in S1",
+      "S5 residual/other CALLS sites"
+    ],
+    "selection": "fixed seed 20261015; random.Random(seed).sample within each stratum, allocation proportional with min 6 per stratum where available; rare strata exhaustively sampled; no replacement; historical 8 sites and 38 conflicts excluded and reported separately",
+    "audit_method": "per site: source line + receiver context read from the pinned repo; truth = declaring type derivable from source (imports/field/param declarations); sites where truth cannot be established are recorded UNADJUDICATED (never forced correct)",
+    "audit_bias_control": "L1/JDT bindings hidden from the truth-extraction step (truth derived from source only, then compared)"
+  },
+  "acceptance_metrics": [
+    "G1 scale: merge completes on all 3 repos via the formal path",
+    "G2 correctness: 8/8 historical fixed; no NEW unresolved wrong-binding in fresh audit; 38 conflicts all adjudicated or explicitly pending-manual",
+    "G3 recall: correct-demotion, unnecessary-demotion, JDT-recovery, end-to-end correctness quantified on frozen strata",
+    "G4 perf: D4 budget (Xmx1g/RSS<=1.6GB/jgit<=15s) on comparable conditions; merge wall reported separately; end-to-end wall reported separately",
+    "G5 compat: golden parity (except designed version stamp), python/c/cpp pin tests, MCP contract untouched, no-JVM default path",
+    "G6 evidence: all conclusions traceable to raw files in evidence/java-phase2-p2e/"
+  ],
+  "statistics_note": "stratified sample results reported per stratum; population-level zero-error claims are NEVER made from samples"
+}

@@ -1,0 +1,59 @@
+{
+  "manifest": {
+    "label": "jgit",
+    "repo_path": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\jgit",
+    "java_files": 1892,
+    "java_bytes": 14640744
+  },
+  "cold_wall_ms": {
+    "median": 24883,
+    "min": 24773,
+    "max": 24912,
+    "spread": 139
+  },
+  "cold_peak_rss_mb": {
+    "median": 1026.2,
+    "min": 1026.0,
+    "max": 1027.1,
+    "spread": 1.099999999999909
+  },
+  "warm_wall_ms": {
+    "median": 31728,
+    "min": 31665,
+    "max": 32030,
+    "spread": 365
+  },
+  "warm_peak_rss_mb": {
+    "median": 1026.3,
+    "min": 1025.8,
+    "max": 1026.4,
+    "spread": 0.6000000000001364
+  },
+  "incremental_wall_ms": {
+    "median": 33334,
+    "min": 33329,
+    "max": 33374,
+    "spread": 45
+  },
+  "delete_wall_ms": {
+    "median": 33231,
+    "min": 33231,
+    "max": 33231,
+    "spread": 0
+  },
+  "reference_profile_last_cold": {
+    "files_scanned": 1896,
+    "files_parsed": 1896,
+    "nodes_created": 37944,
+    "edges_created": 142220,
+    "raw_references": 360289,
+    "resolved_references": 155982,
+    "ambiguous_references": 107655,
+    "unresolved_references": 96652,
+    "parse_failures": 0,
+    "syntax_error_files": 0,
+    "index_time_ms": 24551.36919999495,
+    "shards_created": 33
+  },
+  "db_size_last_cold_bytes": 856457216
+}

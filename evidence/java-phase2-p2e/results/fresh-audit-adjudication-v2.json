@@ -1,0 +1,4160 @@
+{
+  "by_label": {
+    "hikaricp": {
+      "counts": {
+        "UNADJUDICATED": 47,
+        "CORRECT_DEMOTION": 12,
+        "NEEDS_MANUAL": 3,
+        "UNRESOLVED_HONEST": 5,
+        "JDT_RESOLVES_UNRESOLVED": 1,
+        "JDT_RECOVERED_CORRECT": 1,
+        "CHAIN_CONSISTENT (spot-checked)": 6
+      },
+      "rows": [
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/CodahaleMetricsTest.java",
+          "line": 230,
+          "raw_name": "newHikariDataSource",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/CodahaleMetricsTest.java",
+          "line": 71,
+          "raw_name": "newHikariConfig",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConcurrentBag.java",
+          "line": 90,
+          "raw_name": "setSlf4jTargetStream",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnectionTimeoutRetry.java",
+          "line": 228,
+          "raw_name": "newHikariConfig",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+          "line": 1165,
+          "raw_name": "PropertyElf.getProperty",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "PropertyElf",
+            "source_line": "var value = PropertyElf.getProperty(prop, this);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+          "line": 336,
+          "raw_name": "DriverDataSource",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+          "line": 108,
+          "raw_name": "UtilityElf.getTransactionIsolation",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "UtilityElf",
+            "source_line": "this.transactionIsolation = UtilityElf.getTransactionIsolation(config.getTransactionIsolation());"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestJNDI.java",
+          "line": 58,
+          "raw_name": "HikariJNDIFactory",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/CodahaleMetricsTest.java",
+          "line": 177,
+          "raw_name": "HikariDataSource",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+          "line": 484,
+          "raw_name": "HikariDataSource",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+          "line": 61,
+          "raw_name": "setSlf4jLogLevel",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+          "line": 180,
+          "raw_name": "newHikariConfig",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+          "line": 832,
+          "raw_name": "HikariDataSource",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestMBean.java",
+          "line": 72,
+          "raw_name": "getUnsealedConfig",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestPropertySetter.java",
+          "line": 127,
+          "raw_name": "HikariConfig",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+          "line": 616,
+          "raw_name": "config.setMinimumIdle",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "config",
+            "decl_simple": "HikariConfig",
+            "decl_full": "com.zaxxer.hikari.HikariConfig",
+            "source_line": "config.setMinimumIdle(3);"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/ConnectionStateTest.java",
+          "line": 107,
+          "raw_name": "connection.setReadOnly",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "connection",
+            "decl_simple": "Connection",
+            "decl_full": "java.sql.Connection",
+            "source_line": "connection.setReadOnly(true);"
+          },
+          "jdt_decl": "java.sql.Connection",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/UnwrapTest.java",
+          "line": 71,
+          "raw_name": "config.setDataSourceClassName",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "config",
+            "decl_simple": "HikariConfig",
+            "decl_full": "com.zaxxer.hikari.HikariConfig",
+            "source_line": "config.setDataSourceClassName(\"com.zaxxer.hikari.mocks.StubDataSource\");"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "NEEDS_MANUAL (mode A resolved)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+          "line": 102,
+          "raw_name": "config.getCatalog",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "config",
+            "decl_simple": "HikariConfig",
+            "decl_full": "com.zaxxer.hikari.HikariConfig",
+            "source_line": "this.catalog = config.getCatalog();"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/ConnectionStateTest.java",
+          "line": 48,
+          "raw_name": "ds.addDataSourceProperty",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "ds",
+            "decl_simple": "HikariDataSource",
+            "decl_full": "com.zaxxer.hikari.HikariDataSource",
+            "source_line": "ds.addDataSourceProperty(\"user\", \"bar\");"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "NEEDS_MANUAL (mode A resolved)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusHistogramMetricsTrackerTest.java",
+          "line": 130,
+          "raw_name": "configFirstPool.setConnectionTimeout",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "configFirstPool",
+            "decl_simple": "HikariConfig",
+            "decl_full": "com.zaxxer.hikari.HikariConfig",
+            "source_line": "configFirstPool.setConnectionTimeout(250);"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+          "line": 600,
+          "raw_name": "connection.createStatement",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "connection",
+            "decl_simple": "Connection",
+            "decl_full": "java.sql.Connection",
+            "source_line": "try (var statement = connection.createStatement()) {"
+          },
+          "jdt_decl": "java.sql.Connection",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/PostgresTest.java",
+          "line": 252,
+          "raw_name": "postgres.getPassword",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "postgres",
+            "decl_simple": "PostgreSQLContainer",
+            "decl_full": "org.testcontainers.postgresql.PostgreSQLContainer",
+            "source_line": "config.setPassword(postgres.getPassword());"
+          },
+          "jdt_decl": null,
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+          "line": 773,
+          "raw_name": "tracker.recordConnectionAcquiredNanos",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "tracker",
+            "decl_simple": "IMetricsTracker",
+            "decl_full": "com.zaxxer.hikari.metrics.IMetricsTracker",
+            "source_line": "tracker.recordConnectionAcquiredNanos(elapsedNanos(startTime, now));"
+          },
+          "jdt_decl": "com.zaxxer.hikari.metrics.IMetricsTracker",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+          "line": 193,
+          "raw_name": "pool.getIdleConnections",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "pool",
+            "decl_simple": "HikariPool",
+            "decl_full": "HikariPool",
+            "source_line": "assertSame(\"Second idle connections not as expected\", 0, pool.getIdleConnections());"
+          },
+          "jdt_decl": "com.zaxxer.hikari.pool.HikariPool",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/ConnectionStateTest.java",
+          "line": 67,
+          "raw_name": "ds.setTransactionIsolation",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "ds",
+            "decl_simple": "HikariDataSource",
+            "decl_full": "com.zaxxer.hikari.HikariDataSource",
+            "source_line": "ds.setTransactionIsolation(\"TRANSACTION_READ_COMMITTED\");"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/MiscTest.java",
+          "line": 121,
+          "raw_name": "SECONDS.toMillis",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "SECONDS",
+            "decl_simple": "TimeUnit",
+            "decl_full": "java.util.concurrent.TimeUnit",
+            "source_line": "quietlySleep(SECONDS.toMillis(1));"
+          },
+          "jdt_decl": "java.util.concurrent.TimeUnit",
+          "adjudication": "NEEDS_MANUAL (mode A resolved)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+          "line": 826,
+          "raw_name": "config.setMaximumPoolSize",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "config",
+            "decl_simple": "HikariConfig",
+            "decl_full": "com.zaxxer.hikari.HikariConfig",
+            "source_line": "config.setMaximumPoolSize(2);"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusHistogramMetricsTrackerTest.java",
+          "line": 96,
+          "raw_name": "configFirstPool.setMaximumPoolSize",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "configFirstPool",
+            "decl_simple": "HikariConfig",
+            "decl_full": "com.zaxxer.hikari.HikariConfig",
+            "source_line": "configFirstPool.setMaximumPoolSize(2);"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/metrics/micrometer/MicrometerMetricsTracker.java",
+          "line": 183,
+          "raw_name": "meterRegistry.remove",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "meterRegistry",
+            "decl_simple": "String poolName, final PoolStats poolStats, final MeterRegistry",
+            "decl_full": "String poolName, final PoolStats poolStats, final MeterRegistry",
+            "source_line": "meterRegistry.remove(activeConnectionGauge);"
+          },
+          "jdt_decl": null,
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/metrics/dropwizard/Dropwizard5MetricsTracker.java",
+          "line": 65,
+          "raw_name": "registry.register",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "registry",
+            "decl_simple": "String poolName, final PoolStats poolStats, final MetricRegistry",
+            "decl_full": "String poolName, final PoolStats poolStats, final MetricRegistry",
+            "source_line": "registry.register(MetricRegistry.name(poolName, METRIC_CATEGORY, METRIC_NAME_ACTIVE_CONNECTIONS),"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNRESOLVED_HONEST"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+          "line": 684,
+          "raw_name": "IllegalArgumentException",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestJavassistCodegen.java",
+          "line": 35,
+          "raw_name": "Modifier.isPublic",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "Modifier",
+            "source_line": "Assert.assertTrue(\"Generated proxy class should be public\", Modifier.isPublic(mod));"
+          },
+          "jdt_decl": "java.lang.reflect.Modifier",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestElf.java",
+          "line": 213,
+          "raw_name": "name.replace",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "name",
+            "decl_simple": "String",
+            "decl_full": "String",
+            "source_line": "final String resourceName = \"/\" + name.replace('.', '/') + \".class\";"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "JDT_RESOLVES_UNRESOLVED"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/JavassistProxyFactory.java",
+          "line": 97,
+          "raw_name": "method.setBody",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "method",
+            "decl_simple": "CtMethod",
+            "decl_full": "CtMethod",
+            "source_line": "method.setBody(\"{return new \" + packageName + \".HikariProxyResultSet($$);}\");"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNRESOLVED_HONEST"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+          "line": 1214,
+          "raw_name": "RuntimeException",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestMBean.java",
+          "line": 84,
+          "raw_name": "TimeUnit.SECONDS.sleep",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "TimeUnit",
+            "source_line": "TimeUnit.SECONDS.sleep(1);"
+          },
+          "jdt_decl": "java.util.concurrent.TimeUnit",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/util/ConcurrentBagVirtualThreadTest.java",
+          "line": 38,
+          "raw_name": "ofVirtual.invoke",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "ofVirtual",
+            "source_line": "final var virtualThreadBuilder = ofVirtual.invoke(null);"
+          },
+          "jdt_decl": "java.lang.reflect.Method",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/metrics/prometheus/PrometheusMetricsTracker.java",
+          "line": 111,
+          "raw_name": "connectionTimeoutCounterChild.inc",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "connectionTimeoutCounterChild",
+            "decl_simple": "Counter.Child",
+            "decl_full": "Counter.Child",
+            "source_line": "connectionTimeoutCounterChild.inc();"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNRESOLVED_HONEST"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/ProxyLeakTask.java",
+          "line": 90,
+          "raw_name": "scheduledFuture.cancel",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "scheduledFuture",
+            "decl_simple": "ScheduledFuture",
+            "decl_full": "java.util.concurrent.ScheduledFuture",
+            "source_line": "scheduledFuture.cancel(false);"
+          },
+          "jdt_decl": "java.util.concurrent.Future<>",
+          "adjudication": "UNRESOLVED_HONEST"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/HikariPool.java",
+          "line": 238,
+          "raw_name": "assassinExecutor.shutdown",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "assassinExecutor",
+            "decl_simple": "ExecutorService",
+            "decl_full": "ExecutorService",
+            "source_line": "assassinExecutor.shutdown();"
+          },
+          "jdt_decl": "java.util.concurrent.ThreadPoolExecutor",
+          "adjudication": "UNRESOLVED_HONEST"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/PropertyElf.java",
+          "line": 136,
+          "raw_name": "m.getParameterCount",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "m",
+            "source_line": "var writeMethod = methods.stream().filter(m -> m.getName().equals(methodName) && m.getParameterCount() == 1).findFirst()"
+          },
+          "jdt_decl": "java.lang.reflect.Method",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/metrics/dropwizard/CodahaleHealthChecker.java",
+          "line": 58,
+          "raw_name": "String.valueOf",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "String",
+            "source_line": "final var checkTimeoutMs = Long.parseLong(healthCheckProperties.getProperty(\"connectivityCheckTimeoutMs\", String.valueOf"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestJavassistCodegen.java",
+          "line": 36,
+          "raw_name": "Assert.assertTrue",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "Assert",
+            "source_line": "Assert.assertTrue(\"Generated proxy class should be final\", Modifier.isFinal(mod));"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/datasource/TestSealedConfig.java",
+          "line": 67,
+          "raw_name": "fail",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConcurrentBag.java",
+          "line": 98,
+          "raw_name": "new String(baos.toByteArray()).contains",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "new String(baos",
+            "source_line": "assertTrue(new String(baos.toByteArray()).contains(\"was not reserved\"));"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+          "line": 1225,
+          "raw_name": "this.getClass().getClassLoader().getResourceAsStream",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "this",
+            "source_line": "propertiesInputStream = this.getClass().getClassLoader().getResourceAsStream(propertyFileName);"
+          },
+          "jdt_decl": "java.lang.ClassLoader",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/StatementTest.java",
+          "line": 110,
+          "raw_name": "statement2.getGeneratedKeys().getStatement().close",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "statement2",
+            "decl_simple": "Statement",
+            "decl_full": "java.sql.Statement",
+            "source_line": "statement2.getGeneratedKeys().getStatement().close();"
+          },
+          "jdt_decl": "java.sql.Statement",
+          "adjudication": "JDT_RECOVERED_CORRECT"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestCredentials.java",
+          "line": 32,
+          "raw_name": "((TestCredentialsProvider) ds.getCredentialsProvider()).called.get",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "((TestCredentialsProvider) ds",
+            "source_line": "assertTrue(\"CredentialsProvider was not called\", ((TestCredentialsProvider) ds.getCredentialsProvider()).called.get());"
+          },
+          "jdt_decl": "java.util.concurrent.atomic.AtomicBoolean",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/ConcurrentBag.java",
+          "line": 168,
+          "raw_name": "((WeakReference<T>) entry).get",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "((WeakReference<T>) entry)",
+            "source_line": "final T bagEntry = useWeakThreadLocals ? ((WeakReference<T>) entry).get() : (T) entry;"
+          },
+          "jdt_decl": "java.lang.ref.Reference<T>",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestElf.java",
+          "line": 146,
+          "raw_name": "clazz.getClassLoader().loadClass",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "clazz",
+            "decl_simple": "Class",
+            "decl_full": "Class",
+            "source_line": "Field field = clazz.getClassLoader().loadClass(\"org.apache.logging.slf4j.Log4jLogger\").getDeclaredField(\"logger\");"
+          },
+          "jdt_decl": "java.lang.ClassLoader",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/PropertyElf.java",
+          "line": 136,
+          "raw_name": "methods.stream().filter(m -> m.getName().equals(methodName) && m.getParameterCount() == 1).findFirst().orElse",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "methods",
+            "decl_simple": "Object target, final String propName, final Object propValue, final List",
+            "decl_full": "Object target, final String propName, final Object propValue, final List",
+            "source_line": "var writeMethod = methods.stream().filter(m -> m.getName().equals(methodName) && m.getParameterCount() == 1).findFirst()"
+          },
+          "jdt_decl": "java.util.Optional<java.lang.reflect.Method>",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestValidation.java",
+          "line": 81,
+          "raw_name": "ise.getMessage().contains",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "ise",
+            "decl_simple": "IllegalArgumentException",
+            "decl_full": "IllegalArgumentException",
+            "source_line": "assertTrue(ise.getMessage().contains(\"jdbcUrl is required with driverClassName\"));"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/PropertyElf.java",
+          "line": 155,
+          "raw_name": "parseDuration(value).map(Duration::toMillis).orElseGet",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "parseDuration(value)",
+            "source_line": "writeMethod.invoke(target, parseDuration(value).map(Duration::toMillis).orElseGet(() -> Long.parseLong(value)));"
+          },
+          "jdt_decl": "java.util.Optional<java.lang.Long>",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/osgi/OSGiBundleTest.java",
+          "line": 59,
+          "raw_name": "bundle.getSymbolicName().equals",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "bundle",
+            "decl_simple": "Bundle",
+            "decl_full": "org.osgi.framework.Bundle",
+            "source_line": "if (bundle.getSymbolicName().equals(\"com.zaxxer.HikariCP\")) {"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+          "line": 396,
+          "raw_name": "\"(Failed to create/setup connection (\".concat(id.toString()).concat",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "\"(Failed to create/setup connection (\"",
+            "source_line": "quietlyCloseConnection(connection, \"(Failed to create/setup connection (\".concat(id.toString()).concat(\")\"));"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestValidation.java",
+          "line": 54,
+          "raw_name": "ise.getMessage().contains",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "ise",
+            "decl_simple": "IllegalArgumentException",
+            "decl_full": "IllegalArgumentException",
+            "source_line": "assertTrue(ise.getMessage().contains(\"property file\"));"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/HikariPool.java",
+          "line": 121,
+          "raw_name": "Runtime.getRuntime().availableProcessors",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "Runtime",
+            "source_line": "addConnectionExecutor.setMaximumPoolSize(Math.min(16, Runtime.getRuntime().availableProcessors()));"
+          },
+          "jdt_decl": "java.lang.Runtime",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/PropertyElf.java",
+          "line": 53,
+          "raw_name": "((HikariConfig) target).addDataSourceProperty",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "((HikariConfig) target)",
+            "source_line": "((HikariConfig) target).addDataSourceProperty(keyName.substring(\"dataSource.\".length()), value);"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariDataSource.java",
+          "line": 170,
+          "raw_name": "p.getUnwrappedDataSource().getLoginTimeout",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "p",
+            "decl_simple": "HikariPool",
+            "decl_full": "com.zaxxer.hikari.pool.HikariPool",
+            "source_line": "return (p != null ? p.getUnwrappedDataSource().getLoginTimeout() : 0);"
+          },
+          "jdt_decl": "javax.sql.DataSource",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+          "line": 521,
+          "raw_name": "checkIfSealed",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/UtilityElf.java",
+          "line": 105,
+          "raw_name": "createInstance",
+          "stratum": "S5",
+          "status": "ambiguous",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.util.UtilityElf",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/metrics/prometheus/PrometheusMetricsTrackerFactoryTest.java",
+          "line": 31,
+          "raw_name": "assertHikariMetricsAreNotPresent",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.metrics.prometheus.PrometheusMetricsTrackerFactoryTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/util/ConcurrentBag.java",
+          "line": 83,
+          "raw_name": "MethodHandles.publicLookup().findVirtual",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "MethodHandles",
+            "source_line": ".findVirtual(Thread.class, \"isVirtual\", MethodType.methodType(boolean.class));"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/HikariPool.java",
+          "line": 488,
+          "raw_name": "getTotalConnections",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.pool.HikariPool",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/metrics/dropwizard/Dropwizard5MetricsTrackerTest.java",
+          "line": 32,
+          "raw_name": "verify(mockMetricRegistry).remove",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "verify(mockMetricRegistry)",
+            "source_line": "verify(mockMetricRegistry).remove(MetricRegistry.name(\"mypool.pool.Wait\"));"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/mocks/StubStatement.java",
+          "line": 390,
+          "raw_name": "checkClosed",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.mocks.StubStatement",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+          "line": 151,
+          "raw_name": "TimeUnit.SECONDS.toMillis",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.75,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "TimeUnit",
+            "source_line": "quietlySleep(TimeUnit.SECONDS.toMillis(2));"
+          },
+          "jdt_decl": "java.util.concurrent.TimeUnit",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/metrics/prometheus/HikariCPCollectorTest.java",
+          "line": 177,
+          "raw_name": "getValue",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.metrics.prometheus.HikariCPCollectorTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/metrics/prometheus/HikariCPCollectorTest.java",
+          "line": 191,
+          "raw_name": "getValue",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.metrics.prometheus.HikariCPCollectorTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+          "line": 805,
+          "raw_name": "newHikariConfig",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.75,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.pool.TestElf",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+          "line": 778,
+          "raw_name": "checkIfSealed",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/PoolBase.java",
+          "line": 177,
+          "raw_name": "setNetworkTimeout",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.pool.PoolBase",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/pool/HikariPool.java",
+          "line": 845,
+          "raw_name": "fillPool",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.pool.HikariPool",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+          "line": 639,
+          "raw_name": "checkIfSealed",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        }
+      ]
+    },
+    "gson": {
+      "counts": {
+        "UNADJUDICATED": 52,
+        "CORRECT_DEMOTION": 14,
+        "NEEDS_MANUAL": 1,
+        "JDT_RESOLVES_UNRESOLVED": 1,
+        "UNRESOLVED_HONEST": 1,
+        "NEEDS_MANUAL (S4 JDT vs truth)": 3,
+        "CHAIN_CONSISTENT (spot-checked)": 2,
+        "JDT_RECOVERED_CORRECT": 1
+      },
+      "rows": [
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/DefaultTypeAdaptersTest.java",
+          "line": 1018,
+          "raw_name": "GsonBuilder",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/CustomTypeAdaptersTest.java",
+          "line": 377,
+          "raw_name": "GsonBuilder",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/PrettyPrintingTest.java",
+          "line": 84,
+          "raw_name": "ArrayOfObjects",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/StreamingTypeAdaptersTest.java",
+          "line": 168,
+          "raw_name": "TypeToken",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "extras/src/test/java/com/google/gson/typeadapters/UtcDateTypeAdapterTest.java",
+          "line": 35,
+          "raw_name": "GsonBuilder",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/internal/bind/DefaultDateTypeAdapter.java",
+          "line": 182,
+          "raw_name": "ISO8601Utils.parse",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "ISO8601Utils",
+            "source_line": "return ISO8601Utils.parse(s, new ParsePosition(0));"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/TypeAdapter.java",
+          "line": 144,
+          "raw_name": "JsonWriter",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "test-shrinker/src/main/java/com/example/Main.java",
+          "line": 111,
+          "raw_name": "GsonBuilder",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/CustomTypeAdaptersTest.java",
+          "line": 81,
+          "raw_name": "GsonBuilder",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/internal/bind/JsonElementReaderTest.java",
+          "line": 83,
+          "raw_name": "JsonParser.parseString",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "JsonParser",
+            "source_line": "JsonElement element = JsonParser.parseString(\"[\\\"1\\\", \\\"2\\\", \\\"3\\\"]\");"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/ParameterizedTypesTest.java",
+          "line": 547,
+          "raw_name": "JsonReader",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/ObjectTest.java",
+          "line": 472,
+          "raw_name": "GsonBuilder",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "proto/src/main/java/com/google/gson/protobuf/StructTypeAdapter.java",
+          "line": 56,
+          "raw_name": "JsonObject",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/NumberLimitsTest.java",
+          "line": 82,
+          "raw_name": "JsonPrimitive",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/EnumTest.java",
+          "line": 165,
+          "raw_name": "TypeToken",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "proto/src/test/java/com/google/gson/protobuf/functional/LegacyProtoTypeAdapterFactoryTest.java",
+          "line": 249,
+          "raw_name": "GSON_WITH_LEGACY_ADAPTER.toJsonTree",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "GSON_WITH_LEGACY_ADAPTER",
+            "decl_simple": "static final Gson",
+            "decl_full": "static final Gson",
+            "source_line": "JsonElement legacyJson = GSON_WITH_LEGACY_ADAPTER.toJsonTree(message);"
+          },
+          "jdt_decl": "com.google.gson.Gson",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/VersioningTest.java",
+          "line": 80,
+          "raw_name": "gson.toJson",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "gson",
+            "decl_simple": "Gson",
+            "decl_full": "com.google.gson.Gson",
+            "source_line": "String json2 = gson.toJson(new Version1_1());"
+          },
+          "jdt_decl": "com.google.gson.Gson",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+          "line": 763,
+          "raw_name": "reader.nextLong",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "reader",
+            "decl_simple": "JsonReader",
+            "decl_full": "JsonReader",
+            "source_line": "NumberFormatException e = assertThrows(NumberFormatException.class, () -> reader.nextLong());"
+          },
+          "jdt_decl": null,
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/internal/bind/DefaultDateTypeAdapter.java",
+          "line": 152,
+          "raw_name": "out.value",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "out",
+            "decl_simple": "JsonWriter",
+            "decl_full": "com.google.gson.stream.JsonWriter",
+            "source_line": "out.value(dateFormatAsString);"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonWriter",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/MixedStreamTest.java",
+          "line": 80,
+          "raw_name": "jsonReader.endArray",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "jsonReader",
+            "decl_simple": "JsonReader",
+            "decl_full": "com.google.gson.stream.JsonReader",
+            "source_line": "jsonReader.endArray();"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonReader",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/internal/bind/JsonTreeWriterTest.java",
+          "line": 114,
+          "raw_name": "writer.value",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "writer",
+            "decl_simple": "JsonTreeWriter",
+            "decl_full": "JsonTreeWriter",
+            "source_line": "writer.value(12);"
+          },
+          "jdt_decl": "com.google.gson.internal.bind.JsonTreeWriter",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/JsonArrayTest.java",
+          "line": 465,
+          "raw_name": "singleElement.getAsBigDecimal",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "singleElement",
+            "decl_simple": "JsonArray",
+            "decl_full": "JsonArray",
+            "source_line": "assertThat(singleElement.getAsBigDecimal()).isEqualTo(bigDecimal);"
+          },
+          "jdt_decl": "com.google.gson.JsonArray",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/internal/bind/JsonAdapterAnnotationTypeAdapterFactory.java",
+          "line": 124,
+          "raw_name": "factory.create",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "factory",
+            "decl_simple": "TypeToken",
+            "decl_full": "com.google.gson.reflect.TypeToken",
+            "source_line": "typeAdapter = factory.create(gson, type);"
+          },
+          "jdt_decl": "com.google.gson.TypeAdapterFactory",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+          "line": 973,
+          "raw_name": "reader.peek",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "reader",
+            "decl_simple": "JsonReader",
+            "decl_full": "JsonReader",
+            "source_line": "assertThat(reader.peek()).isEqualTo(NUMBER);"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonReader",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+          "line": 294,
+          "raw_name": "target.add",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "target",
+            "decl_simple": "ObjectWithWildcardCollection",
+            "decl_full": "ObjectWithWildcardCollection",
+            "source_line": "target.add(objB);"
+          },
+          "jdt_decl": "java.util.List<com.google.gson.common.TestTypes.BagOfPrimitives>",
+          "adjudication": "NEEDS_MANUAL (mode A resolved)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/internal/bind/JsonElementTypeAdapter.java",
+          "line": 147,
+          "raw_name": "out.value",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "out",
+            "decl_simple": "JsonWriter",
+            "decl_full": "com.google.gson.stream.JsonWriter",
+            "source_line": "out.value(primitive.getAsBoolean());"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonWriter",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/JsonAdapterAnnotationOnFieldsTest.java",
+          "line": 137,
+          "raw_name": "out.value",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "out",
+            "decl_simple": "JsonWriter",
+            "decl_full": "com.google.gson.stream.JsonWriter",
+            "source_line": "out.value(\"PartJsonFieldAnnotationAdapter\");"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonWriter",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+          "line": 1834,
+          "raw_name": "reader.getPath",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "reader",
+            "decl_simple": "JsonReader",
+            "decl_full": "JsonReader",
+            "source_line": "assertThat(reader.getPath())"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonReader",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/ObjectTypeAdapterTest.java",
+          "line": 87,
+          "raw_name": "current.get",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "current",
+            "decl_simple": "Map",
+            "decl_full": "java.util.Map",
+            "source_line": "current = (List<List<?>>) current.get(0);"
+          },
+          "jdt_decl": "java.util.List<java.util.List<?>>",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+          "line": 146,
+          "raw_name": "gson.fromJson",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "gson",
+            "decl_simple": "Gson",
+            "decl_full": "com.google.gson.Gson",
+            "source_line": "PriorityQueue<Integer> queue = gson.fromJson(\"[10, 20, 22]\", type);"
+          },
+          "jdt_decl": "com.google.gson.Gson",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+          "line": 2396,
+          "raw_name": "StringReader",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/PrettyPrintingTest.java",
+          "line": 58,
+          "raw_name": "assertThat",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/JsonParserTest.java",
+          "line": 181,
+          "raw_name": "assertThat",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+          "line": 929,
+          "raw_name": "ArrayList",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/internal/LinkedTreeMap.java",
+          "line": 256,
+          "raw_name": "removeInternal",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.google.gson.internal.LinkedTreeMap<K,V>",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "proto/src/test/java/com/google/gson/protobuf/functional/ProtosWithAnnotationsAndJsonNamesTest.java",
+          "line": 163,
+          "raw_name": "assertThat",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "extras/src/main/java/com/google/gson/typeadapters/PostConstructAdapterFactory.java",
+          "line": 66,
+          "raw_name": "e.getCause",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "e",
+            "decl_simple": "InvocationTargetException",
+            "decl_full": "java.lang.reflect.InvocationTargetException",
+            "source_line": "if (e.getCause() instanceof RuntimeException) {"
+          },
+          "jdt_decl": "java.lang.reflect.InvocationTargetException",
+          "adjudication": "JDT_RESOLVES_UNRESOLVED"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/reflect/TypeTokenTest.java",
+          "line": 179,
+          "raw_name": "assertThat",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/RuntimeTypeAdapterFactoryFunctionalTest.java",
+          "line": 106,
+          "raw_name": "LinkedHashMap",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/PrintFormattingTest.java",
+          "line": 66,
+          "raw_name": "assertThat",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/JsonObjectTest.java",
+          "line": 225,
+          "raw_name": "assertThat",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "extras/src/test/java/com/google/gson/typeadapters/UtcDateTypeAdapterTest.java",
+          "line": 79,
+          "raw_name": "assertThat",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonWriterTest.java",
+          "line": 704,
+          "raw_name": "StringWriter",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+          "line": 193,
+          "raw_name": "assertThrows",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "metrics/src/main/java/com/google/gson/metrics/ParseBenchmark.java",
+          "line": 248,
+          "raw_name": "jp.currentName",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "jp",
+            "decl_simple": "com.fasterxml.jackson.core.JsonParser",
+            "decl_full": "com.fasterxml.jackson.core.JsonParser",
+            "source_line": "jp.currentName();"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNRESOLVED_HONEST"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/reflect/TypeTokenTest.java",
+          "line": 72,
+          "raw_name": "TypeToken.get(b).isAssignableFrom",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "TypeToken",
+            "source_line": "assertThat(TypeToken.get(b).isAssignableFrom(a)).isFalse();"
+          },
+          "jdt_decl": "com.google.gson.reflect.TypeToken<>",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "proto/src/test/java/com/google/gson/protobuf/functional/StructTypeAdapterTest.java",
+          "line": 102,
+          "raw_name": "json.getAsJsonArray(\"list\").get(0).getAsString",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "json",
+            "decl_simple": "JsonObject",
+            "decl_full": "com.google.gson.JsonObject",
+            "source_line": "expect.that(json.getAsJsonArray(\"list\").get(0).getAsString()).isEqualTo(\"first\");"
+          },
+          "jdt_decl": "com.google.gson.JsonElement",
+          "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/internal/bind/DefaultDateTypeAdapter.java",
+          "line": 193,
+          "raw_name": "((SimpleDateFormat) defaultFormat).toPattern",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "((SimpleDateFormat) defaultFormat)",
+            "source_line": "return SIMPLE_NAME + '(' + ((SimpleDateFormat) defaultFormat).toPattern() + ')';"
+          },
+          "jdt_decl": "java.text.SimpleDateFormat",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/JsonObjectTest.java",
+          "line": 261,
+          "raw_name": "a.keySet().iterator",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "a",
+            "decl_simple": "JsonObject",
+            "decl_full": "JsonObject",
+            "source_line": "Iterator<String> iterator = a.keySet().iterator();"
+          },
+          "jdt_decl": "java.util.Set<java.lang.String>",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/internal/reflect/ReflectionHelper.java",
+          "line": 140,
+          "raw_name": "((Constructor<?>) executable).getParameterTypes",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "((Constructor<?>) executable)",
+            "source_line": ": ((Constructor<?>) executable).getParameterTypes();"
+          },
+          "jdt_decl": "java.lang.reflect.Constructor<>",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/CustomDeserializerTest.java",
+          "line": 114,
+          "raw_name": "jsonObj.get(\"data\").getAsString",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "jsonObj",
+            "decl_simple": "JsonObject",
+            "decl_full": "com.google.gson.JsonObject",
+            "source_line": "String dataString = jsonObj.get(\"data\").getAsString();"
+          },
+          "jdt_decl": "com.google.gson.JsonElement",
+          "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/JsonPrimitive.java",
+          "line": 281,
+          "raw_name": "getAsNumber().doubleValue",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "getAsNumber()",
+            "source_line": "return hashOfDoubleValue(getAsNumber().doubleValue());"
+          },
+          "jdt_decl": "java.lang.Number",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/reflect/TypeTokenTest.java",
+          "line": 65,
+          "raw_name": "getClass().getDeclaredField(\"listOfNumber\").getGenericType",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "getClass()",
+            "source_line": "Type b = getClass().getDeclaredField(\"listOfNumber\").getGenericType();"
+          },
+          "jdt_decl": "java.lang.reflect.Field",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/DefaultTypeAdaptersTest.java",
+          "line": 620,
+          "raw_name": "gsonBuilder.setDateFormat(style, style).create",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "gsonBuilder",
+            "decl_simple": "GsonBuilder",
+            "decl_full": "com.google.gson.GsonBuilder",
+            "source_line": "String styleJson = gsonBuilder.setDateFormat(style, style).create().toJson(date);"
+          },
+          "jdt_decl": "com.google.gson.GsonBuilder",
+          "adjudication": "JDT_RECOVERED_CORRECT"
+        },
+        {
+          "file": "proto/src/main/java/com/google/gson/protobuf/LegacyProtoTypeAdapterFactory.java",
+          "line": 581,
+          "raw_name": "writeFieldName(out, \"listData\").nullValue",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "writeFieldName(out, \"listData\")",
+            "source_line": "writeFieldName(out, \"listData\").nullValue();"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonWriter",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "extras/src/test/java/com/google/gson/typeadapters/UtcDateTypeAdapterTest.java",
+          "line": 35,
+          "raw_name": "new GsonBuilder().registerTypeAdapter",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "new GsonBuilder()",
+            "source_line": "new GsonBuilder().registerTypeAdapter(Date.class, new UtcDateTypeAdapter()).create();"
+          },
+          "jdt_decl": "com.google.gson.GsonBuilder",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "metrics/src/main/java/com/google/gson/metrics/BagOfPrimitivesDeserializationBenchmark.java",
+          "line": 103,
+          "raw_name": "field.getName().equals",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "field",
+            "decl_simple": "Field",
+            "decl_full": "java.lang.reflect.Field",
+            "source_line": "if (field.getName().equals(name)) {"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+          "line": 434,
+          "raw_name": "((Long) obj).intValue",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "((Long) obj)",
+            "source_line": "ints[i] = ((Long) obj).intValue();"
+          },
+          "jdt_decl": "java.lang.Long",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/JsonAdapterAnnotationOnClassesTest.java",
+          "line": 128,
+          "raw_name": "new Gson().toJson",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "new Gson()",
+            "source_line": "String json = new Gson().toJson(new B(\"bar\"));"
+          },
+          "jdt_decl": "com.google.gson.Gson",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/InheritanceTest.java",
+          "line": 91,
+          "raw_name": "json.get(ClassWithBaseArrayField.FIELD_KEY).getAsJsonArray",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "json",
+            "decl_simple": "String",
+            "decl_full": "String",
+            "source_line": "JsonArray bases = json.get(ClassWithBaseArrayField.FIELD_KEY).getAsJsonArray();"
+          },
+          "jdt_decl": "com.google.gson.JsonElement",
+          "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/GsonVersionDiagnosticsTest.java",
+          "line": 65,
+          "raw_name": "assertThat(\"(GSON 2.8.5-SNAPSHOT)\").matches",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "assertThat(\"(GSON 2",
+            "source_line": "assertThat(\"(GSON 2.8.5-SNAPSHOT)\").matches(GSON_VERSION_PATTERN);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/GsonBuilderTest.java",
+          "line": 211,
+          "raw_name": "GsonBuilder",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.75,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "test-jpms/src/test/java/com/google/gson/jpms_test/opened/ReflectionTest.java",
+          "line": 38,
+          "raw_name": "assertThat(deserialized.i).isEqualTo",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "assertThat(deserialized",
+            "source_line": "assertThat(deserialized.i).isEqualTo(1);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+          "line": 180,
+          "raw_name": "reader",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonReaderTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+          "line": 1295,
+          "raw_name": "reader",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonReaderTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/GsonBuilderTest.java",
+          "line": 327,
+          "raw_name": "assertThat(e).hasMessageThat",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "assertThat(e)",
+            "source_line": "assertThat(e).hasMessageThat().isEqualTo(errorMessage + type);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/stream/JsonReader.java",
+          "line": 497,
+          "raw_name": "unexpectedTokenError",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.google.gson.stream.JsonReader",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/ConcurrencyTest.java",
+          "line": 48,
+          "raw_name": "MyObject",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/JsonPrimitive.java",
+          "line": 216,
+          "raw_name": "getAsNumber",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.google.gson.JsonPrimitive",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/main/java/com/google/gson/JsonPrimitive.java",
+          "line": 224,
+          "raw_name": "getAsString",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.google.gson.JsonPrimitive",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/InstanceCreatorTest.java",
+          "line": 74,
+          "raw_name": "new GsonBuilder().registerTypeAdapter",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "new GsonBuilder()",
+            "source_line": ".registerTypeAdapter(Base.class, (InstanceCreator<Base>) type -> new Sub())"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/PrimitiveTest.java",
+          "line": 947,
+          "raw_name": "assertThat(gson.fromJson(\"-122.08e-2132\", float.class)).isEqualTo",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "assertThat(gson",
+            "source_line": "assertThat(gson.fromJson(\"-122.08e-2132\", float.class)).isEqualTo(-0.0f);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/functional/DelegateTypeAdapterTest.java",
+          "line": 71,
+          "raw_name": "assertThat(stats.numWrites).isEqualTo",
+          "stratum": "S5",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "assertThat(stats",
+            "source_line": "assertThat(stats.numWrites).isEqualTo(5);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "proto/src/main/java/com/google/gson/protobuf/LegacyProtoTypeAdapterFactory.java",
+          "line": 217,
+          "raw_name": "readFieldName",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "com.google.gson.protobuf.LegacyProtoTypeAdapterFactory.Adapter<T>",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "gson/src/test/java/com/google/gson/JsonPrimitiveTest.java",
+          "line": 311,
+          "raw_name": "JsonPrimitive",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.75,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        }
+      ]
+    },
+    "jgit": {
+      "counts": {
+        "UNADJUDICATED": 48,
+        "CORRECT_DEMOTION": 12,
+        "JDT_RESOLVES_UNRESOLVED": 2,
+        "CHAIN_CONSISTENT (spot-checked)": 11,
+        "NEEDS_MANUAL (S4 JDT vs truth)": 2
+      },
+      "rows": [
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/IndexDiffSubmoduleTest.java",
+          "line": 245,
+          "raw_name": "JGitTestUtil.deleteTrashFile",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "JGitTestUtil",
+            "source_line": "JGitTestUtil.deleteTrashFile(db, \"fileInRoot\");"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/transport/connectivity/TreeWalkConnectivityCheckerTest.java",
+          "line": 1119,
+          "raw_name": "PersonIdent",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/merge/MergeAlgorithm.java",
+          "line": 82,
+          "raw_name": "Edit",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/transport/PushCertificate.java",
+          "line": 81,
+          "raw_name": "JGitText.get",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "JGitText",
+            "source_line": "JGitText.get().pushCertificateInvalidField,"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.http.test/tst/org/eclipse/jgit/http/test/GitServletInitTest.java",
+          "line": 55,
+          "raw_name": "GitServlet",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.pgm.test/tst/org/eclipse/jgit/pgm/CleanTest.java",
+          "line": 94,
+          "raw_name": "check",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.lfs/src/org/eclipse/jgit/lfs/SmudgeFilter.java",
+          "line": 178,
+          "raw_name": "LfsText.get",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "LfsText",
+            "source_line": "LfsText.get().inconsistentContentLength,"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/reftable/ReftableTest.java",
+          "line": 1134,
+          "raw_name": "ObjectIdRef.Unpeeled",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "ObjectIdRef",
+            "source_line": "return new ObjectIdRef.Unpeeled(NEW, name, null);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java",
+          "line": 149,
+          "raw_name": "FileBasedConfig",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/lib/AnyObjectId.java",
+          "line": 142,
+          "raw_name": "NB.compareUInt32",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "NB",
+            "source_line": "cmp = NB.compareUInt32(w2, other.w2);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/RefDirectory.java",
+          "line": 1460,
+          "raw_name": "JGitText.get",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "JGitText",
+            "source_line": "MessageFormat.format(JGitText.get().fileCannotBeDeleted,"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/PackObjectSizeIndexHelper.java",
+          "line": 79,
+          "raw_name": "PackedObjectInfo",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/submodule/SubmoduleAddTest.java",
+          "line": 319,
+          "raw_name": "SubmoduleAddCommand",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/transport/TransportHttp.java",
+          "line": 1520,
+          "raw_name": "PackProtocolException",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.pgm/src/org/eclipse/jgit/pgm/Merge.java",
+          "line": 162,
+          "raw_name": "CLIText.get",
+          "stratum": "S1",
+          "status": "resolved",
+          "resolution_strategy": "import_resolution",
+          "confidence": 1.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "CLIText",
+            "source_line": "outw.println(CLIText.get().mergeCheckoutFailed);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/transport/connectivity/TreeWalkConnectivityCheckerTest.java",
+          "line": 217,
+          "raw_name": "formatter.append",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "formatter",
+            "decl_simple": "TreeFormatter",
+            "decl_full": "org.eclipse.jgit.lib.TreeFormatter",
+            "source_line": "formatter.append(\"dir\", FileMode.TREE, missingTreeId);"
+          },
+          "jdt_decl": "org.eclipse.jgit.lib.TreeFormatter",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/MidxPackFilterTest.java",
+          "line": 304,
+          "raw_name": "reorgPacks.contains",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "reorgPacks",
+            "decl_simple": "List",
+            "decl_full": "java.util.List",
+            "source_line": "assertTrue(reorgPacks.contains(gc));"
+          },
+          "jdt_decl": "java.util.List<org.eclipse.jgit.internal.storage.dfs.DfsPackDescription>",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.ssh.apache/src/org/eclipse/jgit/internal/transport/sshd/JGitPublicKeyAuthentication.java",
+          "line": 372,
+          "raw_name": "log.warn",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "log",
+            "source_line": "log.warn(LOG_FORMAT,"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/merge/SimpleMergeTest.java",
+          "line": 346,
+          "raw_name": "treeB.builder",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "treeB",
+            "decl_simple": "ObjectInserter odi, DirCache",
+            "decl_full": "ObjectInserter odi, DirCache",
+            "source_line": "DirCacheBuilder bTreeBuilder = treeB.builder();"
+          },
+          "jdt_decl": "org.eclipse.jgit.dircache.DirCache",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.test/exttst/org/eclipse/jgit/internal/storage/midx/CgitMidxCompatibilityTest.java",
+          "line": 118,
+          "raw_name": "proc.waitFor",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "proc",
+            "decl_simple": "Process",
+            "decl_full": "Process",
+            "source_line": "return proc.waitFor();"
+          },
+          "jdt_decl": "java.lang.Process",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/treewalk/FileTreeIteratorTest.java",
+          "line": 332,
+          "raw_name": "fs.lastModifiedInstant",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "fs",
+            "decl_simple": "FS",
+            "decl_full": "org.eclipse.jgit.util.FS",
+            "source_line": "Instant lastModified = fs.lastModifiedInstant(f);"
+          },
+          "jdt_decl": "org.eclipse.jgit.util.FS",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/junit/TestRepositoryTest.java",
+          "line": 151,
+          "raw_name": "tr.reset",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "tr",
+            "decl_simple": "TestRepository",
+            "decl_full": "TestRepository",
+            "source_line": "tr.reset(\"master\");"
+          },
+          "jdt_decl": "org.eclipse.jgit.junit.TestRepository<org.eclipse.jgit.internal.storage.dfs.InMemoryRepository>",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/merge/SimpleMergeTest.java",
+          "line": 326,
+          "raw_name": "bTreeBuilder.finish",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "bTreeBuilder",
+            "decl_simple": "DirCacheBuilder",
+            "decl_full": "org.eclipse.jgit.dircache.DirCacheBuilder",
+            "source_line": "bTreeBuilder.finish();"
+          },
+          "jdt_decl": "org.eclipse.jgit.dircache.DirCacheBuilder",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/api/StashCreateCommand.java",
+          "line": 294,
+          "raw_name": "treeWalk.next",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "treeWalk",
+            "decl_simple": "TreeWalk",
+            "decl_full": "org.eclipse.jgit.treewalk.TreeWalk",
+            "source_line": "} while (treeWalk.next());"
+          },
+          "jdt_decl": "org.eclipse.jgit.treewalk.TreeWalk",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/DfsPackFileMidxSingleTest.java",
+          "line": 531,
+          "raw_name": "allFromPack.size",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "allFromPack",
+            "decl_simple": "List",
+            "decl_full": "java.util.List",
+            "source_line": "assertEquals(6, allFromPack.size());"
+          },
+          "jdt_decl": "java.util.List<org.eclipse.jgit.internal.storage.dfs.DfsObjectToPack>",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.lfs.test/tst/org/eclipse/jgit/lfs/LfsGitTest.java",
+          "line": 150,
+          "raw_name": "git.add",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "org.eclipse.jgit.api.Git",
+            "source_line": "git.add().addFilepattern(\"Test.txt\").call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.Git",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.pgm/src/org/eclipse/jgit/pgm/Push.java",
+          "line": 243,
+          "raw_name": "outw.println",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "outw",
+            "source_line": "outw.println();"
+          },
+          "jdt_decl": "org.eclipse.jgit.util.io.ThrowingPrintWriter",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.gpg.bc/src/org/eclipse/jgit/gpg/bc/internal/BouncyCastleGpgKeyLocator.java",
+          "line": 233,
+          "raw_name": "userId.equals",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "userId",
+            "decl_simple": "String",
+            "decl_full": "String",
+            "source_line": "return userId.equals(toMatch);"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/PackReverseIndexWriter.java",
+          "line": 87,
+          "raw_name": "Integer.toString",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "Integer",
+            "source_line": "Integer.toString(version)));"
+          },
+          "jdt_decl": "java.lang.Integer",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/BitmapIndexImpl.java",
+          "line": 264,
+          "raw_name": "ii.hasNext",
+          "stratum": "S2",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "ii",
+            "decl_simple": "IntIterator",
+            "decl_full": "com.googlecode.javaewah.IntIterator",
+            "source_line": "if (ii.hasNext() && ii.next() < bitmapIndex.indexObjectCount)"
+          },
+          "jdt_decl": null,
+          "adjudication": "CORRECT_DEMOTION"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/PushCommandTest.java",
+          "line": 159,
+          "raw_name": "ByteArrayOutputStream",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.http.apache/src/org/eclipse/jgit/transport/http/apache/HttpClientConnection.java",
+          "line": 324,
+          "raw_name": "HttpHead",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/Hex.java",
+          "line": 76,
+          "raw_name": "String",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/transport/FilterSpec.java",
+          "line": 176,
+          "raw_name": "IllegalArgumentException",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/sha1/SHA1Java.java",
+          "line": 391,
+          "raw_name": "rotateLeft",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "java.lang.Integer",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/WalkEncryptionTest.java",
+          "line": 1242,
+          "raw_name": "ArrayList",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/api/GarbageCollectCommand.java",
+          "line": 232,
+          "raw_name": "packKeptObjects.booleanValue",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "packKeptObjects",
+            "decl_simple": "Boolean",
+            "decl_full": "Boolean",
+            "source_line": "gc.setPackKeptObjects(packKeptObjects.booleanValue());"
+          },
+          "jdt_decl": "java.lang.Boolean",
+          "adjudication": "JDT_RESOLVES_UNRESOLVED"
+        },
+        {
+          "file": "org.eclipse.jgit.pgm.test/tst/org/eclipse/jgit/pgm/AddTest.java",
+          "line": 99,
+          "raw_name": "assertArrayEquals",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.ssh.apache/src/org/eclipse/jgit/internal/transport/sshd/JGitSshClient.java",
+          "line": 188,
+          "raw_name": "Collections.singletonMap",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "Collections",
+            "source_line": "Collections.singletonMap("
+          },
+          "jdt_decl": "java.util.Collections",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.pgm/src/org/eclipse/jgit/pgm/CommandCatalog.java",
+          "line": 107,
+          "raw_name": "Collections.emptyEnumeration",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "Collections",
+            "source_line": "return Collections.emptyEnumeration();"
+          },
+          "jdt_decl": "java.util.Collections",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/attributes/AttributesMatcherTest.java",
+          "line": 336,
+          "raw_name": "assertNotNull",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/dfs/InMemoryRepository.java",
+          "line": 181,
+          "raw_name": "FileNotFoundException",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.junit.ssh/src/org/eclipse/jgit/junit/ssh/SshTestGitServer.java",
+          "line": 308,
+          "raw_name": "KeyUtils.compareKeys",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "KeyUtils",
+            "source_line": ".compareKeys(SshTestGitServer.this.testKey, publicKey);"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/UploadPackTest.java",
+          "line": 3320,
+          "raw_name": "assertThrows",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/RefDirectory.java",
+          "line": 1098,
+          "raw_name": "modCnt.incrementAndGet",
+          "stratum": "S3",
+          "status": "unresolved",
+          "resolution_strategy": "unresolved",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "modCnt",
+            "decl_simple": "AtomicInteger",
+            "decl_full": "java.util.concurrent.atomic.AtomicInteger",
+            "source_line": "modCnt.incrementAndGet();"
+          },
+          "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+          "adjudication": "JDT_RESOLVES_UNRESOLVED"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/RebaseCommandTest.java",
+          "line": 1582,
+          "raw_name": "git.add().setUpdate(true).addFilepattern(\"file2\").call",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "Git",
+            "source_line": "git.add().setUpdate(true).addFilepattern(\"file2\").call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.AddCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/HttpConfigTest.java",
+          "line": 200,
+          "raw_name": "http.getExtraHeaders().size",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "http",
+            "decl_simple": "HttpConfig",
+            "decl_full": "HttpConfig",
+            "source_line": "assertEquals(2, http.getExtraHeaders().size());"
+          },
+          "jdt_decl": "java.util.List<java.lang.String>",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.lfs.server/src/org/eclipse/jgit/lfs/server/s3/SignerV4.java",
+          "line": 189,
+          "raw_name": "s.append(SCHEME).append(\"-\").append(ALGORITHM).append",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "s",
+            "decl_simple": "String",
+            "decl_full": "String",
+            "source_line": "s.append(SCHEME).append(\"-\").append(ALGORITHM).append(\" \"); //$NON-NLS-1$ //$NON-NLS-2$"
+          },
+          "jdt_decl": "java.lang.StringBuilder",
+          "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/symlinks/SymlinksTest.java",
+          "line": 150,
+          "raw_name": "git.add().addFilepattern(\".\").call",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "org.eclipse.jgit.api.Git",
+            "source_line": "git.add().addFilepattern(\".\").call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.AddCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java",
+          "line": 1650,
+          "raw_name": "nonNullRepo().getFS",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "nonNullRepo()",
+            "source_line": ": nonNullRepo().getFS().lastModifiedInstant(mergedFile);"
+          },
+          "jdt_decl": "org.eclipse.jgit.lib.Repository",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/PushCommandTest.java",
+          "line": 721,
+          "raw_name": "git.checkout().setName",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "Git",
+            "source_line": "git.checkout().setName(\"not-pushed\").setCreateBranch(true).call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.CheckoutCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/RefMap.java",
+          "line": 404,
+          "raw_name": "r.getName().equals",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "r",
+            "decl_simple": "Ref",
+            "decl_full": "org.eclipse.jgit.lib.Ref",
+            "source_line": "if (r.getName().equals(ref.getName())) {"
+          },
+          "jdt_decl": "java.lang.String",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/blame/BlameGeneratorTest.java",
+          "line": 639,
+          "raw_name": "git.commit().setMessage(\"c2: branch1\").call",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "org.eclipse.jgit.api.Git",
+            "source_line": "RevCommit c2 = git.commit().setMessage(\"c2: branch1\").call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.CommitCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/StashApplyCommandTest.java",
+          "line": 401,
+          "raw_name": "git.commit().setMessage(\"more content\").call",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "Git",
+            "source_line": "git.commit().setMessage(\"more content\").call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.CommitCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/junit/TestRepositoryTest.java",
+          "line": 214,
+          "raw_name": "repo.updateRef(\"HEAD\").link",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "repo",
+            "decl_simple": "InMemoryRepository",
+            "decl_full": "org.eclipse.jgit.internal.storage.dfs.InMemoryRepository",
+            "source_line": "repo.updateRef(\"HEAD\").link(\"refs/heads/master\");"
+          },
+          "jdt_decl": "org.eclipse.jgit.lib.RefUpdate",
+          "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/HugeFileTest.java",
+          "line": 182,
+          "raw_name": "git.commit().setMessage",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "Git",
+            "source_line": "git.commit().setMessage(\"make a commit\").call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.CommitCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/HugeFileTest.java",
+          "line": 71,
+          "raw_name": "status.getChanged().size",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "status",
+            "decl_simple": "Status",
+            "decl_full": "Status",
+            "source_line": "assertEquals(0, status.getChanged().size());"
+          },
+          "jdt_decl": "java.util.Set<java.lang.String>",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/CleanCommandTest.java",
+          "line": 163,
+          "raw_name": "git.status().call",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "Git",
+            "source_line": "status = git.status().call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.StatusCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/DfsGarbageCollectorTest.java",
+          "line": 259,
+          "raw_name": "commit().message",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "decl_not_found_in_file",
+            "receiver": "commit()",
+            "source_line": "RevCommit commit0 = commit().message(\"0\").create();"
+          },
+          "jdt_decl": "org.eclipse.jgit.junit.TestRepository<org.eclipse.jgit.internal.storage.dfs.InMemoryRepository>.CommitBuilder",
+          "adjudication": "UNADJUDICATED (decl_not_found_in_file)"
+        },
+        {
+          "file": "org.eclipse.jgit.pgm.test/tst/org/eclipse/jgit/pgm/CheckoutTest.java",
+          "line": 643,
+          "raw_name": "git.commit().setMessage",
+          "stratum": "S4",
+          "status": "unresolved",
+          "resolution_strategy": "indirect_call_shape",
+          "confidence": 0.0,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "OK",
+            "receiver": "git",
+            "decl_simple": "Git",
+            "decl_full": "org.eclipse.jgit.api.Git",
+            "source_line": "git.commit().setMessage(\"commit file a\").call();"
+          },
+          "jdt_decl": "org.eclipse.jgit.api.CommitCommand",
+          "adjudication": "CHAIN_CONSISTENT (spot-checked)"
+        },
+        {
+          "file": "org.eclipse.jgit.junit/src/org/eclipse/jgit/junit/LocalDiskRepositoryTestCase.java",
+          "line": 578,
+          "raw_name": "write",
+          "stratum": "S5",
+          "status": "ambiguous",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.junit.LocalDiskRepositoryTestCase",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/GcConcurrentTest.java",
+          "line": 176,
+          "raw_name": "getSinglePack",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "unresolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.internal.storage.file.GcConcurrentTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/merge/MergeAlgorithmUnionTest.java",
+          "line": 258,
+          "raw_name": "t",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.merge.MergeAlgorithmUnionTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/DfsPackFileMidxSingleTest.java",
+          "line": 936,
+          "raw_name": "assertEquals",
+          "stratum": "S5",
+          "status": "ambiguous",
+          "resolution_strategy": "ambiguous",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/transport/PackParser.java",
+          "line": 1006,
+          "raw_name": "onObjectHeader",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.transport.PackParser",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/attributes/TreeWalkAttributeTest.java",
+          "line": 595,
+          "raw_name": "assertEntry",
+          "stratum": "S5",
+          "status": "ambiguous",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.attributes.TreeWalkAttributeTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/RefUpdateTest.java",
+          "line": 852,
+          "raw_name": "assertEquals",
+          "stratum": "S5",
+          "status": "ambiguous",
+          "resolution_strategy": "unique_imported_symbol_resolution",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.junit.Assert",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/PacketLineOutTest.java",
+          "line": 86,
+          "raw_name": "assertBuffer",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.transport.PacketLineOutTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/util/io/BinaryHunkStreamTest.java",
+          "line": 63,
+          "raw_name": "BinaryHunkOutputStream",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "unique_symbol_resolution",
+          "confidence": 0.75,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/transport/ssh/OpenSshConfigFileTest.java",
+          "line": 608,
+          "raw_name": "assertPort",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.internal.transport.ssh.OpenSshConfigFileTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/ConfigTest.java",
+          "line": 996,
+          "raw_name": "createAllTypesIncludedContent",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.lib.ConfigTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit/src/org/eclipse/jgit/diff/ContentSource.java",
+          "line": 47,
+          "raw_name": "ObjectReaderSource",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.http.test/tst/org/eclipse/jgit/http/server/ClientVersionUtilTest.java",
+          "line": 22,
+          "raw_name": "assertEquals",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.http.server.ClientVersionUtilTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/ignore/FastIgnoreRuleTest.java",
+          "line": 263,
+          "raw_name": "assertMatched",
+          "stratum": "S5",
+          "status": "resolved",
+          "resolution_strategy": "same_file_resolution",
+          "confidence": 0.98,
+          "mode_a_original_l1": "resolved",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": "org.eclipse.jgit.ignore.FastIgnoreRuleTest",
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        },
+        {
+          "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/ReflogCommandTest.java",
+          "line": 118,
+          "raw_name": "assertEquals",
+          "stratum": "S5",
+          "status": "ambiguous",
+          "resolution_strategy": "ambiguous",
+          "confidence": 0.0,
+          "mode_a_original_l1": "ambiguous",
+          "truth": {
+            "verdict": "UNADJUDICATED",
+            "reason": "no_receiver"
+          },
+          "jdt_decl": null,
+          "adjudication": "UNADJUDICATED (no_receiver)"
+        }
+      ]
+    }
+  },
+  "manual_needed": [
+    {
+      "file": "src/test/java/com/zaxxer/hikari/pool/UnwrapTest.java",
+      "line": 71,
+      "raw_name": "config.setDataSourceClassName",
+      "stratum": "S2",
+      "status": "ambiguous",
+      "resolution_strategy": "unique_symbol_resolution",
+      "confidence": 0.0,
+      "mode_a_original_l1": "resolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "config",
+        "decl_simple": "HikariConfig",
+        "decl_full": "com.zaxxer.hikari.HikariConfig",
+        "source_line": "config.setDataSourceClassName(\"com.zaxxer.hikari.mocks.StubDataSource\");"
+      },
+      "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+      "adjudication": "NEEDS_MANUAL (mode A resolved)",
+      "source": "config.setDataSourceClassName(\"com.zaxxer.hikari.mocks.StubDataSource\");"
+    },
+    {
+      "file": "src/test/java/com/zaxxer/hikari/pool/ConnectionStateTest.java",
+      "line": 48,
+      "raw_name": "ds.addDataSourceProperty",
+      "stratum": "S2",
+      "status": "ambiguous",
+      "resolution_strategy": "unique_symbol_resolution",
+      "confidence": 0.0,
+      "mode_a_original_l1": "resolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "ds",
+        "decl_simple": "HikariDataSource",
+        "decl_full": "com.zaxxer.hikari.HikariDataSource",
+        "source_line": "ds.addDataSourceProperty(\"user\", \"bar\");"
+      },
+      "jdt_decl": "com.zaxxer.hikari.HikariConfig",
+      "adjudication": "NEEDS_MANUAL (mode A resolved)",
+      "source": "ds.addDataSourceProperty(\"user\", \"bar\");"
+    },
+    {
+      "file": "src/test/java/com/zaxxer/hikari/pool/MiscTest.java",
+      "line": 121,
+      "raw_name": "SECONDS.toMillis",
+      "stratum": "S2",
+      "status": "ambiguous",
+      "resolution_strategy": "unique_symbol_resolution",
+      "confidence": 0.0,
+      "mode_a_original_l1": "resolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "SECONDS",
+        "decl_simple": "TimeUnit",
+        "decl_full": "java.util.concurrent.TimeUnit",
+        "source_line": "quietlySleep(SECONDS.toMillis(1));"
+      },
+      "jdt_decl": "java.util.concurrent.TimeUnit",
+      "adjudication": "NEEDS_MANUAL (mode A resolved)",
+      "source": "quietlySleep(SECONDS.toMillis(1));"
+    },
+    {
+      "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+      "line": 294,
+      "raw_name": "target.add",
+      "stratum": "S2",
+      "status": "ambiguous",
+      "resolution_strategy": "same_file_resolution",
+      "confidence": 0.0,
+      "mode_a_original_l1": "resolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "target",
+        "decl_simple": "ObjectWithWildcardCollection",
+        "decl_full": "ObjectWithWildcardCollection",
+        "source_line": "target.add(objB);"
+      },
+      "jdt_decl": "java.util.List<com.google.gson.common.TestTypes.BagOfPrimitives>",
+      "adjudication": "NEEDS_MANUAL (mode A resolved)",
+      "source": "target.add(objB);"
+    },
+    {
+      "file": "proto/src/test/java/com/google/gson/protobuf/functional/StructTypeAdapterTest.java",
+      "line": 102,
+      "raw_name": "json.getAsJsonArray(\"list\").get(0).getAsString",
+      "stratum": "S4",
+      "status": "unresolved",
+      "resolution_strategy": "indirect_call_shape",
+      "confidence": 0.0,
+      "mode_a_original_l1": "unresolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "json",
+        "decl_simple": "JsonObject",
+        "decl_full": "com.google.gson.JsonObject",
+        "source_line": "expect.that(json.getAsJsonArray(\"list\").get(0).getAsString()).isEqualTo(\"first\");"
+      },
+      "jdt_decl": "com.google.gson.JsonElement",
+      "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)",
+      "source": "expect.that(json.getAsJsonArray(\"list\").get(0).getAsString()).isEqualTo(\"first\");"
+    },
+    {
+      "file": "gson/src/test/java/com/google/gson/functional/CustomDeserializerTest.java",
+      "line": 114,
+      "raw_name": "jsonObj.get(\"data\").getAsString",
+      "stratum": "S4",
+      "status": "unresolved",
+      "resolution_strategy": "indirect_call_shape",
+      "confidence": 0.0,
+      "mode_a_original_l1": "unresolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "jsonObj",
+        "decl_simple": "JsonObject",
+        "decl_full": "com.google.gson.JsonObject",
+        "source_line": "String dataString = jsonObj.get(\"data\").getAsString();"
+      },
+      "jdt_decl": "com.google.gson.JsonElement",
+      "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)",
+      "source": "String dataString = jsonObj.get(\"data\").getAsString();"
+    },
+    {
+      "file": "gson/src/test/java/com/google/gson/functional/InheritanceTest.java",
+      "line": 91,
+      "raw_name": "json.get(ClassWithBaseArrayField.FIELD_KEY).getAsJsonArray",
+      "stratum": "S4",
+      "status": "unresolved",
+      "resolution_strategy": "indirect_call_shape",
+      "confidence": 0.0,
+      "mode_a_original_l1": "unresolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "json",
+        "decl_simple": "String",
+        "decl_full": "String",
+        "source_line": "JsonArray bases = json.get(ClassWithBaseArrayField.FIELD_KEY).getAsJsonArray();"
+      },
+      "jdt_decl": "com.google.gson.JsonElement",
+      "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)",
+      "source": "JsonArray bases = json.get(ClassWithBaseArrayField.FIELD_KEY).getAsJsonArray();"
+    },
+    {
+      "file": "org.eclipse.jgit.lfs.server/src/org/eclipse/jgit/lfs/server/s3/SignerV4.java",
+      "line": 189,
+      "raw_name": "s.append(SCHEME).append(\"-\").append(ALGORITHM).append",
+      "stratum": "S4",
+      "status": "unresolved",
+      "resolution_strategy": "indirect_call_shape",
+      "confidence": 0.0,
+      "mode_a_original_l1": "unresolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "s",
+        "decl_simple": "String",
+        "decl_full": "String",
+        "source_line": "s.append(SCHEME).append(\"-\").append(ALGORITHM).append(\" \"); //$NON-NLS-1$ //$NON-NLS-2$"
+      },
+      "jdt_decl": "java.lang.StringBuilder",
+      "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)",
+      "source": "s.append(SCHEME).append(\"-\").append(ALGORITHM).append(\" \"); //$NON-NLS-1$ //$NON-NLS-2$"
+    },
+    {
+      "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/junit/TestRepositoryTest.java",
+      "line": 214,
+      "raw_name": "repo.updateRef(\"HEAD\").link",
+      "stratum": "S4",
+      "status": "unresolved",
+      "resolution_strategy": "indirect_call_shape",
+      "confidence": 0.0,
+      "mode_a_original_l1": "unresolved",
+      "truth": {
+        "verdict": "OK",
+        "receiver": "repo",
+        "decl_simple": "InMemoryRepository",
+        "decl_full": "org.eclipse.jgit.internal.storage.dfs.InMemoryRepository",
+        "source_line": "repo.updateRef(\"HEAD\").link(\"refs/heads/master\");"
+      },
+      "jdt_decl": "org.eclipse.jgit.lib.RefUpdate",
+      "adjudication": "NEEDS_MANUAL (S4 JDT vs truth)",
+      "source": "repo.updateRef(\"HEAD\").link(\"refs/heads/master\");"
+    }
+  ]
+}

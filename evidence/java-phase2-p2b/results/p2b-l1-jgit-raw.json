@@ -1,0 +1,64 @@
+{
+  "label": "jgit",
+  "mode": "l1",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\jgit",
+  "runs": [
+    {
+      "rc": 0,
+      "wall_ms": 37328,
+      "sampled_peak_rss_mb": 1025.8,
+      "rss_samples": 372,
+      "cpu_ms": 24687,
+      "cpu_ms_exact": 24687,
+      "metrics": {
+        "files_scanned": 1895,
+        "nodes_created": 37942,
+        "edges_created": 142113,
+        "resolved_references": 155877,
+        "ambiguous_references": 107655,
+        "unresolved_references": 96749,
+        "parse_failures": 0,
+        "index_time_ms": 36910.12710001087
+      },
+      "db_size_mb": 816.6
+    },
+    {
+      "rc": 0,
+      "wall_ms": 24991,
+      "sampled_peak_rss_mb": 1026.5,
+      "rss_samples": 249,
+      "cpu_ms": 24093,
+      "cpu_ms_exact": 24093,
+      "metrics": {
+        "files_scanned": 1895,
+        "nodes_created": 37942,
+        "edges_created": 142113,
+        "resolved_references": 155877,
+        "ambiguous_references": 107655,
+        "unresolved_references": 96749,
+        "parse_failures": 0,
+        "index_time_ms": 24553.050200018333
+      },
+      "db_size_mb": 816.6
+    },
+    {
+      "rc": 0,
+      "wall_ms": 25092,
+      "sampled_peak_rss_mb": 1026.6,
+      "rss_samples": 250,
+      "cpu_ms": 24359,
+      "cpu_ms_exact": 24359,
+      "metrics": {
+        "files_scanned": 1895,
+        "nodes_created": 37942,
+        "edges_created": 142113,
+        "resolved_references": 155877,
+        "ambiguous_references": 107655,
+        "unresolved_references": 96749,
+        "parse_failures": 0,
+        "index_time_ms": 24716.829000011785
+      },
+      "db_size_mb": 816.6
+    }
+  ]
+}

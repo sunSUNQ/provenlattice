@@ -1,0 +1,245 @@
+{
+  "denominator": 5077,
+  "sample": [
+    {
+      "path": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+      "start_line": 894,
+      "raw_name": "assertNotANumber",
+      "target": "com.google.gson.stream.JsonReaderTest.assertNotANumber",
+      "confidence": 0.98,
+      "source_line": "assertNotANumber(\"-\");"
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/internal/sql/SqlTypesSupport.java",
+      "start_line": 64,
+      "raw_name": "DateType",
+      "target": "com.google.gson.internal.bind.DefaultDateTypeAdapter.DateType",
+      "confidence": 1.0,
+      "source_line": "new DateType<java.sql.Date>(java.sql.Date.class) {"
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/stream/JsonReader.java",
+      "start_line": 1104,
+      "raw_name": "nextUnquotedValue",
+      "target": "com.google.gson.stream.JsonReader.nextUnquotedValue",
+      "confidence": 0.98,
+      "source_line": "peekedString = nextUnquotedValue();"
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/JsonObject.java",
+      "start_line": 223,
+      "raw_name": "members.get",
+      "target": "com.google.gson.JsonObject.get",
+      "confidence": 0.98,
+      "source_line": "return (JsonObject) members.get(memberName);"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/ParameterizedTypeFixtures.java",
+      "start_line": 156,
+      "raw_name": "PrimitiveTypeAdapter",
+      "target": "com.google.gson.PrimitiveTypeAdapter",
+      "confidence": 0.75,
+      "source_line": "PrimitiveTypeAdapter typeAdapter = new PrimitiveTypeAdapter();"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/stream/JsonWriterTest.java",
+      "start_line": 684,
+      "raw_name": "JsonWriter",
+      "target": "com.google.gson.stream.JsonWriter",
+      "confidence": 0.75,
+      "source_line": "JsonWriter jsonWriter = new JsonWriter(stringWriter);"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/functional/MapTest.java",
+      "start_line": 95,
+      "raw_name": "map.put",
+      "target": "com.google.gson.functional.MapTest.MapWithoutNoArgsConstructor.put",
+      "confidence": 0.98,
+      "source_line": "map.put(\"b\", \"string\");"
+    },
+    {
+      "path": "extras/src/test/java/com/google/gson/typeadapters/RuntimeTypeAdapterFactoryTest.java",
+      "start_line": 149,
+      "raw_name": "GsonBuilder",
+      "target": "com.google.gson.GsonBuilder",
+      "confidence": 1.0,
+      "source_line": "Gson gson = new GsonBuilder().registerTypeAdapterFactory(billingAdapter).create();"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/functional/VersioningTest.java",
+      "start_line": 78,
+      "raw_name": "gsonWithVersion",
+      "target": "com.google.gson.functional.VersioningTest.gsonWithVersion",
+      "confidence": 0.98,
+      "source_line": "Gson gson = gsonWithVersion(1.0);"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/internal/bind/JsonElementReaderTest.java",
+      "start_line": 133,
+      "raw_name": "JsonParser.parseString",
+      "target": "com.google.gson.JsonParser.parseString",
+      "confidence": 1.0,
+      "source_line": "JsonElement element = JsonParser.parseString(\"[1, 2, 3]\");"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/internal/LinkedTreeMapTest.java",
+      "start_line": 201,
+      "raw_name": "LinkedTreeMap",
+      "target": "com.google.gson.internal.LinkedTreeMap",
+      "confidence": 0.75,
+      "source_line": "LinkedTreeMap<String, Integer> map2 = new LinkedTreeMap<>();"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/functional/PrettyPrintingTest.java",
+      "start_line": 46,
+      "raw_name": "GsonBuilder",
+      "target": "com.google.gson.GsonBuilder",
+      "confidence": 1.0,
+      "source_line": "gson = new GsonBuilder().setPrettyPrinting().create();"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/internal/JavaVersionTest.java",
+      "start_line": 72,
+      "raw_name": "JavaVersion.parseMajorJavaVersion",
+      "target": "com.google.gson.internal.JavaVersion.parseMajorJavaVersion",
+      "confidence": 0.75,
+      "source_line": "assertThat(JavaVersion.parseMajorJavaVersion(\"9.0.1+20\")).isEqualTo(9);"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/JsonPrimitiveTest.java",
+      "start_line": 275,
+      "raw_name": "MoreAsserts.assertEqualsAndHashCode",
+      "target": "com.google.gson.common.MoreAsserts.assertEqualsAndHashCode",
+      "confidence": 1.0,
+      "source_line": "MoreAsserts.assertEqualsAndHashCode("
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/internal/bind/JsonTreeReader.java",
+      "start_line": 368,
+      "raw_name": "push",
+      "target": "com.google.gson.internal.bind.JsonTreeReader.push",
+      "confidence": 0.98,
+      "source_line": "push(entry.getValue());"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/functional/NumberLimitsTest.java",
+      "start_line": 103,
+      "raw_name": "\"1\".repeat",
+      "target": "com.google.gson.stream.JsonReaderTest.repeat",
+      "confidence": 0.75,
+      "source_line": ".isEqualTo(new BigInteger(\"1\".repeat(MAX_LENGTH)));"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/JsonNullTest.java",
+      "start_line": 35,
+      "raw_name": "JsonNull",
+      "target": "com.google.gson.JsonNull",
+      "confidence": 0.75,
+      "source_line": "MoreAsserts.assertEqualsAndHashCode(new JsonNull(), JsonNull.INSTANCE);"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+      "start_line": 273,
+      "raw_name": "target.add",
+      "target": "com.google.gson.functional.CollectionTest.CollectionWithoutNoArgsConstructor.add",
+      "confidence": 0.98,
+      "source_line": "target.add(\"World\");"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/JsonArrayTest.java",
+      "start_line": 530,
+      "raw_name": "JsonArray",
+      "target": "com.google.gson.JsonArray",
+      "confidence": 0.75,
+      "source_line": "JsonArray singleElement = new JsonArray();"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/functional/MapTest.java",
+      "start_line": 597,
+      "raw_name": "Gson",
+      "target": "com.google.gson.Gson",
+      "confidence": 1.0,
+      "source_line": "Gson gson = new Gson();"
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/internal/GsonTypes.java",
+      "start_line": 640,
+      "raw_name": "canonicalize",
+      "target": "com.google.gson.internal.GsonTypes.canonicalize",
+      "confidence": 0.98,
+      "source_line": "this.lowerBound = canonicalize(lowerBounds[0]);"
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/JsonObject.java",
+      "start_line": 105,
+      "raw_name": "add",
+      "target": "com.google.gson.JsonObject.add",
+      "confidence": 0.98,
+      "source_line": "add(property, value == null ? JsonNull.INSTANCE : new JsonPrimitive(value));"
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/internal/bind/util/ISO8601Utils.java",
+      "start_line": 103,
+      "raw_name": "padInt",
+      "target": "com.google.gson.internal.bind.util.ISO8601Utils.padInt",
+      "confidence": 0.98,
+      "source_line": "padInt(formatted, calendar.get(Calendar.MONTH) + 1, \"MM\".length());"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+      "start_line": 2020,
+      "raw_name": "JsonReader",
+      "target": "com.google.gson.stream.JsonReader",
+      "confidence": 0.75,
+      "source_line": "JsonReader reader = new JsonReader(reader(json));"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+      "start_line": 2042,
+      "raw_name": "repeat",
+      "target": "com.google.gson.stream.JsonReaderTest.repeat",
+      "confidence": 0.98,
+      "source_line": "JsonReader reader = new JsonReader(reader(\"[\" + repeat('x', 8192) + \"]\"));"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/JsonArrayAsListTest.java",
+      "start_line": 274,
+      "raw_name": "JsonPrimitive",
+      "target": "com.google.gson.JsonPrimitive",
+      "confidence": 0.75,
+      "source_line": ".containsExactly(new JsonPrimitive(1), new JsonPrimitive(2), new JsonPrimitive(3))"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/stream/JsonReaderTest.java",
+      "start_line": 1797,
+      "raw_name": "JsonReader",
+      "target": "com.google.gson.stream.JsonReader",
+      "confidence": 0.75,
+      "source_line": "JsonReader reader = new JsonReader(reader(\"[0.\" + repeat('9', 8192) + \"]\"));"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/JsonObjectAsMapTest.java",
+      "start_line": 230,
+      "raw_name": "JsonPrimitive",
+      "target": "com.google.gson.JsonPrimitive",
+      "confidence": 0.75,
+      "source_line": "assertThat(entrySet.remove(new SimpleEntry<>(\"a\", new JsonPrimitive(1)))).isTrue();"
+    },
+    {
+      "path": "gson/src/test/java/com/google/gson/JsonPrimitiveTest.java",
+      "start_line": 327,
+      "raw_name": "JsonPrimitive",
+      "target": "com.google.gson.JsonPrimitive",
+      "confidence": 0.75,
+      "source_line": "new JsonPrimitive(9007199254740993L), new JsonPrimitive(9007199254740992.0));"
+    },
+    {
+      "path": "gson/src/main/java/com/google/gson/internal/bind/util/ISO8601Utils.java",
+      "start_line": 207,
+      "raw_name": "checkOffset",
+      "target": "com.google.gson.internal.bind.util.ISO8601Utils.checkOffset",
+      "confidence": 0.98,
+      "source_line": "if (checkOffset(date, offset, '.')) {"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "note": "Hand-verified gold per JLS. Statuses: CORRECT (expected binding FQN), AMBIGUOUS (compile error per JLS), UNRESOLVED_OK (missing dependency must not bind), SYNTAX_RECOVERY (class must survive error file). No backend output was used as gold.",
+  "queries": [
+    {"id": "Q01", "file": "com/x/app/Overloads.java", "expr": "build(1)", "expect": "CORRECT", "target": "com.x.app.Overloads.build(int)"},
+    {"id": "Q02", "file": "com/x/app/Overloads.java", "expr": "build(\"x\")", "expect": "CORRECT", "target": "com.x.app.Overloads.build(java.lang.String)"},
+    {"id": "Q03", "file": "com/x/app/Overloads.java", "expr": "build(1, \"y\")", "expect": "CORRECT", "target": "com.x.app.Overloads.build(int,java.lang.String)"},
+    {"id": "Q04", "file": "com/x/app/App.java", "expr": "build(5)", "expect": "CORRECT", "target": "com.x.core.Helper.build(int)"},
+    {"id": "Q05", "file": "com/x/app/App.java", "expr": "com.x.core.Helper.build(6)", "expect": "CORRECT", "target": "com.x.core.Helper.build(int)"},
+    {"id": "Q06", "file": "com/x/app/App.java", "expr": "new Helper()", "expect": "CORRECT", "target": "com.x.core.Helper.<init>()"},
+    {"id": "Q07", "file": "com/x/app/App.java", "expr": ".run()", "expect": "CORRECT", "target": "com.x.core.Helper.run()"},
+    {"id": "Q08", "file": "com/x/app/App.java", "expr": "com.x.core.Runner (return type)", "expect": "CORRECT", "target": "com.x.core.Runner"},
+    {"id": "Q09", "file": "com/x/app/App.java", "expr": "new com.x.core.Runner()", "expect": "CORRECT", "target": "com.x.core.Runner.<init>()"},
+    {"id": "Q10", "file": "com/x/app/Wild.java", "expr": "Helper h", "expect": "CORRECT", "target": "com.x.util.Helper", "note": "GOLD CORRECTION (2026-10-15): initial hand-label claimed ambiguity, but Wild.java imports only com.x.util.* - single on-demand candidate, no ambiguity per JLS 6.5.5"},
+    {"id": "Q11", "file": "com/x/app/Wild.java", "expr": "Runner r", "expect": "CORRECT", "target": "com.x.util.Runner", "note": "same gold correction as Q10"},
+    {"id": "Q20", "file": "com/x/app/Wild2.java", "expr": "Helper h (two on-demand imports)", "expect": "AMBIGUOUS", "target": "com.x.core.Helper|com.x.util.Helper"},
+    {"id": "Q21", "file": "com/x/app/Wild2.java", "expr": "Runner r (two on-demand imports)", "expect": "AMBIGUOUS", "target": "com.x.core.Runner|com.x.util.Runner"},
+    {"id": "Q12", "file": "com/x/app/Generic.java", "expr": "List<String>", "expect": "CORRECT", "target": "java.util.List"},
+    {"id": "Q13", "file": "com/x/app/Generic.java", "expr": "new Box<Integer>()", "expect": "CORRECT", "target": "com.x.app.Box.<init>()"},
+    {"id": "Q14", "file": "com/x/app/UseExternal.java", "expr": "HashMap<String,Integer>", "expect": "CORRECT", "target": "java.util.HashMap"},
+    {"id": "Q15", "file": "com/x/app/UseExternal.java", "expr": "org.apache.commons.math3.util.FastMath", "expect": "UNRESOLVED_OK", "target": null},
+    {"id": "Q16", "file": "com/x/core/Runner.java", "expr": "extends Base", "expect": "CORRECT", "target": "com.x.core.Base"},
+    {"id": "Q17", "file": "com/x/core/Runner.java", "expr": "implements Shape", "expect": "CORRECT", "target": "com.x.core.Shape"},
+    {"id": "Q18", "file": "com/x/core/Runner.java", "expr": "calc(2)", "expect": "CORRECT", "target": "com.x.core.Base.calc(int)"},
+    {"id": "Q19", "file": "com/x/app/Broken.java", "expr": "class Broken declaration", "expect": "SYNTAX_RECOVERY", "target": "com.x.app.Broken"}
+  ],
+  "capability_matrix_notes": {
+    "maven_multimodule": "no backend ships in-source-tree multimodule resolution without build tool integration; classify per-backend (UNSUPPORTED without manual classpath)",
+    "gradle_multimodule": "same as above"
+  }
+}

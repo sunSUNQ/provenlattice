@@ -1,0 +1,208 @@
+[
+  {
+    "id": 2,
+    "repo": "hikaricp",
+    "site": "HikariConfig.java:318",
+    "call": "getPassword",
+    "truth": "com.zaxxer.hikari.util.Credentials.getPassword",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+        "line": 318,
+        "expr": "getPassword",
+        "decl": "com.zaxxer.hikari.util.Credentials",
+        "signature": "getPassword()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CORRECT"
+  },
+  {
+    "id": 1,
+    "repo": "hikaricp",
+    "site": "ClockSourceTest.java:41",
+    "call": "toMillis",
+    "truth": "java.util.concurrent.TimeUnit.toMillis",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "src/test/java/com/zaxxer/hikari/util/ClockSourceTest.java",
+        "line": 41,
+        "expr": "toMillis",
+        "decl": "java.util.concurrent.TimeUnit",
+        "signature": "toMillis()",
+        "recovered": false
+      },
+      {
+        "kind": "call",
+        "file": "src/test/java/com/zaxxer/hikari/util/ClockSourceTest.java",
+        "line": 41,
+        "expr": "toMillis",
+        "decl": "java.util.concurrent.TimeUnit",
+        "signature": "toMillis()",
+        "recovered": false
+      },
+      {
+        "kind": "call",
+        "file": "src/test/java/com/zaxxer/hikari/util/ClockSourceTest.java",
+        "line": 41,
+        "expr": "toMillis",
+        "decl": "java.util.concurrent.TimeUnit",
+        "signature": "toMillis()",
+        "recovered": false
+      },
+      {
+        "kind": "call",
+        "file": "src/test/java/com/zaxxer/hikari/util/ClockSourceTest.java",
+        "line": 41,
+        "expr": "toMillis",
+        "decl": "java.util.concurrent.TimeUnit",
+        "signature": "toMillis()",
+        "recovered": false
+      },
+      {
+        "kind": "call",
+        "file": "src/test/java/com/zaxxer/hikari/util/ClockSourceTest.java",
+        "line": 41,
+        "expr": "toMillis",
+        "decl": "java.util.concurrent.TimeUnit",
+        "signature": "toMillis()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CORRECT"
+  },
+  {
+    "id": 3,
+    "repo": "hikaricp",
+    "site": "ConcurrentBag.java:305",
+    "call": "stream",
+    "truth": "java.util.List.stream",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "src/main/java/com/zaxxer/hikari/util/ConcurrentBag.java",
+        "line": 305,
+        "expr": "stream",
+        "decl": "java.util.Collection<T>",
+        "signature": "stream()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CHECK: bound to java.util.Collection<T>"
+  },
+  {
+    "id": 4,
+    "repo": "hikaricp",
+    "site": "HikariConfig.java:1029",
+    "call": "get",
+    "truth": "java.lang.reflect.Field.get",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+        "line": 1029,
+        "expr": "get",
+        "decl": "java.lang.reflect.Field",
+        "signature": "get()",
+        "recovered": false
+      },
+      {
+        "kind": "call",
+        "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+        "line": 1029,
+        "expr": "get",
+        "decl": "java.util.concurrent.atomic.AtomicReference",
+        "signature": "get()",
+        "recovered": false
+      },
+      {
+        "kind": "call",
+        "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+        "line": 1029,
+        "expr": "get",
+        "decl": "java.lang.reflect.Field",
+        "signature": "get()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CORRECT"
+  },
+  {
+    "id": 5,
+    "repo": "gson",
+    "site": "JsonObject.java:223",
+    "call": "get",
+    "truth": "com.google.gson.internal.LinkedTreeMap.get",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "gson/src/main/java/com/google/gson/JsonObject.java",
+        "line": 223,
+        "expr": "get",
+        "decl": "com.google.gson.internal.LinkedTreeMap<java.lang.String,com.google.gson.JsonElement>",
+        "signature": "get()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CORRECT"
+  },
+  {
+    "id": 6,
+    "repo": "gson",
+    "site": "MapTest.java:95",
+    "call": "put",
+    "truth": "java.util.Map.put (or implementing class)",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "gson/src/test/java/com/google/gson/functional/MapTest.java",
+        "line": 95,
+        "expr": "put",
+        "decl": "java.util.Map<java.lang.String,java.lang.Object>",
+        "signature": "put()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CORRECT"
+  },
+  {
+    "id": 7,
+    "repo": "gson",
+    "site": "NumberLimitsTest.java:103",
+    "call": "repeat",
+    "truth": "java.lang.String.repeat",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "gson/src/test/java/com/google/gson/functional/NumberLimitsTest.java",
+        "line": 103,
+        "expr": "repeat",
+        "decl": "java.lang.String",
+        "signature": "repeat()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CORRECT"
+  },
+  {
+    "id": 8,
+    "repo": "gson",
+    "site": "CollectionTest.java:273",
+    "call": "add",
+    "truth": "java.util.List.add (or implementing class)",
+    "jdt": [
+      {
+        "kind": "call",
+        "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+        "line": 273,
+        "expr": "add",
+        "decl": "java.util.List<java.lang.Object>",
+        "signature": "add()",
+        "recovered": false
+      }
+    ],
+    "verdict": "CORRECT"
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "dataset": [
+    {"label": "hikaricp", "url": "https://github.com/brettwooldridge/HikariCP", "commit": "a4d93f4f85517f90e632b795486d7102e933d7ff", "java_files": 114, "clone": "depth-1"},
+    {"label": "gson", "url": "https://github.com/google/gson", "commit": "e2292f9c9f2e07a4791827e8eea34aa7d80545d6", "java_files": 264, "clone": "depth-1"},
+    {"label": "jgit", "url": "https://github.com/eclipse-jgit/jgit", "commit": "6e68739fd9535672d5f1316d943a2107063617e0", "java_files": 1896, "clone": "depth-1"}
+  ],
+  "protocol": {
+    "warmup": "1x discarded",
+    "cold": "3x fresh subprocess (fresh db each run)",
+    "warm": "3x full re-index on persisted db",
+    "incremental": "3x single-file touch on indexed db (3 distinct files)",
+    "delete": "1x file removal + update",
+    "isolation": "each run in a fresh python subprocess; PYTHONPATH=src",
+    "rss": "GetProcessMemoryInfo PeakWorkingSetSize inside the measuring process"
+  },
+  "environment": {
+    "os": "Windows (win32)",
+    "python": "3.12.10",
+    "tree_sitter": "0.26.0",
+    "tree_sitter_java": "0.23.5",
+    "disk": "local fixed disk (unspecified SSD/HDD)",
+    "cpu_load": "uncontrolled workstation background"
+  },
+  "headlines": {
+    "hikaricp": {"cold_ms": 649, "cold_rss_mb": 60.2, "nodes": 2083, "edges": 5795, "refs": 13494, "resolved_pct": 36.4, "ambiguous_pct": 14.5, "unresolved_pct": 49.0, "db_mb": 24.2},
+    "gson": {"cold_ms": 2829, "cold_rss_mb": 131.7, "nodes": 5479, "edges": 16573, "refs": 43340, "resolved_pct": 35.3, "ambiguous_pct": 16.2, "unresolved_pct": 48.5, "db_mb": 77.0},
+    "jgit": {"cold_ms": 24883, "cold_rss_mb": 1026.2, "nodes": 37944, "edges": 142220, "refs": 360289, "resolved_pct": 43.3, "ambiguous_pct": 29.9, "unresolved_pct": 26.8, "db_mb": 816.8}
+  },
+  "findings": [
+    "Zero parse failures and zero syntax-error files across all 2274 Java files indexed (clean upstream corpora).",
+    "jgit cold ~13.2 files/s; peak RSS ~1 GB at 1.9k files (parser-cache JSON + graph build dominate).",
+    "warm is SLOWER than cold at jgit scale (31.7s vs 24.9s) - replace_snapshot delete+insert on a large existing db costs more than building fresh.",
+    "incremental offers NO benefit at gson/jgit scale (2.9s vs 2.8s; 33.3s vs 24.9s): a single-file touch invalidates a large affected-reference set (short-name collisions across packages), forcing near-full re-resolution. This is a real cost characteristic of the current incremental design on Java corpora and is a key input to the P4 ADR.",
+    "No pre-existing PASS threshold was violated or invented: the plan set no absolute budget; raw numbers are reported as measurements."
+  ],
+  "raw_files": ["bench-raw-hikaricp.json", "bench-raw-gson.json", "bench-raw-jgit.json"],
+  "stats_files": ["bench-stats-hikaricp.json", "bench-stats-gson.json", "bench-stats-jgit.json"]
+}
