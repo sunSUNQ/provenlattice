@@ -402,9 +402,13 @@ class JavaGraphTests(unittest.TestCase):
         self.assertEqual(param_type["resolution_strategy"], "qualified_name_resolution")
         self.assertEqual(param_type["confidence"], 0.99)
         call = find_references(references, raw_name="coreHelper.run", reference_type="CALLS")[0]
-        self.assertEqual(call["status"], "resolved")
+        # P2-A R1: identifier-receiver instance call -> ambiguous (demoted)
+        self.assertEqual(call["status"], "ambiguous")
         self.assertEqual(call["resolution_strategy"], "unique_symbol_resolution")
-        self.assertEqual(call["confidence"], 0.75)
+        self.assertEqual(call["confidence"], 0.0)
+        self.assertEqual(json.loads(call["metadata"])["receiver_shape"], "identifier")
+        self.assertEqual(json.loads(call["metadata"])["demote_reason"],
+                         "receiver_type_unknown")
 
     # java10
     def test_java10_cross_package_same_name_is_ambiguous(self) -> None:

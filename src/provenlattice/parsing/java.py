@@ -84,6 +84,8 @@ class JavaExtractor:
         self.references: list[ParsedReference] = []
         self.imports: list[ParsedImport] = []
         self.import_aliases: dict[str, tuple[str, str | None]] = {}
+        self.type_aliases: set[str] = set()
+        self.static_member_aliases: set[str] = set()
         self.declared_types: set[str] = set()
         self.locals: set[str] = set()
 
@@ -410,6 +412,10 @@ class JavaExtractor:
         )
         if not wildcard:
             self.import_aliases[target] = (module, target)
+            if is_static:
+                self.static_member_aliases.add(target)
+            else:
+                self.type_aliases.add(target)
 
     # -- references and calls ---------------------------------------------
 
@@ -446,6 +452,28 @@ class JavaExtractor:
     def _base_text(self, node: Any) -> str:
         return self.text(node).split("<", 1)[0].strip()
 
+    def _receiver_shape(self, object_node: Any, receiver: str) -> str:
+        """Classify the receiver of a method invocation for P2-A R1 demotion.
+
+        "identifier" = a plain variable/field/parameter or a static-imported
+        member constant: the declared type is NOT statically known from the
+        syntax-only view, so name-only bindings are unsafe (P2-A R1).
+        "class_static" = the receiver root names an in-file or imported class
+        (single-type import), which is explicit evidence.
+        """
+        if object_node is None:
+            return "implicit_this"
+        if object_node.type == "this":
+            return "this"
+        if receiver == "super" or object_node.type == "super":
+            return "super"
+        if "(" in receiver or "[" in receiver:
+            return "complex"
+        root = receiver.partition(".")[0]
+        if root in self.declared_types or root in self.type_aliases:
+            return "class_static"
+        return "identifier"
+
     def _call(self, node: Any) -> None:
         name = self.text(node.child_by_field_name("name"))
         if not name:
@@ -476,6 +504,9 @@ class JavaExtractor:
                 target = f"{receiver}.{name}"
                 if receiver.partition(".")[0] in self.import_aliases:
                     target, target_module = self._rewrite(target)
+        metadata["receiver_shape"] = self._receiver_shape(object_node,
+                                                           self.text(object_node).strip()
+                                                           if object_node is not None else "")
         metadata["call_kind"] = call_kind
         self._ref(
             target, ref_type="CALLS", target_module=target_module, metadata=metadata,

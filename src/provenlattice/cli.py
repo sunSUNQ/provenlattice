@@ -84,6 +84,20 @@ def build_parser() -> argparse.ArgumentParser:
         "--max-candidates", type=int, default=20,
         help="budget cap: truncation is reported, never hidden as an empty result")
     command("status")
+    java_semantic_cmd = command("java-semantic")
+    java_semantic_cmd.add_argument("repo")
+    java_semantic_cmd.add_argument(
+        "--classpath-manifest", default=None,
+        help="P2-C manifest file (project:<path> / dep:<path> lines); "
+             "omit for an empty classpath")
+    java_semantic_cmd.add_argument("--xmx", default="1g")
+    java_semantic_cmd.add_argument("--timeout", type=int, default=900)
+    java_semantic_cmd.add_argument(
+        "--mode", choices=("stats", "full"), default="full",
+        help="stats: summary only; full: per-call-site bindings + L1 merge audit")
+    java_semantic_cmd.add_argument(
+        "--status-only", action="store_true",
+        help="report analyzer availability without running JDT")
     symbol = command("symbol")
     symbol.add_argument("name")
     definition = command("definition")
@@ -199,6 +213,20 @@ def run(args: argparse.Namespace) -> dict:
                 "error": {"code": error.code, "detail": error.detail},
                 "defect_type": args.type,
             }
+    if args.command == "java-semantic":
+        from . import java_semantic as jsem
+
+        if args.status_only:
+            return jsem.availability()
+        result = jsem.run_jdt_analysis(
+            args.repo, classpath_manifest=args.classpath_manifest,
+            xmx=args.xmx, timeout_s=args.timeout, mode=args.mode)
+        payload = result.to_dict()
+        if result.status == "available" and args.mode == "full":
+            database = Path(args.database) if args.database else Path(args.repo) / ".provenlattice" / "codegraph.db"
+            if database.exists():
+                payload["merge_audit"] = jsem.merge_with_l1(result, database)
+        return payload
     if args.command == "task-context":
         if not database.exists():
             return {"version": "task-context-v0", "status": "not_built", "anchor": args.symbol}
