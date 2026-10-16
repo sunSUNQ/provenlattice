@@ -1,0 +1,22 @@
+{
+  "identical": true,
+  "counts_old": {
+    "jdt_ambiguous": 1379,
+    "recovered_by_jdt": 3084,
+    "conflict_conservative": 38,
+    "l1_and_jdt_agree": 716
+  },
+  "counts_new": {
+    "jdt_ambiguous": 1379,
+    "recovered_by_jdt": 3084,
+    "conflict_conservative": 38,
+    "l1_and_jdt_agree": 716
+  },
+  "sites": 5217,
+  "frozen_oracle_counts": {
+    "recovered_by_jdt": 3215,
+    "conflict_conservative": 38,
+    "l1_and_jdt_agree": 716,
+    "jdt_ambiguous": 1248
+  }
+}
