@@ -1,0 +1,71 @@
+{
+  "label": "jgit-heap1g",
+  "mode": "jdt",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\jgit",
+  "runs": [
+    {
+      "cmd_xmx": "1g",
+      "rc": 0,
+      "wall_ms": 6621,
+      "sampled_peak_rss_mb": 1189.8,
+      "rss_samples": 66,
+      "cpu_ms": 35968,
+      "cpu_ms_exact": 35968,
+      "summary": {
+        "kind": "summary",
+        "files_total": 1891,
+        "files_parsed": 1891,
+        "problems_total": 30612,
+        "calls_resolved": 138315,
+        "calls_recovered": 1,
+        "calls_ambiguous": 23970,
+        "types_resolved": 95487,
+        "types_recovered": 2280,
+        "types_ambiguous": 85,
+        "news_resolved": 15717,
+        "news_recovered": 268,
+        "news_ambiguous": 43,
+        "parser_inits": 1,
+        "wall_ms": 6335,
+        "cpu_ms": 35781,
+        "heap_used_mb": 678,
+        "heap_max_mb": 1024
+      },
+      "xmx": "1g",
+      "detail_lines": 1,
+      "run": 0
+    },
+    {
+      "cmd_xmx": "1g",
+      "rc": 0,
+      "wall_ms": 7826,
+      "sampled_peak_rss_mb": 1128.5,
+      "rss_samples": 78,
+      "cpu_ms": 39406,
+      "cpu_ms_exact": 39406,
+      "summary": {
+        "kind": "summary",
+        "files_total": 1891,
+        "files_parsed": 1891,
+        "problems_total": 30612,
+        "calls_resolved": 138315,
+        "calls_recovered": 1,
+        "calls_ambiguous": 23970,
+        "types_resolved": 95487,
+        "types_recovered": 2280,
+        "types_ambiguous": 85,
+        "news_resolved": 15717,
+        "news_recovered": 268,
+        "news_ambiguous": 43,
+        "parser_inits": 1,
+        "wall_ms": 7482,
+        "cpu_ms": 39218,
+        "heap_used_mb": 740,
+        "heap_max_mb": 1024
+      },
+      "xmx": "1g",
+      "detail_lines": 1,
+      "run": 1
+    }
+  ]
+}

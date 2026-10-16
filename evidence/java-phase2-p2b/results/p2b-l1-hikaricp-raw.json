@@ -1,0 +1,64 @@
+{
+  "label": "hikaricp",
+  "mode": "l1",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\hikaricp",
+  "runs": [
+    {
+      "rc": 0,
+      "wall_ms": 1505,
+      "sampled_peak_rss_mb": 59.9,
+      "rss_samples": 15,
+      "cpu_ms": 765,
+      "cpu_ms_exact": 765,
+      "metrics": {
+        "files_scanned": 112,
+        "nodes_created": 2062,
+        "edges_created": 5740,
+        "resolved_references": 4872,
+        "ambiguous_references": 1958,
+        "unresolved_references": 6550,
+        "parse_failures": 0,
+        "index_time_ms": 1326.196500012884
+      },
+      "db_size_mb": 24.0
+    },
+    {
+      "rc": 0,
+      "wall_ms": 802,
+      "sampled_peak_rss_mb": 60.3,
+      "rss_samples": 8,
+      "cpu_ms": 734,
+      "cpu_ms_exact": 734,
+      "metrics": {
+        "files_scanned": 112,
+        "nodes_created": 2062,
+        "edges_created": 5740,
+        "resolved_references": 4872,
+        "ambiguous_references": 1958,
+        "unresolved_references": 6550,
+        "parse_failures": 0,
+        "index_time_ms": 656.7763000202831
+      },
+      "db_size_mb": 24.0
+    },
+    {
+      "rc": 0,
+      "wall_ms": 802,
+      "sampled_peak_rss_mb": 59.8,
+      "rss_samples": 8,
+      "cpu_ms": 671,
+      "cpu_ms_exact": 671,
+      "metrics": {
+        "files_scanned": 112,
+        "nodes_created": 2062,
+        "edges_created": 5740,
+        "resolved_references": 4872,
+        "ambiguous_references": 1958,
+        "unresolved_references": 6550,
+        "parse_failures": 0,
+        "index_time_ms": 650.5913999862969
+      },
+      "db_size_mb": 24.0
+    }
+  ]
+}

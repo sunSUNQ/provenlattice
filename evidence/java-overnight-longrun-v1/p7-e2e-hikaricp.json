@@ -1,0 +1,64 @@
+{
+  "label": "hikaricp",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\hikaricp",
+  "stages": {
+    "index": {
+      "files_scanned": 112,
+      "nodes": 2062,
+      "edges": 5740,
+      "resolved": 4872,
+      "ambiguous": 1958,
+      "unresolved": 6550,
+      "parse_failures": 0,
+      "index_time_ms": 651.1150000151247
+    },
+    "symbol_query": {
+      "anchor": "HikariConfig",
+      "anchor_file": "src\\main\\java\\com\\zaxxer\\hikari\\HikariConfig.java",
+      "returned": 4,
+      "matched": [
+        "com.zaxxer.hikari.HikariConfig",
+        "com.zaxxer.hikari.HikariConfig.HikariConfig",
+        "com.zaxxer.hikari.HikariConfig.HikariConfig"
+      ]
+    },
+    "graph_queries": {
+      "callers": 11,
+      "callees": 2,
+      "references": 136
+    },
+    "task_context": {
+      "status": "available",
+      "bundle_status": null,
+      "bytes": 6133
+    },
+    "incremental_edit": {
+      "changed": true,
+      "files_reparsed": 1,
+      "wall_ms": 751.8000999989454
+    },
+    "delete_readd": {
+      "deleted": true,
+      "reparsed_after_readd": 1
+    },
+    "consistency": {
+      "generations": [
+        {
+          "mode": "full",
+          "n": 1
+        },
+        {
+          "mode": "incremental",
+          "n": 3
+        }
+      ],
+      "nodes": 2062,
+      "orphan_edges": 0
+    },
+    "audit_sample": {
+      "denominator_resolved_calls": 1990,
+      "sample_size": 30,
+      "file": "p7-audit-hikaricp.json"
+    }
+  }
+}

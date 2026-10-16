@@ -1,0 +1,13 @@
+{
+  "merge_wall_ms": 20,
+  "sites": 5217,
+  "counts": {
+    "recovered_by_jdt": 3215,
+    "conflict_conservative": 38,
+    "l1_and_jdt_agree": 716,
+    "jdt_ambiguous": 1248
+  },
+  "l1_calls_rows": 5862,
+  "jdt_calls_resolved": 4025,
+  "detail_lines": 1865
+}

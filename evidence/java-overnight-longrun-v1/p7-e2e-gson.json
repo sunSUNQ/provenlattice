@@ -1,0 +1,63 @@
+{
+  "label": "gson",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\gson",
+  "stages": {
+    "index": {
+      "files_scanned": 263,
+      "nodes": 5468,
+      "edges": 16548,
+      "resolved": 15282,
+      "ambiguous": 7006,
+      "unresolved": 21007,
+      "parse_failures": 0,
+      "index_time_ms": 2166.378900001291
+    },
+    "symbol_query": {
+      "anchor": "Shape",
+      "anchor_file": "extras\\src\\main\\java\\com\\google\\gson\\typeadapters\\RuntimeTypeAdapterFactory.java",
+      "returned": 2,
+      "matched": [
+        "com.google.gson.functional.RuntimeTypeAdapterFactoryFunctionalTest.Shape",
+        "com.google.gson.functional.RuntimeTypeAdapterFactoryFunctionalTest.Shape.Shape"
+      ]
+    },
+    "graph_queries": {
+      "callers": 0,
+      "callees": 0,
+      "references": 2
+    },
+    "task_context": {
+      "status": "available",
+      "bundle_status": null,
+      "bytes": 5074
+    },
+    "incremental_edit": {
+      "changed": true,
+      "files_reparsed": 1,
+      "wall_ms": 2769.186900026398
+    },
+    "delete_readd": {
+      "deleted": true,
+      "reparsed_after_readd": 1
+    },
+    "consistency": {
+      "generations": [
+        {
+          "mode": "full",
+          "n": 1
+        },
+        {
+          "mode": "incremental",
+          "n": 3
+        }
+      ],
+      "nodes": 5468,
+      "orphan_edges": 0
+    },
+    "audit_sample": {
+      "denominator_resolved_calls": 5077,
+      "sample_size": 30,
+      "file": "p7-audit-gson.json"
+    }
+  }
+}

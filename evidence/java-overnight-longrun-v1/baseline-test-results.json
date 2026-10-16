@@ -1,0 +1,12 @@
+{
+  "command": "python -m unittest discover -s tests (PYTHONPATH=src)",
+  "ran_at": "2026-10-15 (P0)",
+  "total": 442,
+  "result": "OK",
+  "breakdown": {"main_baseline": 417, "java_t1_t3": 21, "java_p1_regression": 4},
+  "duration_s": 43.7,
+  "golden_parity": {
+    "python_fixture": "IDENTICAL (nodes/edges/shards; raw_references except designed call_kind_version stamp)",
+    "cpp_fixture": "IDENTICAL (same rule)"
+  }
+}

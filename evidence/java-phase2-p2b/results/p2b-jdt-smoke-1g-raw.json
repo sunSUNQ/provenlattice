@@ -1,0 +1,39 @@
+{
+  "label": "smoke",
+  "mode": "jdt",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\t9b\\fixture",
+  "runs": [
+    {
+      "cmd_xmx": "1g",
+      "rc": 0,
+      "wall_ms": 501,
+      "sampled_peak_rss_mb": 110.6,
+      "rss_samples": 5,
+      "cpu_ms": 1250,
+      "cpu_ms_exact": 1250,
+      "summary": {
+        "kind": "summary",
+        "files_total": 14,
+        "files_parsed": 14,
+        "problems_total": 5,
+        "calls_resolved": 9,
+        "calls_recovered": 0,
+        "calls_ambiguous": 0,
+        "types_resolved": 20,
+        "types_recovered": 1,
+        "types_ambiguous": 2,
+        "news_resolved": 4,
+        "news_recovered": 0,
+        "news_ambiguous": 0,
+        "parser_inits": 1,
+        "wall_ms": 316,
+        "cpu_ms": 1218,
+        "heap_used_mb": 29,
+        "heap_max_mb": 1024
+      },
+      "xmx": "1g",
+      "detail_lines": 1,
+      "run": 0
+    }
+  ]
+}

@@ -1,0 +1,470 @@
+{
+  "hikaricp": {
+    "resolved_calls_total": 1990,
+    "exact_tier (conf>=0.99)": 417,
+    "heuristic_tier (conf<0.99)": 1573,
+    "heuristic_share_pct": 79.0,
+    "tiers": [
+      {
+        "strategy": "unique_symbol_resolution",
+        "confidence": 0.75,
+        "n": 1065
+      },
+      {
+        "strategy": "same_file_resolution",
+        "confidence": 0.98,
+        "n": 508
+      },
+      {
+        "strategy": "import_resolution",
+        "confidence": 1.0,
+        "n": 417
+      }
+    ],
+    "audit_item_evidence": [
+      {
+        "audit_call": "MINUTES.toMillis",
+        "rows": [
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 50,
+            "raw_name": "SECONDS.toMillis",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 51,
+            "raw_name": "SECONDS.toMillis",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 53,
+            "raw_name": "MINUTES.toMillis",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 54,
+            "raw_name": "MINUTES.toMillis",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 55,
+            "raw_name": "MINUTES.toMillis",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 1103,
+            "raw_name": "SECONDS.toMillis",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis"
+          }
+        ]
+      },
+      {
+        "audit_call": "current.getPassword",
+        "rows": [
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 318,
+            "raw_name": "current.getPassword",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.zaxxer.hikari.HikariConfig.getPassword"
+          }
+        ]
+      },
+      {
+        "audit_call": "sharedList.stream",
+        "rows": [
+          {
+            "file": "src/main/java/com/zaxxer/hikari/util/ConcurrentBag.java",
+            "start_line": 305,
+            "raw_name": "sharedList.stream",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/util/PropertyElf.java",
+            "start_line": 136,
+            "raw_name": "methods.stream",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/util/PropertyElf.java",
+            "start_line": 140,
+            "raw_name": "methods.stream",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/util/UtilityElf.java",
+            "start_line": 141,
+            "raw_name": "Arrays.stream",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream"
+          },
+          {
+            "file": "src/test/java/com/zaxxer/hikari/metrics/prometheus/HikariCPCollectorTest.java",
+            "start_line": 190,
+            "raw_name": "metrics.stream",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream"
+          }
+        ]
+      },
+      {
+        "audit_call": "field.get",
+        "rows": [
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 130,
+            "raw_name": "System.getProperty",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.PropertyElf.getProperty"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 144,
+            "raw_name": "PropertyElf.setTargetFromProperties",
+            "status": "resolved",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0,
+            "target": "com.zaxxer.hikari.util.PropertyElf.setTargetFromProperties"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 287,
+            "raw_name": "credentials.get",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.FastList.get"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 297,
+            "raw_name": "current.getUsername",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.zaxxer.hikari.HikariConfig.getUsername"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 307,
+            "raw_name": "credentials.get",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.zaxxer.hikari.util.FastList.get"
+          },
+          {
+            "file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+            "start_line": 318,
+            "raw_name": "current.getPassword",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.zaxxer.hikari.HikariConfig.getPassword"
+          }
+        ]
+      }
+    ]
+  },
+  "gson": {
+    "resolved_calls_total": 5077,
+    "exact_tier (conf>=0.99)": 1270,
+    "heuristic_tier (conf<0.99)": 3807,
+    "heuristic_share_pct": 75.0,
+    "tiers": [
+      {
+        "strategy": "same_file_resolution",
+        "confidence": 0.98,
+        "n": 2180
+      },
+      {
+        "strategy": "unique_symbol_resolution",
+        "confidence": 0.75,
+        "n": 1627
+      },
+      {
+        "strategy": "import_resolution",
+        "confidence": 1.0,
+        "n": 1270
+      }
+    ],
+    "audit_item_evidence": [
+      {
+        "audit_call": "members.get",
+        "rows": [
+          {
+            "file": "extras/src/main/java/com/google/gson/interceptors/InterceptorFactory.java",
+            "start_line": 36,
+            "raw_name": "gson.getDelegateAdapter",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.Gson.getDelegateAdapter"
+          },
+          {
+            "file": "extras/src/main/java/com/google/gson/typeadapters/PostConstructAdapterFactory.java",
+            "start_line": 40,
+            "raw_name": "gson.getDelegateAdapter",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.Gson.getDelegateAdapter"
+          },
+          {
+            "file": "extras/src/main/java/com/google/gson/typeadapters/RuntimeTypeAdapterFactory.java",
+            "start_line": 259,
+            "raw_name": "gson.getDelegateAdapter",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.Gson.getDelegateAdapter"
+          },
+          {
+            "file": "extras/src/main/java/com/google/gson/typeadapters/RuntimeTypeAdapterFactory.java",
+            "start_line": 260,
+            "raw_name": "entry.getKey",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.internal.LinkedTreeMap.Node.getKey"
+          },
+          {
+            "file": "extras/src/test/java/com/google/gson/interceptors/InterceptorTest.java",
+            "start_line": 99,
+            "raw_name": "entry.getKey",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.internal.LinkedTreeMap.Node.getKey"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/Gson.java",
+            "start_line": 683,
+            "raw_name": "writer.getSerializeNulls",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.stream.JsonWriter.getSerializeNulls"
+          }
+        ]
+      },
+      {
+        "audit_call": "map.put",
+        "rows": [
+          {
+            "file": "gson/src/main/java/com/google/gson/internal/bind/JsonAdapterAnnotationTypeAdapterFactory.java",
+            "start_line": 121,
+            "raw_name": "putFactoryAndGetCurrent",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.internal.bind.JsonAdapterAnnotationTypeAdapterFactory.putFactoryAndGetCurrent"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/internal/bind/JsonAdapterAnnotationTypeAdapterFactory.java",
+            "start_line": 206,
+            "raw_name": "putFactoryAndGetCurrent",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.internal.bind.JsonAdapterAnnotationTypeAdapterFactory.putFactoryAndGetCurrent"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java",
+            "start_line": 103,
+            "raw_name": "put",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.internal.bind.JsonTreeWriter.put"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java",
+            "start_line": 126,
+            "raw_name": "put",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.internal.bind.JsonTreeWriter.put"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java",
+            "start_line": 166,
+            "raw_name": "put",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.internal.bind.JsonTreeWriter.put"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java",
+            "start_line": 173,
+            "raw_name": "put",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.internal.bind.JsonTreeWriter.put"
+          }
+        ]
+      },
+      {
+        "audit_call": "\"1\".repeat",
+        "rows": [
+          {
+            "file": "gson/src/test/java/com/google/gson/JsonParserTest.java",
+            "start_line": 102,
+            "raw_name": "\"]\".repeat",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.stream.JsonReaderTest.repeat"
+          },
+          {
+            "file": "gson/src/test/java/com/google/gson/JsonParserTest.java",
+            "start_line": 124,
+            "raw_name": "\"{\\\"a\\\":\".repeat",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.stream.JsonReaderTest.repeat"
+          },
+          {
+            "file": "gson/src/test/java/com/google/gson/JsonParserTest.java",
+            "start_line": 124,
+            "raw_name": "\"}\".repeat",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.stream.JsonReaderTest.repeat"
+          },
+          {
+            "file": "gson/src/test/java/com/google/gson/ObjectTypeAdapterTest.java",
+            "start_line": 75,
+            "raw_name": "\"]\".repeat",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.stream.JsonReaderTest.repeat"
+          },
+          {
+            "file": "gson/src/test/java/com/google/gson/ObjectTypeAdapterTest.java",
+            "start_line": 98,
+            "raw_name": "\"{\\\"a\\\":\".repeat",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.stream.JsonReaderTest.repeat"
+          },
+          {
+            "file": "gson/src/test/java/com/google/gson/ObjectTypeAdapterTest.java",
+            "start_line": 98,
+            "raw_name": "\"}\".repeat",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.stream.JsonReaderTest.repeat"
+          }
+        ]
+      },
+      {
+        "audit_call": "target.add",
+        "rows": [
+          {
+            "file": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "start_line": 181,
+            "raw_name": "this.factories.addAll",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.JsonArray.addAll"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "start_line": 182,
+            "raw_name": "this.hierarchyFactories.addAll",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.JsonArray.addAll"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "start_line": 186,
+            "raw_name": "this.reflectionFilters.addAll",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.JsonArray.addAll"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "start_line": 939,
+            "raw_name": "addUserDefinedAdapters",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.GsonBuilder.addUserDefinedAdapters"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "start_line": 942,
+            "raw_name": "addDateTypeAdapters",
+            "status": "resolved",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98,
+            "target": "com.google.gson.GsonBuilder.addDateTypeAdapters"
+          },
+          {
+            "file": "gson/src/main/java/com/google/gson/GsonBuilder.java",
+            "start_line": 984,
+            "raw_name": "factories.addAll",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target": "com.google.gson.JsonArray.addAll"
+          }
+        ]
+      }
+    ]
+  }
+}

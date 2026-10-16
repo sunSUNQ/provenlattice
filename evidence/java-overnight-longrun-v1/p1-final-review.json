@@ -1,0 +1,42 @@
+{
+  "stage": "P1",
+  "verdict": "P1_FINAL_REVIEW_PASS",
+  "reviewed_at": "2026-10-15",
+  "head": "dec0272",
+  "points": {
+    "1_type_target_kind_restriction": {
+      "verdict": "PASS",
+      "evidence": "resolver.py guard code reviewed in commit d5aa6e7; _TYPE_TARGET_SYNTAXES={type_usage, object_creation}, _CALLABLE_KINDS={Function, Method}; java22/23/24 assert Class targets"
+    },
+    "2_both_ladders_covered": {
+      "verdict": "PASS",
+      "evidence": "same-file (step 3) and unique-global (step 8) both filtered; qualified/module/alias steps operate on FQN-shaped targets where Java structurally cannot collide (method qualified is always pkg.Class.method)"
+    },
+    "3_java22_23_24_fixed": {
+      "verdict": "PASS",
+      "evidence": "25/25 java tests OK at dec0272; pre-fix FAIL reproduced in T8 and P1 rounds"
+    },
+    "4_conservative_behaviors_preserved": {
+      "verdict": "PASS",
+      "evidence": "java11 overloads ambiguous (candidates=3), java12 wildcard unresolved+ambiguous, java13 this()-ctor ambiguous (syntax not in guard set), java10 cross-package ambiguous"
+    },
+    "5_python_pin": {
+      "verdict": "PASS",
+      "evidence": "CrossLanguageGuardPinTests.test_python_same_name_call_binding_unchanged — same_file 0.98 -> Function pinned"
+    },
+    "6_cpp_no_unexpected_change": {
+      "verdict": "PASS",
+      "evidence": "golden 4-table compare py+cpp: IDENTICAL except designed call_kind_version stamp; guard zero-trigger for cpp syntax values"
+    },
+    "7_call_kind_version_compat": {
+      "verdict": "PASS",
+      "evidence": "L1 freshness = file hashes (unchanged); version only gates re-resolution inside resolve(); migration experiment: v1 db + any file change -> reprocessed=9 reused=0, all rows converge to v2"
+    },
+    "8_stale_v1_db_delayed_upgrade": {
+      "verdict": "NOT_A_BLOCKER (documented)",
+      "analysis": "A pre-fix (v1-metadata) Java DB keeps wrong resolved->Method edges until a rebuild trigger. Population of such DBs: ONLY temp evidence DBs created by the uncommitted working tree in this session — never committed, never released, zero production exposure. The mechanism matches the existing CALL_KIND_VERSION contract (re-resolution on resolve(); no-change fast path is an existing incremental design decision, not introduced by P1). Mandatory mitigation recorded: the Java support release note MUST require one full `provenlattice index` after upgrade. Forced re-index-on-version-mismatch would be a cache-mechanism overhaul outside the authorized boundary."
+    }
+  },
+  "full_suite_at_head": "442 OK (45.6s)",
+  "hard_gate": "Wrong-Resolution=0 maintained on all covered scenarios"
+}

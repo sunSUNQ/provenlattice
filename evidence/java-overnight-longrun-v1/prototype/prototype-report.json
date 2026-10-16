@@ -1,0 +1,910 @@
+{
+  "queries": [
+    {
+      "id": "Q01",
+      "file": "com/x/app/Overloads.java",
+      "line": 6,
+      "kind": "call",
+      "expect": "CORRECT",
+      "gold_target": "com.x.app.Overloads.build(int)",
+      "l1": {
+        "status": "AMBIGUOUS",
+        "refs": [
+          {
+            "raw_name": "build",
+            "reference_type": "CALLS",
+            "status": "ambiguous",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.app.Overloads.build(int)",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "call",
+          "file": "com/x/app/Overloads.java",
+          "line": 6,
+          "expr": "build",
+          "resolved": "com.x.app.Overloads",
+          "signature": "build(int,)",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q02",
+      "file": "com/x/app/Overloads.java",
+      "line": 7,
+      "kind": "call",
+      "expect": "CORRECT",
+      "gold_target": "com.x.app.Overloads.build(java.lang.String)",
+      "l1": {
+        "status": "AMBIGUOUS",
+        "refs": [
+          {
+            "raw_name": "build",
+            "reference_type": "CALLS",
+            "status": "ambiguous",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.app.Overloads.build(java.lang.String)",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "call",
+          "file": "com/x/app/Overloads.java",
+          "line": 7,
+          "expr": "build",
+          "resolved": "com.x.app.Overloads",
+          "signature": "build(java.lang.String,)",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q03",
+      "file": "com/x/app/Overloads.java",
+      "line": 8,
+      "kind": "call",
+      "expect": "CORRECT",
+      "gold_target": "com.x.app.Overloads.build(int,java.lang.String)",
+      "l1": {
+        "status": "AMBIGUOUS",
+        "refs": [
+          {
+            "raw_name": "build",
+            "reference_type": "CALLS",
+            "status": "ambiguous",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.app.Overloads.build(int,java.lang.String)",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "call",
+          "file": "com/x/app/Overloads.java",
+          "line": 8,
+          "expr": "build",
+          "resolved": "com.x.app.Overloads",
+          "signature": "build(int,java.lang.String,)",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q04",
+      "file": "com/x/app/App.java",
+      "line": 5,
+      "kind": "call",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Helper.build(int)",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "build",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0,
+            "target_kind": "Method",
+            "target_qname": "com.x.core.Helper.build"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Helper.build(int)",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "call",
+          "file": "com/x/app/App.java",
+          "line": 5,
+          "expr": "build",
+          "resolved": "com.x.core.Helper",
+          "signature": "build(int,)",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q05",
+      "file": "com/x/app/App.java",
+      "line": 6,
+      "kind": "call",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Helper.build(int)",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "com.x.core.Helper.build",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "qualified_name_resolution",
+            "confidence": 0.99,
+            "target_kind": "Method",
+            "target_qname": "com.x.core.Helper.build"
+          },
+          {
+            "raw_name": "com",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Helper.build(int)",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "call",
+          "file": "com/x/app/App.java",
+          "line": 6,
+          "expr": "build",
+          "resolved": "com.x.core.Helper",
+          "signature": "build(int,)",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q06",
+      "file": "com/x/app/App.java",
+      "line": 7,
+      "kind": "new",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Helper",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "new Helper().run",
+            "reference_type": "CALLS",
+            "status": "unresolved",
+            "resolution_strategy": "indirect_call_shape",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "Helper",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Helper"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Helper",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "new",
+          "file": "com/x/app/App.java",
+          "line": 7,
+          "expr": "Helper",
+          "resolved": "com.x.core.Helper",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q07",
+      "file": "com/x/app/App.java",
+      "line": 7,
+      "kind": "call",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Helper.run()",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "new Helper().run",
+            "reference_type": "CALLS",
+            "status": "unresolved",
+            "resolution_strategy": "indirect_call_shape",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "Helper",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Helper"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Helper.run()",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "call",
+          "file": "com/x/app/App.java",
+          "line": 7,
+          "expr": "run",
+          "resolved": "com.x.core.Helper",
+          "signature": "run()",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q08",
+      "file": "com/x/app/App.java",
+      "line": 8,
+      "kind": "type",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Runner",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "com.x.core.Runner",
+            "reference_type": "REFERENCES",
+            "status": "resolved",
+            "resolution_strategy": "qualified_name_resolution",
+            "confidence": 0.99,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Runner"
+          },
+          {
+            "raw_name": "com.x.core",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "com.x",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "com.x.core.Runner",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "qualified_name_resolution",
+            "confidence": 0.99,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Runner"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Runner",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/App.java",
+          "line": 8,
+          "expr": "com.x.core.Runner",
+          "resolved": "com.x.core.Runner",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q09",
+      "file": "com/x/app/App.java",
+      "line": 8,
+      "kind": "new",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Runner",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "com.x.core.Runner",
+            "reference_type": "REFERENCES",
+            "status": "resolved",
+            "resolution_strategy": "qualified_name_resolution",
+            "confidence": 0.99,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Runner"
+          },
+          {
+            "raw_name": "com.x.core",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "com.x",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "com.x.core.Runner",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "qualified_name_resolution",
+            "confidence": 0.99,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Runner"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Runner",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "new",
+          "file": "com/x/app/App.java",
+          "line": 8,
+          "expr": "com.x.core.Runner",
+          "resolved": "com.x.core.Runner",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q10",
+      "file": "com/x/app/Wild.java",
+      "line": 4,
+      "kind": "type",
+      "expect": "CORRECT",
+      "gold_target": "com.x.util.Helper",
+      "l1": {
+        "status": "AMBIGUOUS",
+        "refs": [
+          {
+            "raw_name": "Helper",
+            "reference_type": "REFERENCES",
+            "status": "ambiguous",
+            "resolution_strategy": "ambiguous",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.util.Helper",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/Wild.java",
+          "line": 4,
+          "expr": "Helper",
+          "resolved": "com.x.util.Helper",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q11",
+      "file": "com/x/app/Wild.java",
+      "line": 5,
+      "kind": "type",
+      "expect": "CORRECT",
+      "gold_target": "com.x.util.Runner",
+      "l1": {
+        "status": "AMBIGUOUS",
+        "refs": [
+          {
+            "raw_name": "Runner",
+            "reference_type": "REFERENCES",
+            "status": "ambiguous",
+            "resolution_strategy": "ambiguous",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.util.Runner",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/Wild.java",
+          "line": 5,
+          "expr": "Runner",
+          "resolved": "com.x.util.Runner",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q12",
+      "file": "com/x/app/Generic.java",
+      "line": 4,
+      "kind": "type",
+      "expect": "CORRECT",
+      "gold_target": "java.util.List",
+      "l1": {
+        "status": "UNRESOLVED",
+        "refs": [
+          {
+            "raw_name": "List",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "String",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "java.util.List",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/Generic.java",
+          "line": 4,
+          "expr": "List",
+          "resolved": "java.util.List<java.lang.String>",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q13",
+      "file": "com/x/app/Generic.java",
+      "line": 5,
+      "kind": "new",
+      "expect": "CORRECT",
+      "gold_target": "com.x.app.Box",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "new Box<Integer>().get",
+            "reference_type": "CALLS",
+            "status": "unresolved",
+            "resolution_strategy": "indirect_call_shape",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "Box",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target_kind": "Class",
+            "target_qname": "com.x.app.Box"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.app.Box",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "new",
+          "file": "com/x/app/Generic.java",
+          "line": 5,
+          "expr": "Box<Integer>",
+          "resolved": "com.x.app.Box<java.lang.Integer>",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q14",
+      "file": "com/x/app/UseExternal.java",
+      "line": 4,
+      "kind": "type",
+      "expect": "CORRECT",
+      "gold_target": "java.util.HashMap",
+      "l1": {
+        "status": "UNRESOLVED",
+        "refs": [
+          {
+            "raw_name": "HashMap",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "String",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "Integer",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "HashMap",
+            "reference_type": "CALLS",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "java.util.HashMap",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/UseExternal.java",
+          "line": 4,
+          "expr": "HashMap",
+          "resolved": "java.util.HashMap<java.lang.String,java.lang.Integer>",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q15",
+      "file": "com/x/app/UseExternal.java",
+      "line": 5,
+      "kind": "type",
+      "expect": "UNRESOLVED_OK",
+      "gold_target": null,
+      "l1": {
+        "status": "UNRESOLVED",
+        "refs": [
+          {
+            "raw_name": "org.apache.commons.math3.util.FastMath",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "org.apache.commons.math3.util",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "org.apache.commons.math3",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "org.apache.commons",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          },
+          {
+            "raw_name": "org.apache",
+            "reference_type": "REFERENCES",
+            "status": "unresolved",
+            "resolution_strategy": "unresolved",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": null,
+        "status": "RECOVERED_FILTERED",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/UseExternal.java",
+          "line": 5,
+          "expr": "org.apache.commons.math3.util.FastMath",
+          "resolved": "org.apache.commons.math3.util.FastMath",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "id": "Q16",
+      "file": "com/x/core/Runner.java",
+      "line": 2,
+      "kind": "extends",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Base",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "Base",
+            "reference_type": "IMPLEMENTS",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Base"
+          },
+          {
+            "raw_name": "Shape",
+            "reference_type": "IMPLEMENTS",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target_kind": "Interface",
+            "target_qname": "com.x.core.Shape"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Base",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/core/Runner.java",
+          "line": 2,
+          "expr": "Base",
+          "resolved": "com.x.core.Base",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q17",
+      "file": "com/x/core/Runner.java",
+      "line": 2,
+      "kind": "implements",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Shape",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "Base",
+            "reference_type": "IMPLEMENTS",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target_kind": "Class",
+            "target_qname": "com.x.core.Base"
+          },
+          {
+            "raw_name": "Shape",
+            "reference_type": "IMPLEMENTS",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target_kind": "Interface",
+            "target_qname": "com.x.core.Shape"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Shape",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/core/Runner.java",
+          "line": 2,
+          "expr": "Shape",
+          "resolved": "com.x.core.Shape",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q18",
+      "file": "com/x/core/Runner.java",
+      "line": 4,
+      "kind": "call",
+      "expect": "CORRECT",
+      "gold_target": "com.x.core.Base.calc(int)",
+      "l1": {
+        "status": "RESOLVED",
+        "refs": [
+          {
+            "raw_name": "calc",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target_kind": "Method",
+            "target_qname": "com.x.core.Base.calc"
+          },
+          {
+            "raw_name": "calc",
+            "reference_type": "CALLS",
+            "status": "resolved",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75,
+            "target_kind": "Method",
+            "target_qname": "com.x.core.Base.calc"
+          }
+        ]
+      },
+      "jdt": {
+        "binding": "com.x.core.Base.calc(int)",
+        "status": "CORRECT",
+        "raw": {
+          "kind": "call",
+          "file": "com/x/core/Runner.java",
+          "line": 4,
+          "expr": "calc",
+          "resolved": "com.x.core.Base",
+          "signature": "calc(int,)",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q19",
+      "file": "com/x/app/Broken.java",
+      "line": 2,
+      "kind": "class",
+      "expect": "SYNTAX_RECOVERY",
+      "gold_target": "com.x.app.Broken",
+      "l1": {
+        "status": "NO_REF",
+        "refs": []
+      },
+      "jdt": {
+        "binding": null,
+        "status": "CORRECT",
+        "raw": {
+          "kind": "class",
+          "file": "com/x/app/Broken.java",
+          "expr": "Broken"
+        }
+      }
+    },
+    {
+      "id": "Q20",
+      "file": "com/x/app/Wild2.java",
+      "line": 5,
+      "kind": "type",
+      "expect": "AMBIGUOUS",
+      "gold_target": "com.x.core.Helper|com.x.util.Helper",
+      "l1": {
+        "status": "AMBIGUOUS",
+        "refs": [
+          {
+            "raw_name": "Helper",
+            "reference_type": "REFERENCES",
+            "status": "ambiguous",
+            "resolution_strategy": "ambiguous",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": null,
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/Wild2.java",
+          "line": 5,
+          "expr": "Helper",
+          "resolved": null,
+          "recovered": false
+        }
+      }
+    },
+    {
+      "id": "Q21",
+      "file": "com/x/app/Wild2.java",
+      "line": 6,
+      "kind": "type",
+      "expect": "AMBIGUOUS",
+      "gold_target": "com.x.core.Runner|com.x.util.Runner",
+      "l1": {
+        "status": "AMBIGUOUS",
+        "refs": [
+          {
+            "raw_name": "Runner",
+            "reference_type": "REFERENCES",
+            "status": "ambiguous",
+            "resolution_strategy": "ambiguous",
+            "confidence": 0.0,
+            "target_kind": null,
+            "target_qname": null
+          }
+        ]
+      },
+      "jdt": {
+        "binding": null,
+        "status": "CORRECT",
+        "raw": {
+          "kind": "type",
+          "file": "com/x/app/Wild2.java",
+          "line": 6,
+          "expr": "Runner",
+          "resolved": null,
+          "recovered": false
+        }
+      }
+    }
+  ],
+  "summary": {
+    "l1_ambiguous_improvable": 5,
+    "l1_unresolved_improvable": 2,
+    "jdt_correct": 20,
+    "jdt_wrong": 0,
+    "recovered_filtered": 1,
+    "l1_wrong": 0,
+    "queries": 21
+  }
+}

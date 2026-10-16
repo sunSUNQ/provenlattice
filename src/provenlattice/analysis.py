@@ -156,6 +156,20 @@ CAPABILITY_CONTRACT: dict[str, dict] = {
         "query_time": True,
         "grade": "local-only, diagnostic",
     },
+    "semantic_java": {
+        # P2-D: optional Eclipse JDT exact-resolution enrichment for Java
+        # CALLS. Query-time only (java-semantic command, defect precedent):
+        # the default index never invokes it, the L1 graph is never written,
+        # and a missing JDK/JDT classpath yields an explicit unavailable
+        # state. Recovered bindings are dropped; ambiguity is never
+        # upgraded. Runs as a separate JVM process (P2-B budget: -Xmx1g,
+        # RSS <= 1.6GB, jgit <= 15s -- pending human budget approval).
+        "status": "implemented", "domain": "agent",
+        "languages": ("java",), "depends_on": (), "cost_class": "high",
+        "analyzer_ids": (), "planned_integration": None,
+        "query_time": True, "optional_runtime": "jdk+jdt",
+        "grade": "local-only, diagnostic",
+    },
 }
 
 

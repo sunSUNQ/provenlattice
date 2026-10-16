@@ -30,6 +30,7 @@ SUPPORTED_EXTENSIONS = {
     ".py": "python", ".pyi": "python",
     ".h": "cpp", ".hh": "cpp", ".hpp": "cpp", ".hxx": "cpp", ".inc": "cpp",
     ".c": "c", ".cc": "cpp", ".cpp": "cpp", ".cxx": "cpp", ".c++": "cpp",
+    ".java": "java",
 }
 
 

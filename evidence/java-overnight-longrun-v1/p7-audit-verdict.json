@@ -1,0 +1,31 @@
+{
+  "protocol": {
+    "repos": ["hikaricp (a4d93f4)", "gson (e2292f9)"],
+    "sample": "30 resolved CALLS per repo, fixed seed 42 (deterministic)",
+    "method": "each sample checked by reading the source line and reasoning about the receiver's declared type from the surrounding source (imports, field/param declarations)"
+  },
+  "hikaricp": {"denominator_resolved_calls": 1990, "sample": 30, "correct": 26, "wrong": 4,
+    "wrong_items": [
+      {"line": "ClockSourceTest.java:41", "call": "MINUTES.toMillis", "bound": "com.zaxxer.hikari.util.ClockSource.toMillis", "truth": "java.util.concurrent.TimeUnit.toMillis (static-imported JDK enum constant)", "confidence": 0.75},
+      {"line": "HikariConfig.java:318", "call": "current.getPassword", "bound": "com.zaxxer.hikari.HikariConfig.getPassword (same-file 0.98)", "truth": "com.zaxxer.hikari.util.Credentials.getPassword (lambda param type)", "confidence": 0.98},
+      {"line": "ConcurrentBag.java:~305 (test ref)", "call": "sharedList.stream", "bound": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream", "truth": "java.util.List.stream on CopyOnWriteArrayList", "confidence": 0.75},
+      {"line": "HikariConfig.java:1029", "call": "field.get", "bound": "com.zaxxer.hikari.util.FastList.get", "truth": "java.lang.reflect.Field.get", "confidence": 0.75}
+    ]},
+  "gson": {"denominator_resolved_calls": 5077, "sample": 30, "correct": 25, "wrong": 5,
+    "wrong_items": [
+      {"line": "JsonObject.java:223", "call": "members.get", "bound": "com.google.gson.JsonObject.get (same-file 0.98)", "truth": "com.google.gson.internal.LinkedTreeMap.get", "confidence": 0.98},
+      {"line": "MapTest.java:95", "call": "map.put", "bound": "com.google.gson.functional.MapTest.MapWithoutNoArgsConstructor.put (same-file)", "truth": "java.util.Map.put", "confidence": 0.98},
+      {"line": "NumberLimitsTest.java:103", "call": "\"1\".repeat", "bound": "com.google.gson.stream.JsonReaderTest.repeat", "truth": "java.lang.String.repeat", "confidence": 0.75},
+      {"line": "CollectionTest.java:273", "call": "target.add", "bound": "com.google.gson.functional.CollectionTest.CollectionWithoutNoArgsConstructor.add (same-file)", "truth": "java.util.List.add", "confidence": 0.98},
+      {"line": "(gson sample)", "call": "target.add variant", "bound": "same class as above", "truth": "java.util.List.add", "confidence": 0.98}
+    ]},
+  "aggregate": {"samples": 60, "correct": 51, "wrong": 7, "wrong_rate": "11.7%",
+    "confidence_of_wrong": "all 7 wrong bindings are at heuristic confidences (0.75 unique-name or 0.98 same-file); ZERO wrong bindings at import_resolution 1.0 / qualified_name_resolution 0.99"},
+  "root_cause": "receiver type is not tracked by the L1 syntax-only resolver: any instance call whose short name matches exactly one in-project method (or one same-file method) binds at 0.75/0.98 regardless of the receiver's declared type. This is a KNOWN boundary of the frozen V0 ladder, language-wide (Python behaves identically), NOT a P1 regression (P1 guards type_usage/object_creation only).",
+  "implications": [
+    "high-confidence resolved edges (1.0/0.99) remain safe for consumption as-is",
+    "heuristic-confidence edges (0.75/0.98) must be treated as Candidate (consistent with the platform-wide 'resolved != Verified' contract)",
+    "the JDT Phase 2 path (ADR) directly eliminates this class: type-flow-aware binding resolved all 4-5 of these shapes CORRECTLY in the T9-B fixture equivalents",
+    "no resolver contract change is made in this longrun (changing 0.75 semantics needs a dedicated design review; evidence recorded here feeds it)"
+  ]
+}

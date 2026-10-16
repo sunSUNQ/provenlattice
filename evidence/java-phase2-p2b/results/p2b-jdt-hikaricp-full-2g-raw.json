@@ -1,0 +1,40 @@
+{
+  "label": "hikaricp-full",
+  "mode": "jdt",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\hikaricp",
+  "runs": [
+    {
+      "cmd_xmx": "2g",
+      "rc": 0,
+      "wall_ms": 1304,
+      "sampled_peak_rss_mb": 284.0,
+      "rss_samples": 13,
+      "cpu_ms": 5125,
+      "cpu_ms_exact": 5125,
+      "summary": {
+        "kind": "summary",
+        "files_total": 112,
+        "files_parsed": 112,
+        "problems_total": 2065,
+        "calls_resolved": 3894,
+        "calls_recovered": 0,
+        "calls_ambiguous": 1391,
+        "types_resolved": 4190,
+        "types_recovered": 255,
+        "types_ambiguous": 14,
+        "news_resolved": 559,
+        "news_recovered": 34,
+        "news_ambiguous": 4,
+        "parser_inits": 1,
+        "wall_ms": 1048,
+        "cpu_ms": 5062,
+        "heap_used_mb": 104,
+        "heap_max_mb": 2048
+      },
+      "xmx": "2g",
+      "detail_lines": 10342,
+      "run": 0
+    }
+  ],
+  "classpath": "(none)"
+}

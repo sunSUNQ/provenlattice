@@ -1,0 +1,1 @@
+{"kind":"summary","files_total":112,"files_parsed":112,"problems_total":1898,"calls_resolved":4021,"calls_recovered":0,"calls_ambiguous":1264,"types_resolved":4203,"types_recovered":242,"types_ambiguous":14,"news_resolved":559,"news_recovered":34,"news_ambiguous":4,"parser_inits":1,"wall_ms":1086,"cpu_ms":5125,"heap_used_mb":100,"heap_max_mb":1024}

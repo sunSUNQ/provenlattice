@@ -9,9 +9,21 @@
 | 能力 | 来源 | 语言 | 默认 | 状态 | 验证 | 典型任务 | 限制 |
 |---|---|---|---|---|---|---|---|
 | Foundation Graph | V1.3 | Python/C/C++ | 默认 | ✅ implemented | RQ1/RQ2/SQI formal | 代码理解/定位/影响 | S3+ 未测 |
+| Foundation Graph (Java) | PL-JAVA-P0-P1 (T1–T3) | Java (.java) | 默认 | ✅ implemented (FUNCTIONAL + DIAGNOSTIC) | 21 用例 + 438 全量回归 + py/cpp 四表金样（2026-10-15）；RQ1 formal 未执行 | Java 代码理解/定位（tree-sitter 语法事实） | 三态精度边界见下；无 L2 分析器；性能基准未测 |
 | Three-state References | V1.3 | Python/C/C++ | 默认 | ✅ | RQ1 | 引用追溯 | — |
 | Impact Analysis | V1.3 | Python/C/C++ | 默认 | ✅ | RQ2 | 影响面分析 | — |
 | Knowledge Layer | V1.3 | Markdown | 默认 | ✅ | SQI | 需求→代码 | — |
+
+> **Java（P0，Foundation Graph 阶段）能力边界（2026-10-15）**：
+>
+> - **节点**（全部复用冻结 kind，metadata 判别）：`Class`（class/enum/record）、`Interface`（interface/annotation）、`Method`（method/constructor/field/enum_constant）；包声明不建节点（存于 File `metadata["java_package"]`）。
+> - **边**：`DEFINES`、`CONTAINS`、`IMPORTS`、`CALLS`、`REFERENCES`、`IMPLEMENTS`（extends/implements/throws，`metadata["java_relation"]` 区分）。
+> - **resolved**（确定性绑定）：单类型/静态 import 路径（confidence 1.0）、限定名（0.99）、同文件符号（0.98）、import 别名（0.95）、全局唯一名（0.75）。
+> - **ambiguous**（如实保留候选）：方法重载调用、跨包同名、通配 import 下的同名类型、`this(...)` 显式构造调用。
+> - **unresolved**（不猜测）：间接形状（`super.x()` / `super()` / 复杂 receiver / `Type::method`，strategy=`indirect_call_shape`）、外部类型（JDK/第三方，如 `java.io.Serializable`）、通配 import 本身、隐式默认构造。
+> - **提取 gap（已记录限制，非错误映射）**：record 组件、注解元素（annotation_type_element）、匿名类体内容、隐式默认构造不产出符号；局部变量/参数/lambda 参数/模式变量不产出引用（消除错误绑定面）。
+> - **明确不等同于**：JDT/编译器级语义绑定（未实测未集成，Phase 2 候选为 JDT、对照 SCIP）、方法重载判定、继承层级解析、完整 CFG/DFG、任何缺陷查询。`analyze` 对 `.java` 文件全部 fail-closed 上报 `skipped/unsupported_language`，默认 index 零高级分析产物。
+> - **已知精度边界（T8 评审发现 → PL-JAVA-P1 已修复，2026-10-15）**：~~same-file 阶梯按名绑定不区分 Java 类型/值命名空间~~ **已修复**：resolver 对 `type_usage`/`object_creation` 引用（metadata 门控，仅 Java 发射）在 same-file 与全局唯一阶梯排除可调用 kind（Function/Method）；同文件方法不再捕获类型目标（回归用例 java22/23/24）。Python 侧共享机制经 CALLS 显形（注解引用不发射），行为已用 pin 测试固化、修复需独立决策；C/C++ 不发射 type_usage，守卫零触发。`CALL_KIND_VERSION` 1→2：旧 Java 库在下次实际重建时全量重解析收敛（无变化库维持既有解析直至触发——既有缓存机制边界）。
 
 ## L2 Agent Analysis (V1.3)
 

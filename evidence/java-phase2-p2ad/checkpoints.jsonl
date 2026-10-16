@@ -1,0 +1,2 @@
+﻿{"stage": "P4-P6", "ended": "2026-10-15", "status": "COMPLETE", "result": "T1 8/8 (L1 no-wrong-bind + JDT 8/8 CORRECT); T3 3 repos tightened-L1 + JDT; jgit production path 8.1s median <=15s budget; failure probes all fail-closed", "next": "P7 reports"}
+{"stage": "P7-FINAL", "ended": "2026-10-15", "head": "d2d053d", "status": "COMPLETE", "final": "P2AD_CONDITIONAL_PASS", "tests": "475 OK (417 base + 32 java + 13 classpath + 9 demote/R2 + 4 semantic)", "commits_total": 15, "mcp_contract": "untouched", "golden": "IDENTICAL except designed CALL_KIND_VERSION stamp"}

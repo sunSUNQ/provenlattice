@@ -1,0 +1,3234 @@
+{
+  "jgit": {
+    "conflicts_total": 789,
+    "families": {
+      "F5_streams_arrays": 455,
+      "F8_collections": 243,
+      "F7_jdk_other": 72,
+      "F10_project_or_other": 12,
+      "F2_timeunit": 6,
+      "F3_reflection": 1
+    },
+    "sampled": 100,
+    "audit_verdicts": {
+      "TRUTH_EXTERNAL_UNADJUDICATED": 9,
+      "JDT_CORRECT_L1_WRONG": 88,
+      "CROSS_FILE_DECL_WEAK": 3
+    },
+    "sites": [
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/FileSnapshotTest.java",
+        "line": 111,
+        "call": "sleep",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.NANOSECONDS.sleep",
+            "target": "org.eclipse.jgit.internal.storage.file.RefDirectory.sleep",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "TimeUnit.NANOSECONDS.sleep(",
+        "receiver": "TimeUnit.NANOSECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/FileSnapshot.java",
+        "line": 349,
+        "call": "sleep",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.NANOSECONDS.sleep",
+            "target": "org.eclipse.jgit.internal.storage.file.RefDirectory.sleep",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "TimeUnit.NANOSECONDS.sleep(timestampResolution);",
+        "receiver": "TimeUnit.NANOSECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/util/FSTest.java",
+        "line": 236,
+        "call": "sleep",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.NANOSECONDS.sleep",
+            "target": "org.eclipse.jgit.internal.storage.file.RefDirectory.sleep",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "TimeUnit.NANOSECONDS.sleep(resolutionNs);",
+        "receiver": "TimeUnit.NANOSECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/transport/ssh/OpenSshConfigFileTest.java",
+        "line": 71,
+        "call": "sleep",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.NANOSECONDS.sleep",
+            "target": "org.eclipse.jgit.internal.storage.file.RefDirectory.sleep",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "TimeUnit.NANOSECONDS.sleep(resolution);",
+        "receiver": "TimeUnit.NANOSECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/LockFile.java",
+        "line": 467,
+        "call": "sleep",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.NANOSECONDS.sleep",
+            "target": "org.eclipse.jgit.internal.storage.file.RefDirectory.sleep",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "TimeUnit.NANOSECONDS.sleep(fsTimeResolution);",
+        "receiver": "TimeUnit.NANOSECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit.junit/src/org/eclipse/jgit/junit/RepositoryTestCase.java",
+        "line": 387,
+        "call": "sleep",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.NANOSECONDS.sleep",
+            "target": "org.eclipse.jgit.internal.storage.file.RefDirectory.sleep",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "TimeUnit.NANOSECONDS.sleep(sleepTime);",
+        "receiver": "TimeUnit.NANOSECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/ignore/IgnoreNodeTest.java",
+        "line": 740,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(userIgnore, \"x\");",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/ApplyCommandTest.java",
+        "line": 89,
+        "call": "readAllBytes",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.readAllBytes",
+            "target": "org.eclipse.jgit.util.io.ByteBufferInputStream.readAllBytes",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "assertArrayEquals(post, Files.readAllBytes(f.toPath()));",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/FileUtils.java",
+        "line": 1105,
+        "call": "setLastModifiedTime",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.setLastModifiedTime",
+            "target": "org.eclipse.jgit.internal.storage.file.GcDeleteEmptyRefsFoldersTest.setLastModifiedTime",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.setLastModifiedTime(f, FileTime.from(Instant.now()));",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/merge/MergerTest.java",
+        "line": 2079,
+        "call": "readAllBytes",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.readAllBytes",
+            "target": "org.eclipse.jgit.util.io.ByteBufferInputStream.readAllBytes",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "byte[] fileContent = Files.readAllBytes(conflictingFile.toPath());",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/FS.java",
+        "line": 641,
+        "call": "setLastModifiedTime",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.setLastModifiedTime",
+            "target": "org.eclipse.jgit.internal.storage.file.GcDeleteEmptyRefsFoldersTest.setLastModifiedTime",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.setLastModifiedTime(probe,",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/storage/file/UserConfigFileTest.java",
+        "line": 60,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(xdg, \"[user]\\n\\tname = Archibald Ulysses Thor\");",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.lfs/src/org/eclipse/jgit/lfs/CleanFilter.java",
+        "line": 113,
+        "call": "size",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.size",
+            "target": "org.eclipse.jgit.lfs.CleanFilter.size",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "long fsSize = Files.size(mediaFile);",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/ignore/IgnoreNodeTest.java",
+        "line": 712,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(userIgnore, \"x\");",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.ssh.apache/src/org/eclipse/jgit/internal/signing/ssh/SshSigner.java",
+        "line": 204,
+        "call": "toString",
+        "jdt_decl": "java.lang.Integer",
+        "l1": [
+          {
+            "raw_name": "toString",
+            "target": "org.eclipse.jgit.internal.signing.ssh.SshSigner.toString",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Integer.toString(exitCode), toString(stderr)));",
+        "receiver": "Integer",
+        "same_file_decl": "Integer",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/storage/file/UserConfigFileTest.java",
+        "line": 228,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(user,",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.junit.ssh/src/org/eclipse/jgit/junit/ssh/SshTestHarness.java",
+        "line": 124,
+        "call": "write",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.write",
+            "target": "org.eclipse.jgit.junit.ssh.SshTestHarness.write",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.write(knownHosts.toPath(),",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/storage/file/UserConfigFileTest.java",
+        "line": 286,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(xdg, \"[user]\\n\\tname = Archibald Ulysses Thor\");",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/patch/PatchApplier.java",
+        "line": 508,
+        "call": "equals",
+        "jdt_decl": "java.lang.Enum<org.eclipse.jgit.patch.FileHeader.PatchType>",
+        "l1": [
+          {
+            "raw_name": "PatchType.BINARY.equals",
+            "target": "org.eclipse.jgit.patch.PatchApplier.Result.Error.equals",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "if (PatchType.BINARY.equals(fh.getPatchType())) {",
+        "receiver": "PatchType.BINARY",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/storage/file/UserConfigFileTest.java",
+        "line": 126,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(xdg, \"[user]\\n\\tname = Archibald Ulysses Thor\");",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/patch/PatchApplierTest.java",
+        "line": 217,
+        "call": "readAllBytes",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.readAllBytes",
+            "target": "org.eclipse.jgit.util.io.ByteBufferInputStream.readAllBytes",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "assertArrayEquals(postImage, Files.readAllBytes(f.toPath()));",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java",
+        "line": 674,
+        "call": "defaultCharset",
+        "jdt_decl": "java.nio.charset.Charset",
+        "l1": [
+          {
+            "raw_name": "Charset.defaultCharset",
+            "target": "org.eclipse.jgit.util.SystemReader.defaultCharset",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "result = Charset.defaultCharset();",
+        "receiver": "Charset",
+        "same_file_decl": "java.nio.charset.Charset",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.pgm/src/org/eclipse/jgit/pgm/opt/CmdLineParser.java",
+        "line": 253,
+        "call": "get",
+        "jdt_decl": "java.lang.reflect.Field",
+        "l1": [
+          {
+            "raw_name": "CLIText.get",
+            "target": "org.eclipse.jgit.pgm.internal.CLIText.get",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "String ret = field.get(CLIText.get()).toString();",
+        "receiver": "field",
+        "same_file_decl": "java.lang.reflect.Field",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/dfs/DfsBlockCacheConfig.java",
+        "line": 84,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "packExtCacheConfigurations = Collections.emptyList();",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffFormatter.java",
+        "line": 609,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "return Collections.emptyList();",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/blame/BlameGenerator.java",
+        "line": 596,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "return reverse(start, Collections.singleton(end.toObjectId()));",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/DfsGarbageCollectorTest.java",
+        "line": 164,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "odb.commitPack(Collections.singleton(large), null);",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/ReceivePackAdvertiseRefsHookTest.java",
+        "line": 93,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "Collections.singleton(new RefSpec(\"+refs/*:refs/*\")));",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/DfsGarbageCollectorTest.java",
+        "line": 1550,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "odb.commitPack(Collections.singleton(t1), null);",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/midx/MultiPackIndexTest.java",
+        "line": 314,
+        "call": "of",
+        "jdt_decl": "java.util.List",
+        "l1": [
+          {
+            "raw_name": "FakeIndexFactory.indexOf",
+            "target": "org.eclipse.jgit.junit.FakeIndexFactory.indexOf",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "PackIndex idxTwo = FakeIndexFactory.indexOf(List.of());",
+        "receiver": "List",
+        "same_file_decl": "java.util.List",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.ssh.apache/src/org/eclipse/jgit/internal/transport/sshd/JGitServerKeyVerifier.java",
+        "line": 62,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "return Collections.emptyList();",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/memory/TernarySearchTreeTest.java",
+        "line": 201,
+        "call": "toArray",
+        "jdt_decl": "java.util.List<java.lang.String>",
+        "l1": [
+          {
+            "raw_name": "toArray",
+            "target": "org.eclipse.jgit.internal.storage.memory.TernarySearchTreeTest.toArray",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "assertArrayEquals(keys.toArray(), toArray(tree.getKeys()));",
+        "receiver": "keys",
+        "same_file_decl": "java.util.List",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/GcCommitGraphTest.java",
+        "line": 153,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "gc.writeCommitGraph(Collections.singleton(tip));",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/DfsBlockCacheTest.java",
+        "line": 100,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "r2.getObjectDatabase().commitPack(packs, Collections.emptyList());",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.junit.ssh/src/org/eclipse/jgit/junit/ssh/SshTestHarness.java",
+        "line": 125,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "Collections.singleton(knownHostsLine.toString()));",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/midx/MultiPackIndexTest.java",
+        "line": 475,
+        "call": "of",
+        "jdt_decl": "java.util.List",
+        "l1": [
+          {
+            "raw_name": "FakeIndexFactory.indexOf",
+            "target": "org.eclipse.jgit.junit.FakeIndexFactory.indexOf",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "PackIndex idxOne = FakeIndexFactory.indexOf(List.of(",
+        "receiver": "List",
+        "same_file_decl": "java.util.List",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/UploadPackTest.java",
+        "line": 124,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": ".assumeShallow(Collections.singleton(commit1.getId()));",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/RebaseCommandTest.java",
+        "line": 635,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "assertEquals(Collections.singleton(\"conflict\"), git.status().call()",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/fnmatch/FileNameMatcher.java",
+        "line": 52,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "static final List<Head> EMPTY_HEAD_LIST = Collections.emptyList();",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/treewalk/filter/ChangedPathTreeFilterTest.java",
+        "line": 118,
+        "call": "toSet",
+        "jdt_decl": "java.util.stream.Collectors",
+        "l1": [
+          {
+            "raw_name": "Collectors.toSet",
+            "target": "org.eclipse.jgit.treewalk.filter.ByteArraySet.toSet",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": ".collect(Collectors.toSet())));",
+        "receiver": "Collectors",
+        "same_file_decl": "java.util.stream.Collectors",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.pgm.test/src/org/eclipse/jgit/lib/CLIRepositoryTestCase.java",
+        "line": 203,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "return toString(Arrays.asList(lines));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/reftable/ReftableTest.java",
+        "line": 1151,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "return write(Arrays.asList(refs));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/diffmergetool/ExternalMergeToolTest.java",
+        "line": 151,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<String> expectedToolPrompts = Arrays.asList(\"customTool\");",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/merge/MergeMessageFormatterTest.java",
+        "line": 153,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "String message = formatter.format(Arrays.asList(a), head);",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/DirCacheCheckoutTest.java",
+        "line": 1951,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "assertTrue(Arrays.asList(expected.getConflictingFiles())",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/BatchRefUpdateTest.java",
+        "line": 273,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<ReceiveCommand> cmds = Arrays.asList(new ReceiveCommand(B, A,",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/util/io/TimeoutInputStreamTest.java",
+        "line": 163,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "return Arrays.asList(all).subList(0, n);",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/attributes/AttributesNodeDirCacheIteratorTest.java",
+        "line": 83,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "asList(DELTA_UNSET));",
+        "receiver": "asList",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.List": "BitmappedObjectReachabilityChecker.java",
+          "java.util.Collection": "HugeFileTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/api/DeleteBranchCommand.java",
+        "line": 233,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "this.branchNames.addAll(Arrays.asList(branchnames));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/TagCommandTest.java",
+        "line": 317,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(\"refs/tags/v1\", \"refs/tags/v2\")));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/revwalk/ReachabilityCheckerTestCase.java",
+        "line": 95,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "checker.areAllReachable(Arrays.asList(b2), Stream.of(b1)));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/api/MergeCommand.java",
+        "line": 327,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "repo.writeMergeHeads(Arrays.asList(ref.getObjectId()));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/transport/DaemonClient.java",
+        "line": 95,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "extraParameters = Arrays.asList(cmd.substring(nulnul + 2).split(\"\\0\")); //$NON-NLS-1$",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/IndexDiffTest.java",
+        "line": 459,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "new HashSet<>(Arrays.asList(\"src/org\", \"src/tst\",",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/merge/MergeMessageFormatterTest.java",
+        "line": 76,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "String message = formatter.format(Arrays.asList(c, b, a), master);",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.ui/src/org/eclipse/jgit/awtui/CommitGraphPane.java",
+        "line": 65,
+        "call": "getColumnCount",
+        "jdt_decl": "javax.swing.JTable",
+        "l1": [
+          {
+            "raw_name": "getColumnCount",
+            "target": "org.eclipse.jgit.awtui.CommitGraphPane.CommitTableModel.getColumnCount",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "for (int i = 0; i<getColumnCount(); ++i) {",
+        "receiver": "getColumnCount",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit.gpg.bc.test/tst/org/eclipse/jgit/gpg/bc/internal/keys/SecretKeysTest.java",
+        "line": 42,
+        "call": "getProvider",
+        "jdt_decl": "java.security.Security",
+        "l1": [
+          {
+            "raw_name": "Security.getProvider",
+            "target": "org.eclipse.jgit.internal.transport.sshd.pkcs11.Pkcs11Provider.getProvider",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {",
+        "receiver": "Security",
+        "same_file_decl": "java.security.Security",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/transport/http/NetscapeCookieFile.java",
+        "line": 315,
+        "call": "digest",
+        "jdt_decl": "java.security.MessageDigest",
+        "l1": [
+          {
+            "raw_name": "Constants.newMessageDigest",
+            "target": "org.eclipse.jgit.lib.Constants.newMessageDigest",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "return Constants.newMessageDigest().digest(in);",
+        "receiver": "digest",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.security.MessageDigest": "PatchIdDiffFormatter.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/util/Optionally.java",
+        "line": 41,
+        "call": "empty",
+        "jdt_decl": "java.util.Optional",
+        "l1": [
+          {
+            "raw_name": "Optional.empty",
+            "target": "org.eclipse.jgit.internal.util.Optionally.empty",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "return Optional.empty();",
+        "receiver": "Optional",
+        "same_file_decl": "java.util.Optional",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/util/Optionally.java",
+        "line": 68,
+        "call": "empty",
+        "jdt_decl": "java.util.Optional",
+        "l1": [
+          {
+            "raw_name": "Optional.empty",
+            "target": "org.eclipse.jgit.internal.util.Optionally.empty",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "optional = Optional.empty();",
+        "receiver": "Optional",
+        "same_file_decl": "java.util.Optional",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.gpg.bc.test/tst/org/eclipse/jgit/gpg/bc/internal/keys/KeyGripTest.java",
+        "line": 42,
+        "call": "getProvider",
+        "jdt_decl": "java.security.Security",
+        "l1": [
+          {
+            "raw_name": "Security.getProvider",
+            "target": "org.eclipse.jgit.internal.transport.sshd.pkcs11.Pkcs11Provider.getProvider",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {",
+        "receiver": "Security",
+        "same_file_decl": "java.security.Security",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/util/HttpSupport.java",
+        "line": 198,
+        "call": "encode",
+        "jdt_decl": "java.net.URLEncoder",
+        "l1": [
+          {
+            "raw_name": "URLEncoder.encode",
+            "target": "org.eclipse.jgit.util.HttpSupport.encode",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "encoded = URLEncoder.encode(url, UTF_8);",
+        "receiver": "URLEncoder",
+        "same_file_decl": "java.net.URLEncoder",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/transport/TransportProtocol.java",
+        "line": 199,
+        "call": "copyOf",
+        "jdt_decl": "java.util.EnumSet",
+        "l1": [
+          {
+            "raw_name": "EnumSet.copyOf",
+            "target": "org.eclipse.jgit.internal.storage.dfs.DfsInserter.PackStream.copyOf",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "Set<URIishField> canHave = EnumSet.copyOf(getRequiredFields());",
+        "receiver": "EnumSet",
+        "same_file_decl": "java.util.EnumSet",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileBasedConfig.java",
+        "line": 230,
+        "call": "digest",
+        "jdt_decl": "java.security.MessageDigest",
+        "l1": [
+          {
+            "raw_name": "Constants.newMessageDigest",
+            "target": "org.eclipse.jgit.lib.Constants.newMessageDigest",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "return ObjectId.fromRaw(Constants.newMessageDigest().digest(rawText));",
+        "receiver": "digest",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.security.MessageDigest": "PatchIdDiffFormatter.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java",
+        "line": 325,
+        "call": "copyOf",
+        "jdt_decl": "java.util.EnumSet",
+        "l1": [
+          {
+            "raw_name": "EnumSet.copyOf",
+            "target": "org.eclipse.jgit.internal.storage.dfs.DfsInserter.PackStream.copyOf",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "sb.append(EnumSet.copyOf(failingPaths.values()));",
+        "receiver": "EnumSet",
+        "same_file_decl": "java.util.EnumSet",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/dfs/DfsBlockCacheConfig.java",
+        "line": 597,
+        "call": "copyOf",
+        "jdt_decl": "java.util.EnumSet",
+        "l1": [
+          {
+            "raw_name": "EnumSet.copyOf",
+            "target": "org.eclipse.jgit.internal.storage.dfs.DfsInserter.PackStream.copyOf",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "return new DfsBlockCachePackExtConfig(EnumSet.copyOf(packExts),",
+        "receiver": "EnumSet",
+        "same_file_decl": "java.util.EnumSet",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/dfs/DfsReader.java",
+        "line": 143,
+        "call": "of",
+        "jdt_decl": "java.util.Optional",
+        "l1": [
+          {
+            "raw_name": "Optional.of",
+            "target": "org.eclipse.jgit.internal.storage.dfs.DfsReader.PackLoadListener.DfsBlockData.of",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "return Optional.of(cg);",
+        "receiver": "Optional",
+        "same_file_decl": "java.util.Optional",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/storage/file/UserConfigFileTest.java",
+        "line": 47,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(user, \"[user]\\n\\temail = a.u.thor@example.com\");",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/TransportHttpTest.java",
+        "line": 95,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": ".thenReturn(Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/CheckoutCommandTest.java",
+        "line": 444,
+        "call": "setLastModifiedTime",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.setLastModifiedTime",
+            "target": "org.eclipse.jgit.internal.storage.file.GcDeleteEmptyRefsFoldersTest.setLastModifiedTime",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.setLastModifiedTime(db.getIndexFile().toPath(),",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/events/WorkingTreeModifiedEvent.java",
+        "line": 84,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "result = Collections.emptyList();",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/memory/TernarySearchTreeTest.java",
+        "line": 199,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "tree.delete(Arrays.asList(new String[] { \"foobar\", \"johndoe\" }));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/storage/file/UserConfigFileTest.java",
+        "line": 90,
+        "call": "writeString",
+        "jdt_decl": "java.nio.file.Files",
+        "l1": [
+          {
+            "raw_name": "Files.writeString",
+            "target": "org.eclipse.jgit.transport.PacketLineOut.writeString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Files.writeString(xdg, \"[user]\\n\\tname = Archibald Ulysses Thor\");",
+        "receiver": "Files",
+        "same_file_decl": "java.nio.file.Files",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/diff/FilteredRenameDetectorTest.java",
+        "line": 105,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<PathFilter> filters = Arrays.asList(PathFilter.create(PATH_A),",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/diff/FilteredRenameDetectorTest.java",
+        "line": 146,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<DiffEntry> changes = Arrays.asList(a, b, c, d);",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/UploadPackHandleDeletedPackFileTest.java",
+        "line": 57,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "return Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.pgm.test/tst/org/eclipse/jgit/pgm/MergeToolTest.java",
+        "line": 254,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "expectedOutput.addAll(Arrays.asList(userDefinedToolsHelp));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/midx/MultiPackIndexTest.java",
+        "line": 413,
+        "call": "of",
+        "jdt_decl": "java.util.List",
+        "l1": [
+          {
+            "raw_name": "FakeIndexFactory.indexOf",
+            "target": "org.eclipse.jgit.junit.FakeIndexFactory.indexOf",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "PackIndex idxOne = FakeIndexFactory.indexOf(List.of(",
+        "receiver": "List",
+        "same_file_decl": "java.util.List",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/api/blame/BlameGeneratorTest.java",
+        "line": 551,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "generator.setIgnoreRevs(Collections.singleton(c4));",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/treewalk/filter/PathFilterLogicTest.java",
+        "line": 81,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<String> expected = Arrays.asList(\"a.txt\", \"sub1.txt\",",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/FileSnapshotTest.java",
+        "line": 283,
+        "call": "write",
+        "jdt_decl": "java.io.OutputStream",
+        "l1": [
+          {
+            "raw_name": "os.write",
+            "target": "org.eclipse.jgit.junit.JGitTestUtil.write",
+            "resolution_strategy": "unique_imported_symbol_resolution",
+            "confidence": 0.95
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "os.write(b);",
+        "receiver": "os",
+        "same_file_decl": "java.io.OutputStream",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/midx/MultiPackIndexTest.java",
+        "line": 578,
+        "call": "of",
+        "jdt_decl": "java.util.List",
+        "l1": [
+          {
+            "raw_name": "FakeIndexFactory.indexOf",
+            "target": "org.eclipse.jgit.junit.FakeIndexFactory.indexOf",
+            "resolution_strategy": "import_resolution",
+            "confidence": 1.0
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "PackIndex idxOne = FakeIndexFactory.indexOf(List.of(",
+        "receiver": "List",
+        "same_file_decl": "java.util.List",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/BatchRefUpdateTest.java",
+        "line": 941,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<ReceiveCommand> cmds = Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/revwalk/ObjectReachabilityTestCase.java",
+        "line": 82,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "checker.areAllReachable(Arrays.asList(branchABlob),",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.pgm.test/tst/org/eclipse/jgit/pgm/ArchiveTest.java",
+        "line": 235,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "for (String ext : Arrays.asList(\"tar.xz\", \"txz\")) {",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/reftable/MergedReftableTest.java",
+        "line": 323,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<Ref> delta3 = Arrays.asList(ref(\"refs/heads/master\", 8));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/commitgraph/CommitGraphWriterTest.java",
+        "line": 375,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "Set<ObjectId> wants = Collections.singleton(root);",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/file/Pack.java",
+        "line": 484,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "return Collections.<PackIndex.MutableEntry> emptyList().iterator();",
+        "receiver": "emptyList",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/transport/RemoteConfigTest.java",
+        "line": 494,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(\"pre\", \"prefix\", \"pref\", \"perf\"));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/internal/storage/dfs/PackExtBlockCacheTable.java",
+        "line": 133,
+        "call": "copyOf",
+        "jdt_decl": "java.util.List",
+        "l1": [
+          {
+            "raw_name": "List.copyOf",
+            "target": "org.eclipse.jgit.internal.storage.dfs.DfsInserter.PackStream.copyOf",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "List.copyOf(blockCacheTables), packExtBlockCacheTables);",
+        "receiver": "List",
+        "same_file_decl": "java.util.List",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/commitgraph/CommitGraphTest.java",
+        "line": 268,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "writeAndReadCommitGraph(Collections.singleton(a), true, -1);",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceivePack.java",
+        "line": 1465,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "? Collections.emptyList()",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/api/VerifySignatureCommand.java",
+        "line": 105,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "namesToCheck.addAll(Arrays.asList(names));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/treewalk/filter/PathFilterLogicTest.java",
+        "line": 174,
+        "call": "emptyList",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.emptyList",
+            "target": "org.eclipse.jgit.util.RefList.emptyList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "List<String> expected = Collections.emptyList();",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/commitgraph/CommitGraphWriterTest.java",
+        "line": 151,
+        "call": "singleton",
+        "jdt_decl": "java.util.Collections",
+        "l1": [
+          {
+            "raw_name": "Collections.singleton",
+            "target": "org.eclipse.jgit.diff.EditList.singleton",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F8_collections",
+        "source_line": "Set<ObjectId> wants = Collections.singleton(tip);",
+        "receiver": "Collections",
+        "same_file_decl": "java.util.Collections",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/BasePackWriterTest.java",
+        "line": 743,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(c1.getId(), c1.getTree().getId(),",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/treewalk/filter/PathFilterLogicTest.java",
+        "line": 104,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<String> expected = Arrays.asList(\"sub1.txt\", \"sub1/suba/a.txt\",",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/dfs/DfsGarbageCollectorTest.java",
+        "line": 1349,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "DfsPackDescription midx = midx(Arrays.asList(odb.getPacks()), null);",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit.test/tst/org/eclipse/jgit/internal/storage/file/BasePackWriterTest.java",
+        "line": 697,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "org.eclipse.jgit.util.RefList.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "assertContent(idx, Arrays.asList(c5.getId(), c5.getTree().getId(),",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "org.eclipse.jgit/src/org/eclipse/jgit/treewalk/TreeWalk.java",
+        "line": 853,
+        "call": "copyOf",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.copyOf",
+            "target": "org.eclipse.jgit.internal.storage.dfs.DfsInserter.PackStream.copyOf",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "attrs = Arrays.copyOf(attrs, n + 2);",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      }
+    ]
+  },
+  "gson": {
+    "conflicts_total": 76,
+    "families": {
+      "F5_streams_arrays": 59,
+      "F3_reflection": 9,
+      "F7_jdk_other": 5,
+      "F10_project_or_other": 3
+    },
+    "sampled": 30,
+    "audit_verdicts": {
+      "CROSS_FILE_DECL_WEAK": 6,
+      "JDT_CORRECT_L1_WRONG": 24
+    },
+    "sites": [
+      {
+        "file": "gson/src/main/java/com/google/gson/JsonPrimitive.java",
+        "line": 281,
+        "call": "doubleValue",
+        "jdt_decl": "java.lang.Number",
+        "l1": [
+          {
+            "raw_name": "hashOfDoubleValue",
+            "target": "com.google.gson.JsonPrimitive.hashOfDoubleValue",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "return hashOfDoubleValue(getAsNumber().doubleValue());",
+        "receiver": "doubleValue",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "String": "PrimitiveTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/InheritanceTest.java",
+        "line": 268,
+        "call": "append",
+        "jdt_decl": "java.lang.StringBuilder",
+        "l1": [
+          {
+            "raw_name": "append",
+            "target": "com.google.gson.functional.InheritanceTest.ClassWithSubInterfacesOfCollection.append",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "append(sb, queue).append(\",\");",
+        "receiver": "append",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "Appendable": "StreamsTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/InheritanceTest.java",
+        "line": 266,
+        "call": "append",
+        "jdt_decl": "java.lang.StringBuilder",
+        "l1": [
+          {
+            "raw_name": "append",
+            "target": "com.google.gson.functional.InheritanceTest.ClassWithSubInterfacesOfCollection.append",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "append(sb, list).append(\",\");",
+        "receiver": "append",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "Appendable": "StreamsTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/InheritanceTest.java",
+        "line": 270,
+        "call": "append",
+        "jdt_decl": "java.lang.StringBuilder",
+        "l1": [
+          {
+            "raw_name": "append",
+            "target": "com.google.gson.functional.InheritanceTest.ClassWithSubInterfacesOfCollection.append",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "append(sb, set).append(\",\");",
+        "receiver": "append",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "Appendable": "StreamsTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/JsonPrimitive.java",
+        "line": 276,
+        "call": "doubleValue",
+        "jdt_decl": "java.lang.Number",
+        "l1": [
+          {
+            "raw_name": "hashOfDoubleValue",
+            "target": "com.google.gson.JsonPrimitive.hashOfDoubleValue",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "return hashOfDoubleValue(getAsNumber().doubleValue());",
+        "receiver": "doubleValue",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "String": "PrimitiveTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/bind/ReflectiveTypeAdapterFactory.java",
+        "line": 171,
+        "call": "isStatic",
+        "jdt_decl": "java.lang.reflect.Modifier",
+        "l1": [
+          {
+            "raw_name": "Modifier.isStatic",
+            "target": "com.google.gson.internal.reflect.ReflectionHelper.isStatic",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "member, Modifier.isStatic(member.getModifiers()) ? null : object)) {",
+        "receiver": "Modifier",
+        "same_file_decl": "java.lang.reflect.Modifier",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/bind/ArrayTypeAdapter.java",
+        "line": 92,
+        "call": "newInstance",
+        "jdt_decl": "java.lang.reflect.Array",
+        "l1": [
+          {
+            "raw_name": "Array.newInstance",
+            "target": "com.google.gson.internal.UnsafeAllocator.newInstance",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "E[] array = (E[]) Array.newInstance(componentType, size);",
+        "receiver": "Array",
+        "same_file_decl": "java.lang.reflect.Array",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/GsonTypes.java",
+        "line": 143,
+        "call": "newInstance",
+        "jdt_decl": "java.lang.reflect.Array",
+        "l1": [
+          {
+            "raw_name": "Array.newInstance",
+            "target": "com.google.gson.internal.UnsafeAllocator.newInstance",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "return Array.newInstance(getRawType(componentType), 0).getClass();",
+        "receiver": "Array",
+        "same_file_decl": "java.lang.reflect.Array",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/bind/ReflectiveTypeAdapterFactory.java",
+        "line": 387,
+        "call": "isStatic",
+        "jdt_decl": "java.lang.reflect.Modifier",
+        "l1": [
+          {
+            "raw_name": "Modifier.isStatic",
+            "target": "com.google.gson.internal.reflect.ReflectionHelper.isStatic",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "if (Modifier.isStatic(field.getModifiers())) {",
+        "receiver": "Modifier",
+        "same_file_decl": "java.lang.reflect.Modifier",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/GsonTypes.java",
+        "line": 506,
+        "call": "isStatic",
+        "jdt_decl": "java.lang.reflect.Modifier",
+        "l1": [
+          {
+            "raw_name": "Modifier.isStatic",
+            "target": "com.google.gson.internal.reflect.ReflectionHelper.isStatic",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "return !Modifier.isStatic(rawTypeAsClass.getModifiers())",
+        "receiver": "Modifier",
+        "same_file_decl": "java.lang.reflect.Modifier",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/common/MoreAsserts.java",
+        "line": 60,
+        "call": "isProtected",
+        "jdt_decl": "java.lang.reflect.Modifier",
+        "l1": [
+          {
+            "raw_name": "Modifier.isProtected",
+            "target": "com.google.gson.metrics.ParseBenchmark.User.isProtected",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "return Modifier.isProtected(modifiers) || Modifier.isPublic(modifiers);",
+        "receiver": "Modifier",
+        "same_file_decl": "java.lang.reflect.Modifier",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "test-jpms/src/test/java/com/google/gson/jpms_test/ExportedPackagesTest.java",
+        "line": 84,
+        "call": "isStatic",
+        "jdt_decl": "java.lang.reflect.Modifier",
+        "l1": [
+          {
+            "raw_name": "Modifier.isStatic",
+            "target": "com.google.gson.internal.reflect.ReflectionHelper.isStatic",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F3_reflection",
+        "source_line": "f -> !Modifier.isStatic(f.getModifiers()) && !Modifier.isPublic(f.getModifiers()))",
+        "receiver": "Modifier",
+        "same_file_decl": "java.lang.reflect.Modifier",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/JsonAdapterAnnotationOnFieldsTest.java",
+        "line": 723,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "String json = gson.toJson(new WithJsonDeserializer(Arrays.asList(4, 5, 6)));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/bind/ReflectiveTypeAdapterFactory.java",
+        "line": 96,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "alternates = Arrays.asList(annotation.alternate());",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+        "line": 404,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "assertThat(copy.longs).isEqualTo(Arrays.asList(1L, 3L));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/JsonObjectTest.java",
+        "line": 303,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/JsonParserParameterizedTest.java",
+        "line": 33,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "return Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/MixedStreamTest.java",
+        "line": 208,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/JsonArrayAsListTest.java",
+        "line": 91,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/DefaultTypeAdaptersTest.java",
+        "line": 268,
+        "call": "fromString",
+        "jdt_decl": "java.util.UUID",
+        "l1": [
+          {
+            "raw_name": "UUID.fromString",
+            "target": "com.google.gson.ToNumberPolicyTest.fromString",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "UUID uuid = UUID.fromString(uuidValue);",
+        "receiver": "UUID",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "com.google.gson.TypeAdapter": "TypeAdapters.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/LinkedTreeMap.java",
+        "line": 227,
+        "call": "equals",
+        "jdt_decl": "java.util.Objects",
+        "l1": [
+          {
+            "raw_name": "Objects.equals",
+            "target": "com.google.gson.internal.LinkedTreeMap.Node.equals",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "return Objects.equals(a, b);",
+        "receiver": "Objects",
+        "same_file_decl": "java.util.Objects",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/reflect/TypeToken.java",
+        "line": 88,
+        "call": "equals",
+        "jdt_decl": "java.util.Objects",
+        "l1": [
+          {
+            "raw_name": "Objects.equals",
+            "target": "com.google.gson.reflect.TypeToken.equals",
+            "resolution_strategy": "same_file_resolution",
+            "confidence": 0.98
+          }
+        ],
+        "family": "F10_project_or_other",
+        "source_line": "return !Objects.equals(System.getProperty(\"gson.allowCapturingTypeVariables\"), \"true\");",
+        "receiver": "Objects",
+        "same_file_decl": "java.util.Objects",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/main/java/com/google/gson/internal/sql/SqlTypesSupport.java",
+        "line": 84,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(TIME_FACTORY, DATE_FACTORY, TIMESTAMP_FACTORY));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/JsonObjectTest.java",
+        "line": 321,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/ObjectTypeAdapterTest.java",
+        "line": 115,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Object b = Arrays.asList(1, 2, null);",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "extras/src/test/java/com/google/gson/typeadapters/PostConstructAdapterFactoryTest.java",
+        "line": 51,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Arrays.asList(new Sandwich(\"white\", \"cheddar\"), new Sandwich(\"whole wheat\", \"swiss\")));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+        "line": 322,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Collection<?> target = Arrays.asList(bag1, bag1, \"test\");",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/StreamingTypeAdaptersTest.java",
+        "line": 68,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": ".isEqualTo(Arrays.asList(new Person(\"Jesse\", 29), new Person(\"Jodie\", 29)));",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/functional/CollectionTest.java",
+        "line": 419,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "assertThat(gson.toJson(Arrays.asList(\"ab\", \"cd\"), listOfString)).isEqualTo(\"\\\"ab;cd\\\"\");",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "gson/src/test/java/com/google/gson/MixedStreamTest.java",
+        "line": 186,
+        "call": "asList",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.asList",
+            "target": "com.google.gson.JsonArray.asList",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "List<String> contents = Arrays.asList(\"<\", \">\", \"&\", \"=\", \"'\");",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      }
+    ]
+  },
+  "hikaricp": {
+    "conflicts_total": 27,
+    "families": {
+      "F2_timeunit": 17,
+      "F1_atomic": 7,
+      "F5_streams_arrays": 2,
+      "F7_jdk_other": 1
+    },
+    "sampled": 27,
+    "audit_verdicts": {
+      "CROSS_FILE_DECL_WEAK": 7,
+      "TRUTH_EXTERNAL_UNADJUDICATED": 17,
+      "JDT_CORRECT_L1_WRONG": 3
+    },
+    "sites": [
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+        "line": 68,
+        "call": "get",
+        "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+        "l1": [
+          {
+            "raw_name": "StubConnection.count.get",
+            "target": "com.zaxxer.hikari.util.FastList.get",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F1_atomic",
+        "source_line": "Assert.assertSame(\"StubConnection count not as expected\", 0, StubConnection.count.get());",
+        "receiver": "StubConnection.count",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.concurrent.atomic.AtomicInteger": "StubConnection.java",
+          "Double": "PrometheusHistogramMetricsTrackerTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 545,
+        "call": "set",
+        "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+        "l1": [
+          {
+            "raw_name": "StubConnection.count.set",
+            "target": "com.zaxxer.hikari.util.FastList.set",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F1_atomic",
+        "source_line": "StubConnection.count.set(0); // reset counter",
+        "receiver": "StubConnection.count",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.concurrent.atomic.AtomicInteger": "StubConnection.java",
+          "Double": "PrometheusHistogramMetricsTrackerTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+        "line": 204,
+        "call": "get",
+        "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+        "l1": [
+          {
+            "raw_name": "StubConnection.count.get",
+            "target": "com.zaxxer.hikari.util.FastList.get",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F1_atomic",
+        "source_line": "Assert.assertSame(\"StubConnection count not as expected\", 0, StubConnection.count.get());",
+        "receiver": "StubConnection.count",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.concurrent.atomic.AtomicInteger": "StubConnection.java",
+          "Double": "PrometheusHistogramMetricsTrackerTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+        "line": 149,
+        "call": "get",
+        "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+        "l1": [
+          {
+            "raw_name": "StubConnection.count.get",
+            "target": "com.zaxxer.hikari.util.FastList.get",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F1_atomic",
+        "source_line": "assertSame(\"StubConnection count not as expected\", 0, StubConnection.count.get());",
+        "receiver": "StubConnection.count",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.concurrent.atomic.AtomicInteger": "StubConnection.java",
+          "Double": "PrometheusHistogramMetricsTrackerTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+        "line": 119,
+        "call": "get",
+        "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+        "l1": [
+          {
+            "raw_name": "StubConnection.count.get",
+            "target": "com.zaxxer.hikari.util.FastList.get",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F1_atomic",
+        "source_line": "assertSame(\"StubConnection count not as expected\", 0, StubConnection.count.get());",
+        "receiver": "StubConnection.count",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.concurrent.atomic.AtomicInteger": "StubConnection.java",
+          "Double": "PrometheusHistogramMetricsTrackerTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 577,
+        "call": "get",
+        "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+        "l1": [
+          {
+            "raw_name": "StubConnection.count.get",
+            "target": "com.zaxxer.hikari.util.FastList.get",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F1_atomic",
+        "source_line": "assertSame(\"StubConnection count not as expected\", 4, StubConnection.count.get());",
+        "receiver": "StubConnection.count",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.concurrent.atomic.AtomicInteger": "StubConnection.java",
+          "Double": "PrometheusHistogramMetricsTrackerTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/ShutdownTest.java",
+        "line": 54,
+        "call": "set",
+        "jdt_decl": "java.util.concurrent.atomic.AtomicInteger",
+        "l1": [
+          {
+            "raw_name": "StubConnection.count.set",
+            "target": "com.zaxxer.hikari.util.FastList.set",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F1_atomic",
+        "source_line": "StubConnection.count.set(0);",
+        "receiver": "StubConnection.count",
+        "same_file_decl": null,
+        "cross_file_decl": {
+          "java.util.concurrent.atomic.AtomicInteger": "StubConnection.java",
+          "Double": "PrometheusHistogramMetricsTrackerTest.java"
+        },
+        "audit_verdict": "CROSS_FILE_DECL_WEAK"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/MiscTest.java",
+        "line": 111,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(1));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/ExceptionTest.java",
+        "line": 54,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(CONNECTION_TIMEOUT_SECS));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 829,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setInitializationFailTimeout(TimeUnit.SECONDS.toMillis(2));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 775,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setInitializationFailTimeout(TimeUnit.SECONDS.toMillis(2));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 773,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(3));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestValidation.java",
+        "line": 177,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.MINUTES.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setMaxLifetime(TimeUnit.MINUTES.toMillis(2));",
+        "receiver": "TimeUnit.MINUTES",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestIsRunning.java",
+        "line": 77,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(30));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/ExceptionTest.java",
+        "line": 146,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "Thread.sleep(TimeUnit.SECONDS.toMillis(CONNECTION_TIMEOUT_SECS + 1)); // wait longer than the connection timeout",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/main/java/com/zaxxer/hikari/metrics/dropwizard/CodahaleHealthChecker.java",
+        "line": 89,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "this.checkTimeoutMs = (checkTimeoutMs > 0 && checkTimeoutMs != Integer.MAX_VALUE ? checkTimeoutMs : TimeUnit.SECONDS.toMillis(10));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestJavassistCodegen.java",
+        "line": 24,
+        "call": "get",
+        "jdt_decl": "java.nio.file.Paths",
+        "l1": [
+          {
+            "raw_name": "Paths.get",
+            "target": "com.zaxxer.hikari.util.FastList.get",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F7_jdk_other",
+        "source_line": "Path base = Paths.get(tmp, \"target/classes/com/zaxxer/hikari/pool\".split(\"/\"));",
+        "receiver": "Paths",
+        "same_file_decl": "java.nio.file.Paths",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "src/main/java/com/zaxxer/hikari/util/UtilityElf.java",
+        "line": 141,
+        "call": "stream",
+        "jdt_decl": "java.util.Arrays",
+        "l1": [
+          {
+            "raw_name": "Arrays.stream",
+            "target": "com.zaxxer.hikari.pool.TestElf.StringAppender.stream",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "Constructor<?> constructor = Arrays.stream(loaded.getConstructors())",
+        "receiver": "Arrays",
+        "same_file_decl": "java.util.Arrays",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestJavassistCodegen.java",
+        "line": 62,
+        "call": "of",
+        "jdt_decl": "java.util.stream.Stream",
+        "l1": [
+          {
+            "raw_name": "Stream.of",
+            "target": "com.zaxxer.hikari.util.Credentials.of",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F5_streams_arrays",
+        "source_line": "return Stream.of(clazz.getDeclaredMethods())",
+        "receiver": "Stream",
+        "same_file_decl": "java.util.stream.Stream",
+        "cross_file_decl": {},
+        "audit_verdict": "JDT_CORRECT_L1_WRONG"
+      },
+      {
+        "file": "src/main/java/com/zaxxer/hikari/metrics/dropwizard/CodahaleHealthChecker.java",
+        "line": 120,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.NANOSECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "final long the99thPercentile = TimeUnit.NANOSECONDS.toMillis(Math.round(waitTimer.getSnapshot().get99thPercentile()));",
+        "receiver": "TimeUnit.NANOSECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/CodahaleMetricsTest.java",
+        "line": 80,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "quietlySleep(TimeUnit.SECONDS.toMillis(2));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestProxies.java",
+        "line": 114,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(1));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestValidation.java",
+        "line": 162,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setIdleTimeout(TimeUnit.SECONDS.toMillis(5));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 151,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "quietlySleep(TimeUnit.SECONDS.toMillis(2));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 827,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setConnectionTimeout(TimeUnit.SECONDS.toMillis(3));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestConnections.java",
+        "line": 73,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.SECONDS.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(30));",
+        "receiver": "TimeUnit.SECONDS",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      },
+      {
+        "file": "src/test/java/com/zaxxer/hikari/pool/TestValidation.java",
+        "line": 178,
+        "call": "toMillis",
+        "jdt_decl": "java.util.concurrent.TimeUnit",
+        "l1": [
+          {
+            "raw_name": "TimeUnit.MINUTES.toMillis",
+            "target": "com.zaxxer.hikari.util.ClockSource.toMillis",
+            "resolution_strategy": "unique_symbol_resolution",
+            "confidence": 0.75
+          }
+        ],
+        "family": "F2_timeunit",
+        "source_line": "config.setIdleTimeout(TimeUnit.MINUTES.toMillis(3));",
+        "receiver": "TimeUnit.MINUTES",
+        "same_file_decl": null,
+        "cross_file_decl": {},
+        "audit_verdict": "TRUTH_EXTERNAL_UNADJUDICATED"
+      }
+    ]
+  }
+}

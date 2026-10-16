@@ -1,0 +1,96 @@
+{
+  "t1_sites": [
+    {
+      "repo": "gson",
+      "site": "JsonObject.java:223",
+      "call": "get",
+      "truth": "com.google.gson.internal.LinkedTreeMap",
+      "l1_tightened": {
+        "status": "ambiguous",
+        "resolution_strategy": "same_file_resolution",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "com.google.gson.internal.LinkedTreeMap<java.lang.String,com.google.gson.JsonElement>",
+        "state": "resolved"
+      }
+    },
+    {
+      "repo": "gson",
+      "site": "MapTest.java:95",
+      "call": "put",
+      "truth": "java.util.Map",
+      "l1_tightened": {
+        "status": "ambiguous",
+        "resolution_strategy": "same_file_resolution",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "java.util.Map<java.lang.String,java.lang.Object>",
+        "state": "resolved"
+      }
+    },
+    {
+      "repo": "gson",
+      "site": "NumberLimitsTest.java:103",
+      "call": "repeat",
+      "truth": "java.lang.String",
+      "l1_tightened": {
+        "status": "ambiguous",
+        "resolution_strategy": "unique_symbol_resolution",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "java.lang.String",
+        "state": "resolved"
+      }
+    },
+    {
+      "repo": "gson",
+      "site": "CollectionTest.java:273",
+      "call": "add",
+      "truth": "java.util.List",
+      "l1_tightened": {
+        "status": "ambiguous",
+        "resolution_strategy": "same_file_resolution",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "java.util.List<java.lang.Object>",
+        "state": "resolved"
+      }
+    }
+  ],
+  "t3": {
+    "l1_tightened_gson": {
+      "calls_total": 22735,
+      "resolved": 4159,
+      "ambiguous": 7231,
+      "unresolved": 11345,
+      "resolved_pct": 18.3
+    },
+    "jdt_gson": {
+      "jdt_status": "available",
+      "reason": null,
+      "mode": "full",
+      "summary": {
+        "files_parsed": 263,
+        "calls_resolved": 11334,
+        "calls_recovered": 4,
+        "calls_ambiguous": 8556,
+        "types_recovered": 321
+      },
+      "merge_note": "merge skipped: prototype per-site SQL too slow at this scale (P2-E engineering item)"
+    }
+  },
+  "t5_failures": {
+    "no_jdk": {
+      "status": "unavailable",
+      "reason": "jdk_not_found"
+    },
+    "invalid_classpath": {
+      "usable": false,
+      "status": "invalid"
+    }
+  }
+}

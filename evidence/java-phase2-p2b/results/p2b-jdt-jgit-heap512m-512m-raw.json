@@ -1,0 +1,19 @@
+{
+  "label": "jgit-heap512m",
+  "mode": "jdt",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\jgit",
+  "runs": [
+    {
+      "cmd_xmx": "512m",
+      "rc": 1,
+      "wall_ms": 9233,
+      "sampled_peak_rss_mb": 752.3,
+      "rss_samples": 92,
+      "cpu_ms": 64062,
+      "cpu_ms_exact": 64062,
+      "error": "Exception in thread \"main\" java.lang.OutOfMemoryError: Java heap space\n\tat org.eclipse.jdt.internal.compiler.Compiler.handleInternalException(Compiler.java:704)\n\tat org.eclipse.jdt.core.dom.CompilationUnitResolver.handleInternalException(CompilationUnitResolver.java:457)\n\tat org.eclipse.jdt.core.dom.CompilationUnitResolver.resolve(CompilationUnitResolver.java:1196)\n\tat org.eclipse.jdt.core.dom.CompilationUnitResolver.resolve(CompilationUnitResolver.java:739)\n\tat org.eclipse.jdt.core.dom.ASTParser.createASTs(ASTParser.java:1049)\n\tat P2bDriver.main(P2bDriver.java:69)\n",
+      "xmx": "512m",
+      "run": 0
+    }
+  ]
+}

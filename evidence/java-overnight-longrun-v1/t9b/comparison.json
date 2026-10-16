@@ -1,0 +1,79 @@
+{
+  "protocol": {
+    "fixture": "14-file shared source tree (com.x.core/util/app), no build tool",
+    "gold": "hand-labeled per JLS (gold.json); Q10/Q11 corrected after re-labeling (single on-demand import = no ambiguity); Q20/Q21 added for true two-on-demand ambiguity",
+    "backends": {
+      "javaparser": "javaparser-core 3.26.4 + symbol-solver-core 3.26.4 + guava 33.2.1 + slf4j 2.0.13 (6 jars), JDK Temurin 21.0.12.1",
+      "jdt": "org.eclipse.jdt.core 3.37.0 + ecj 3.37.0 + 10 platform jars (signatures stripped to fix cross-jar signer conflict), JDK Temurin 21.0.12.1, compliance=21",
+      "scip_java": "INFRA_BLOCKED (see below)"
+    },
+    "scoring": "per-query CORRECT/WRONG/AMBIGUOUS/UNRESOLVED/UNSUPPORTED/INFRA_BLOCKED; raw driver output retained (jp-raw.txt / jdt-raw.txt in longrun temp, summarized here)"
+  },
+  "per_query": {
+    "javaparser": {
+      "Q01-Q03_overloads": "CORRECT (signature-level: build(int)/build(java.lang.String)/build(int,java.lang.String))",
+      "Q04_static_import": "CORRECT",
+      "Q05_fqn": "CORRECT",
+      "Q06_Q09_new_ctor": "CORRECT",
+      "Q07_instance_call": "CORRECT",
+      "Q08_type": "CORRECT",
+      "Q10_Q11_single_wildcard": "CORRECT",
+      "Q12_Q14_jdk_generics": "CORRECT",
+      "Q13_box_generic": "CORRECT",
+      "Q15_missing_dep": "UNRESOLVED (UnsolvedSymbolException - correct refusal)",
+      "Q16_Q17_inheritance": "CORRECT",
+      "Q18_inherited_method": "CORRECT",
+      "Q19_syntax_recovery": "CORRECT (parse ok=true, error-tolerant)",
+      "Q20_Q21_two_wildcard_ambiguity": "WRONG (silently binds com.x.util.Helper / com.x.util.Runner; JLS requires ambiguity)"
+    },
+    "jdt": {
+      "Q01-Q03_overloads": "CORRECT (signature-level)",
+      "Q04_static_import": "CORRECT (after driver set compliance=21; default source level <1.5 was a driver-config bug, not a JDT defect)",
+      "Q05_fqn": "CORRECT",
+      "Q06_Q09_new_ctor": "CORRECT",
+      "Q07_instance_call": "CORRECT",
+      "Q08_type": "CORRECT",
+      "Q10_Q11_single_wildcard": "CORRECT",
+      "Q12_Q14_jdk_generics": "CORRECT",
+      "Q13_box_generic": "CORRECT (parameterized binding com.x.app.Box<java.lang.Integer>)",
+      "Q15_missing_dep": "WRONG-unless-filtered: returns a RECOVERED binding carrying the requested FQN (org.apache.commons.math3.util.FastMath) with an explicit compile problem; integrators MUST filter ITypeBinding.isRecovered() or a phantom resolved edge is produced",
+      "Q16_Q17_inheritance": "CORRECT",
+      "Q18_inherited_method": "CORRECT (calc -> com.x.core.Base)",
+      "Q19_syntax_recovery": "CORRECT (2 problems reported, class survives)",
+      "Q20_Q21_two_wildcard_ambiguity": "CORRECT (resolved=null + explicit 'The type Helper is ambiguous')"
+    },
+    "scip_java": {
+      "verdict": "INFRA_BLOCKED",
+      "evidence": "official release v0.13.1 notes state 'drop Windows launcher' (PR #970); coursier native win32 launcher assets 404 across v2.1.8..v2.1.23; GitHub API rate-limited. No measurements taken; no scores inferred."
+    }
+  },
+  "scorecard": {
+    "javaparser": {"correct": 17, "wrong": 2, "ambiguous_ok": 0, "unresolved_ok": 1, "infra_blocked": 0, "wrong_resolution_rate_on_gold": "2/21"},
+    "jdt": {"correct": 20, "wrong": 0, "wrong_unless_filtered": 1, "ambiguous_ok": 2, "unresolved_ok": 0, "infra_blocked": 0, "wrong_resolution_rate_on_gold": "0/21 with isRecovered() filter; 1/21 without"},
+    "scip_java": {"infra_blocked": 1}
+  },
+  "capability_matrix": {
+    "cross_file_resolution": {"javaparser": "CORRECT", "jdt": "CORRECT", "scip": "INFRA_BLOCKED"},
+    "same_name_types_import": {"javaparser": "CORRECT", "jdt": "CORRECT"},
+    "jls_ambiguity_two_wildcards": {"javaparser": "WRONG (silent bind)", "jdt": "CORRECT (reject)"},
+    "overload_disambiguation": {"javaparser": "CORRECT", "jdt": "CORRECT"},
+    "inheritance": {"javaparser": "CORRECT", "jdt": "CORRECT"},
+    "interface_impl": {"javaparser": "CORRECT", "jdt": "CORRECT"},
+    "generics": {"javaparser": "CORRECT", "jdt": "CORRECT (parameterized)"},
+    "constructors": {"javaparser": "CORRECT", "jdt": "CORRECT"},
+    "maven_multimodule": {"javaparser": "UNSUPPORTED without manual classpath", "jdt": "UNSUPPORTED without manual classpath (API-level)", "scip": "first-class (build integrations) but unmeasured here"},
+    "gradle_multimodule": {"javaparser": "UNSUPPORTED without manual classpath", "jdt": "UNSUPPORTED without manual classpath (API-level)", "scip": "first-class (build integrations) but unmeasured here"},
+    "missing_dependency_degradation": {"javaparser": "correct refusal", "jdt": "recovered binding - caller must filter isRecovered()", "scip": "unmeasured"},
+    "syntax_error_recovery": {"javaparser": "CORRECT", "jdt": "CORRECT + explicit problems"},
+    "init_cost": {"javaparser": "6 jars / ~15MB", "jdt": "19 jars / ~25MB + signature-strip workaround + compliance config", "scip": "unmeasured (coursier-based toolchain)"},
+    "batch_runtime_fixture": {"javaparser": "sub-second (not precisely instrumented)", "jdt": "311ms batch (14 files, bindings resolved)"},
+    "windows_compat": {"javaparser": "OK", "jdt": "OK (requires signature-strip workaround)", "scip": "OFFICIALLY DROPPED (v0.13.1 'drop Windows launcher')"},
+    "integration_complexity": {"javaparser": "low: subprocess + JSON, needs ambiguity-safety wrapper", "jdt": "medium-high: dependency tree, recovered-binding filter, compliance options; best correctness", "scip": "protobuf pipeline + build-tool integration assumptions; not measurable on Windows here"}
+  },
+  "key_findings": [
+    "JDT is the only measured backend with zero wrong resolutions on the gold set AND correct JLS-ambiguity refusal.",
+    "JavaParser silently violates JLS ambiguity rules (two on-demand imports) - it would reintroduce P1-class wrong bindings that the L1 resolver just fixed.",
+    "SCIP Java officially dropped its Windows launcher; on this Windows-only environment it is INFRA_BLOCKED, and its Maven/Gradle-first design conflicts with the no-build-tool degradation requirement.",
+    "L1 (tree-sitter + P1 guard) remains the only component that never fabricates ambiguity resolution; backends add recall, not safety."
+  ]
+}
