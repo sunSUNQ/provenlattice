@@ -64,10 +64,13 @@ class ClasspathContract:
 
 
 def _normalize(entry: str, base_dir: Path | None) -> Path:
+    # abspath (not resolve()): resolve() expands 8.3 short names and symlinks,
+    # making the normalized path (and thus the contract fingerprint) depend
+    # on machine-specific filesystem aliases (observed as RUNNER~1 on CI).
     path = Path(os.path.expanduser(entry))
     if not path.is_absolute() and base_dir is not None:
-        path = base_dir / path
-    return path.resolve()
+        path = Path(base_dir) / path
+    return Path(os.path.abspath(path))
 
 
 def _dedup_key(normalized: Path) -> str:
