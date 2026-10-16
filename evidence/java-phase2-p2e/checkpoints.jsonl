@@ -1,0 +1,1 @@
+﻿{"stage": "ALL", "ended": "2026-10-15", "status": "COMPLETE", "final": "JAVA_PHASE2_ENGINEERING_PASS", "g1_g6": "all PASS", "fresh_audit": "225 sites, WRONG_RESOLUTION=0 all modes, 41 correct-demotion / 2 unnecessary (JDT recovered both) / 0 JDT new wrong", "merge": "hikaricp 20ms / gson 93ms / jgit 1965ms (prototype could not finish gson/jgit)"}
