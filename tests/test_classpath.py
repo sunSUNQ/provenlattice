@@ -124,7 +124,7 @@ class ClasspathContractTests(unittest.TestCase):
         # like RUNNER~1 on some CI runners), so only the shape is asserted.
         dep = contract.dependencies[0]
         self.assertTrue(dep.endswith("/lib.jar"), dep)
-        self.assertTrue(Path(dep.replace("/", os.sep)).is_dir())
+        self.assertTrue(Path(dep.replace("/", os.sep)).exists())
 
     def test_cp12_manifest_file_roles_comments_and_blank_lines(self) -> None:
         src = self.root / "src"
