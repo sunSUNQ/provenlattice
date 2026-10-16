@@ -46,7 +46,16 @@ class CapabilityContractTests(unittest.TestCase):
     def test_implemented_features_match_contract(self) -> None:
         self.assertEqual(
             implemented_features(),
-            {"ast", "cfg", "sparse_cfg", "sparse_dfg", "defect"})
+            {"ast", "cfg", "sparse_cfg", "sparse_dfg", "defect", "semantic_java"})
+        # semantic_java (P2-D) is implemented as a query-time OPTIONAL
+        # capability: it never runs in the default index, needs an external
+        # JDK/JDT classpath, and its grade stays "local-only, diagnostic"
+        # (no formal claim).
+        record = CAPABILITY_CONTRACT["semantic_java"]
+        self.assertEqual(record["query_time"], True)
+        self.assertEqual(record["optional_runtime"], "jdk+jdt")
+        self.assertEqual(record["grade"], "local-only, diagnostic")
+        self.assertEqual(record["languages"], ("java",))
         # I2A: defect was partially_implemented (two of eight queries);
         # I2B1+overnight: all eight queries are ported (implemented).
         self.assertEqual(
