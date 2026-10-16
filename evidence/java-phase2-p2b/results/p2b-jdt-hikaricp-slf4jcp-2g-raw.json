@@ -1,0 +1,40 @@
+{
+  "label": "hikaricp-slf4jcp",
+  "mode": "jdt",
+  "repo": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\repos\\hikaricp",
+  "runs": [
+    {
+      "cmd_xmx": "2g",
+      "rc": 0,
+      "wall_ms": 1405,
+      "sampled_peak_rss_mb": 255.4,
+      "rss_samples": 14,
+      "cpu_ms": 5515,
+      "cpu_ms_exact": 5515,
+      "summary": {
+        "kind": "summary",
+        "files_total": 112,
+        "files_parsed": 112,
+        "problems_total": 1898,
+        "calls_resolved": 4021,
+        "calls_recovered": 0,
+        "calls_ambiguous": 1264,
+        "types_resolved": 4203,
+        "types_recovered": 242,
+        "types_ambiguous": 14,
+        "news_resolved": 559,
+        "news_recovered": 34,
+        "news_ambiguous": 4,
+        "parser_inits": 1,
+        "wall_ms": 1186,
+        "cpu_ms": 5421,
+        "heap_used_mb": 100,
+        "heap_max_mb": 2048
+      },
+      "xmx": "2g",
+      "detail_lines": 1,
+      "run": 0
+    }
+  ],
+  "classpath": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\tools\\jars\\slf4j-api.jar"
+}
