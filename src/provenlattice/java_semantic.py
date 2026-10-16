@@ -245,6 +245,14 @@ def load_manifest(manifest: str | Path) -> tuple[list[str], list[str]]:
 def merge_with_l1(result: SemanticResult, l1_db: str | Path) -> dict:
     """Audit view: per JDT call site, the (post-P2-A) L1 status side by side.
 
+    Batch implementation (P2-E): ONE bulk SQL query loads every CALLS
+    raw-reference row (with resolved-target join) into memory; per-site
+    matching is then done in-process. This removes the prototype's per-site
+    N+1 queries (hikaricp 3.9k, gson 9k, jgit 60k+ sites) while keeping the
+    matching semantics identical to the frozen prototype: a site matches L1
+    rows on the same start_line whose raw_name ends with the call-root
+    (SQL LIKE '%root' equivalence).
+
     Merge policy (P2-A/P2-D linked delivery):
     - L1 resolved (exact tiers) stays authoritative for its own row
     - JDT 'resolved' binds the site precisely; L1 ambiguous/unresolved rows
@@ -260,21 +268,31 @@ def merge_with_l1(result: SemanticResult, l1_db: str | Path) -> dict:
     for b in result.bindings:
         root = (b.expr or "").split(".")[-1]
         sites.setdefault((b.file, b.line, root), {"jdt": b, "l1": []})
+
+    # one bulk query for all CALLS rows; in-memory matching replaces N+1
+    bulk: dict[int, list[dict]] = {}
     with closing(sqlite3.connect(str(l1_db))) as conn:
         conn.row_factory = sqlite3.Row
-        for (file, line, root), bucket in sites.items():
-            like = f"%{root}"
-            rows = conn.execute(
-                "SELECT f.path AS file, r.raw_name, r.status, r.resolution_strategy, "
-                "r.confidence, n.qualified_name AS target "
-                "FROM raw_references r JOIN nodes n ON r.resolved_symbol_id=n.id "
-                "JOIN files f ON r.file_id=f.file_id "
-                "WHERE r.reference_type='CALLS' AND r.start_line=? AND r.raw_name LIKE ? "
-                "ORDER BY r.id", (line, like)).fetchall()
-            bucket["l1"] = [dict(r) for r in rows]
+        for row in conn.execute(
+            "SELECT f.path AS file, r.start_line AS line, r.raw_name, r.status, "
+            "r.resolution_strategy, r.confidence, n.qualified_name AS target "
+            "FROM raw_references r JOIN nodes n ON r.resolved_symbol_id=n.id "
+            "JOIN files f ON r.file_id=f.file_id "
+            "WHERE r.reference_type='CALLS'"
+        ):
+            bulk.setdefault(row["line"], []).append(dict(row))
+
     merged = []
     for (file, line, root), bucket in sites.items():
-        jdt, l1rows = bucket["jdt"], bucket["l1"]
+        jdt, _ = bucket["jdt"], bucket["l1"]
+        # sqlite LIKE is case-insensitive for ASCII by default; the batch
+        # matcher must replicate that exactly to stay equivalent to the
+        # frozen prototype (P2-E equivalence harness caught this).
+        root_lower = root.lower()
+        l1rows = [
+            r for r in bulk.get(line, [])
+            if r["raw_name"].lower().endswith(root_lower)
+        ]
         state = "jdt_resolved"
         if jdt.state != "resolved":
             state = f"jdt_{jdt.state}"
