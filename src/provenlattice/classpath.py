@@ -189,7 +189,8 @@ def load_classpath_file(manifest: str | Path, *, base_dir: str | Path | None = N
     roots: list[str] = []
     deps: list[str] = []
     base = Path(base_dir) if base_dir is not None else Path(manifest).resolve().parent
-    for raw in Path(manifest).read_text(encoding="utf-8").splitlines():
+    # utf-8-sig: tolerate a BOM (editors on Windows commonly emit one)
+    for raw in Path(manifest).read_text(encoding="utf-8-sig").splitlines():
         line = raw.strip()
         if not line or line.startswith("#"):
             continue

@@ -121,7 +121,8 @@ class ClasspathContractTests(unittest.TestCase):
         jar = self.make_jar()
         manifest = self.root / "classpath.txt"
         manifest.write_text(
-            f"# comment\nproject: {src}\n\n{jar}\n", encoding="utf-8")
+            "﻿# comment\nproject: " + str(src) + "\n\n" + str(jar) + "\n",
+            encoding="utf-8")  # leading BOM must be tolerated
         roots, deps = load_classpath_file(manifest)
         self.assertEqual(roots, [str(src)])
         self.assertEqual(len(deps), 1)
