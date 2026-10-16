@@ -1,0 +1,102 @@
+{
+  "t1_sites": [
+    {
+      "repo": "hikaricp",
+      "site": "HikariConfig.java:318",
+      "call": "getPassword",
+      "truth": "com.zaxxer.hikari.util.Credentials",
+      "l1_tightened": {
+        "status": "ambiguous",
+        "resolution_strategy": "same_file_resolution",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "com.zaxxer.hikari.util.Credentials",
+        "state": "resolved"
+      }
+    },
+    {
+      "repo": "hikaricp",
+      "site": "ClockSourceTest.java:41",
+      "call": "toMillis",
+      "truth": "java.util.concurrent.TimeUnit",
+      "l1_tightened": {
+        "status": "ambiguous",
+        "resolution_strategy": "unique_symbol_resolution",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "java.util.concurrent.TimeUnit",
+        "state": "resolved"
+      }
+    },
+    {
+      "repo": "hikaricp",
+      "site": "ConcurrentBag.java:305",
+      "call": "stream",
+      "truth": "java.util.Collection",
+      "l1_tightened": {
+        "status": "ambiguous",
+        "resolution_strategy": "unique_symbol_resolution",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "java.util.Collection<T>",
+        "state": "resolved"
+      }
+    },
+    {
+      "repo": "hikaricp",
+      "site": "HikariConfig.java:1029",
+      "call": "get",
+      "truth": "java.lang.reflect.Field",
+      "l1_tightened": {
+        "status": "unresolved",
+        "resolution_strategy": "indirect_call_shape",
+        "confidence": 0.0
+      },
+      "jdt": {
+        "decl": "java.lang.reflect.Field",
+        "state": "resolved"
+      }
+    }
+  ],
+  "t3": {
+    "l1_tightened_hikaricp": {
+      "calls_total": 5862,
+      "resolved": 1036,
+      "ambiguous": 2256,
+      "unresolved": 2570,
+      "resolved_pct": 17.7
+    },
+    "jdt_hikaricp": {
+      "jdt_status": "available",
+      "reason": null,
+      "mode": "full",
+      "summary": {
+        "files_parsed": 112,
+        "calls_resolved": 4025,
+        "calls_recovered": 0,
+        "calls_ambiguous": 1260,
+        "types_recovered": 239
+      },
+      "merge_counts": {
+        "recovered_by_jdt": 3215,
+        "conflict_conservative": 38,
+        "l1_and_jdt_agree": 716,
+        "jdt_ambiguous": 1248
+      },
+      "demoted_recovered_by_jdt": 3215
+    }
+  },
+  "t5_failures": {
+    "no_jdk": {
+      "status": "unavailable",
+      "reason": "jdk_not_found"
+    },
+    "invalid_classpath": {
+      "usable": false,
+      "status": "invalid"
+    }
+  }
+}

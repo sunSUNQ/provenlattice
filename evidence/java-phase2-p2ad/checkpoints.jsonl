@@ -1,0 +1,1 @@
+﻿{"stage": "P4-P6", "ended": "2026-10-15", "status": "COMPLETE", "result": "T1 8/8 (L1 no-wrong-bind + JDT 8/8 CORRECT); T3 3 repos tightened-L1 + JDT; jgit production path 8.1s median <=15s budget; failure probes all fail-closed", "next": "P7 reports"}
