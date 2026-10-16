@@ -211,6 +211,9 @@ validation / remediation state / regression tracking）时，才重新评估是�
 **Already implemented（main 已集成）**：
 
 - L1 Foundation Graph 默认基础能力
+- Java Foundation Graph（tree-sitter-java 语法事实，PL-JAVA T1–T3，2026-10-15；
+  复用冻结 kind + 三态契约，21 用例 + 旧语言金样回归；无 L2 分析器，
+  RQ1 formal 资格未执行，详见 capability-matrix.md Java 边界注）
 - optional AST / CFG materialization（Python AST/CFG；C normalized AST + 函数内
   CFG + 短路 + 调用语义分类 + I0R1 对齐修复）
 - scoped analysis（`analyze --scope`）
@@ -243,6 +246,7 @@ validation / remediation state / regression tracking）时，才重新评估是�
 - 统一 Normalized Program IR / Canonical Control-Flow Model（Full/Sparse 双视图收敛）
 - unified capability config / profile system / automatic capability planning
 - def-use / points-to / 精确 taint / Clang
+- Java 语义绑定后端（JDT 候选 / SCIP 对照，未实测未集成）与 Java L2 分析器
 - Plugin / SDK
 - distributed / cross-repo infrastructure
 - Code Inspection 的正式 qualification（三臂实验未执行）

@@ -30,7 +30,7 @@ ProvenLattice 探索一种新的工程上下文组织方式：
 ```text
 L1 Foundation Graph（默认启用，零检测开销）
 │   index/update → Repository/File/Symbol/Call/Reference/Impact/Knowledge
-│   Python + C/C++ 确定性解析，resolved/ambiguous/unresolved 三态引用
+│   Python + C/C++ + Java 确定性解析，resolved/ambiguous/unresolved 三态引用
 │
 L2 Unified Optional Analysis（按 Capability × Scope 按需物化）
 │
@@ -95,6 +95,55 @@ provenlattice defect /path/to/repo --type all --json
 | Composite PK (id, feature) | V1.4 | 跨 analyzer 同 ID 共存，旧库自动迁移 |
 | Three-state Reachability | V1C-R1 | true / false / unknown — unknown 不当作不可达 |
 
+## Java Support (P0, Foundation Graph)
+
+Java 以 **tree-sitter 语法事实**接入默认 Foundation Graph（T1–T3，2026-10-15）：
+
+```bash
+provenlattice index /path/to/java-repo --json   # .java 文件自动识别
+provenlattice symbol Helper --database /path/to/java-repo/.provenlattice/codegraph.db --json
+provenlattice callers com.example.core.Helper.build --database ... --json
+```
+
+* **节点**：`Class`（class/enum/record）、`Interface`（interface/annotation）、`Method`（method/constructor/field/enum_constant）——全部复用既有冻结 kind，metadata 判别（`java_kind` / `java_member`）；包不建节点。
+* **边**：`DEFINES` / `CONTAINS` / `IMPORTS` / `CALLS` / `REFERENCES` / `IMPLEMENTS`（extends/implements/throws 以 `java_relation` 区分）。
+* **三态边界**：import/限定名/同文件/全局唯一 → `resolved`（0.75–1.0）；重载调用、跨包同名、通配 import 同名 → `ambiguous`（候选完整保留）；间接形状（`super.x()`、复杂 receiver、`Type::method`）、JDK/第三方类型、隐式默认构造 → `unresolved`。**不做重载判定与继承层级绑定**。
+* **已记录提取 gap**：record 组件、注解元素、匿名类体、隐式默认构造不产出符号；局部变量/参数/lambda/模式变量不产出引用。
+* **边界**：这是 Foundation Graph 阶段，**不等同于** JDT 语义绑定、完整 CFG/DFG 或缺陷查询；`analyze` 对 `.java` 全部 fail-closed 上报 skipped。语义后端（JDT 候选 / SCIP 对照）未实测、未集成。详细矩阵见 [docs/capability-matrix.md](docs/capability-matrix.md) Java 边界注。
+
+### 可选精确解析：`java-semantic`（Eclipse JDT Analyzer）
+
+在 L1 之上提供一个**可选的**查询时精确解析增强（Eclipse JDT，独立 JVM 进程，
+按需启动，用完即退；**默认 index 永不启动 JVM**）。经 P2-A/P2-D 集成与 P2-E
+工程资格验证（G1–G6，`docs/java-phase2-p2e-final-qualification-report.md`）。
+
+```bash
+# 1. 环境要求（可选能力，未配置时 L1 完全不受影响）
+set PL_JAVA_JDK=C:\path\to\jdk-21            # 需要 JDK（javac + java）
+set PL_JAVA_JDT_CLASSPATH=C:\jars\org.eclipse.jdt.core.jar;C:\jars\...  # JDT 及其依赖 jar
+
+# 2. 查看能力状态（fail-closed：缺 JDK/JDT 时明确报告 unavailable 及原因）
+provenlattice java-semantic <repo> --status-only --json
+
+# 3. 手工 Classpath 清单（P2-C 契约；一行一条，project:/dep: 角色，# 注释）
+#    classpath.txt:
+#    project: C:\repos\my-app\src\main\java
+#    dep: C:\libs\slf4j-api.jar
+provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
+
+# 4. 查询结果：每个调用站点给出 L1 状态与 JDT 精确绑定对照
+#    provenance=semantic:jdt-v1 + classpath 指纹可追溯；
+#    recovered（依赖缺失伪造）绑定被过滤，歧义不会被升级为确定。
+```
+
+* **资源**：JVM `-Xmx1g`（默认）；实测 1.9k 文件仓库批处理 ~8s / 进程 RSS ~1.2GB
+  （预算：RSS ≤1.6GB、批处理 ≤15s——已验证，正式预算批准待人工）。
+* **限制**：外部依赖 jar 未入 classpath 的类型绑定被过滤（不伪造）；跨文件类型流
+  样本中 147/225 无法建立独立真值（诚实边界）；query-time 结果**不持久化到 L1 图谱**；
+  Maven/Gradle 不会被执行（classpath 手工提供）。
+* **已验证**：475+ 项测试、三真实仓库端到端、8/8 历史错误绑定修正、168 冲突抽样
+  0 JDT 错误。**未取得** RQ1 formal qualification。
+
 ## Validation
 
 以下结果基于 aria2 语料（1,393 文件 / 165k LOC）在 5 轮交错配对运行中测量：
@@ -125,6 +174,7 @@ provenlattice defect /path/to/repo --type all --json
 - Streaming Incremental 可在 legacy 单库布局下独立移植（不依赖 Cold Store），待独立 A/B 验证
 - MCP defect 查询未做端到端客户端验证（桥接透传可用；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）
 - `semantics/contracts.toml`（declared 所有权规则数据）和 `semantics/vocabularies/python.toml`（Python 事件词汇表）未迁入
+- Java 为 Foundation Graph 阶段（tree-sitter 语法事实）：无重载判定/继承绑定/L2 分析器；record 组件、注解元素、匿名类体、隐式默认构造不提取；JDT/SCIP 语义后端未实测未集成
 
 ## Documentation
 
@@ -166,6 +216,7 @@ Composite PK (id, feature) + 旧库迁移                          ✅ 已交付
 三态可达性证据 (true/false/unknown)                            ✅ 已交付
 resource_lifetime / lock_order / race_condition                ◐ FUNCTIONAL + DIAGNOSTIC
 error_handling / taint_path                                    ◐ SMOKE + DIAGNOSTIC
+Java Foundation Graph (P0, T1–T3)                              ✅ L1 已交付（21 用例 + 金样回归；无 L2）
 ─── 未来 ───
 Canonical CFG / Full-Sparse 双视图收敛                          规划（Gold Target V2 Phase 3）
 精确 alias / points-to / 跨函数数据流                           future candidate
