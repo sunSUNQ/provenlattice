@@ -104,7 +104,7 @@ def build_classpath(
 ) -> ClasspathContract:
     """Validate and normalize a manual classpath. Never raises for bad input;
     problems are reported as issues and flip the contract to invalid."""
-    base = Path(base_dir).resolve() if base_dir is not None else None
+    base = Path(os.path.abspath(base_dir)) if base_dir is not None else None
     issues: list[ClasspathIssue] = []
 
     seen: dict[str, str] = {}
@@ -191,7 +191,8 @@ def load_classpath_file(manifest: str | Path, *, base_dir: str | Path | None = N
     ``(project_roots, dependencies)`` as raw strings for build_classpath."""
     roots: list[str] = []
     deps: list[str] = []
-    base = Path(base_dir) if base_dir is not None else Path(manifest).resolve().parent
+    base = (Path(os.path.abspath(base_dir)) if base_dir is not None
+             else Path(os.path.abspath(manifest)).parent)
     # utf-8-sig: tolerate a BOM (editors on Windows commonly emit one)
     for raw in Path(manifest).read_text(encoding="utf-8-sig").splitlines():
         line = raw.strip()
@@ -204,6 +205,7 @@ def load_classpath_file(manifest: str | Path, *, base_dir: str | Path | None = N
             role, value = "dep", line
         if not value:
             continue
-        resolved = str((base / os.path.expanduser(value)).resolve())
+        resolved = str(Path(os.path.abspath(os.path.join(
+                base, os.path.expanduser(value)))))
         (roots if role.strip().lower() == "project" else deps).append(resolved)
     return roots, deps
