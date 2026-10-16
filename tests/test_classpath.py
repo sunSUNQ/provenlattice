@@ -1,3 +1,4 @@
+import os
 import tempfile
 import unittest
 import zipfile
@@ -8,6 +9,12 @@ from provenlattice.classpath import (
     fingerprint_for,
     load_classpath_file,
 )
+
+
+def os_abs(value: str) -> str:
+    """Mirror the product normalization (abspath) for environment-portable
+    assertions: Path.resolve() expands 8.3 short names on CI runners."""
+    return os.path.abspath(value)
 
 
 class ClasspathContractTests(unittest.TestCase):
@@ -51,9 +58,9 @@ class ClasspathContractTests(unittest.TestCase):
         jar = self.make_jar()
         contract = build_classpath(project_roots=[str(src)], dependencies=[str(jar)])
         self.assertEqual(contract.project_roots,
-                         (str(src.resolve()).replace("\\", "/"),))
+                         (os_abs(str(src)).replace("\\", "/"),))
         self.assertEqual(contract.dependencies,
-                         (str(jar.resolve()).replace("\\", "/"),))
+                         (os_abs(str(jar)).replace("\\", "/"),))
 
     def test_cp04_empty_classpath_is_valid_and_usable(self) -> None:
         contract = build_classpath()
@@ -113,7 +120,7 @@ class ClasspathContractTests(unittest.TestCase):
         contract = build_classpath(dependencies=["lib.jar"], base_dir=self.root)
         self.assertEqual(contract.status, "valid")
         self.assertEqual(contract.dependencies,
-                         (str(jar.resolve()).replace("\\", "/"),))
+                         (os_abs(str(jar)).replace("\\", "/"),))
 
     def test_cp12_manifest_file_roles_comments_and_blank_lines(self) -> None:
         src = self.root / "src"
@@ -124,7 +131,7 @@ class ClasspathContractTests(unittest.TestCase):
             "﻿# comment\nproject: " + str(src) + "\n\n" + str(jar) + "\n",
             encoding="utf-8")  # leading BOM must be tolerated
         roots, deps = load_classpath_file(manifest)
-        self.assertEqual(roots, [str(src)])
+        self.assertEqual(roots, [os_abs(str(src))])
         self.assertEqual(len(deps), 1)
         contract = build_classpath(project_roots=roots, dependencies=deps)
         self.assertEqual(contract.status, "valid")
