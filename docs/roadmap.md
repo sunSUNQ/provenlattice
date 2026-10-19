@@ -241,12 +241,19 @@ validation / remediation state / regression tracking）时，才重新评估是�
 - error_handling / taint_path 为 SMOKE + DIAGNOSTIC
 - taint_path 仅 4 source/3 sink 最小集
 
+**Already implemented（1.5.0 增补，2026-10-19）**：
+
+- Java Optional JDT Semantic Analyzer（`java-semantic`，query-time；21 gold
+  20+1 CORRECT、8/8 历史错误样本修正、168 冲突抽样 0 JDT 错误、479 全量回归；
+  Windows/JDK21 已验证——Linux JDT NOT_VERIFIED、JDK 矩阵待测）
+
 **Not implemented（统一架构目标，当前无实现）**：
 
 - 统一 Normalized Program IR / Canonical Control-Flow Model（Full/Sparse 双视图收敛）
 - unified capability config / profile system / automatic capability planning
 - def-use / points-to / 精确 taint / Clang
-- Java 语义绑定后端（JDT 候选 / SCIP 对照，未实测未集成）与 Java L2 分析器
+- Java 语义后端扩展（SCIP 对照已 INFRA_BLOCKED；Linux JDT 验证待完成）与 Java L2 分析器（CFG/DFG/缺陷链）
+- Java RQ1 formal qualification（独立立项）
 - Plugin / SDK
 - distributed / cross-repo infrastructure
 - Code Inspection 的正式 qualification（三臂实验未执行）

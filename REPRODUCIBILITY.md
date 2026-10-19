@@ -4,6 +4,20 @@
 > 本文件是研究证据的**总入口**：当前证明了什么、没证明什么、如何验证、如何复现。
 > 详细实验治理见 `docs/provenlattice-research-validation-framework-v1.md` 与各线 README。
 
+## 0. 1.5.0 Java Public Beta Evidence（2026-10-19，GitHub Release provenlattice-v1.5.0）
+
+- **发布对象**：main commit `0ec6364`（PR #8 merge commit；tag `provenlattice-v1.5.0`）
+- **资格链**：PR #6（干净重组 121 文件，双平台 CI）→ PR #7（driver 缓存指纹
+  blocker 修复）→ PR #8（1.5.0 版本/CHANGELOG/验收报告迁移）→ 人工批准发布
+- **测试**：479 tests OK（Windows/Linux CI 双绿 @ 0ec6364 与 82c9bde/da6dd01 轮）
+- **Java L1**：HikariCP 112 / gson 263 / jgit 1895 文件索引零失败；三态引用
+  R1 收紧（8/8 历史错误绑定修复；225 站点新鲜分层审计四模式 WRONG_RESOLUTION=0）
+- **Optional JDT**：21 gold 20+1 CORRECT；168 冲突抽样 0 JDT 错误；jgit 批处理
+  8.1s / RSS ~1.2GB（-Xmx1g）；recovered 过滤；file-scoped merge
+- **发布包**：wheel `7ce708a593b8a39bcd2bbab2e3788fcf315ed25683a722e51a8bb62ffe5c391c` /
+  sdist `8417a05eddf7af8d817ab5e0f96df2afd95ade9e1ebe267a2f37f7a7f4d9be46`（干净 venv 安装验证）
+- **未取得**：RQ1 formal；Linux JDT（NOT_VERIFIED）；JDK 矩阵；Java Stable
+
 ## 0. V1.4 PR1 Integration Evidence（2026-10-13）
 
 ```text

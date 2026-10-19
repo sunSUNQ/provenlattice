@@ -1,0 +1,48 @@
+{
+ "version_consistency": {
+  "README.md": {
+   "has_150": true,
+   "has_unreleased_marker": false,
+   "has_release_url": true,
+   "title_140": false
+  },
+  "CHANGELOG.md": {
+   "has_150": true,
+   "has_unreleased_marker": false,
+   "has_release_url": true,
+   "title_140": true
+  },
+  "docs/capability-matrix.md": {
+   "has_150": true,
+   "has_unreleased_marker": false,
+   "has_release_url": false,
+   "title_140": false
+  },
+  "docs/releases/v1.5.0.md": {
+   "has_150": true,
+   "has_unreleased_marker": false,
+   "has_release_url": true,
+   "title_140": false
+  },
+  "REPRODUCIBILITY.md": {
+   "has_150": true,
+   "has_unreleased_marker": false,
+   "has_release_url": false,
+   "title_140": false
+  }
+ },
+ "stale_scan": [],
+ "links": {
+  "checked": 74,
+  "broken_count": 1,
+  "broken": [
+   {
+    "file": "docs/design-analysis-layer-c-a3-audit.md",
+    "link": "x"
+   }
+  ]
+ },
+ "format": {
+  "unclosed_fences": []
+ }
+}
