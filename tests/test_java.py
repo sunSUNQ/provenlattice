@@ -590,6 +590,8 @@ class JavaNoRegressionTests(unittest.TestCase):
 
     # java21
     def test_java21_java_files_reported_unsupported_by_analyzer(self) -> None:
+        """1.5.0: ast:java is now registered, so Java files should be
+        processed by `analyze --features ast` (no longer skipped)."""
         from provenlattice.orchestrator import analyze_scope
 
         with tempfile.TemporaryDirectory() as temp:
@@ -601,7 +603,7 @@ class JavaNoRegressionTests(unittest.TestCase):
         java_files = [row for row in result["per_file"] if row.get("language") == "java"]
         self.assertTrue(java_files)
         for row in java_files:
-            self.assertEqual(row["bucket"], "skipped")
+            self.assertNotEqual(row["bucket"], "skipped")
 
 
 @unittest.skipUnless(HAS_JAVA_GRAMMAR, "tree-sitter-java is required")

@@ -9,6 +9,8 @@ from .analysis import capability_record, selectable_features
 from .analysis_ast import analyze_ast_scope, normalize_scope, scoped_sources
 from .analysis_c_ast import analyze_c_ast_scope
 from .analysis_c_cfg import ANALYZER as C_CFG_ANALYZER, analyze_c_cfg_scope
+from .analysis_java_ast import analyze_ast_scope as analyze_java_ast_scope
+from .analysis_java_cfg import analyze_cfg_scope as analyze_java_cfg_scope
 from .analysis_c_events import EVENTS_SUFFIXES, analyze_c_events_scope
 from .analysis_c_dfg import analyze_c_dfg_scope
 from .analysis_c_scfg import analyze_c_scfg_scope
@@ -185,15 +187,14 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
     results = {}
     if "ast" in plan:
         ast_runs = [analyze_ast_scope(root, scope_path.as_posix(), database)]
-        # C AST is materialized when explicitly requested or as the declared
-        # dependency of a C CFG request (mirrors Python cfg -> ast). It is
-        # never built implicitly by a plain query.
         if "ast" in requested or "cfg" in requested:
             ast_runs.append(analyze_c_ast_scope(root, scope_path.as_posix(), database))
+            ast_runs.append(analyze_java_ast_scope(root, scope_path.as_posix(), database))
         results["ast"] = _merge_feature_results(ast_runs)
     if "cfg" in plan:
         cfg_runs = [analyze_cfg_scope(root, scope_path.as_posix(), database)]
         cfg_runs.append(analyze_c_cfg_scope(root, scope_path.as_posix(), database))
+        cfg_runs.append(analyze_java_cfg_scope(root, scope_path.as_posix(), database))
         results["cfg"] = _merge_feature_results(cfg_runs)
     if "events" in plan:
         results["events"] = _merge_feature_results(
