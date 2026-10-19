@@ -3,6 +3,49 @@
 所有已发布里程碑按时间倒序记录。tag 命名遵循 `provenlattice-*` 前缀约定；
 各阶段的"已完成 / 明确未包含"以对应发布文档为准（`docs/releases/`）。
 
+## ProvenLattice 1.5.0 — Java Public Beta（UNRELEASED / 待发布）
+
+**1.5.0 新增 Java 支持（Public Beta）**：默认轻量确定性 L1 + 可选 Eclipse JDT
+精确语义增强（query-time）。**Java 当前为 Public Beta，非 Stable**。
+
+### 新能力
+
+- Java L1 deterministic indexing：`.java` 扫描/解析/符号/引用/调用，复用冻结
+  schema 与三态引用契约（resolved / ambiguous / unresolved）；默认索引**无 JVM
+  依赖**
+- Java import/reference/resolver 支持：R1 安全收紧（receiver 类型不可知的
+  0.75/0.98 启发式绑定降为 ambiguous，候选保留）——已知 8 个历史错误绑定形态
+  全部修复，新鲜分层审计 225 站点 Wrong Resolution = 0（四模式）
+- Optional JDT semantic analyzer：`java-semantic` CLI + `semantic_java`
+  capability（query-time；独立 JVM 进程按需启动；recovered 绑定过滤；保守
+  冲突合并；provenance `semantic:jdt-v1` + classpath 指纹）
+- Classpath manifest：手工 classpath 契约（校验/去重/顺序敏感指纹/fail-closed/
+  BOM 兼容）
+- Driver 编译缓存按源码 + classpath 指纹失效（升级不再执行旧 driver）
+
+### 兼容性
+
+- 既有 Python/C/C++ 能力与行为不变（金样四表一致；metadata 门控隔离）
+- **升级要求**：执行一次完整 `provenlattice index`（CALL_KIND_VERSION 3 自动
+  重解析）
+- MCP frozen contract 未变更
+
+### 明确限制（Public Beta 边界）
+
+- **Linux JDT：NOT_VERIFIED**（CI 全量测试已覆盖 Linux；JDT 可选步骤需配置
+  classpath，未在 Linux 实际运行）
+- **146 UNKNOWN 保守保留**：跨文件/外部类型流站点无法建立独立真值
+- **query-time 结果非持久化**：JDT 分析为查询时视图，不写入 L1 图谱
+- **RQ1 formal 尚未取得**：Java 能力等级为工程验证（local-only, diagnostic），
+  不宣称 formal qualification
+- JDT 依赖由用户自备（JDK 21 已验证；Eclipse JDT EPL-2.0）；Maven/Gradle
+  永不自动执行；SCIP Java INFRA_BLOCKED
+
+### 升级说明
+
+由 1.4.x 升级：执行一次完整 `provenlattice index`（CALL_KIND_VERSION 3 会使
+既有引用缓存失效并自动重解析）。
+
 ## ProvenLattice V1.4 — Selective PR1 Integration（2026-10-13）
 
 **V1.4 = Agent Development 基础平台 + 按需 Code Inspection（八类缺陷候选查询）**
