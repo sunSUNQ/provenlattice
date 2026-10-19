@@ -104,6 +104,10 @@ def build_parser() -> argparse.ArgumentParser:
     definition.add_argument("symbol")
     callers = command("callers")
     callers.add_argument("symbol")
+    callers.add_argument(
+        "--include-ambiguous", action="store_true",
+        help="also return ambiguous candidate callers from raw_references "
+             "(evidence_level=candidate; default off)")
     callees = command("callees")
     callees.add_argument("symbol")
     references = command("references")
@@ -248,7 +252,8 @@ def run(args: argparse.Namespace) -> dict:
         if args.command == "definition":
             return query.get_definition(args.symbol)
         if args.command == "callers":
-            return query.get_callers(args.symbol)
+            return query.get_callers(args.symbol,
+                                     include_ambiguous=getattr(args, "include_ambiguous", False))
         if args.command == "callees":
             return query.get_callees(args.symbol)
         if args.command == "references":

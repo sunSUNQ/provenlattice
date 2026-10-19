@@ -332,8 +332,120 @@ class GraphQuery:
             "callees" if edge_type == "CALLS" else "references")
         return self._result(result, started, evidence, query_type=direction, anchor=symbol)
 
-    def get_callers(self, symbol: str) -> dict:
-        return self._neighbors(symbol, "CALLS", True)
+    def get_callers(self, symbol: str, *, include_ambiguous: bool = False) -> dict:
+        result = self._neighbors(symbol, "CALLS", True)
+        if include_ambiguous:
+            anchor = self._resolve(symbol)
+            possible, pc_meta = self._possible_callers(symbol, resolved_anchor=anchor)
+            result["possible_callers"] = possible
+            result["possible_callers_meta"] = pc_meta
+        return result
+
+    def _possible_callers(
+        self, symbol: str, *, resolved_anchor: dict | None = None,
+        max_results: int = 200,
+    ) -> tuple[list[dict], dict]:
+        """Read ambiguous CALLS raw_references whose candidate_symbols contain
+        the target symbol ID. Returns evidence-level candidates (never
+        resolved edges); zero schema or default-index behavior change.
+
+        F2: uses the same _resolve target as confirmed callers when exact
+        matching succeeds; falls back to broader endswith only when exact
+        fails. F1: exact nodes.id match is the highest-priority lookup."""
+        if resolved_anchor is not None:
+            target_id = resolved_anchor["id"]
+        else:
+            anchor = self._resolve(symbol)
+            target_id = anchor["id"] if anchor else None
+
+        if not target_id:
+            # F1: exact nodes.id priority, then full qualified_name, then
+            # endswith (SQL LIKE '%symbol' matches qualified_name suffix)
+            all_nodes = self.view.query(
+                "Node",
+                "SELECT * FROM nodes WHERE qualified_name=? "
+                "OR qualified_name LIKE '%' || ?",
+                (symbol, "." + symbol),
+            )
+            matching = [
+                r for r in all_nodes
+                if r.get("kind") in SYMBOL_KINDS and (
+                    r.get("qualified_name") == symbol
+                    or r.get("qualified_name", "").endswith("." + symbol)
+                )
+            ]
+            if len(matching) == 1:
+                target_id = matching[0]["id"]
+            elif len(matching) > 1:
+                return [], {"total": 0, "returned": 0, "truncated": False,
+                            "target_ambiguous": True}
+            else:
+                return [], {"total": 0, "returned": 0, "truncated": False}
+
+        # F3: single bulk query; dedup by raw_reference_id (unique per site)
+        rows = self.view.query(
+            "RawReference",
+            "SELECT * FROM raw_references WHERE reference_type='CALLS' "
+            "AND status='ambiguous'",
+            (),
+            lambda row: True,
+        )
+        candidates = []
+        for row in rows:
+            try:
+                cand_ids = json.loads(row["candidate_symbols"])
+            except (json.JSONDecodeError, TypeError, KeyError):
+                continue
+            if target_id not in cand_ids:
+                continue
+            caller_nodes = self.view.by_ids("Node", [row["owner_symbol_id"]])
+            caller_node = None
+            for cn in caller_nodes:
+                if cn.get("id") == row["owner_symbol_id"]:
+                    caller_node = cn
+                    break
+            if caller_node is None:
+                continue
+            decoded = decode_row(caller_node)
+            if decoded.get("kind") not in ("Method", "Function"):
+                continue
+            file_rows = self.storage.rows(
+                "SELECT path FROM files WHERE file_id=?", (row["file_id"],))
+            file_path = file_rows[0]["path"] if file_rows else ""
+            metadata = {}
+            try:
+                metadata = json.loads(row["metadata"])
+            except (json.JSONDecodeError, TypeError):
+                pass
+            candidates.append({
+                "caller_symbol_id": row["owner_symbol_id"],
+                "caller_qualified_name": decoded.get("qualified_name", ""),
+                "caller_kind": decoded.get("kind", ""),
+                "source_file": file_path,
+                "source_line": row.get("start_line"),
+                "raw_reference_id": row["id"],
+                "target_candidate_symbol_id": target_id,
+                "resolution_status": "ambiguous",
+                "evidence_level": "candidate",
+                "candidate_symbols": cand_ids,
+                "resolution_strategy": row.get("resolution_strategy", ""),
+                "receiver_shape": metadata.get("receiver_shape"),
+                "demote_reason": metadata.get("demote_reason"),
+            })
+        # F3: dedup by raw_reference_id (unique per call site, not per line)
+        candidates.sort(key=lambda c: (c["source_file"], c["source_line"] or 0,
+                                       c["caller_qualified_name"],
+                                       c["raw_reference_id"]))
+        seen: set[str] = set()
+        deduped = []
+        for c in candidates:
+            if c["raw_reference_id"] not in seen:
+                seen.add(c["raw_reference_id"])
+                deduped.append(c)
+        truncated = len(deduped) > max_results
+        meta = {"total": len(deduped), "returned": min(len(deduped), max_results),
+                "truncated": truncated, "target_id": target_id}
+        return deduped[:max_results], meta
 
     def get_callees(self, symbol: str) -> dict:
         return self._neighbors(symbol, "CALLS", False)
