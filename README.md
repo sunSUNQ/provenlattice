@@ -115,7 +115,7 @@ provenlattice callers com.example.core.Helper.build --database ... --json
 
 在 L1 之上提供一个**可选的**查询时精确解析增强（Eclipse JDT，独立 JVM 进程，按需启动，用完即退；**默认 index 永不启动 JVM**）。已经 P2-A/P2-D 集成与 P2-E 工程资格验证（G1–G6，`docs/java-phase2-p2e-final-qualification-report.md`）。
 
-```bash
+```bat
 # 1. 环境要求（可选能力，未配置时 L1 完全不受影响）
 set PL_JAVA_JDK=C:\path\to\jdk-21            # 需要 JDK（javac + java）
 set PL_JAVA_JDT_CLASSPATH=C:\jars\org.eclipse.jdt.core.jar;C:\jars\...  # JDT 及其依赖 jar

@@ -1,29 +1,23 @@
 {
- "task": "PL-V1.5.0-ALL-MARKDOWN-DOCUMENTATION-REFRESH-V1",
- "worktree": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\docs150",
- "branch": "docs/1.5.0-refresh (from origin/main 0ec6364)",
- "total_markdown": 250,
- "class_counts": {
-  "A": 5,
-  "B": 44,
-  "C": 55,
-  "D": 146
- },
- "updated_files": [
-  "README.md",
-  "CHANGELOG.md",
-  "REPRODUCIBILITY.md",
-  "docs/capability-matrix.md",
-  "docs/roadmap.md"
- ],
- "created_files": [
-  "docs/releases/v1.5.0.md",
-  "docs-refresh/*"
- ],
- "frozen_evidence_touched": false,
- "src_touched": false,
- "broken_links": 1,
- "broken_link_note": "historical example placeholder in class-C audit doc, kept",
- "verdict": "DOCS_V150_READY_FOR_PR",
- "commit_status": "NOT committed (per constraint; awaiting human review to approve docs PR)"
+  "task": "PL-V1.5.0-ALL-MARKDOWN-DOCUMENTATION-REFRESH-V1",
+  "branch": "docs/1.5.0-refresh (from origin/main 0ec6364)",
+  "total_markdown": 250,
+  "class_counts": {"A": 5, "B": 44, "C": 55, "D": 146},
+  "updated_files": [
+    "README.md",
+    "CHANGELOG.md",
+    "REPRODUCIBILITY.md",
+    "docs/capability-matrix.md",
+    "docs/roadmap.md"
+  ],
+  "created_files": [
+    "docs/releases/v1.5.0.md",
+    "docs-refresh/* (4 audit deliverables)"
+  ],
+  "frozen_evidence_touched": false,
+  "src_touched": false,
+  "broken_links": 1,
+  "broken_link_note": "historical example placeholder in class-C audit doc, kept",
+  "verdict": "DOCS_V150_READY_FOR_PR",
+  "pr_state": "SUBMITTED (PR #9, HEAD 54a388d + provenance/numstat/CMD-fence fixes, dual-platform CI PASS)"
 }

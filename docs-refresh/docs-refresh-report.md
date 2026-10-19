@@ -1,7 +1,7 @@
-# 1.5.0 全量 Markdown 文档刷新报告（DOCS_V150_READY_FOR_PR）
+# 1.5.0 全量 Markdown 文档刷新报告（DOCS_V150_READY_FOR_PR → PR #9 已提交）
 
 **日期**：2026-10-19 · **基线**：远程 main `0ec6364`（PR #8 merge commit）
-**工作区**：隔离 worktree `docs/1.5.0-refresh` 分支（修改保留为工作区状态，未 commit——按约束等待人工审查后单独批准文档 PR）
+**工作区**：隔离 worktree `docs/1.5.0-refresh` 分支（修改已 commit 并 push 至 PR #9，双平台 CI PASS）
 
 ---
 
