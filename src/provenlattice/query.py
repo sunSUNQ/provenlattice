@@ -335,10 +335,12 @@ class GraphQuery:
     def get_callers(self, symbol: str, *, include_ambiguous: bool = False) -> dict:
         result = self._neighbors(symbol, "CALLS", True)
         if include_ambiguous:
-            result["possible_callers"] = self._possible_callers(symbol)
+            possible, pc_meta = self._possible_callers(symbol)
+            result["possible_callers"] = possible
+            result["possible_callers_meta"] = pc_meta
         return result
 
-    def _possible_callers(self, symbol: str, *, max_results: int = 200) -> list[dict]:
+    def _possible_callers(self, symbol: str, *, max_results: int = 200) -> tuple[list[dict], dict]:
         """Read ambiguous CALLS raw_references whose candidate_symbols contain
         the target symbol ID. Returns evidence-level candidates (never
         resolved edges); zero schema or default-index behavior change.
@@ -346,20 +348,33 @@ class GraphQuery:
         Uses find_symbol's broader matching (qualified_name endswith) so
         method-level qualified names like "Node.get" resolve correctly."""
         placeholders = ",".join("?" for _ in SYMBOL_KINDS)
-        rows = self.view.query(
+        all_nodes = self.view.query(
             "Node",
             "SELECT * FROM nodes WHERE qualified_name=? OR name=? "
             "OR qualified_name LIKE ? || '.%'",
             (symbol, symbol.rsplit(".", 1)[-1], symbol),
-            lambda row: row.get("kind") in SYMBOL_KINDS and (
-                row.get("qualified_name") == symbol
-                or row.get("name") == symbol.rsplit(".", 1)[-1]
-                or row.get("qualified_name", "").endswith("." + symbol)
-            ),
         )
-        if not rows:
-            return []
-        target_id = rows[0]["id"]
+        # Apply the type+name filter in Python (overlay predicate is not
+        # applied by view.query — pre-existing overlay design).
+        # Uses find_symbol's matching semantics: qualified_name endswith
+        # ensures method-level names like "Node.get" match "a.Node.get"
+        # without also matching "a.Box.get" (different class, same method
+        # short name).
+        matching = [
+            r for r in all_nodes
+            if r.get("kind") in SYMBOL_KINDS and (
+                r.get("qualified_name") == symbol
+                or r.get("qualified_name", "").endswith("." + symbol)
+            )
+        ]
+        if not matching:
+            return [], {"total": 0, "returned": 0, "truncated": False}
+        if len(matching) > 1:
+            # Wide match hit multiple targets: report ambiguity, never
+            # silently pick one (P2-A R1 precedent).
+            return [], {"total": 0, "returned": 0, "truncated": False,
+                        "target_ambiguous": True}
+        target_id = matching[0]["id"]
         rows = self.view.query(
             "RawReference",
             "SELECT * FROM raw_references WHERE reference_type='CALLS' "
@@ -418,7 +433,10 @@ class GraphQuery:
             if key not in seen:
                 seen.add(key)
                 deduped.append(c)
-        return deduped[:max_results]
+        truncated = len(deduped) > max_results
+        result_meta = {"total": len(deduped), "returned": min(len(deduped), max_results),
+                       "truncated": truncated}
+        return deduped[:max_results], result_meta
 
     def get_callees(self, symbol: str) -> dict:
         return self._neighbors(symbol, "CALLS", False)
