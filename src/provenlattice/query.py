@@ -335,46 +335,54 @@ class GraphQuery:
     def get_callers(self, symbol: str, *, include_ambiguous: bool = False) -> dict:
         result = self._neighbors(symbol, "CALLS", True)
         if include_ambiguous:
-            possible, pc_meta = self._possible_callers(symbol)
+            anchor = self._resolve(symbol)
+            possible, pc_meta = self._possible_callers(symbol, resolved_anchor=anchor)
             result["possible_callers"] = possible
             result["possible_callers_meta"] = pc_meta
         return result
 
-    def _possible_callers(self, symbol: str, *, max_results: int = 200) -> tuple[list[dict], dict]:
+    def _possible_callers(
+        self, symbol: str, *, resolved_anchor: dict | None = None,
+        max_results: int = 200,
+    ) -> tuple[list[dict], dict]:
         """Read ambiguous CALLS raw_references whose candidate_symbols contain
         the target symbol ID. Returns evidence-level candidates (never
         resolved edges); zero schema or default-index behavior change.
 
-        Uses find_symbol's broader matching (qualified_name endswith) so
-        method-level qualified names like "Node.get" resolve correctly."""
-        placeholders = ",".join("?" for _ in SYMBOL_KINDS)
-        all_nodes = self.view.query(
-            "Node",
-            "SELECT * FROM nodes WHERE qualified_name=? OR name=? "
-            "OR qualified_name LIKE ? || '.%'",
-            (symbol, symbol.rsplit(".", 1)[-1], symbol),
-        )
-        # Apply the type+name filter in Python (overlay predicate is not
-        # applied by view.query — pre-existing overlay design).
-        # Uses find_symbol's matching semantics: qualified_name endswith
-        # ensures method-level names like "Node.get" match "a.Node.get"
-        # without also matching "a.Box.get" (different class, same method
-        # short name).
-        matching = [
-            r for r in all_nodes
-            if r.get("kind") in SYMBOL_KINDS and (
-                r.get("qualified_name") == symbol
-                or r.get("qualified_name", "").endswith("." + symbol)
+        F2: uses the same _resolve target as confirmed callers when exact
+        matching succeeds; falls back to broader endswith only when exact
+        fails. F1: exact nodes.id match is the highest-priority lookup."""
+        if resolved_anchor is not None:
+            target_id = resolved_anchor["id"]
+        else:
+            anchor = self._resolve(symbol)
+            target_id = anchor["id"] if anchor else None
+
+        if not target_id:
+            # F1: exact nodes.id priority, then full qualified_name, then
+            # endswith (SQL LIKE '%symbol' matches qualified_name suffix)
+            all_nodes = self.view.query(
+                "Node",
+                "SELECT * FROM nodes WHERE qualified_name=? "
+                "OR qualified_name LIKE '%' || ?",
+                (symbol, "." + symbol),
             )
-        ]
-        if not matching:
-            return [], {"total": 0, "returned": 0, "truncated": False}
-        if len(matching) > 1:
-            # Wide match hit multiple targets: report ambiguity, never
-            # silently pick one (P2-A R1 precedent).
-            return [], {"total": 0, "returned": 0, "truncated": False,
-                        "target_ambiguous": True}
-        target_id = matching[0]["id"]
+            matching = [
+                r for r in all_nodes
+                if r.get("kind") in SYMBOL_KINDS and (
+                    r.get("qualified_name") == symbol
+                    or r.get("qualified_name", "").endswith("." + symbol)
+                )
+            ]
+            if len(matching) == 1:
+                target_id = matching[0]["id"]
+            elif len(matching) > 1:
+                return [], {"total": 0, "returned": 0, "truncated": False,
+                            "target_ambiguous": True}
+            else:
+                return [], {"total": 0, "returned": 0, "truncated": False}
+
+        # F3: single bulk query; dedup by raw_reference_id (unique per site)
         rows = self.view.query(
             "RawReference",
             "SELECT * FROM raw_references WHERE reference_type='CALLS' "
@@ -424,19 +432,20 @@ class GraphQuery:
                 "receiver_shape": metadata.get("receiver_shape"),
                 "demote_reason": metadata.get("demote_reason"),
             })
+        # F3: dedup by raw_reference_id (unique per call site, not per line)
         candidates.sort(key=lambda c: (c["source_file"], c["source_line"] or 0,
-                                       c["caller_qualified_name"]))
-        seen = set()
+                                       c["caller_qualified_name"],
+                                       c["raw_reference_id"]))
+        seen: set[str] = set()
         deduped = []
         for c in candidates:
-            key = (c["caller_symbol_id"], c["source_file"], c["source_line"])
-            if key not in seen:
-                seen.add(key)
+            if c["raw_reference_id"] not in seen:
+                seen.add(c["raw_reference_id"])
                 deduped.append(c)
         truncated = len(deduped) > max_results
-        result_meta = {"total": len(deduped), "returned": min(len(deduped), max_results),
-                       "truncated": truncated}
-        return deduped[:max_results], result_meta
+        meta = {"total": len(deduped), "returned": min(len(deduped), max_results),
+                "truncated": truncated, "target_id": target_id}
+        return deduped[:max_results], meta
 
     def get_callees(self, symbol: str) -> dict:
         return self._neighbors(symbol, "CALLS", False)

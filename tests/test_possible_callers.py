@@ -92,15 +92,5 @@ class PossibleCallersTests(unittest.TestCase):
         self.assertEqual(r1.get("possible_callers"), r2.get("possible_callers"))
 
 
-def _build(root: Path, fixture: dict[str, str]) -> Path:
-    for rel, body in fixture.items():
-        p = root / rel
-        p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(body, encoding="utf-8", newline="\n")
-    db = root / "db.sqlite"
-    full_index(root, db)
-    return db
-
-
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
