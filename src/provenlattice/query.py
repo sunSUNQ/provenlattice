@@ -332,8 +332,93 @@ class GraphQuery:
             "callees" if edge_type == "CALLS" else "references")
         return self._result(result, started, evidence, query_type=direction, anchor=symbol)
 
-    def get_callers(self, symbol: str) -> dict:
-        return self._neighbors(symbol, "CALLS", True)
+    def get_callers(self, symbol: str, *, include_ambiguous: bool = False) -> dict:
+        result = self._neighbors(symbol, "CALLS", True)
+        if include_ambiguous:
+            result["possible_callers"] = self._possible_callers(symbol)
+        return result
+
+    def _possible_callers(self, symbol: str, *, max_results: int = 200) -> list[dict]:
+        """Read ambiguous CALLS raw_references whose candidate_symbols contain
+        the target symbol ID. Returns evidence-level candidates (never
+        resolved edges); zero schema or default-index behavior change.
+
+        Uses find_symbol's broader matching (qualified_name endswith) so
+        method-level qualified names like "Node.get" resolve correctly."""
+        placeholders = ",".join("?" for _ in SYMBOL_KINDS)
+        rows = self.view.query(
+            "Node",
+            "SELECT * FROM nodes WHERE qualified_name=? OR name=? "
+            "OR qualified_name LIKE ? || '.%'",
+            (symbol, symbol.rsplit(".", 1)[-1], symbol),
+            lambda row: row.get("kind") in SYMBOL_KINDS and (
+                row.get("qualified_name") == symbol
+                or row.get("name") == symbol.rsplit(".", 1)[-1]
+                or row.get("qualified_name", "").endswith("." + symbol)
+            ),
+        )
+        if not rows:
+            return []
+        target_id = rows[0]["id"]
+        rows = self.view.query(
+            "RawReference",
+            "SELECT * FROM raw_references WHERE reference_type='CALLS' "
+            "AND status='ambiguous'",
+            (),
+            lambda row: True,
+        )
+        candidates = []
+        for row in rows:
+            try:
+                cand_ids = json.loads(row["candidate_symbols"])
+            except (json.JSONDecodeError, TypeError, KeyError):
+                continue
+            if target_id not in cand_ids:
+                continue
+            caller_nodes = self.view.by_ids("Node", [row["owner_symbol_id"]])
+            caller_node = None
+            for cn in caller_nodes:
+                if cn.get("id") == row["owner_symbol_id"]:
+                    caller_node = cn
+                    break
+            if caller_node is None:
+                continue
+            decoded = decode_row(caller_node)
+            if decoded.get("kind") not in ("Method", "Function"):
+                continue
+            file_rows = self.storage.rows(
+                "SELECT path FROM files WHERE file_id=?", (row["file_id"],))
+            file_path = file_rows[0]["path"] if file_rows else ""
+            metadata = {}
+            try:
+                metadata = json.loads(row["metadata"])
+            except (json.JSONDecodeError, TypeError):
+                pass
+            candidates.append({
+                "caller_symbol_id": row["owner_symbol_id"],
+                "caller_qualified_name": decoded.get("qualified_name", ""),
+                "caller_kind": decoded.get("kind", ""),
+                "source_file": file_path,
+                "source_line": row.get("start_line"),
+                "raw_reference_id": row["id"],
+                "target_candidate_symbol_id": target_id,
+                "resolution_status": "ambiguous",
+                "evidence_level": "candidate",
+                "candidate_symbols": cand_ids,
+                "resolution_strategy": row.get("resolution_strategy", ""),
+                "receiver_shape": metadata.get("receiver_shape"),
+                "demote_reason": metadata.get("demote_reason"),
+            })
+        candidates.sort(key=lambda c: (c["source_file"], c["source_line"] or 0,
+                                       c["caller_qualified_name"]))
+        seen = set()
+        deduped = []
+        for c in candidates:
+            key = (c["caller_symbol_id"], c["source_file"], c["source_line"])
+            if key not in seen:
+                seen.add(key)
+                deduped.append(c)
+        return deduped[:max_results]
 
     def get_callees(self, symbol: str) -> dict:
         return self._neighbors(symbol, "CALLS", False)
