@@ -335,54 +335,66 @@ class GraphQuery:
     def get_callers(self, symbol: str, *, include_ambiguous: bool = False) -> dict:
         result = self._neighbors(symbol, "CALLS", True)
         if include_ambiguous:
-            anchor = self._resolve(symbol)
-            possible, pc_meta = self._possible_callers(symbol, resolved_anchor=anchor)
+            possible, pc_meta = self._possible_callers_strict(symbol)
             result["possible_callers"] = possible
             result["possible_callers_meta"] = pc_meta
         return result
 
-    def _possible_callers(
-        self, symbol: str, *, resolved_anchor: dict | None = None,
-        max_results: int = 200,
+    def _possible_callers_strict(
+        self, symbol: str, *, max_results: int = 200,
     ) -> tuple[list[dict], dict]:
-        """Read ambiguous CALLS raw_references whose candidate_symbols contain
-        the target symbol ID. Returns evidence-level candidates (never
-        resolved edges); zero schema or default-index behavior change.
+        """Strict multi-target resolution for include_ambiguous=True.
 
-        F2: uses the same _resolve target as confirmed callers when exact
-        matching succeeds; falls back to broader endswith only when exact
-        fails. F1: exact nodes.id match is the highest-priority lookup."""
-        if resolved_anchor is not None:
-            target_id = resolved_anchor["id"]
-        else:
-            anchor = self._resolve(symbol)
-            target_id = anchor["id"] if anchor else None
+        Unlike _resolve (which deterministically picks one node), this
+        method reports target_ambiguous when the symbol matches multiple
+        independent nodes (e.g. overloaded methods). Only a unique match
+        proceeds to the ambiguous CALLS candidate query.
 
-        if not target_id:
-            # F1: exact nodes.id priority, then full qualified_name, then
-            # endswith (SQL LIKE '%symbol' matches qualified_name suffix)
-            all_nodes = self.view.query(
-                "Node",
-                "SELECT * FROM nodes WHERE qualified_name=? "
-                "OR qualified_name LIKE '%' || ?",
-                (symbol, "." + symbol),
-            )
-            matching = [
-                r for r in all_nodes
-                if r.get("kind") in SYMBOL_KINDS and (
-                    r.get("qualified_name") == symbol
-                    or r.get("qualified_name", "").endswith("." + symbol)
-                )
-            ]
+        Match priority:
+        1. Exact nodes.id (for `symbol:<sha256>` queries)
+        2. Exact qualified_name
+        3. qualified_name endswith `.<symbol>` (must be unique)"""
+        # Priority 1: exact nodes.id
+        if symbol.startswith("symbol:"):
+            node_rows = self.view.by_ids("Node", [symbol])
+            matching = [decode_row(n) for n in node_rows
+                        if n and n.get("kind") in SYMBOL_KINDS]
             if len(matching) == 1:
                 target_id = matching[0]["id"]
-            elif len(matching) > 1:
-                return [], {"total": 0, "returned": 0, "truncated": False,
-                            "target_ambiguous": True}
-            else:
-                return [], {"total": 0, "returned": 0, "truncated": False}
+                return self._query_ambiguous_for_target(target_id, max_results)
+            return [], {"total": 0, "returned": 0, "truncated": False,
+                        "target_ambiguous": len(matching) > 1}
 
-        # F3: single bulk query; dedup by raw_reference_id (unique per site)
+        # Priority 2: exact qualified_name
+        exact = self.view.query(
+            "Node", "SELECT * FROM nodes WHERE qualified_name=?",
+            (symbol,), lambda row: row.get("kind") in SYMBOL_KINDS,
+        )
+        if len(exact) == 1:
+            target_id = exact[0]["id"]
+            return self._query_ambiguous_for_target(target_id, max_results)
+        if len(exact) > 1:
+            return [], {"total": 0, "returned": 0, "truncated": False,
+                        "target_ambiguous": True}
+
+        # Priority 3: qualified_name endswith (must be unique)
+        suffix = "." + symbol if "." in symbol else symbol
+        broad = self.view.query(
+            "Node", "SELECT * FROM nodes WHERE qualified_name LIKE '%' || ?",
+            (suffix,), lambda row: row.get("kind") in SYMBOL_KINDS,
+        )
+        if len(broad) == 1:
+            target_id = broad[0]["id"]
+            return self._query_ambiguous_for_target(target_id, max_results)
+        if len(broad) > 1:
+            return [], {"total": 0, "returned": 0, "truncated": False,
+                        "target_ambiguous": True}
+        return [], {"total": 0, "returned": 0, "truncated": False}
+
+    def _query_ambiguous_for_target(
+        self, target_id: str, max_results: int,
+    ) -> tuple[list[dict], dict]:
+        """Query ambiguous CALLS raw_references for a resolved target."""
         rows = self.view.query(
             "RawReference",
             "SELECT * FROM raw_references WHERE reference_type='CALLS' "
@@ -432,7 +444,6 @@ class GraphQuery:
                 "receiver_shape": metadata.get("receiver_shape"),
                 "demote_reason": metadata.get("demote_reason"),
             })
-        # F3: dedup by raw_reference_id (unique per call site, not per line)
         candidates.sort(key=lambda c: (c["source_file"], c["source_line"] or 0,
                                        c["caller_qualified_name"],
                                        c["raw_reference_id"]))

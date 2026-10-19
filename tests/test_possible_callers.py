@@ -154,22 +154,24 @@ class OverloadSafetyTests(unittest.TestCase):
             return q.get_callers(symbol, **kwargs)
 
     def test_overload_ambiguous_target(self) -> None:
-        """`eval(1)` and `eval(\"x\")` are overloads; the L1 resolver reports
-        ambiguous for the bare calls (same-file multi-candidate). The
-        possible_callers for either overload should return candidates."""
+        """P0 fix: querying "a.Calc.eval" (2 overloads) must report
+        target_ambiguous — the strict resolver refuses to silently pick
+        one overload."""
         result = self._query("a.Calc.eval", include_ambiguous=True)
-        possible = result.get("possible_callers", [])
-        for pc in possible:
-            self.assertEqual(pc["evidence_level"], "candidate")
-        # bare `eval(...)` calls in Calc.run() are ambiguous (3 overloads)
-        self.assertGreater(len(possible), 0)
+        meta = result.get("possible_callers_meta", {})
+        self.assertTrue(meta.get("target_ambiguous"),
+                        f"expected target_ambiguous, got {meta}")
+        self.assertEqual(result.get("possible_callers", []), [])
 
     def test_overload_exact_qualified_name_resolves(self) -> None:
-        """Exact qualified_name with signature still resolves to unique symbol."""
+        """Both overloads share qualified_name "a.Calc.eval" → the strict
+        resolver reports target_ambiguous (cannot determine which overload
+        is being called without signature information)."""
         result = self._query("a.Calc.eval", include_ambiguous=True)
-        possible = result.get("possible_callers", [])
-        targets = {pc["target_candidate_symbol_id"] for pc in possible}
-        self.assertEqual(len(targets), 1)  # all candidates target same base ID
+        meta = result.get("possible_callers_meta", {})
+        self.assertTrue(meta.get("target_ambiguous"),
+                        f"expected target_ambiguous, got {meta}")
+        self.assertEqual(result.get("possible_callers", []), [])
 
 
 class SameLineMultiCallTests(unittest.TestCase):
