@@ -1,0 +1,32 @@
+{
+  "task": "PL-V1.5.0-PR9-DOCS-CORRECTION-V1",
+  "completed_at": "2026-10-15",
+  "verdict": "PR9_REVIEW_PASS_READY_FOR_MERGE",
+  "pr": {
+    "url": "https://github.com/sunSUNQ/provenlattice/pull/9",
+    "state": "OPEN", "mergeable": "MERGEABLE",
+    "head": "d97ceba", "base": "main @ 0ec6364",
+    "changed_files": 11,
+    "ci_run": "39216634626",
+    "ci": {"test-linux": "PASS (41s)", "test-windows": "PASS (13m21s)", "corresponds_to_head": true}
+  },
+  "corrections_applied": [
+    "provenance numstat: already correct in PR #8 (+22/-4 and +44); confirmed no further edit needed",
+    "CMD code block language tag: bash -> bat (README)",
+    "postmerge report file-count snapshot note added (112/263/1895 scanned vs 114/264/1891 rglob distinction)",
+    "markdown-inventory: sha256 -> sha256_16 renamed; A-class action UPDATED_IN_PR9; B-class 0 stale confirmed",
+    "docs-change-manifest: absolute worktree path removed; PR-submitted state recorded",
+    "docs-refresh-report: PR-submitted state + B-class count correction"
+  ],
+  "sha256_unchanged": {
+    "java-beta-postmerge-validation-report.md": "18aa86f1ead686b5",
+    "java-beta-pr-submission-report.md": "e35dbb4991ef68e3"
+  },
+  "remaining_limits": [
+    "Linux JDT NOT_VERIFIED",
+    "146 UNKNOWN",
+    "query-time not persisted",
+    "RQ1 formal not obtained",
+    "PyPI deferred by user"
+  ]
+}
