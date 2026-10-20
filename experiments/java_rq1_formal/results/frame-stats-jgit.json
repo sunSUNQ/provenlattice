@@ -1,0 +1,29 @@
+{
+  "task": "PL-JAVA-RQ1-FORMAL-V1 frame",
+  "mode": "stats",
+  "repo": "jgit",
+  "evidence_level": "frame-statistics-windows-only",
+  "population_N": {
+    "S1_L1_RESOLVED_L1_ONLY": 27162,
+    "S2_L1_RESOLVED_JDT_AGREE": 7335,
+    "S3_L1_RESOLVED_JDT_CONFLICT": 136,
+    "S4_NONRESOLVED_RECOVERED": 46939,
+    "S5_NONRESOLVED_JDT_AMBIG": 1006,
+    "S6_NONRESOLVED_NOT_SEEN": 95784
+  },
+  "sample_n_rule": "proportional, floor 3, cap 24, largest remainder",
+  "sample_n": {
+    "S1_L1_RESOLVED_L1_ONLY": 9,
+    "S2_L1_RESOLVED_JDT_AGREE": 4,
+    "S3_L1_RESOLVED_JDT_CONFLICT": 3,
+    "S4_NONRESOLVED_RECOVERED": 15,
+    "S5_NONRESOLVED_JDT_AMBIG": 3,
+    "S6_NONRESOLVED_NOT_SEEN": 24
+  },
+  "total_sample_n": 58,
+  "frame_sha256": "924bfbeb5692fe373a5d4eebb0193b32d01669f346b0c5b940f59f10c3e8dd3b",
+  "gates": {
+    "sample_mode_executed": false,
+    "gate_ack": null
+  }
+}
