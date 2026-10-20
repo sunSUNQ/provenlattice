@@ -14,9 +14,12 @@ fingerprint / 对比") over the bundled minimal fixture:
   S4 fail-closed   a corrupt jar on the classpath yields an explicit failed
                    result, never a partial success.
   S5 fingerprint   the P2-C classpath contract fingerprint is byte-stable
-                   across repeated builds and path-spelling variants.
+                    across repeated builds and path-spelling variants.
   S6 compare       normalized S3 output is byte-identical to the committed
-                   cross-platform golden (generated on Windows, Temurin 21).
+                    cross-platform golden (generated on Windows, Temurin 21).
+  S7 parse-error   ast:java partially materializes a syntactically broken
+                    file while cfg:java skips its methods with an explicit
+                    methods_skipped_parse_error count (never a guessed CFG).
 
 Raw step outputs are archived under --out; comparisons use normalized
 JSON only (absolute paths and environment-dependent fields excluded).
@@ -203,6 +206,29 @@ def s6_compare(out: Path, normalized: dict, compare: bool = True) -> None:
     check("S6 cross-platform golden match", actual_text == golden_text)
 
 
+def s7_parse_error_skip(out: Path) -> None:
+    from provenlattice.analysis_java_ast import analyze_ast_scope
+    from provenlattice.analysis_java_cfg import analyze_cfg_scope
+
+    ast_payload = analyze_ast_scope(FIXTURE, "src", out / "fixture.db")
+    (out / "step7-ast.json").write_text(
+        json.dumps(ast_payload, indent=1), encoding="utf-8")
+    check("S7 ast partially materializes parse-error file",
+          "src/com/example/Broken.java" in ast_payload["materialized"]
+          and ast_payload["nodes_written"] > 0,
+          str(ast_payload)[:300])
+
+    cfg_payload = analyze_cfg_scope(FIXTURE, "src", out / "fixture.db")
+    (out / "step7-cfg.json").write_text(
+        json.dumps(cfg_payload, indent=1), encoding="utf-8")
+    check("S7 cfg counts parse-error method skips",
+          cfg_payload["methods_skipped_parse_error"] >= 1,
+          str(cfg_payload)[:300])
+    check("S7 cfg builds only the well-formed methods",
+          cfg_payload["methods_built"] == 3,
+          str(cfg_payload)[:300])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--jdk", required=True, help="JDK 21 home (Temurin 21)")
@@ -219,6 +245,7 @@ def main() -> None:
     compare = not args.emit_golden
 
     s1_index(out, compare=compare)
+    s7_parse_error_skip(out)
     s2_status_only(out, args.jdk, jars_dir)
     normalized = s3_full(out, args.jdk, jars_dir)
     s4_fail_closed(out, args.jdk, jars_dir)
