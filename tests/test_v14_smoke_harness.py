@@ -28,6 +28,7 @@ import test_mcp_defect_e2e as mcp_e2e
 REPO = pathlib.Path(__file__).resolve().parent.parent
 PYPROJECT = REPO / "pyproject.toml"
 EXPECTED_VERSION = "1.6.0-dev0"
+EXPECTED_VERSION_INSTALL_METADATA = "1.6.0.dev0"
 
 CORE_COMMANDS = (
     "index", "update", "knowledge", "analyze", "defect", "status",
@@ -152,7 +153,8 @@ class V14SmokeHarness(unittest.TestCase):
             pyproject["project"]["version"], EXPECTED_VERSION,
             "pyproject version drifted from the frozen release version")
         self.assertEqual(
-            importlib.metadata.version("provenlattice"), EXPECTED_VERSION,
+            importlib.metadata.version("provenlattice"),
+            EXPECTED_VERSION_INSTALL_METADATA,
             "installed distribution version does not match the release")
         import provenlattice
         semantics = pathlib.Path(provenlattice.__file__).parent / "semantics"
