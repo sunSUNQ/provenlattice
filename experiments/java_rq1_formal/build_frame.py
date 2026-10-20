@@ -33,6 +33,18 @@ R2 amendment changes (vs v1.0):
    lowers platform evidence qualification only; it is never a substitute
    for a Linux Formal result.
 
+R3 amendment changes (vs v1.1, owner decision
+PL-SOLO-V2-OWNER-DECISION-20261020-R3 §2):
+7. Evidence sufficiency: the Stable binary verdict is only reachable when
+   the design-weighted estimator is valid (see decision_rule.py gates
+   G1-G4); otherwise the outcome is INCONCLUSIVE - an honest disclosure
+   tier, never a qualification middle tier.
+8. External authorization verification: sample mode verifies via the
+   GitHub API that --decision-ref resolves to a REAL Human Owner
+   authorization record (author is the owner account, record body
+   contains the expected ack token). Any verification failure REFUSES.
+   The ack formula check is kept but is no longer the sole basis.
+
 Strata (per repository, relation CALLS):
   S1 L1_RESOLVED_L1_ONLY      L1 resolved; site not bound by JDT merge
   S2 L1_RESOLVED_JDT_AGREE    L1 resolved and JDT agrees
@@ -47,19 +59,26 @@ import argparse
 import hashlib
 import json
 import random
+import re
 import sqlite3
+import subprocess
 import sys
 from contextlib import closing
 from pathlib import Path
 
 from provenlattice.java_semantic import run_jdt_analysis, merge_with_l1
 
-PLAN_VERSION = "v1.1-amendment-r2"
+PLAN_VERSION = "v1.2-amendment-r3"
 PLAN_FILE = Path(__file__).resolve().parent / "plan-frozen-v1.md"
 # Pre-frozen public seed (plan-frozen-v1.md §4). Never generated at runtime.
 SAMPLE_SEED = "PL-JAVA-RQ1-FORMAL-V1.1-FIXED-SEED-20261020"
 BOOTSTRAP_SEED = "PL-JAVA-RQ1-FORMAL-V1.1-BOOTSTRAP-SEED-20261020"
 BOOTSTRAP_B = 10000
+
+OWNER_LOGIN = "sunSUNQ"
+DECISION_REF_RE = re.compile(
+    r"^https://github\.com/([A-Za-z0-9.-]+)/([A-Za-z0-9.-]+)"
+    r"/issues/(\d+)(?:#issuecomment-(\d+))?$")
 
 STRATA = ["S1_L1_RESOLVED_L1_ONLY", "S2_L1_RESOLVED_JDT_AGREE",
           "S3_L1_RESOLVED_JDT_CONFLICT", "S4_NONRESOLVED_RECOVERED",
@@ -79,6 +98,54 @@ def plan_sha256() -> str:
 def expected_gate_ack(decision_ref: str) -> str:
     canonical = f"{decision_ref}|{PLAN_VERSION}|{plan_sha256()}"
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()[:16]
+
+
+def _gh_api(api_args: list[str]) -> tuple[int, str]:
+    proc = subprocess.run(["gh", *api_args], capture_output=True, text=True,
+                          timeout=60)
+    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+
+
+def verify_authorization(decision_ref: str, expected_ack: str,
+                         run_gh=_gh_api) -> dict:
+    """Verify decision_ref resolves to a REAL Human Owner authorization
+    record via the GitHub API (v1.2, R3 revision 2).
+
+    Checks, in order, each failing check REFUSES sample mode:
+    - the permalink is a github.com issue or issue-comment URL;
+    - the record is fetchable (`gh api`);
+    - the record author is the owner account (OWNER_LOGIN);
+    - the record body contains the expected ack token.
+    The record body itself is never echoed into outputs."""
+    match = DECISION_REF_RE.match(decision_ref or "")
+    if not match:
+        return {"verified": False, "reason": "decision_ref_unparseable"}
+    owner, repo_name, issue_number, comment_id = match.groups()
+    api_path = (f"repos/{owner}/{repo_name}/issues/comments/{comment_id}"
+                if comment_id else
+                f"repos/{owner}/{repo_name}/issues/{issue_number}")
+    try:
+        code, output = run_gh(["api", api_path])
+    except (OSError, subprocess.TimeoutExpired):
+        return {"verified": False, "reason": "authorization_record_unreachable",
+                "api_path": api_path}
+    if code != 0:
+        return {"verified": False, "reason": "authorization_record_unreachable",
+                "api_path": api_path}
+    try:
+        record = json.loads(output)
+    except ValueError:
+        return {"verified": False, "reason": "authorization_record_unparseable",
+                "api_path": api_path}
+    author = (record.get("user") or {}).get("login")
+    body = record.get("body") or ""
+    if author != OWNER_LOGIN:
+        return {"verified": False, "reason": "author_not_owner",
+                "author": author, "api_path": api_path}
+    if expected_ack not in body:
+        return {"verified": False, "reason": "ack_token_absent",
+                "author": author, "api_path": api_path}
+    return {"verified": True, "author": author, "api_path": api_path}
 
 
 def case_id(case: dict) -> str:
@@ -267,6 +334,16 @@ def main() -> int:
                   "Obtain the ack from the Owner frame-freeze approval "
                   "record referenced by --decision-ref.", file=sys.stderr)
             return 2
+        authorization = verify_authorization(
+            args.decision_ref, expected_gate_ack(args.decision_ref))
+        if not authorization["verified"]:
+            print(f"REFUSED: owner authorization record not verified "
+                  f"({authorization['reason']}). sample mode requires "
+                  "--decision-ref to resolve, via the GitHub API, to a real "
+                  f"Human Owner record authored by {OWNER_LOGIN} whose body "
+                  "contains the expected ack token.", file=sys.stderr)
+            return 2
+        verified_authorization = authorization
 
     repo_path = Path(args.repo).resolve()
     classified = classify(repo_path, Path(args.db).resolve(), args.manifest)
@@ -307,7 +384,12 @@ def main() -> int:
         payload["gates"] = {"sample_mode_executed": True,
                             "decision_ref": args.decision_ref,
                             "gate_ack": args.gate_ack,
-                            "plan_sha256": plan_sha256()}
+                            "plan_sha256": plan_sha256(),
+                            "authorization_verification": {
+                                "verified": verified_authorization["verified"],
+                                "author": verified_authorization.get("author"),
+                                "api_path": verified_authorization.get(
+                                    "api_path")}}
         blind_cases = [make_blind_case(c) for c in cases]
         blind_text = json.dumps(blind_cases, indent=2, ensure_ascii=False)
         leaked = [f for f in SYSTEM_FIELDS if f in blind_text]

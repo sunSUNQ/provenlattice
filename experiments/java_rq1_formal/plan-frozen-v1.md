@@ -1,14 +1,20 @@
-# Java RQ1 Formal — 采样与评分方案冻结文档 V1.1
+# Java RQ1 Formal — 采样与评分方案冻结文档 V1.2
 
-Issue Pilot #4 · 状态：**方案冻结（FROZEN FOR DESIGN）** · 版本：`v1.1-amendment-r2`
+Issue Pilot #4 · 状态：**方案冻结（FROZEN FOR DESIGN）** · 版本：`v1.2-amendment-r3`
 · Owner gate：PL-JAVA-ISSUE-DECISION-20261020（APPROVE_DESIGN_ONLY）+ 修订要求
-PL-JAVA-OWNER-DECISION-R2（AMENDMENT_REQUIRED，六项方法学修订）。
+PL-JAVA-OWNER-DECISION-R2（六项方法学修订）+ PL-SOLO-V2-OWNER-DECISION-20261020-R3
+§2（DESIGN_APPROVED_CONDITIONAL，两项合并前定向修订）。
 **本文档只冻结方案；标注执行被 §6 执行门禁止，直到全部前置条件满足。**
 
 > v1.0 → v1.1 差异摘要：① 前 n 例选择改为冻结种子的分层简单随机抽样；
 > ② 新增 JDT 关联键碰撞审计，碰撞行排除出抽样框；③ 盲评视图字段白名单化；
 > ④ 新增加权估计量、bootstrap 置信区间与 Stable 判定规则；⑤ gate-ack 绑定
 > 授权记录+方案版本+方案哈希；⑥ Windows-only 豁免语义限定。
+>
+> v1.1 → v1.2 差异摘要（R3 §2 修订①②）：⑦ 资格判定的证据充分性——
+> 估计量/证据无效时输出 INCONCLUSIVE 披露档（非资格中间档），二值判定仅在
+> 估计量有效时可达；⑧ sample 模式增加 decision_ref 的 GitHub API 外部校验
+> （真实 owner 授权记录 + 记录正文含 ack 令牌），ack 计算保留但不再是唯一依据。
 
 ## 1. 研究问题与资格目标
 
@@ -111,8 +117,16 @@ v1.1 新增 `association_ambiguous` 排除（§4），frame-freeze 执行时必�
   - **Stable 资格判定规则**（对应 §1 资格规则）：QUALIFIED 当且仅当
     加权 Resolved Precision ≥ 0.90 且其 bootstrap 95% CI 下界 ≥ 0.85，
     且加权 False-Resolution-on-Absent ≤ 0.10 且其 CI 上界 ≤ 0.15，
-    且校准门通过。否则 NOT_QUALIFIED（V1 不设中间档；无论结论如何，
-    全部加权/未加权数字与 CI 原样报告）。
+    且校准门通过。否则 NOT_QUALIFIED（无论结论如何，全部加权/未加权
+    数字与 CI 原样报告）。
+  - **INCONCLUSIVE 披露档（v1.2，R3 修订①）**：当且仅当加权估计量或
+    其 bootstrap CI **无法有效计算**时，结果输出 INCONCLUSIVE 并列出
+    原因，不得落入二值判定。触发条件（估计量有效性门，实现于
+    `decision_rule.py`）：G1 总样本量为 0；G2 任一 N_h>0 的分层
+    n_h=0（覆盖空洞：W_h=N_h/N 给该层分配权重但无数据代表）；
+    G3 任一指标分母为空（指标未定义）；G4 标注不完整。INCONCLUSIVE
+    **不是资格中间档**——它只表示"证据不足/估计量无效"的诚实披露；
+    宽而有效的 CI 未达标仍是合法的 NOT_QUALIFIED。
   - 结果类映射沿用 GRAPH_FIDELITY_SCORING_V1（WRONG_TARGET_RESOLUTION、
     FALSE_RESOLUTION_ON_ABSENT、JUSTIFIED_ABSTENTION 等，INDETERMINATE
     排除出全部分母）。
@@ -122,19 +136,26 @@ v1.1 新增 `association_ambiguous` 排除（§4），frame-freeze 执行时必�
 
 ## 6. 执行门（全部满足才允许 `build_frame.py sample` 与任何标注）
 
-1. 本方案（v1.1）与决策记录经 owner 评审合并（PR #16）。
+1. 本方案（v1.2）与决策记录经 owner 评审合并（PR #16）。
 2. **Issue #3 Linux JDT 兼容性补测 VERIFIED**，或 owner 明示豁免。
    **豁免语义（v1.1，R2 修订⑥）**：Windows-only 豁免仅降低平台证据资格——
    系统预测与标注环境记录为 Windows 管线口径，结果标注 platform-scoped；
    它**不构成、也不替代 Linux Formal 结果**。任何把资格外推到 Linux 平台
    的宣称，仍需 Linux 侧证据（Issue #3 的 fixture 级 S6 字节一致 + 后续
    Linux 实仓验证）先行。
-3. **frame-freeze 批准与 gate-ack 绑定（v1.1，R2 修订⑤）**：owner 在
-   frame-freeze 批准评论中给出授权记录 permalink（`--decision-ref`）与
-   16 位十六进制 ack；脚本强制校验
+3. **frame-freeze 批准与 gate-ack 绑定（v1.1，R2 修订⑤；v1.2，R3 修订②）**：
+   owner 在 frame-freeze 批准评论中给出授权记录 permalink（`--decision-ref`）
+   与 16 位十六进制 ack；脚本强制校验
    `ack == sha256("{decision_ref}|{PLAN_VERSION}|{plan_sha256}")[:16]`，
    其中 plan_sha256 是合并时 plan-frozen-v1.md 的文件哈希。非空字符串
    不再被接受；校验失败时打印公式输入（不打印期望 ack 值）。
+   **外部授权校验（v1.2，R3 修订②）**：ack 的公式输入均可由执行者自行
+   计算，不构成对真实授权的依赖；因此 sample 模式还必须经 GitHub API
+   核验 `--decision-ref` 指向**真实存在的 Human Owner 授权记录**——
+   记录作者为 owner 账号（`OWNER_LOGIN = sunSUNQ`）、记录正文包含预期
+   ack 令牌；permalink 无法解析、记录不可达、作者不符或正文无令牌，
+   任一失败即 REFUSED。校验结果（verified/author/api_path）写入输出
+   `gates.authorization_verification`；ack 计算保留，但不再是唯一依据。
 4. **Before 基线先于任何修复线**：CALLS coverage / 146 UNKNOWN 的改进工作
    必须等待本 RQ1 的 Before 测量冻结（"先测后改"）。
 5. 未满足以上任一条：只允许工具性准备（标注脚本、视图生成器），不得触碰案例。

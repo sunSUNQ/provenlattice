@@ -1,9 +1,11 @@
-"""Issue Pilot #4 (R2 amendment): frame builder methodological guarantees.
+"""Issue Pilot #4 (R2/R3 amendments): frame builder methodological guarantees.
 
-Covers the six R2 amendment points that are testable without JDT:
-seeded reproducible sampling (1), association-ambiguity exclusion logic (2),
-blinding isolation (3), Stable decision-rule boundaries (4), gate-ack
-binding (5). Population measurement itself is exercised by `stats` runs.
+Covers the amendment points that are testable without JDT: seeded
+reproducible sampling (R2-1), association-ambiguity exclusion logic (R2-2),
+blinding isolation (R2-3), Stable decision-rule boundaries (R2-4),
+gate-ack binding (R2-5), INCONCLUSIVE evidence-sufficiency gates (R3-1),
+external owner-authorization verification (R3-2). Population measurement
+itself is exercised by `stats` runs.
 """
 from __future__ import annotations
 
@@ -16,9 +18,11 @@ sys.path.insert(
     0, str(Path(__file__).resolve().parent.parent / "experiments"))
 
 from experiments.java_rq1_formal.build_frame import (  # noqa: E402
-    BLIND_FIELDS, PLAN_VERSION, STRATA, allocate, expected_gate_ack,
-    make_blind_case, plan_sha256, select_cases,
+    BLIND_FIELDS, OWNER_LOGIN, PLAN_VERSION, STRATA, allocate,
+    expected_gate_ack, make_blind_case, plan_sha256, select_cases,
+    verify_authorization,
 )
+from experiments.java_rq1_formal.decision_rule import stable_verdict  # noqa: E402
 
 
 def _fake_population(n: int, repo_file_prefix: str = "src/A") -> list[dict]:
@@ -118,14 +122,19 @@ class GateAckTests(unittest.TestCase):
 
 
 class StableDecisionRuleTests(unittest.TestCase):
-    """Boundary checks for the frozen Stable qualification rule (plan §5)."""
+    """Boundary checks for the frozen Stable qualification rule (plan §5),
+    exercised through decision_rule.stable_verdict."""
 
-    @staticmethod
-    def _verdict(rp: float, rp_lo: float, fra: float, fra_hi: float,
+    VALID_SIZES = (
+        {s: 10 for s in STRATA},
+        {s: 100 for s in STRATA},
+    )
+
+    def _verdict(self, rp: float, rp_lo: float, fra: float, fra_hi: float,
                  calibration_passed: bool = True) -> str:
-        qualified = (rp >= 0.90 and rp_lo >= 0.85
-                     and fra <= 0.10 and fra_hi <= 0.15 and calibration_passed)
-        return "QUALIFIED" if qualified else "NOT_QUALIFIED"
+        samples, populations = self.VALID_SIZES
+        return stable_verdict(rp, rp_lo, fra, fra_hi, calibration_passed,
+                              samples, populations)["verdict"]
 
     def test_qualifies_only_when_all_bounds_hold(self):
         self.assertEqual(self._verdict(0.92, 0.86, 0.08, 0.12), "QUALIFIED")
@@ -143,6 +152,122 @@ class StableDecisionRuleTests(unittest.TestCase):
         self.assertEqual(self._verdict(0.92, 0.86, 0.08, 0.12,
                                        calibration_passed=False),
                          "NOT_QUALIFIED")
+
+
+class DegenerateEvidenceTests(unittest.TestCase):
+    """R3 revision 1: INCONCLUSIVE on estimator-invalid inputs; the binary
+    verdict is unreachable when the weighted estimator cannot be computed
+    validly (plan §5 INCONCLUSIVE tier, decision_rule gates G1-G4)."""
+
+    STRATA_SIZES = {s: 100 for s in STRATA}
+
+    def test_total_sample_zero_is_inconclusive(self):
+        result = stable_verdict(0.99, 0.95, 0.01, 0.02, True,
+                                {s: 0 for s in STRATA}, self.STRATA_SIZES)
+        self.assertEqual(result["verdict"], "INCONCLUSIVE")
+        self.assertIn("G1_total_sample_zero", result["reasons"])
+
+    def test_unrepresented_stratum_is_inconclusive(self):
+        samples = {s: 10 for s in STRATA}
+        samples["S3_L1_RESOLVED_JDT_CONFLICT"] = 0
+        result = stable_verdict(0.99, 0.95, 0.01, 0.02, True,
+                                samples, self.STRATA_SIZES)
+        self.assertEqual(result["verdict"], "INCONCLUSIVE")
+        self.assertIn("G2_unrepresented_stratum:S3_L1_RESOLVED_JDT_CONFLICT",
+                      result["reasons"])
+
+    def test_empty_population_stratum_is_not_a_hole(self):
+        populations = {s: 100 for s in STRATA}
+        populations["S3_L1_RESOLVED_JDT_CONFLICT"] = 0
+        samples = {s: 10 for s in STRATA}
+        samples["S3_L1_RESOLVED_JDT_CONFLICT"] = 0
+        result = stable_verdict(0.92, 0.86, 0.08, 0.12, True,
+                                samples, populations)
+        self.assertEqual(result["verdict"], "QUALIFIED")
+
+    def test_undefined_metric_is_inconclusive(self):
+        for kwargs in ({"rp": None}, {"fra": None}, {"rp_lo": float("nan")}):
+            with self.subTest(**kwargs):
+                values = {"rp": 0.92, "rp_lo": 0.86, "fra": 0.08,
+                          "fra_hi": 0.12}
+                values.update(kwargs)
+                result = stable_verdict(
+                    values["rp"], values["rp_lo"], values["fra"],
+                    values["fra_hi"], True, {s: 10 for s in STRATA},
+                    self.STRATA_SIZES)
+                self.assertEqual(result["verdict"], "INCONCLUSIVE")
+                self.assertTrue(
+                    any(r.startswith("G3_metric_undefined")
+                        for r in result["reasons"]))
+
+    def test_incomplete_annotation_is_inconclusive(self):
+        result = stable_verdict(0.92, 0.86, 0.08, 0.12, True,
+                                {s: 10 for s in STRATA},
+                                self.STRATA_SIZES,
+                                annotation_complete=False)
+        self.assertEqual(result["verdict"], "INCONCLUSIVE")
+        self.assertIn("G4_annotation_incomplete", result["reasons"])
+
+    def test_wide_but_valid_ci_is_not_inconclusive(self):
+        result = stable_verdict(0.92, 0.60, 0.08, 0.40, True,
+                                {s: 10 for s in STRATA}, self.STRATA_SIZES)
+        self.assertEqual(result["verdict"], "NOT_QUALIFIED")
+        self.assertEqual(result["reasons"], [])
+
+
+class AuthorizationVerificationTests(unittest.TestCase):
+    """R3 revision 2: sample mode requires decision_ref to resolve, via the
+    GitHub API, to a real Human Owner record carrying the ack token."""
+
+    REF = "https://github.com/sunSUNQ/issue-pilot/issues/4#issuecomment-99"
+    ACK = "0123456789abcdef"
+
+    @staticmethod
+    def _runner(rc: int = 0, author: str = OWNER_LOGIN,
+                body: str = f"frame-freeze approved ack=0123456789abcdef"):
+        def run(_args):
+            return rc, json.dumps(
+                {"user": {"login": author}, "body": body})
+        return run
+
+    def test_valid_owner_record_with_ack_verifies(self):
+        result = verify_authorization(self.REF, self.ACK, self._runner())
+        self.assertTrue(result["verified"])
+        self.assertEqual(result["author"], OWNER_LOGIN)
+        self.assertEqual(
+            result["api_path"],
+            "repos/sunSUNQ/issue-pilot/issues/comments/99")
+
+    def test_issue_level_ref_without_comment(self):
+        ref = "https://github.com/sunSUNQ/issue-pilot/issues/4"
+        result = verify_authorization(ref, self.ACK, self._runner())
+        self.assertTrue(result["verified"])
+        self.assertEqual(result["api_path"],
+                         "repos/sunSUNQ/issue-pilot/issues/4")
+
+    def test_unparseable_ref_is_refused(self):
+        result = verify_authorization("https://example.com/x", self.ACK,
+                                      self._runner())
+        self.assertFalse(result["verified"])
+        self.assertEqual(result["reason"], "decision_ref_unparseable")
+
+    def test_unreachable_record_is_refused(self):
+        result = verify_authorization(self.REF, self.ACK, self._runner(rc=1))
+        self.assertFalse(result["verified"])
+        self.assertEqual(result["reason"], "authorization_record_unreachable")
+
+    def test_non_owner_author_is_refused(self):
+        result = verify_authorization(self.REF, self.ACK,
+                                      self._runner(author="someone-else"))
+        self.assertFalse(result["verified"])
+        self.assertEqual(result["reason"], "author_not_owner")
+
+    def test_missing_ack_token_is_refused(self):
+        result = verify_authorization(
+            self.REF, self.ACK,
+            self._runner(body="approved, but the token is not here"))
+        self.assertFalse(result["verified"])
+        self.assertEqual(result["reason"], "ack_token_absent")
 
 
 if __name__ == "__main__":

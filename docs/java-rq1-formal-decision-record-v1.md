@@ -27,7 +27,9 @@ Issue Pilot #4 · 决策日期：2026-10-20 · 决策者：owner（sunSUNQ）
 
 1. 方案/决策记录 owner 评审合并；
 2. Issue #3 Linux JDT 补测 VERIFIED，或 owner 明示豁免（证据等级降级披露）；
-3. Owner frame-freeze 批准 id（sample 模式硬门，缺 `--gate-ack` 即拒绝执行）；
+3. Owner frame-freeze 批准 permalink + ack（sample 模式硬门，缺
+   `--gate-ack` 即拒绝执行）；v1.2 起另需通过 GitHub API 外部授权校验
+   （见 §6 R3 修订②）；
 4. Before 基线先于任何修复线改动（先测后改）。
 
 ## 4. 预算与排除
@@ -60,3 +62,18 @@ plan-frozen-v1.md 升版 `v1.1-amendment-r2`，脚本与测试同步修订）：
 修订未重做三仓种群测量（v1.0 表保留为参照）；因修订引入关联键排除，
 frame-freeze 时重测**有效总体**（排除后计数）为既定执行步骤。修订后
 交独立复审，通过后重新提交 Owner 合并决策。
+
+## 7. R3 决策落地（PL-SOLO-V2-OWNER-DECISION-20261020-R3 §2，2026-10-20）
+
+Owner 裁定 **DESIGN_APPROVED_CONDITIONAL**：批准 Java Stable 必须满足
+RQ1 Formal QUALIFIED；批准 174 例 / 每仓 58 / floor=3 / cap=24 初始设计、
+冻结种子分层随机抽样、Windows-only 有限证据豁免（§5 三项待批准项随之
+关闭）。合并前两项定向修订（方案升版 `v1.2-amendment-r3`）：
+
+| # | Owner 要求 | 落实 |
+|---|---|---|
+| 1 | 资格判定的证据充分性：检查加权估计量在分层样本极小/为 0 时的退化行为；样本证据不足时不得落入二值判定，必须报告 INCONCLUSIVE（非资格中间档） | 新增 `experiments/java_rq1_formal/decision_rule.py`：估计量有效性门 G1（总样本 0）/G2（N_h>0 且 n_h=0 覆盖空洞）/G3（指标分母空）/G4（标注不完整）触发 INCONCLUSIVE 并列原因；二值 QUALIFIED/NOT_QUALIFIED 规则数值不变，仅估计量有效时可达；宽而有效的 CI 未达标仍是 NOT_QUALIFIED（方案 §5 统计判定、测试 DegenerateEvidenceTests/DecisionRuleTests） |
+| 2 | frame-freeze 授权可验证性：sample 模式必须外部校验 decision_ref 指向真实 Human Owner 授权记录，失败即 REFUSED；ack 计算保留但不再是唯一依据 | `build_frame.py verify_authorization`：GitHub API 核验 permalink 可解析、记录可达、作者为 owner 账号（OWNER_LOGIN=sunSUNQ）、记录正文含预期 ack 令牌；任一失败 REFUSED 且校验结果写入 `gates.authorization_verification`（方案 §6.3、脚本 sample 门、测试 AuthorizationVerificationTests） |
+
+执行边界不变：不启动 sample、不启动 Formal 标注、不签发 frame-freeze
+ID、不修改 `src/`。修订后交独立复审（绑定新 HEAD），合并决策归 Owner。
