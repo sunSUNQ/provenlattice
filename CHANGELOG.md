@@ -3,6 +3,12 @@
 所有已发布里程碑按时间倒序记录。tag 命名遵循 `provenlattice-*` 前缀约定；
 各阶段的"已完成 / 明确未包含"以对应发布文档为准（`docs/releases/`）。
 
+## ProvenLattice 1.6.0-dev0（开发线开启，未发布）
+
+- 版本号预备（Issue Pilot #12）：`1.5.0` → `1.6.0-dev0`，四处检查链路同步
+  （pyproject / CI Verify version ×2 / smoke harness EXPECTED_VERSION）。
+  实际 1.6 内容按 roadmap 演进；Release/tag 由 Owner 决策。
+
 ## ProvenLattice 1.5.0 — Java Public Beta（2026-10-19）
 
 > 已发布：GitHub Release [provenlattice-v1.5.0](https://github.com/sunSUNQ/provenlattice/releases/tag/provenlattice-v1.5.0)（tag 指向 main commit 0ec6364；wheel/sdist SHA256 见 REPRODUCIBILITY.md 与 Release assets）。PyPI 发布独立决策。
