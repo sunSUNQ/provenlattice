@@ -53,6 +53,7 @@ LANGUAGE_PATTERN = re.compile(r"[a-z0-9_\-]+")
 ANALYZER_VERSIONS = {
     "ast:python": 1, "cfg:python": 2, "ast:c": 3, "cfg:c": 3, "events:cpp": 1,
     "sparse_cfg:cpp": 1, "sparse_dfg:cpp": 2,
+    "ast:java": 1, "cfg:java": 2,
 }
 STATUS_CURRENT = "current"
 MAX_ANALYSIS_NODE_PAYLOAD_BYTES = 4096
@@ -90,13 +91,13 @@ MAX_ANALYSIS_NODE_PAYLOAD_BYTES = 4096
 CAPABILITY_CONTRACT: dict[str, dict] = {
     "ast": {
         "status": "implemented", "domain": "agent",
-        "languages": ("python", "c"), "depends_on": (), "cost_class": "low",
-        "analyzer_ids": ("ast:python", "ast:c"), "planned_integration": None,
+        "languages": ("python", "c", "java"), "depends_on": (), "cost_class": "low",
+        "analyzer_ids": ("ast:python", "ast:c", "ast:java"), "planned_integration": None,
     },
     "cfg": {
         "status": "implemented", "domain": "agent",
-        "languages": ("python", "c"), "depends_on": ("ast",), "cost_class": "medium",
-        "analyzer_ids": ("cfg:python", "cfg:c"), "planned_integration": None,
+        "languages": ("python", "c", "java"), "depends_on": ("ast",), "cost_class": "medium",
+        "analyzer_ids": ("cfg:python", "cfg:c", "cfg:java"), "planned_integration": None,
     },
     "events": {
         # I1-A: level-0 vocabulary events only (CALL/RETURN/THROW/ALLOC/

@@ -105,7 +105,7 @@ class CapabilityContractTests(unittest.TestCase):
         # must not pretend otherwise.
         self.assertEqual(CAPABILITY_CONTRACT["cfg"]["status"], "implemented")
         self.assertEqual(CAPABILITY_CONTRACT["sparse_cfg"]["status"], "implemented")
-        self.assertEqual(CAPABILITY_CONTRACT["cfg"]["analyzer_ids"], ("cfg:python", "cfg:c"))
+        self.assertEqual(CAPABILITY_CONTRACT["cfg"]["analyzer_ids"], ("cfg:python", "cfg:c", "cfg:java"))
         self.assertEqual(CAPABILITY_CONTRACT["sparse_cfg"]["analyzer_ids"],
                          ("sparse_cfg:cpp",))
 
