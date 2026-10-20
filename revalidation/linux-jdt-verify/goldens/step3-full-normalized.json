@@ -1,0 +1,91 @@
+{
+ "bindings": [
+  {
+   "decl": "com.example.Greeter",
+   "expr": "greet",
+   "file": "src/com/example/Runner.java",
+   "line": 6,
+   "signature": "greet()",
+   "state": "resolved"
+  },
+  {
+   "decl": "com.example.Greeter",
+   "expr": "greet",
+   "file": "src/com/example/Runner.java",
+   "line": 6,
+   "signature": "greet()",
+   "state": "resolved"
+  }
+ ],
+ "merge_audit": {
+  "counts": {
+   "recovered_by_jdt": 1
+  },
+  "meta": {
+   "backend": "eclipse-jdt",
+   "backend_classpath": "PL_JAVA_JDT_CLASSPATH",
+   "call_kind_version": 3,
+   "classpath_fingerprint": "cp:empty",
+   "classpath_status": "empty",
+   "recovered_filtered": true,
+   "xmx": "1g"
+  },
+  "sites": [
+   {
+    "classpath_fingerprint": "cp:empty",
+    "expr": "greet",
+    "file": "src/com/example/Runner.java",
+    "jdt": {
+     "decl": "com.example.Greeter",
+     "expr": "greet",
+     "file": "src/com/example/Runner.java",
+     "line": 6,
+     "signature": "greet()",
+     "state": "resolved"
+    },
+    "l1": [
+     {
+      "confidence": 0.0,
+      "file": "src/com/example/Runner.java",
+      "line": 6,
+      "raw_name": "g.greet",
+      "resolution_strategy": "unique_symbol_resolution",
+      "status": "ambiguous",
+      "target": null
+     },
+     {
+      "confidence": 0.0,
+      "file": "src/com/example/Runner.java",
+      "line": 6,
+      "raw_name": "g.greet",
+      "resolution_strategy": "unique_symbol_resolution",
+      "status": "ambiguous",
+      "target": null
+     }
+    ],
+    "line": 6,
+    "provenance": "semantic:jdt-v1",
+    "state": "recovered_by_jdt"
+   }
+  ],
+  "status": "available"
+ },
+ "status": "available",
+ "summary": {
+  "calls_ambiguous": 0,
+  "calls_recovered": 0,
+  "calls_resolved": 2,
+  "files_parsed": 2,
+  "files_total": 2,
+  "heap_max_mb": 1024,
+  "kind": "summary",
+  "news_ambiguous": 0,
+  "news_recovered": 0,
+  "news_resolved": 1,
+  "parser_inits": 1,
+  "problems_total": 0,
+  "types_ambiguous": 0,
+  "types_recovered": 0,
+  "types_resolved": 6
+ }
+}

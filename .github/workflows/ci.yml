@@ -95,6 +95,53 @@ jobs:
           PYTHONPATH: src
         run: python -m unittest discover -s tests -v
 
+  linux-jdt-verify:
+    # Issue Pilot #3: Linux JDT optional-analyzer compatibility (Stage-0
+    # Phase 1, previously NOT_VERIFIED for lack of a Linux environment).
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install tree-sitter==0.26.0 tree-sitter-c==0.24.2 tree-sitter-cpp==0.23.4 tree-sitter-python==0.25.0 tree-sitter-java==0.23.5
+
+      - name: Resolve pinned JDT suite from Maven Central
+        run: |
+          mvn -q -B -f revalidation/linux-jdt-verify/jdt-suite-pom.xml dependency:copy-dependencies \
+            -DoutputDirectory="$PWD/revalidation/linux-jdt-verify/.jdt-jars" \
+            -DincludeScope=runtime
+          ls revalidation/linux-jdt-verify/.jdt-jars
+
+      - name: Strip jar signatures (T9-B workaround)
+        run: python revalidation/linux-jdt-verify/strip_signatures.py revalidation/linux-jdt-verify/.jdt-jars
+
+      - name: Run 6-step Linux JDT verification
+        run: |
+          python revalidation/linux-jdt-verify/verify_linux_jdt.py \
+            --jdk "$JAVA_HOME" \
+            --jars-dir revalidation/linux-jdt-verify/.jdt-jars \
+            --out revalidation/linux-jdt-verify/out
+
+      - name: Upload raw verification outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-jdt-verify-raw
+          path: revalidation/linux-jdt-verify/out/
+
   test-linux:
     runs-on: ubuntu-latest
     timeout-minutes: 30
