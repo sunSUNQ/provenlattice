@@ -29,7 +29,7 @@ Stage-0 定义的补测条件（第 27 行）：Linux 环境 + Temurin 21 + JDT 
 | 宿主 | Windows（本机） |
 | JDK | Temurin 21.0.12.1 |
 | JDT 套件 | T9-B 已验证归档 jar（签名已剥离，与 CI 重建套件同版本清单） |
-| 结果 | **9/9 PASS**（S1 计数=golden、S2 available+fail-closed、S3 resolved≥2、S4 显式失败、S5 指纹字节稳定、S6 归一化 golden 一致） |
+| 结果 | 基线两阶段记录：`--emit-golden` 基线运行 **7/7 PASS**（S1 计数比较与 S6 比较在 golden 生成前不存在，未参与）；随后比较模式复跑 **9/9 PASS**（S1 计数=golden、S2 available+fail-closed、S3 resolved≥2、S4 显式失败、S5 指纹字节稳定、S6 归一化 golden 一致）。golden 首次生成时比较断言不参与的先有鸡问题，已在脚本中以 `--emit-golden` 分支显式处理（`compare=False` 时 S1 仅校验命令成功、S6 直接跳过） |
 | fixture | `revalidation/linux-jdt-verify/fixture/`（2 文件：Greeter 重载对 + Runner 实例调用） |
 
 ## 3. Linux 结果（CI 实测）
