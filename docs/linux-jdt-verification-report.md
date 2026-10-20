@@ -40,7 +40,7 @@ Stage-0 定义的补测条件（第 27 行）：Linux 环境 + Temurin 21 + JDT 
 | JDK | Temurin 21（setup-java） |
 | JDT 套件 | Maven Central 固定坐标重建 + 签名剥离（`mvn dependency:copy-dependencies`） |
 | 结果 | **9/9 PASS**（S1 计数=golden、S2 available+fail-closed、S3 resolved≥2、S4 显式失败、S5 指纹字节稳定、**S6 与 Windows golden 字节一致**） |
-| 运行记录 | PR #14 CI（runs/39367695173）；首跑 8/9（S2 断言依赖 `jdk_not_found`，在自带 JAVA_HOME 的 CI 宿主上不可造），修正为宿主无关的结构性断言（classpath 未配置 → unavailable）后 9/9 |
+| 运行记录 | PR #14 CI head run [39368175665](https://github.com/sunSUNQ/provenlattice/actions/runs/39368175665)（head `ba08db1` 起的权威证据；中间 run 39367695173 被 concurrency 取消，其数据不作为证据引用）；首跑 8/9（S2 断言依赖 `jdk_not_found`，在自带 JAVA_HOME 的 CI 宿主上不可造），修正为宿主无关的结构性断言（classpath 未配置 → unavailable）后 9/9 |
 
 补测条件中的"对比"实现为：Linux 归一化输出 vs 提交的 Windows golden
 （S6），字节一致即跨平台确定性成立。raw 输出以 artifact

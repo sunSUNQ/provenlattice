@@ -34,8 +34,9 @@
 
 ### 明确限制（Public Beta 边界）
 
-- **Linux JDT：NOT_VERIFIED**（CI 全量测试已覆盖 Linux；JDT 可选步骤需配置
-  classpath，未在 Linux 实际运行）
+- **Linux JDT：VERIFIED**（2026-10-20 更新，PR #14：CI ubuntu-latest + Temurin 21 +
+  Maven 钉扎套件 9/9，含跨平台 golden 字节一致；发布时为 NOT_VERIFIED；fixture 级
+  对比，JDK 其他组合未测，见 docs/linux-jdt-verification-report.md）
 - **146 UNKNOWN 保守保留**：跨文件/外部类型流站点无法建立独立真值
 - **query-time 结果非持久化**：JDT 分析为查询时视图，不写入 L1 图谱
 - **RQ1 formal 尚未取得**：Java 能力等级为工程验证（local-only, diagnostic），

@@ -176,7 +176,7 @@ provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
 - Streaming Incremental 可在 legacy 单库布局下独立移植（不依赖 Cold Store），待独立 A/B 验证
 - MCP defect 查询未做端到端客户端验证（桥接透传可用；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）
 - `semantics/contracts.toml`（declared 所有权规则数据）和 `semantics/vocabularies/python.toml`（Python 事件词汇表）未迁入
-- Java：L1 已交付（Public Beta）；可选 JDT 精确解析已交付（Windows/JDK21 已验证，Linux JDT NOT_VERIFIED）；record 组件、注解元素、匿名类体、隐式默认构造不提取；SCIP INFRA_BLOCKED；Java 不具备 Stable 资格，RQ1 formal 未取得
+- Java：L1 已交付（Public Beta）；可选 JDT 精确解析已交付（Windows/JDK21 已验证；Linux JDT VERIFIED——CI ubuntu-latest / Temurin 21 / Maven 钉扎套件，PR #14 CI，fixture 级跨平台对比，见 docs/linux-jdt-verification-report.md）；record 组件、注解元素、匿名类体、隐式默认构造不提取；SCIP INFRA_BLOCKED；Java 不具备 Stable 资格，RQ1 formal 未取得
 
 ## Documentation
 
@@ -223,7 +223,7 @@ Java Foundation Graph (P0, T1–T3)                              ✅ L1 已交�
 Java L1 完整工程资格（P2-A/P2-C/P2-D/P2-E）                      ✅ Engineering PASS
 Optional JDT Semantic Analyzer（java-semantic）                 ✅ 已交付（diagnostic；Windows/JDK21 已验证）
 Classpath manifest + Driver fingerprint 缓存                     ✅ 已交付
-Linux JDT 验证 / JDK 矩阵                                       ⬜ NOT_VERIFIED / 待测
+Linux JDT 验证 / JDK 矩阵                                       ✅ VERIFIED (ubuntu CI, PR #14, fixture 级) / 其他 JDK 组合未测
 Java RQ1 formal / Stable 资格                                   ⬜ 未取得（独立立项）
 ─── 未来 ───
 Canonical CFG / Full-Sparse 双视图收敛                          规划（Gold Target V2 Phase 3）
