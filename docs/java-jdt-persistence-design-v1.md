@@ -41,7 +41,13 @@ Issue Pilot #5 · 状态：原型实测完成 · 证据等级：**prototype（Wi
 ### 2.3 边界保持（合同反例逐条核对）
 
 - **不污染 L1**：持久化仅写 `ast:java-jdt` feature 行；三仓实测
-  `ast:java` 行数 before/after 相等（results/*.json `l1_non_pollution.pass=true`）。
+  `ast:java` 行数 before/after 相等（results/*.json
+  `l1_non_pollution.pass=true`）。首轮实测基线为 0（标准 index 流程
+  不产生 `ast:java` 行，0=0 无鉴别力，复审指出后已修复）：复审后的
+  重跑在持久化前先以标准 analyze 流程物化非零 `ast:java` 基线
+  （hikaricp 77,487 行 / gson 222,638 行 / jgit 749,855 行），
+  持久化写前后行数不变（`baseline_nonzero=true`），该检查现具有
+  鉴别力。
 - **默认 index 不触发 JVM**：orchestrator 硬编码分发，不读运行时注册表；
   注册只存在于原型进程内。fail-closed 自检：无 classpath 环境时
   `unavailable / jdt_classpath_not_configured`，持久化 0 行。
@@ -50,18 +56,23 @@ Issue Pilot #5 · 状态：原型实测完成 · 证据等级：**prototype（Wi
 
 ## 3. 实测结果（Windows / Temurin 21.0.12.1+1 / Xmx1g）
 
+复审后重跑（含 `--ast-baseline` 非零基线；环境与首轮同：T9-B 20-jar
+套件，contract 指纹一致 `+12d0a50064c3`，同 pinned commit）：
+
 | 指标 | HikariCP a4d93f4 | gson e2292f9 | jgit 6e68739 |
 |---|---:|---:|---:|
 | 文件数（持久化） | 94 | 216 | 1637 |
-| JDT 批处理 | 1.67s | 3.03s | 19.43s |
-| merge | 0.036s | 0.145s | 1.39s |
-| 持久化写 | 0.39s / 1604 节点 / 3.8MB | 1.28s / 5141 节点 / 12.8MB | 8.57s / 45475 节点 / 112MB |
-| **持久化读延迟 avg（p95）** | **0.276ms（0.61）** | **0.475ms（1.21）** | **0.472ms（1.47）** |
-| query-time 基线（重跑 JDT+merge） | 1.70s | 3.18s | 20.8s |
+| ast:java 基线（标准 analyze 流程） | 77,487 行 | 222,638 行 | 749,855 行 |
+| JDT 批处理 | 2.65s | 2.43s | 9.33s |
+| merge | 0.029s | 0.119s | 1.44s |
+| 持久化写 | 0.33s / 1604 节点 / 3.6MB | 0.91s / 5141 节点 / 12.2MB | 17.4s / 45475 节点 / 107MB |
+| **持久化读延迟 avg（p95）** | **0.278ms（0.62）** | **0.398ms（1.06）** | **0.616ms（1.93）** |
+| query-time 基线（重跑 JDT+merge） | 2.67s | 2.55s | 10.8s |
 | 字节稳定 | 94/94 | 216/216 | 1637/1637 |
-| 失效重建（单文件探测） | 2.85s | 9.15s | 58.2s |
+| 失效重建（单文件探测） | 2.96s | 7.93s | 60.1s |
 | 探测后还原字节一致 | ✅ | ✅ | ✅ |
 | fail-closed（无 classpath） | unavailable / 0 行 | 同 | 同 |
+| L1 非污染（非零基线） | 77,487 → 77,487 | 222,638 → 222,638 | 749,855 → 749,855 |
 
 与 stage0 数字的关系：本轮 gson `recovered_by_jdt` 9513 ≠ stage0 3228——
 本轮覆盖全仓（含 `extras/` 与测试树）且 CALL_KIND_VERSION 可能随 1.4.0→1.5.0
@@ -71,7 +82,7 @@ Issue Pilot #5 · 状态：原型实测完成 · 证据等级：**prototype（Wi
 
 1. **失效重建是全批量的**：原型在任何失效后重跑整仓 index+JDT+merge
    （上表"失效重建"行）。单文件增量 JDT 是后续工作；持久化读路径不受影响。
-2. **payload 存储成本**：jgit 112MB（含全部站点明细行）。生产化若只需
+2. **payload 存储成本**：jgit 107MB（含全部站点明细行）。生产化若只需
    (site → target) 决议，可裁剪 `l1` 侧明细，存储可再降一个量级。
 3. **临时注册槽**：`ast:java-jdt` 仅为原型通道；正式 feature 契约另行走
    PR 的 src 变更（本 Issue 禁止）。
@@ -80,7 +91,7 @@ Issue Pilot #5 · 状态：原型实测完成 · 证据等级：**prototype（Wi
 
 - 可行性：**原型级证实**。三仓全部满足 Issue #5 的反例门（不污染 L1、
   默认 index 不触发 JVM、freshness 与 analysis_state 一致、同输入字节一致）。
-- 收益：查询路径把每次会话 1.7–20.8s 的 JDT 重跑摊销为一次构建 +
-  0.3–0.5ms/文件 的读，收益 3–4 个数量级。
+- 收益：查询路径把每次会话 2.6–10.8s 的 JDT 重跑摊销为一次构建 +
+  0.28–0.62ms/文件 的读，收益 3–4 个数量级。
 - 立项建议：值得进入 feature 契约阶段（正式 analyzer id、增量失效、
   payload 裁剪三项为契约要点）；是否立项由 owner 依本证据决定。

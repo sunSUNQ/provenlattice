@@ -34,6 +34,7 @@ from provenlattice.analysis_java_ast import JAVA_AST_CONTRACT
 from provenlattice.graph import full_index
 from provenlattice.identity import path_id
 from provenlattice.java_semantic import merge_with_l1, run_jdt_analysis
+from provenlattice.orchestrator import analyze_scope
 
 PROVISIONAL_ANALYZER = "ast:java-jdt"
 PROVISIONAL_VERSION = 1
@@ -92,11 +93,26 @@ def feature_row_counts(database: Path) -> dict[str, int]:
 
 
 def persist_repo(repo: Path, database: Path, contract: str,
-                 manifest: str | None = None) -> dict:
-    """Run the full pipeline once (index -> JDT -> merge -> persist)."""
+                 manifest: str | None = None,
+                 ast_baseline_scope: str | None = None) -> dict:
+    """Run the full pipeline once (index -> JDT -> merge -> persist).
+
+    With ast_baseline_scope set, the standard analyze flow first
+    materializes a NON-ZERO ast:java baseline so the l1_non_pollution
+    check has discriminating power (rows before/after are compared
+    around the persistence write phase only)."""
     register()
     index_t0 = time.perf_counter()
     full_index(repo, database)
+    ast_baseline = None
+    if ast_baseline_scope:
+        ast_t0 = time.perf_counter()
+        analyze_scope(repo, ast_baseline_scope, "ast", database)
+        ast_baseline = {
+            "scope": ast_baseline_scope,
+            "ast_java_rows": feature_row_counts(database).get("ast:java", 0),
+            "wall_s": round(time.perf_counter() - ast_t0, 3),
+        }
     index_wall = time.perf_counter() - index_t0
 
     jdt_t0 = time.perf_counter()
@@ -152,6 +168,7 @@ def persist_repo(repo: Path, database: Path, contract: str,
     counts_after = feature_row_counts(database)
     return {
         "status": "available", "index_wall_s": round(index_wall, 3),
+        "ast_baseline": ast_baseline,
         "jdt_wall_s": round(jdt_wall, 3), "merge_wall_s": round(merge_wall, 3),
         "merge_counts": merged["counts"], "files_written": files_written,
         "nodes_written": nodes_written, "payload_bytes_total": payload_bytes,
@@ -160,6 +177,7 @@ def persist_repo(repo: Path, database: Path, contract: str,
             "ast_java_rows_before": counts_before.get("ast:java", 0),
             "ast_java_rows_after": counts_after.get("ast:java", 0),
             "ast_jdt_rows_after": counts_after.get(PROVISIONAL_ANALYZER, 0),
+            "baseline_nonzero": counts_before.get("ast:java", 0) > 0,
             "pass": counts_before.get("ast:java", 0)
             == counts_after.get("ast:java", 0),
         },
@@ -222,6 +240,10 @@ def main() -> int:
     parser.add_argument("--manifest", default=None)
     parser.add_argument("--xmx", default="1g")
     parser.add_argument("--out", required=True)
+    parser.add_argument("--ast-baseline", default=None,
+                        help="repo-relative scope materialized via the "
+                             "standard analyze flow before persistence, "
+                             "giving l1_non_pollution a non-zero baseline")
     parser.add_argument("--selfcheck-failclosed", action="store_true")
     args = parser.parse_args()
 
@@ -258,13 +280,16 @@ def main() -> int:
 
     contract = build_contract()
     evidence = {"repo": repo.name, "commit": commit,
-                "env": {"jdk": jdk, "jars_dir": str(jars), "xmx": args.xmx,
-                        "manifest": args.manifest,
+                "env": {"jdk": Path(jdk).name,
+                        "jars_dir": "<local-jars-dir>",
+                        "xmx": args.xmx,
+                        "manifest": Path(args.manifest).name
+                        if args.manifest else None,
                         "jar_count": len(JDT_CP.split(";"))},
                 "contract": contract,
                 "evidence_level": "prototype-windows-only"}
 
-    first = persist_repo(repo, database, contract, args.manifest)
+    first = persist_repo(repo, database, contract, args.manifest, args.ast_baseline)
     evidence["pipeline"] = first
     if first["status"] != "available":
         Path(args.out).write_text(json.dumps(evidence, indent=2, ensure_ascii=False),
@@ -277,7 +302,7 @@ def main() -> int:
     db2 = database.with_name(database.stem + "-stability.db")
     if db2.exists():
         db2.unlink()
-    persist_repo(repo, db2, contract, args.manifest)
+    persist_repo(repo, db2, contract, args.manifest, args.ast_baseline)
     d1, d2 = sha_file_payloads(database), sha_file_payloads(db2)
     evidence["byte_stability"] = {
         "files_compared": len(d1),
@@ -294,11 +319,11 @@ def main() -> int:
                        encoding="utf-8", newline="\n")
         full_index(repo, database)
         inv_t0 = time.perf_counter()
-        persist_repo(repo, database, contract, args.manifest)
+        persist_repo(repo, database, contract, args.manifest, args.ast_baseline)
         rebuild_wall = time.perf_counter() - inv_t0
         src.write_text(original, encoding="utf-8", newline="\n")
         full_index(repo, database)
-        persist_repo(repo, database, contract, args.manifest)
+        persist_repo(repo, database, contract, args.manifest, args.ast_baseline)
         d3 = sha_file_payloads(database)
         evidence["invalidation"] = {
             "touched_file": target, "rebuild_wall_s": round(rebuild_wall, 3),

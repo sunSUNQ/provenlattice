@@ -21,6 +21,16 @@ cache that reuses the existing `base_hash` + contract freshness rules.
    per file), source-change invalidation + restore, fail-closed selfcheck
    (classpath env removed -> `unavailable`, 0 rows), L1 non-pollution assert
 
+With `--ast-baseline <scope>` the standard analyze flow first materializes a
+non-zero `ast:java` baseline (via `analyze_scope`), so the L1 non-pollution
+check compares real row counts around the persistence write instead of an
+empty 0=0 baseline (review fix, Issue Pilot #5).
+
+Environment values in `results/*.json` are redacted to placeholders
+(`jdk-21.0.12.1+1`, `<local-jars-dir>`, manifest basename): product
+repositories must not contain local absolute paths. Reproduction uses your
+own JDK 21 + stripped JDT jar dir with the same jar set.
+
 ## Registry note (prototype-only)
 
 `KNOWN_FEATURES` does not include a `semantic` feature, so the prototype
