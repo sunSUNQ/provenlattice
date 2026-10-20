@@ -1,7 +1,7 @@
 # Java RQ1 Formal 立项 — 决策记录 V1
 
 Issue Pilot #4 · 决策日期：2026-10-20 · 决策者：owner（sunSUNQ）
-决策文号：**PL-JAVA-ISSUE-DECISION-20261020**
+决策文号：**PL-JAVA-ISSUE-DECISION-20261020**；修订文号：**PL-JAVA-OWNER-DECISION-R2**（2026-10-20，AMENDMENT_REQUIRED）
 
 ## 1. Owner 决策（原文摘录）
 
@@ -41,3 +41,22 @@ Issue Pilot #4 · 决策日期：2026-10-20 · 决策者：owner（sunSUNQ）
 1. Java Stable 资格规则 = "RQ1 formal QUALIFIED"（冻结方案 §1 的门槛数值）；
 2. 分层分配的 floor=3 / cap=24 规则与 §4 分配表；
 3. 豁免条款的触发条件（若 #3 长期阻塞）。
+
+## 6. R2 修订记录（PL-JAVA-OWNER-DECISION-R2，2026-10-20）
+
+Owner 裁定：同意 Stable = RQ1 QUALIFIED；保留 174/58/floor3-cap24 分配规则；
+**抽样方案暂不最终批准**，要求六项方法学修订后重审。落实情况（方案
+plan-frozen-v1.md 升版 `v1.1-amendment-r2`，脚本与测试同步修订）：
+
+| # | Owner 要求 | 落实 |
+|---|---|---|
+| 1 | 冻结种子的可复现概率抽样取代按序取前 n | 分层 SRS without replacement，公开预冻结种子，随机流绑定 (种子, 方案版本, 仓库, 分层, frame_id)（方案 §4） |
+| 2 | 审计同行多调用点 JDT 状态关联键，消除碰撞/覆盖 | stats 模式新增 association_audit（碰撞键数/排除行数）；碰撞行排除出抽样框并如实报告（方案 §4、脚本 classify） |
+| 3 | 盲评输入与系统预测严格隔离 | 盲评视图字段白名单 {case_id, repo, file, line}，生成时程序化泄露校验，检出即拒绝（方案 §5、脚本 make_blind_case + 泄露检查） |
+| 4 | 定义加权方法、置信区间与 Stable 判定 | 分层加权估计量 + 分层 bootstrap 95% CI（B=10000 冻结种子）+ QUALIFIED 当且仅当规则（方案 §5 统计判定） |
+| 5 | gate-ack 绑定真实授权记录与方案版本 | ack = sha256(decision_ref\|PLAN_VERSION\|plan_sha256)[:16]，脚本强制校验，拒绝时只出公式输入（方案 §6、脚本 expected_gate_ack） |
+| 6 | Windows-only 豁免语义限定 | 仅降低平台证据资格、不替代 Linux Formal 结果，跨平台宣称仍需 Linux 证据（方案 §6.2） |
+
+修订未重做三仓种群测量（v1.0 表保留为参照）；因修订引入关联键排除，
+frame-freeze 时重测**有效总体**（排除后计数）为既定执行步骤。修订后
+交独立复审，通过后重新提交 Owner 合并决策。
