@@ -1,0 +1,66 @@
+{
+  "repo": "jgit",
+  "commit": "6e68739fd9535672d5f1316d943a2107063617e0",
+  "env": {
+    "jdk": "jdk-21.0.12.1+1",
+    "jars_dir": "<local-jars-dir>",
+    "xmx": "1g",
+    "manifest": null,
+    "jar_count": 20
+  },
+  "contract": "java-ast-jdt-persist-v1+12d0a50064c3",
+  "evidence_level": "prototype-windows-only",
+  "pipeline": {
+    "status": "available",
+    "index_wall_s": 99.851,
+    "ast_baseline": {
+      "scope": "org.eclipse.jgit/src",
+      "ast_java_rows": 749855,
+      "wall_s": 61.729
+    },
+    "jdt_wall_s": 9.334,
+    "merge_wall_s": 1.444,
+    "merge_counts": {
+      "recovered_by_jdt": 111677,
+      "l1_and_jdt_agree": 23760,
+      "jdt_ambiguous": 23627,
+      "conflict_conservative": 789,
+      "jdt_recovered_filtered": 1
+    },
+    "files_written": 1637,
+    "nodes_written": 45475,
+    "payload_bytes_total": 112204218,
+    "persist_wall_s": 17.412,
+    "l1_non_pollution": {
+      "ast_java_rows_before": 749855,
+      "ast_java_rows_after": 749855,
+      "ast_jdt_rows_after": 45475,
+      "baseline_nonzero": true,
+      "pass": true
+    }
+  },
+  "read_latency": {
+    "n": 1637,
+    "avg_ms": 0.616,
+    "p50_ms": 0.32,
+    "p95_ms": 1.934,
+    "max_ms": 21.172499982640147,
+    "fresh_or_contract_misses": 0
+  },
+  "byte_stability": {
+    "files_compared": 1637,
+    "identical_files": 1637,
+    "pass": true
+  },
+  "invalidation": {
+    "touched_file": "org.eclipse.jgit.ant.test/src/org/eclipse/jgit/ant/tasks/GitCloneTaskTest.java",
+    "rebuild_wall_s": 60.05,
+    "restored_byte_identical": true
+  },
+  "fail_closed": {
+    "status": "unavailable",
+    "reason": "jdt_classpath_not_configured",
+    "rows_persisted": 0,
+    "pass": true
+  }
+}

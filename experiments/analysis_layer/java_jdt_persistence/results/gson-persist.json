@@ -1,0 +1,66 @@
+{
+  "repo": "gson",
+  "commit": "e2292f9c9f2e07a4791827e8eea34aa7d80545d6",
+  "env": {
+    "jdk": "jdk-21.0.12.1+1",
+    "jars_dir": "<local-jars-dir>",
+    "xmx": "1g",
+    "manifest": null,
+    "jar_count": 20
+  },
+  "contract": "java-ast-jdt-persist-v1+12d0a50064c3",
+  "evidence_level": "prototype-windows-only",
+  "pipeline": {
+    "status": "available",
+    "index_wall_s": 15.017,
+    "ast_baseline": {
+      "scope": "gson/src",
+      "ast_java_rows": 222638,
+      "wall_s": 10.679
+    },
+    "jdt_wall_s": 2.428,
+    "merge_wall_s": 0.119,
+    "merge_counts": {
+      "recovered_by_jdt": 9513,
+      "l1_and_jdt_agree": 1521,
+      "jdt_ambiguous": 8534,
+      "conflict_conservative": 76,
+      "jdt_recovered_filtered": 4
+    },
+    "files_written": 216,
+    "nodes_written": 5141,
+    "payload_bytes_total": 12806691,
+    "persist_wall_s": 0.909,
+    "l1_non_pollution": {
+      "ast_java_rows_before": 222638,
+      "ast_java_rows_after": 222638,
+      "ast_jdt_rows_after": 5141,
+      "baseline_nonzero": true,
+      "pass": true
+    }
+  },
+  "read_latency": {
+    "n": 216,
+    "avg_ms": 0.398,
+    "p50_ms": 0.234,
+    "p95_ms": 1.059,
+    "max_ms": 8.928499999456108,
+    "fresh_or_contract_misses": 0
+  },
+  "byte_stability": {
+    "files_compared": 216,
+    "identical_files": 216,
+    "pass": true
+  },
+  "invalidation": {
+    "touched_file": "extras/src/main/java/com/google/gson/extras/examples/rawcollections/RawCollectionsExample.java",
+    "rebuild_wall_s": 7.927,
+    "restored_byte_identical": true
+  },
+  "fail_closed": {
+    "status": "unavailable",
+    "reason": "jdt_classpath_not_configured",
+    "rows_persisted": 0,
+    "pass": true
+  }
+}
