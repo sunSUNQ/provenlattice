@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Pinned JDT suite for the Linux JDT verification (Issue Pilot #3).
+
+  Coordinates recovered from the T9-B/P2-B verified jar set (see
+  docs/java-overnight-longrun-v1/t9b/comparison.json: jdt.core 3.37.0 +
+  ecj 3.37.0; versions inside the archived jars' pom.properties).
+  Eclipse platform jars (core.resources / core.runtime / core.filesystem /
+  org.eclipse.text / equinox.* / osgi) resolve transitively from the
+  org.eclipse.jdt:org.eclipse.jdt.core POM at the exact versions pinned
+  there; Maven Central POMs are immutable, so resolution is stable.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>dev.provenlattice.revalidation</groupId>
+  <artifactId>jdt-suite</artifactId>
+  <version>1</version>
+  <packaging>pom</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>org.eclipse.jdt</groupId>
+      <artifactId>org.eclipse.jdt.core</artifactId>
+      <version>3.37.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.javaparser</groupId>
+      <artifactId>javaparser-core</artifactId>
+      <version>3.26.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.javaparser</groupId>
+      <artifactId>javaparser-symbol-solver-core</artifactId>
+      <version>3.26.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>33.2.1-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>failureaccess</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.service.prefs</artifactId>
+      <version>1.1.2</version>
+    </dependency>
+  </dependencies>
+</project>

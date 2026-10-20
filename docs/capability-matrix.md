@@ -34,7 +34,7 @@
 | C normalized AST | V1.3 | C (.c/.h) | 按需 | ✅ diagnostic | A1 | 结构理解 | C++ unsupported |
 | C CFG + 短路 | V1.3 | C (.c/.h) | 按需 | ✅ diagnostic | A2/A2.1 | 控制流/短路 | 单行 for 已修复 |
 | C 调用语义 | V1.3 | C (.c/.h) | 默认 | ✅ diagnostic | A3 | direct/indirect 分类 | 仅 .c 文件 |
-| **Semantic Java (Optional JDT)** | PL-JAVA-P2-D | Java (.java) | 按需（CLI `java-semantic`） | ✅ implemented (diagnostic) | P2-B/P2-D/P2-E：21 gold 20+1 CORRECT、8/8 历史错误样本修正、168 冲突抽样 0 JDT 错误、479 全量回归（1.5.0） | 跨文件精确绑定/重载消歧/继承层级（query-time 审计视图） | 需用户自备 JDK 21 + JDT classpath（Windows/JDK21 已验证，**Linux JDT NOT_VERIFIED**）；recovered 绑定过滤；query-time 不持久化；JDK 其他组合未测 |
+| **Semantic Java (Optional JDT)** | PL-JAVA-P2-D | Java (.java) | 按需（CLI `java-semantic`） | ✅ implemented (diagnostic) | P2-B/P2-D/P2-E：21 gold 20+1 CORRECT、8/8 历史错误样本修正、168 冲突抽样 0 JDT 错误、479 全量回归（1.5.0）；Linux JDT VERIFIED（PR #14 CI，2026-10-20） | 跨文件精确绑定/重载消歧/继承层级（query-time 审计视图） | 需用户自备 JDK 21 + JDT classpath（Windows/JDK21 已验证；**Linux JDT VERIFIED**：ubuntu-latest / Temurin 21 / Maven 钉扎套件，PR #14 CI runs/39368175665，fixture 级跨平台对比，见 docs/linux-jdt-verification-report.md）；recovered 绑定过滤；query-time 不持久化；JDK 其他组合未测 |
 
 ## L2 Inspection Analysis (PR1 → V1.4)
 
