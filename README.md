@@ -77,7 +77,8 @@ provenlattice defect /path/to/repo --type all --json
 
 # 6. MCP（透明桥接，需 MCP 客户端配置后使用；见 Limitations）
 #    mcp__provenlattice__query 为 MCP 协议内工具名，
-#    不是 CLI 子命令。正式 MCP 客户端端到端验证待完成。
+#    不是 CLI 子命令。MCP stdio 客户端端到端验证已完成（4/4 PASS，
+#    见 docs/v1.4-mcp-e2e-report.md）。
 ```
 
 ## V1.4 New Capabilities
@@ -174,7 +175,7 @@ provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
 - `if(p){*p=1}` null_flow 已知误报
 - Cold Store / declarations 重构未纳入 V1.4（归档于 `archive/pr1-full-merge`）
 - Streaming Incremental 可在 legacy 单库布局下独立移植（不依赖 Cold Store），待独立 A/B 验证
-- MCP defect 查询未做端到端客户端验证（桥接透传可用；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）
+- MCP defect 查询已完成端到端客户端验证（stdio JSON-RPC 真实 server 子进程，initialize/tools/list/8 类 defect query/stale fail-closed 全链路 4/4 PASS，见 `docs/v1.4-mcp-e2e-report.md`；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）
 - `semantics/contracts.toml`（declared 所有权规则数据）和 `semantics/vocabularies/python.toml`（Python 事件词汇表）未迁入
 - Java：L1 已交付（Public Beta）；可选 JDT 精确解析已交付（Windows/JDK21 已验证；Linux JDT VERIFIED——CI ubuntu-latest / Temurin 21 / Maven 钉扎套件，PR #14 CI，fixture 级跨平台对比，见 docs/linux-jdt-verification-report.md）；record 组件、注解元素、匿名类体、隐式默认构造不提取；SCIP INFRA_BLOCKED；Java 不具备 Stable 资格，RQ1 formal 未取得
 
