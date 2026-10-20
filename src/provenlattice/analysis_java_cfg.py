@@ -60,16 +60,13 @@ class _FunctionCFG:
         self._ord: dict[tuple[str, str, str], int] = {}
 
     def node(self, kind: str, role: str, path: str, *,
-             ast_node: str | None = None,
-             start_byte: int | None = None, end_byte: int | None = None,
-             metadata: dict | None = None) -> str:
+             start_byte: int | None = None, end_byte: int | None = None) -> str:
         canonical = "\x1f".join((self.file_id, self.owner, role, path))
         nid = f"cnode:{hashlib.sha256(canonical.encode('utf-8')).hexdigest()}"
         self.nodes.append(AnalysisNode(nid, kind, {
-            "owner_symbol_id": self.owner, "ast_node_id": ast_node,
+            "owner_symbol_id": self.owner,
             "start_byte": start_byte, "end_byte": end_byte,
             "structural_role": role, "structural_path": path,
-            "metadata": metadata or {},
         }))
         return nid
 
@@ -118,6 +115,7 @@ def analyze_cfg_scope(repo: str | Path, scope: str, database: str | Path | None 
     skipped_payload_too_large: list[str] = []
     counters = {"methods_built": 0, "methods_skipped_unmatched_owner": 0,
                 "methods_skipped_unsupported_construct": 0,
+                "methods_skipped_parse_error": 0,
                 "methods_skipped_ast_node_missing": 0}
     nodes_written = 0
     edges_written = 0
@@ -185,6 +183,7 @@ def analyze_cfg_scope(repo: str | Path, scope: str, database: str | Path | None 
             "methods_built": counters["methods_built"],
             "methods_skipped_unmatched_owner": counters["methods_skipped_unmatched_owner"],
             "methods_skipped_unsupported_construct": counters["methods_skipped_unsupported_construct"],
+            "methods_skipped_parse_error": counters["methods_skipped_parse_error"],
             "methods_skipped_ast_node_missing": counters["methods_skipped_ast_node_missing"],
             "nodes_written": nodes_written, "edges_written": edges_written,
             "analyze_time_ms": (time.perf_counter() - started) * 1000}
@@ -203,6 +202,7 @@ def _build_file_cfg(store: AnalysisStore, file_id: str, source, ast_read: dict):
     edges: list[AnalysisEdge] = []
     counters = {"methods_built": 0, "methods_skipped_unmatched_owner": 0,
                 "methods_skipped_unsupported_construct": 0,
+                "methods_skipped_parse_error": 0,
                 "methods_skipped_ast_node_missing": 0}
     ordered = []
     stack = [root]
@@ -220,6 +220,12 @@ def _build_file_cfg(store: AnalysisStore, file_id: str, source, ast_read: dict):
         owner = info.get("owner_symbol_id")
         if owner is None:
             counters["methods_skipped_unmatched_owner"] += 1
+            continue
+        # has_error covers ERROR and MISSING nodes in all descendants
+        # (including nested methods): a method whose tree did not fully
+        # parse is skipped instead of producing a guessed CFG.
+        if func_node.has_error:
+            counters["methods_skipped_parse_error"] += 1
             continue
         unsupported = _scan_unsupported(func_node)
         if unsupported is not None:
@@ -239,7 +245,7 @@ class _JavaCFGBuilder:
 
     def _node(self, kind: str, role: str, node, **kw) -> str:
         return self.f.node(kind, role, f"{node.type}@{node.start_byte}",
-                           ast_node=None, start_byte=node.start_byte,
+                           start_byte=node.start_byte,
                            end_byte=node.end_byte, **kw)
 
     def build(self, func_node):
@@ -298,9 +304,6 @@ class _JavaCFGBuilder:
             nid = self._node("continue", "continue", node)
             if self.f.loop_stack:
                 self.f.loop_stack[-1].continues.append(nid)
-            return nid, []
-        if k == "throw_statement":
-            nid = self._node("throw", "throw", node)
             return nid, []
         if k == "expression_statement" and node.named_children:
             inner = node.named_children[0]
@@ -361,15 +364,20 @@ class _JavaCFGBuilder:
         self.f.loop_stack.append(frame)
         b_entry, b_ends = (self._block_or_stmt(body) if body else (None, []))
         self.f.loop_stack.pop()
-        self.f.edge(header, b_entry or exit_m, "true")
+        # do-while is body-first: the first iteration reaches the body without
+        # passing the condition; the header only gates later iterations.
+        if b_entry is not None:
+            for end in b_ends:
+                self.f.edge(end, header, "next")
+            self.f.edge(header, b_entry, "true")
+        else:
+            self.f.edge(header, exit_m, "true")
         self.f.edge(header, exit_m, "false")
-        for end in b_ends:
-            self.f.edge(end, header, "back")
         for br in frame.breaks:
             self.f.edge(br, exit_m, "break")
         for cont in frame.continues:
             self.f.edge(cont, header, "continue")
-        return header, [exit_m]
+        return (b_entry or header), [exit_m]
 
     def _block_or_stmt(self, node):
         if node is None:

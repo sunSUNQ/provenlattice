@@ -73,11 +73,19 @@ class JavaASTTests(unittest.TestCase):
         self.assertEqual(len(r2["reused"]), 1)
         self.assertEqual(len(r2["materialized"]), 0)
 
-    def test_ast_caching(self) -> None:
+    def test_ast_cache_invalidation_on_source_change(self) -> None:
         r1 = analyze_ast_scope(self.root, "src", self.db)
+        self.assertEqual(len(r1["materialized"]), 1)
+        src = self.root / "src" / "Greet.java"
+        src.write_text(
+            src.read_text(encoding="utf-8").replace('"hello "', '"hi "'),
+            encoding="utf-8", newline="\n")
+        full_index(self.root, self.db)
         r2 = analyze_ast_scope(self.root, "src", self.db)
-        self.assertEqual(len(r2["reused"]), 1)
-        self.assertEqual(len(r2["materialized"]), 0)
+        self.assertEqual(len(r2["materialized"]), 1)
+        self.assertEqual(len(r2["reused"]), 0)
+        r3 = analyze_ast_scope(self.root, "src", self.db)
+        self.assertEqual(len(r3["reused"]), 1)
 
 
 class JavaCFGTests(unittest.TestCase):
@@ -102,11 +110,19 @@ class JavaCFGTests(unittest.TestCase):
         self.assertEqual(len(r2["reused"]), 1)
         self.assertEqual(len(r2["materialized"]), 0)
 
-    def test_cfg_caching(self) -> None:
+    def test_cfg_cache_invalidation_on_source_change(self) -> None:
         r1 = analyze_cfg_scope(self.root, "src", self.db)
+        self.assertEqual(r1["methods_built"], 3)
+        src = self.root / "src" / "Flow.java"
+        src.write_text(
+            src.read_text(encoding="utf-8").replace("int total = 0;", "int total = 1;"),
+            encoding="utf-8", newline="\n")
+        full_index(self.root, self.db)
+        analyze_ast_scope(self.root, "src", self.db)
         r2 = analyze_cfg_scope(self.root, "src", self.db)
-        self.assertEqual(len(r2["reused"]), 1)
-        self.assertEqual(len(r2["materialized"]), 0)
+        self.assertEqual(r2["methods_built"], 3)
+        self.assertEqual(len(r2["reused"]), 0)
+        self.assertEqual(len(r2["materialized"]), 1)
 
     def test_cfg_all_methods_built(self) -> None:
         r = analyze_cfg_scope(self.root, "src", self.db)

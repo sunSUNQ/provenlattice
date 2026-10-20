@@ -53,7 +53,7 @@ LANGUAGE_PATTERN = re.compile(r"[a-z0-9_\-]+")
 ANALYZER_VERSIONS = {
     "ast:python": 1, "cfg:python": 2, "ast:c": 3, "cfg:c": 3, "events:cpp": 1,
     "sparse_cfg:cpp": 1, "sparse_dfg:cpp": 2,
-    "ast:java": 1, "cfg:java": 1,
+    "ast:java": 1, "cfg:java": 2,
 }
 STATUS_CURRENT = "current"
 MAX_ANALYSIS_NODE_PAYLOAD_BYTES = 4096
