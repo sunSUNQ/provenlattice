@@ -1,0 +1,60 @@
+﻿{
+  "repo": "gson",
+  "commit": "e2292f9c9f2e07a4791827e8eea34aa7d80545d6",
+  "env": {
+    "jdk": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\tools\\jdk\\jdk-21.0.12.1+1",
+    "jars_dir": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\tools\\jars",
+    "xmx": "1g",
+    "manifest": null,
+    "jar_count": 20
+  },
+  "contract": "java-ast-jdt-persist-v1+12d0a50064c3",
+  "evidence_level": "prototype-windows-only",
+  "pipeline": {
+    "status": "available",
+    "index_wall_s": 2.934,
+    "jdt_wall_s": 3.031,
+    "merge_wall_s": 0.145,
+    "merge_counts": {
+      "recovered_by_jdt": 9513,
+      "l1_and_jdt_agree": 1521,
+      "jdt_ambiguous": 8534,
+      "conflict_conservative": 76,
+      "jdt_recovered_filtered": 4
+    },
+    "files_written": 216,
+    "nodes_written": 5141,
+    "payload_bytes_total": 12806691,
+    "persist_wall_s": 1.283,
+    "l1_non_pollution": {
+      "ast_java_rows_before": 0,
+      "ast_java_rows_after": 0,
+      "ast_jdt_rows_after": 5141,
+      "pass": true
+    }
+  },
+  "read_latency": {
+    "n": 216,
+    "avg_ms": 0.475,
+    "p50_ms": 0.259,
+    "p95_ms": 1.213,
+    "max_ms": 11.10279990825802,
+    "fresh_or_contract_misses": 0
+  },
+  "byte_stability": {
+    "files_compared": 216,
+    "identical_files": 216,
+    "pass": true
+  },
+  "invalidation": {
+    "touched_file": "extras/src/main/java/com/google/gson/extras/examples/rawcollections/RawCollectionsExample.java",
+    "rebuild_wall_s": 9.154,
+    "restored_byte_identical": true
+  },
+  "fail_closed": {
+    "status": "unavailable",
+    "reason": "jdt_classpath_not_configured",
+    "rows_persisted": 0,
+    "pass": true
+  }
+}

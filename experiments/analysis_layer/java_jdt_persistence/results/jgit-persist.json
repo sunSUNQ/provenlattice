@@ -1,0 +1,60 @@
+﻿{
+  "repo": "jgit",
+  "commit": "6e68739fd9535672d5f1316d943a2107063617e0",
+  "env": {
+    "jdk": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\tools\\jdk\\jdk-21.0.12.1+1",
+    "jars_dir": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\tools\\jars",
+    "xmx": "1g",
+    "manifest": null,
+    "jar_count": 20
+  },
+  "contract": "java-ast-jdt-persist-v1+12d0a50064c3",
+  "evidence_level": "prototype-windows-only",
+  "pipeline": {
+    "status": "available",
+    "index_wall_s": 46.983,
+    "jdt_wall_s": 19.432,
+    "merge_wall_s": 1.393,
+    "merge_counts": {
+      "recovered_by_jdt": 111677,
+      "l1_and_jdt_agree": 23760,
+      "jdt_ambiguous": 23627,
+      "conflict_conservative": 789,
+      "jdt_recovered_filtered": 1
+    },
+    "files_written": 1637,
+    "nodes_written": 45475,
+    "payload_bytes_total": 112204218,
+    "persist_wall_s": 8.567,
+    "l1_non_pollution": {
+      "ast_java_rows_before": 0,
+      "ast_java_rows_after": 0,
+      "ast_jdt_rows_after": 45475,
+      "pass": true
+    }
+  },
+  "read_latency": {
+    "n": 1637,
+    "avg_ms": 0.472,
+    "p50_ms": 0.238,
+    "p95_ms": 1.47,
+    "max_ms": 17.048200010322034,
+    "fresh_or_contract_misses": 0
+  },
+  "byte_stability": {
+    "files_compared": 1637,
+    "identical_files": 1637,
+    "pass": true
+  },
+  "invalidation": {
+    "touched_file": "org.eclipse.jgit.ant.test/src/org/eclipse/jgit/ant/tasks/GitCloneTaskTest.java",
+    "rebuild_wall_s": 58.204,
+    "restored_byte_identical": true
+  },
+  "fail_closed": {
+    "status": "unavailable",
+    "reason": "jdt_classpath_not_configured",
+    "rows_persisted": 0,
+    "pass": true
+  }
+}

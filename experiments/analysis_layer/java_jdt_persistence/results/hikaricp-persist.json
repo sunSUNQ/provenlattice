@@ -1,0 +1,59 @@
+﻿{
+  "repo": "hikaricp",
+  "commit": "a4d93f4f85517f90e632b795486d7102e933d7ff",
+  "env": {
+    "jdk": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\tools\\jdk\\jdk-21.0.12.1+1",
+    "jars_dir": "C:\\Users\\sunqinghw\\AppData\\Local\\Temp\\opencode\\longrun\\tools\\jars",
+    "xmx": "1g",
+    "manifest": "D:\\tasco-temp\\issue-pilot\\java-repos\\manifests\\hikaricp.manifest",
+    "jar_count": 20
+  },
+  "contract": "java-ast-jdt-persist-v1+12d0a50064c3",
+  "evidence_level": "prototype-windows-only",
+  "pipeline": {
+    "status": "available",
+    "index_wall_s": 1.691,
+    "jdt_wall_s": 1.665,
+    "merge_wall_s": 0.036,
+    "merge_counts": {
+      "l1_and_jdt_agree": 720,
+      "recovered_by_jdt": 3257,
+      "jdt_ambiguous": 1244,
+      "conflict_conservative": 27
+    },
+    "files_written": 94,
+    "nodes_written": 1604,
+    "payload_bytes_total": 3788450,
+    "persist_wall_s": 0.392,
+    "l1_non_pollution": {
+      "ast_java_rows_before": 0,
+      "ast_java_rows_after": 0,
+      "ast_jdt_rows_after": 1604,
+      "pass": true
+    }
+  },
+  "read_latency": {
+    "n": 94,
+    "avg_ms": 0.276,
+    "p50_ms": 0.211,
+    "p95_ms": 0.61,
+    "max_ms": 1.8872999353334308,
+    "fresh_or_contract_misses": 0
+  },
+  "byte_stability": {
+    "files_compared": 94,
+    "identical_files": 94,
+    "pass": true
+  },
+  "invalidation": {
+    "touched_file": "src/main/java/com/zaxxer/hikari/HikariConfig.java",
+    "rebuild_wall_s": 2.847,
+    "restored_byte_identical": true
+  },
+  "fail_closed": {
+    "status": "unavailable",
+    "reason": "jdt_classpath_not_configured",
+    "rows_persisted": 0,
+    "pass": true
+  }
+}
