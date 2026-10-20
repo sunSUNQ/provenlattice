@@ -98,13 +98,18 @@ def s2_status_only(out: Path, jdk: str, jars_dir: Path) -> None:
     check("S2 status available",
           available.get("status") == "available", str(available)[:300])
 
+    # Fail-closed contract: with no JDT classpath configured the optional
+    # analyzer must report unavailable on every host, regardless of JDK
+    # discovery (CI runners always have a system JDK via JAVA_HOME, so the
+    # structural fact is the classpath, not the JDK probe).
     missing = cli_json(["java-semantic", str(FIXTURE), "--status-only"],
                        {"PL_JAVA_JDK": str(out / "no-such-jdk"),
                         "PL_JAVA_JDT_CLASSPATH": ""})
-    (out / "step2-status-missing-jdk.json").write_text(
+    (out / "step2-status-unconfigured.json").write_text(
         json.dumps(missing, indent=1), encoding="utf-8")
-    check("S2 missing JDK is explicit fail-closed",
-          missing.get("status") == "unavailable" and missing.get("reason") == "jdk_not_found",
+    check("S2 unconfigured classpath is explicit fail-closed",
+          missing.get("status") == "unavailable"
+          and missing.get("jdt_classpath_configured") is False,
           str(missing)[:300])
 
 
