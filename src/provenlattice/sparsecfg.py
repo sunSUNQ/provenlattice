@@ -1390,18 +1390,7 @@ class SparseCfgBuilder:
             target = node.child_by_field_name(target_field)
             written = _outermost_access(target, self.profile.access_node_types)
             if written is not None:
-                # The bare-copy pre-approval: a pointer-typed declaration copy
-                # (`int *q = p;`) routes its bare identifier here -- the star
-                # lives in the declarator text, not in the routed identifier.
-                # See _access_point's STORAGE_LOCAL bare-copy exception.
-                bare_copy = (
-                    node.type == "init_declarator"
-                    and target is not None
-                    and "*" in self._text(target)
-                    and self._bare_alias_source(written, node, declared=True) != ""
-                )
-                point = self._access_point(written, "WRITE", origin=node,
-                                           bare_copy=bare_copy)
+                point = self._access_point(written, "WRITE", origin=node)
                 if point is not None:
                     points.append(point)
         skip_fields = (DECLARED_FIELDS.get(node.type), ACCESS_SKIP_FIELDS.get(node.type))
@@ -1451,8 +1440,21 @@ class SparseCfgBuilder:
             return source_root
         return ""
 
-    def _access_point(self, expr: Any, event_type: str, origin: Any = None,
-                      bare_copy: bool = False) -> _Point | None:
+    def _declared_pointer(self, expr: Any, subject: str) -> bool:
+        """Whether the subject's declaration binds a pointer type.
+
+        Reads the `is_pointer` syntax fact the declaration index records from
+        the declarator chain (a `pointer_declarator` wraps the name). False
+        when the file declares nothing here or the resolution misses --
+        conservative: no pointer claim without evidence, so a value copy can
+        never be mistaken for a pointer alias.
+        """
+        declaration = self._resolve(expr, subject)
+        if declaration is None:
+            declaration = self._resolve_member(expr, subject)
+        return declaration is not None and declaration.is_pointer
+
+    def _access_point(self, expr: Any, event_type: str, origin: Any = None) -> _Point | None:
         root, member, this_root, _exact = self._member_chain(expr)
         # `this->m_` names the field directly. Taking only `_root_identifier`
         # here would stop at `this` -- a keyword, not an identifier -- and the
@@ -1463,16 +1465,22 @@ class SparseCfgBuilder:
             return None
         facts = self._subject_facts(expr, subject)
         storage = facts.get("subject_storage")
-        # The STORAGE_LOCAL bare-copy exception (pre-approved by the caller's
-        # `bare_copy`): the one local write the alias chain needs is a
-        # pointer-typed declaration copy -- `int *q = p;`. Without it a
-        # release under the copied-from name can never pair with a use
-        # through the copy (the q = p; free(p); *q shape the README
-        # registered). Every other local write stays excluded: a local does
-        # not outlive the frame. The pointer fact is read off the declarator
-        # text at the routing site -- the declared type token carries no
-        # pointer level, and the routed identifier carries no star (both
-        # registered here rather than silently narrowed).
+        # The STORAGE_LOCAL bare-copy exception: the local writes the alias
+        # chain needs are the pointer copies -- `int *q = p;` (declaration)
+        # and `q = p;` (assignment, `q` declared pointer). The pointer fact
+        # comes from the declaration index (a `pointer_declarator` in the
+        # declarator chain), which covers both spellings where the declared
+        # type token carries no pointer level and the routed identifier no
+        # star. A value copy (`x = n`) and a pointer of unknown type stay
+        # excluded -- conservative, no binding without evidence.
+        bare_copy = (
+            storage == STORAGE_LOCAL
+            and event_type == "WRITE"
+            and origin is not None
+            and self._declared_pointer(expr, subject)
+            and self._bare_alias_source(
+                expr, origin, declared=(origin.type == "init_declarator")) != ""
+        )
         if storage not in ACCESS_STORAGES and not bare_copy:
             return None
         if storage == STORAGE_PARAMETER and event_type != "WRITE":
