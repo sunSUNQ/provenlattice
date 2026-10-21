@@ -225,6 +225,28 @@ class UafCoreTests(UafTestBase):
         self.assertEqual(cand["query"], "use_after_free")
         self.assertIn(cand["resolution_status"], ("resolved", "ambiguous", "unresolved"))
 
+    def test_free_then_alias_access_assignment_form(self) -> None:
+        # scenario 8b: alias via assignment form (q declared pointer, then
+        # q = p) before free; use q after free. issue-pilot#17 extends the
+        # #15 fix to this shape: the declaration index's pointer fact lets
+        # the assignment copy carry the alias, so the release pairs too.
+        self.build(
+            "#include <stdlib.h>\n"
+            "int f10(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    int *q;\n"
+            "    q = p;\n"             # assignment-form alias copy
+            "    if (!p) return -1;\n"
+            "    free(p);\n"
+            "    *q = n;\n"            # use through the alias
+            "    return n;\n"
+            "}\n")
+        cands = self.uaf()
+        self.assertEqual(len(cands), 1)
+        cand = cands[0]
+        self.assertEqual(cand["query"], "use_after_free")
+        self.assertIn(cand["resolution_status"], ("resolved", "ambiguous", "unresolved"))
+
     def test_free_then_sink_address(self) -> None:
         # scenario 3: `free(p); sink(&p)` — the address-of reads the pointer
         # slot, not the pointee; PR baseline: 1 ambiguous candidate (the call

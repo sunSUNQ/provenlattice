@@ -90,6 +90,12 @@ class Declaration:
     # names are bound by the same declaration, which is what a lock query
     # needs to join a guard to the mutex it holds (5C-2's 2.6).
     init_arg0: str = ""
+    # Whether the declarator chain wraps the name in a `pointer_declarator`
+    # (`int *q`, `int **r`). A pure syntax fact, same trust level as
+    # `type_token`: enough for a WRITE site to tell a pointer copy (`q = p`)
+    # from a value copy (`x = n`) without inventing a type system, and not
+    # enough to resolve anything.
+    is_pointer: bool = False
 
 
 @dataclass(slots=True)
@@ -258,9 +264,33 @@ class DeclarationIndex:
                     name=name, storage=storage, type_token=token,
                     scope_token=scope_token, start_byte=node.start_byte,
                     init_arg0=self._init_arg0(declarator),
+                    is_pointer=self._declarator_is_pointer(declarator),
                 )
             )
             self.declarations += 1
+
+    def _declarator_is_pointer(self, node: Any) -> bool:
+        """Whether the declarator chain wraps the name in a pointer declarator.
+
+        Mirrors `_declarator_name`'s walk, but answers the shape instead of the
+        name: `int *q` is a `pointer_declarator` holding `q`, `int x = 1` is an
+        `init_declarator` holding a plain identifier. Recorded so a WRITE site
+        can tell a pointer copy from a value copy -- the declared type token
+        deliberately carries no pointer level.
+        """
+        while node is not None:
+            if node.type == "pointer_declarator":
+                return True
+            if node.type in _LEAF_NAMES or node.type == "qualified_identifier":
+                return False
+            if node.type in _NAME_BEARING_DECLARATORS:
+                inner = node.child_by_field_name("declarator")
+                if inner is None:
+                    inner = node.named_children[-1] if node.named_children else None
+                node = inner
+                continue
+            return False
+        return False
 
     def _init_arg0(self, declarator: Any) -> str:
         """The initializing call's first argument, verbatim, or "".

@@ -442,6 +442,153 @@ class IdentityTests(DfgTestBase):
         self.assertEqual({e["src_id"] for e in edges}, {write3["event_id"]})
 
 
+class AssignmentCopyTests(DfgTestBase):
+    """Assignment-form pointer copies (issue-pilot#17).
+
+    The declaration index's pointer fact (`is_pointer`, read off the declarator
+    chain) lets `q = p;` on a pointer-typed local publish the bare copy the
+    alias chain needs, where a value copy (`y = x`) stays excluded."""
+
+    def _free_to_use(self, relative="src/t.c"):
+        return [e for e in self.dfg(relative)["edges"]
+                if e["payload"]["flow_class"] == "free_to_use"]
+
+    def test_assignment_pointer_copy_pairs_release_with_use(self) -> None:
+        # A. q declared pointer, then q = p: the assignment copy carries the
+        # alias fact, and the release of the root value pairs with the deref
+        # through the copy.
+        env = self.build(
+            "#include <stdlib.h>\n"
+            "int f50(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    int *q;\n"
+            "    q = p;\n"
+            "    free(p);\n"
+            "    int v = *q;\n"
+            "    (void)v;\n"
+            "    return n;\n"
+            "}\n")
+        deref = [e for e in self.events_for("src/t.c")
+                 if e["event_type"] == "DEREFERENCE" and e["start_line"] == 7]
+        release = [e for e in self.events_for("src/t.c")
+                   if e["event_type"] == "RELEASE" and e["start_line"] == 6]
+        self.assertEqual(len(deref), 1)
+        self.assertEqual(len(release), 1)
+        paired = [e for e in self._free_to_use()
+                  if e["src_id"] == release[0]["event_id"]
+                  and e["dst_id"] == deref[0]["event_id"]]
+        self.assertEqual(len(paired), 1, env["edges"])
+
+    def test_value_copy_never_becomes_alias(self) -> None:
+        # B. a non-pointer value copy publishes no write and mints no edge.
+        env = self.build(
+            "int f51(int n) {\n"
+            "    int x = 1;\n"
+            "    int y;\n"
+            "    y = x;\n"
+            "    return y;\n"
+            "}\n")
+        self.assertEqual(self._free_to_use(), [])
+        writes = [e for e in self.events_for("src/t.c")
+                  if e["event_type"] == "WRITE" and e["start_line"] == 5]
+        self.assertEqual(writes, [])
+
+    def test_write_through_after_declaration_stays_alloc_chain(self) -> None:
+        # C. declaration + write-through (*p = n) still mints alloc_to_use,
+        # no false alias.
+        env = self.build(
+            "#include <stdlib.h>\n"
+            "int f52(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    *p = n;\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(self._free_to_use(), [])
+        self.assertTrue(any(e["payload"]["flow_class"] == "alloc_to_use"
+                            for e in env["edges"]))
+
+    def test_shadowed_name_resolves_to_pointer_in_scope(self) -> None:
+        # D. an inner int p shadows the outer pointer; the later q = p must
+        # resolve to the outer pointer (position-sensitive index).
+        env = self.build(
+            "#include <stdlib.h>\n"
+            "int f53(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    { int p = 0; (void)p; }\n"
+            "    int *q;\n"
+            "    q = p;\n"
+            "    free(p);\n"
+            "    int v = *q;\n"
+            "    (void)v;\n"
+            "    return n;\n"
+            "}\n")
+        deref = [e for e in self.events_for("src/t.c")
+                 if e["event_type"] == "DEREFERENCE" and e["start_line"] == 8]
+        release = [e for e in self.events_for("src/t.c")
+                   if e["event_type"] == "RELEASE" and e["start_line"] == 7]
+        self.assertEqual(len(deref), 1)
+        self.assertEqual(len(release), 1)
+        paired = [e for e in self._free_to_use()
+                  if e["src_id"] == release[0]["event_id"]
+                  and e["dst_id"] == deref[0]["event_id"]]
+        self.assertEqual(len(paired), 1, env["edges"])
+
+    def test_reassignment_follows_new_value_not_stale(self) -> None:
+        # E1. q = p then q = o: the use follows o's chain; p's release never
+        # pairs with it.
+        env = self.build(
+            "#include <stdlib.h>\n"
+            "int f54(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    int *o = malloc(sizeof(int));\n"
+            "    int *q;\n"
+            "    q = p;\n"
+            "    q = o;\n"
+            "    free(p);\n"
+            "    int v = *q;\n"
+            "    (void)v;\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(self._free_to_use(), [])
+        deref = [e for e in self.events_for("src/t.c")
+                 if e["event_type"] == "DEREFERENCE" and e["start_line"] == 9]
+        alloc_o = [e for e in self.events_for("src/t.c")
+                   if e["event_type"] == "ALLOC" and e["start_line"] == 4]
+        self.assertEqual(len(deref), 1)
+        self.assertEqual(len(alloc_o), 1)
+        paired = [e for e in env["edges"]
+                  if e["payload"]["flow_class"] == "alloc_to_use"
+                  and e["src_id"] == alloc_o[0]["event_id"]
+                  and e["dst_id"] == deref[0]["event_id"]]
+        self.assertEqual(len(paired), 1, env["edges"])
+
+    def test_realloc_after_free_never_inherits_stale_release(self) -> None:
+        # E2. free(p); p = malloc(...); the new allocation is a new root id,
+        # so the deref follows the new alloc and the stale release never pairs.
+        env = self.build(
+            "#include <stdlib.h>\n"
+            "int f55(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    free(p);\n"
+            "    p = malloc(sizeof(int));\n"
+            "    int v = *p;\n"
+            "    (void)v;\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(self._free_to_use(), [])
+        deref = [e for e in self.events_for("src/t.c")
+                 if e["event_type"] == "DEREFERENCE" and e["start_line"] == 6]
+        alloc2 = [e for e in self.events_for("src/t.c")
+                  if e["event_type"] == "ALLOC" and e["start_line"] == 5]
+        self.assertEqual(len(deref), 1)
+        self.assertEqual(len(alloc2), 1)
+        paired = [e for e in env["edges"]
+                  if e["payload"]["flow_class"] == "alloc_to_use"
+                  and e["src_id"] == alloc2[0]["event_id"]
+                  and e["dst_id"] == deref[0]["event_id"]]
+        self.assertEqual(len(paired), 1, env["edges"])
+
+
 class ConsumesTests(DfgTestBase):
     def test_direct_pass_through_mints_consumes(self) -> None:
         # the shape CONSUMES exists for: the allocation is the whole argument
