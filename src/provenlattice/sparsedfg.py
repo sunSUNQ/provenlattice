@@ -214,6 +214,14 @@ def _mint_method(
     live_value: dict[tuple, _Def] = {}
     live_free: dict[tuple, _Def] = {}
     live_root: dict[str, _Def] = {}
+    # Releases travel with the value's root identity: a copy of the pointer
+    # (`q = p`) must pair its uses with the release of the copied-from name,
+    # even though the release happened under `p` and the use reads through
+    # `q` (the q = p; free(p); *q shape the README registered as an
+    # alias-precision limitation). Keyed by the root def's event id, so a
+    # re-allocation of the name after the release is a different key and
+    # never inherits the stale release.
+    release_by_root: dict[str, "_Def"] = {}
     edges: dict[str, SemanticEdge] = {}
 
     for item in method:
@@ -260,6 +268,11 @@ def _mint_method(
                 null_source=False, is_alloc=False,
             )
             killed = live_value.get(flow)
+            if killed is not None:
+                # The release is a fact about the value (its root def), not
+                # about the name it arrived under: copies of that value pair
+                # with it through release_by_root below.
+                release_by_root[_root_def(killed).event_id] = live_free[flow]
             if killed is not None and killed.is_alloc:
                 del live_value[flow]
                 if live_root.get(subject) is killed:
@@ -290,6 +303,20 @@ def _mint_method(
                 pending.append((root_def.event_id, event_id, flow_class,
                                 _via(annotations, id_by_key, method, source_def,
                                      position, flow), ""))
+                # The value's chain was released under another name after the
+                # copy: pair that release with this use as well (free_to_use),
+                # in addition to the value edge above. The own-flow release,
+                # when one exists and is newer, already pairs through the
+                # branch above -- the chain release only adds what it alone
+                # knows. Edges dedupe by id, so a same-event pair collapses.
+                chain_release = release_by_root.get(root_def.event_id)
+                if (chain_release is not None and chain_release is not free_def
+                        and (free_def is None
+                             or chain_release.position > free_def.position)):
+                    pending.append((chain_release.event_id, event_id,
+                                    CLASS_FREE_TO_USE,
+                                    _via(annotations, id_by_key, method,
+                                         chain_release, position, flow), ""))
             continue
 
         if event_type == "CALL" and subject:

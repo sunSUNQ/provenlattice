@@ -355,6 +355,62 @@ class IdentityTests(DfgTestBase):
             self.assertIn(edge["payload"]["control_reachable"],
                           ("true", "unknown"))
 
+    def test_copied_pointer_release_pairs_with_deref_through_copy(self) -> None:
+        # the shape the README registered as an alias-precision limitation:
+        # q = p copies the pointer, the release happens under p, and the
+        # dereference reads through q. The release of the root value must
+        # pair with the use (free_to_use) even though the names differ --
+        # the copy itself is the chain (alias_parent), the release rides
+        # the root identity.
+        env = self.build(
+            "#include <stdlib.h>\n"
+            "int f40(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    int *q = p;\n"        # bare copy: alias_source = p
+            "    free(p);\n"           # release under the copied-from name
+            "    int v = *q;\n"        # dereference through the copy
+            "    (void)v;\n"
+            "    return n;\n"
+            "}\n")
+        deref = [e for e in self.events_for("src/t.c")
+                 if e["event_type"] == "DEREFERENCE" and e["start_line"] == 6]
+        release = [e for e in self.events_for("src/t.c")
+                   if e["event_type"] == "RELEASE" and e["start_line"] == 5]
+        self.assertEqual(len(deref), 1)
+        self.assertEqual(len(release), 1)
+        paired = [e for e in env["edges"]
+                  if e["payload"]["flow_class"] == "free_to_use"
+                  and e["src_id"] == release[0]["event_id"]
+                  and e["dst_id"] == deref[0]["event_id"]]
+        self.assertEqual(len(paired), 1, env["edges"])
+        # the copy site is not claimed as a via hop of the release edge:
+        # the copy happened before the release, not between def and use.
+        self.assertEqual(paired[0]["payload"]["via"], [])
+
+    def test_copied_pointer_release_never_crosses_independent_names(self) -> None:
+        # the negative: releases travel with the value's root identity only.
+        # an independent allocation's use must not pair with another
+        # pointer's release (hallucinated edge = 0).
+        env = self.build(
+            "#include <stdlib.h>\n"
+            "int f41(int n) {\n"
+            "    int *a = malloc(sizeof(int));\n"
+            "    int *b = malloc(sizeof(int));\n"
+            "    free(a);\n"
+            "    int v = *b;\n"        # independent chain: must stay alloc_to_use
+            "    (void)v;\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual([e for e in env["edges"]
+                          if e["payload"]["flow_class"] == "free_to_use"], [])
+        deref = [e for e in self.events_for("src/t.c")
+                 if e["event_type"] == "DEREFERENCE" and e["start_line"] == 6]
+        self.assertEqual(len(deref), 1)
+        paired = [e for e in env["edges"]
+                  if e["dst_id"] == deref[0]["event_id"]
+                  and e["payload"]["flow_class"] == "alloc_to_use"]
+        self.assertEqual(len(paired), 1)
+
     def test_unknown_alias_does_not_manufacture_certainty(self) -> None:
         # two pointers, no alias facts: each chain stays name-local and no
         # edge claims a cross-pointer flow the model cannot prove.

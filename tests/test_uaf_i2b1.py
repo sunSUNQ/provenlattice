@@ -204,10 +204,11 @@ class UafCoreTests(UafTestBase):
 
     def test_free_then_alias_access(self) -> None:
         # scenario 8: alias q = p before free; use q after free
-        # PR baseline: 0 candidates — the alias q = p creates a NEW identity
-        # in the access layer (STORAGE_LOCAL for q), and the DFG's
-        # subject_decl-based chain does not link q's deref back to p's free.
-        # This is a registered PR limitation (alias precision gap).
+        # Fixed by the alias-chain release pairing (issue-pilot#15): the copy
+        # (`int *q = p`, a pointer-typed declaration copy) carries the alias
+        # fact into the access layer, and the DFG pairs the release of the
+        # root value with the use through the copy (free_to_use). The PR
+        # limitation (0 candidates) no longer holds.
         self.build(
             "#include <stdlib.h>\n"
             "int f08(int n) {\n"
@@ -219,7 +220,10 @@ class UafCoreTests(UafTestBase):
             "    return n;\n"
             "}\n")
         cands = self.uaf()
-        self.assertEqual(cands, [])
+        self.assertEqual(len(cands), 1)
+        cand = cands[0]
+        self.assertEqual(cand["query"], "use_after_free")
+        self.assertIn(cand["resolution_status"], ("resolved", "ambiguous", "unresolved"))
 
     def test_free_then_sink_address(self) -> None:
         # scenario 3: `free(p); sink(&p)` — the address-of reads the pointer
