@@ -18,7 +18,7 @@ sys.path.insert(
     0, str(Path(__file__).resolve().parent.parent / "experiments"))
 
 from experiments.java_rq1_formal.build_frame import (  # noqa: E402
-    BLIND_FIELDS, OWNER_LOGIN, PLAN_VERSION, STRATA, allocate,
+    BLIND_FIELDS, OWNER_LOGIN, PLAN_VERSION, STRATA, allocate, case_id,
     expected_gate_ack, make_blind_case, plan_sha256, select_cases,
     verify_authorization,
 )
@@ -74,6 +74,24 @@ class SeededSamplingTests(unittest.TestCase):
         differing = sum(1 for s in STRATA
                         if {c["line"] for c in a[s]} != {c["line"] for c in b[s]})
         self.assertGreater(differing, 0)
+
+
+class CaseAssemblyTests(unittest.TestCase):
+    """issue-pilot #4 infra fix: the sample-mode case carries the `repo` label
+    the blinded view requires (plan §5 {case_id, repo, file, line}), and that
+    label is metadata only -- it never enters the case identity."""
+
+    def test_repo_label_is_added_without_changing_case_identity(self):
+        base = {"file": "src/A.java", "line": 7, "raw_name": "call",
+                "status": "resolved", "resolution_strategy": "exact",
+                "confidence": 0.9, "target": "T.m", "jdt_state": None}
+        no_repo = case_id(base)
+        extended = {**base, "repo": "gson",
+                    "stratum": "S1_L1_RESOLVED_L1_ONLY", "annotation": {}}
+        extended["case_id"] = case_id(extended)
+        self.assertEqual(no_repo, extended["case_id"])
+        blind = make_blind_case(extended)
+        self.assertEqual(set(blind), {"case_id", "repo", "file", "line"})
 
 
 class BlindingTests(unittest.TestCase):

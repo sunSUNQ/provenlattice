@@ -372,7 +372,7 @@ def main() -> int:
         selected = select_cases(populations, allocation, repo_path.name, frame_id)
         cases = []
         for stratum in STRATA:
-            cases.extend({**c, "stratum": stratum,
+            cases.extend({**c, "repo": repo_path.name, "stratum": stratum,
                           "annotation": {"relation_verdict": None,
                                          "gold_target": None,
                                          "build_context_status": None,
