@@ -167,7 +167,6 @@ provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
 
 - 全部输出为 **Candidate**（`resolved` ≠ Verified Finding；`confidence` 为 heuristic score）
 - `error_handling` 和 `taint_path` 仅 SMOKE + DIAGNOSTIC 级
-- 别名精度有限（q = p 拷贝后 deref 不与 p 的 free 配对）
 - CONSUMES 仅覆盖直接传递形状（`f(malloc(n))`）
 - goto 目标不建模；短路坍缩为单 BRANCH
 - 无 SSA / points-to / 跨函数数据流边

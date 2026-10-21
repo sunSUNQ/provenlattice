@@ -1390,7 +1390,18 @@ class SparseCfgBuilder:
             target = node.child_by_field_name(target_field)
             written = _outermost_access(target, self.profile.access_node_types)
             if written is not None:
-                point = self._access_point(written, "WRITE", origin=node)
+                # The bare-copy pre-approval: a pointer-typed declaration copy
+                # (`int *q = p;`) routes its bare identifier here -- the star
+                # lives in the declarator text, not in the routed identifier.
+                # See _access_point's STORAGE_LOCAL bare-copy exception.
+                bare_copy = (
+                    node.type == "init_declarator"
+                    and target is not None
+                    and "*" in self._text(target)
+                    and self._bare_alias_source(written, node, declared=True) != ""
+                )
+                point = self._access_point(written, "WRITE", origin=node,
+                                           bare_copy=bare_copy)
                 if point is not None:
                     points.append(point)
         skip_fields = (DECLARED_FIELDS.get(node.type), ACCESS_SKIP_FIELDS.get(node.type))
@@ -1413,7 +1424,35 @@ class SparseCfgBuilder:
                 points.append(point)
         return points
 
-    def _access_point(self, expr: Any, event_type: str, origin: Any = None) -> _Point | None:
+    def _bare_alias_source(self, expr: Any, origin: Any, declared: bool = False) -> str:
+        """The copied-from root for the bare copy shapes (`q = p`, `q = &p`).
+
+        Empty for everything else: `q = p->f` reads a field and aliases
+        nothing, and the LHS must be the bare root as well -- `*p = q` writes
+        *through* `p`, it does not alias anything. Shared by the WRITE
+        annotation block and the STORAGE_LOCAL bare-copy exception: the copy
+        write is the alias fact carrier, the one local write the chain needs.
+        `declared` marks an init_declarator LHS: there the `*` belongs to the
+        type (`int *q = p` declares `q`), so the spelled text may carry the
+        star and the written name is the root identifier itself.
+        """
+        rhs_field = WRITE_SOURCE_FIELDS.get(origin.type)
+        rhs = origin.child_by_field_name(rhs_field) if rhs_field else None
+        if rhs is None:
+            return ""
+        source_root = self._root_identifier(rhs)
+        if not source_root:
+            return ""
+        rhs_text = self._text(rhs)
+        lhs_root = self._root_identifier(expr)
+        if (declared or self._text(expr) == lhs_root) and (
+            rhs_text == source_root or rhs_text == f"&{source_root}"
+        ):
+            return source_root
+        return ""
+
+    def _access_point(self, expr: Any, event_type: str, origin: Any = None,
+                      bare_copy: bool = False) -> _Point | None:
         root, member, this_root, _exact = self._member_chain(expr)
         # `this->m_` names the field directly. Taking only `_root_identifier`
         # here would stop at `this` -- a keyword, not an identifier -- and the
@@ -1424,7 +1463,17 @@ class SparseCfgBuilder:
             return None
         facts = self._subject_facts(expr, subject)
         storage = facts.get("subject_storage")
-        if storage not in ACCESS_STORAGES:
+        # The STORAGE_LOCAL bare-copy exception (pre-approved by the caller's
+        # `bare_copy`): the one local write the alias chain needs is a
+        # pointer-typed declaration copy -- `int *q = p;`. Without it a
+        # release under the copied-from name can never pair with a use
+        # through the copy (the q = p; free(p); *q shape the README
+        # registered). Every other local write stays excluded: a local does
+        # not outlive the frame. The pointer fact is read off the declarator
+        # text at the routing site -- the declared type token carries no
+        # pointer level, and the routed identifier carries no star (both
+        # registered here rather than silently narrowed).
+        if storage not in ACCESS_STORAGES and not bare_copy:
             return None
         if storage == STORAGE_PARAMETER and event_type != "WRITE":
             # Stage 5B publishes the write side of a parameter only. The
@@ -1458,10 +1507,9 @@ class SparseCfgBuilder:
                     # root as well -- `*p = q` writes *through* `p`, it does
                     # not alias anything.
                     rhs_text = self._text(rhs)
-                    if (
-                        text == subject
-                        and (rhs_text == source_root or rhs_text == f"&{source_root}")
-                    ):
+                    if self._bare_alias_source(
+                        expr, origin, declared=(origin.type == "init_declarator")
+                    ) == source_root:
                         annotations["alias_source"] = source_root
                 # The null half of the DFG's NULL_SOURCE class: a write whose
                 # right-hand side is the null literal defines the subject as
