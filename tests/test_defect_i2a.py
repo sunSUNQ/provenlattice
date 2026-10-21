@@ -218,12 +218,12 @@ class NullFlowTests(DefectTestBase):
         for cand in env["candidates"]:
             self.assertIn(cand["resolution_status"], ("resolved", "ambiguous", "unresolved"))
 
-    def test_check_then_deref_in_branch_matches_pr(self) -> None:
-        # PR null_flow on `if (p) { *p = 1; }` emits 1 resolved candidate:
-        # the null arm of the check reaches the dereference through the
-        # implicit else, and the model has no noreturn/dominance proof to
-        # eliminate it. Verified against the PR implementation on the
-        # identical fixture; the residual is a known stage-6 FP pattern.
+    def test_check_then_deref_in_branch_is_guarded(self) -> None:
+        # issue-pilot#18: `if (p) { *p = 1; }` is the guarded pattern, not a
+        # defect. The guard is now recognised (a bare pointer condition reads
+        # as non-null on the true arm, the same fact `p != NULL` records), so
+        # the dereference on the non-null side is eliminated -- the PR-era
+        # registered false positive no longer fires.
         self.build(
             "#include <stdlib.h>\n"
             "int f09(int n) {\n"
@@ -233,9 +233,87 @@ class NullFlowTests(DefectTestBase):
             "    return n;\n"
             "}\n")
         cands = self.candidates_of("3.1", "null_flow")
+        self.assertEqual(cands, [])
+
+    def _guard_candidates(self, body: str) -> list[dict]:
+        self.build(body)
+        return self.candidates_of("3.1", "null_flow")
+
+    def test_null_branch_guard_still_detected(self) -> None:
+        # B. `if (!p) { *p = 1; }`: the deref is on the null arm -- a real risk.
+        cands = self._guard_candidates(
+            "#include <stdlib.h>\n"
+            "int fb(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    if (!p) { *p = 1; }\n"
+            "    return n;\n"
+            "}\n")
         self.assertEqual(len(cands), 1)
-        self.assertEqual(cands[0]["resolution_status"], "resolved")
-        self.assertEqual(len(cands[0]["facts"]), 2)
+
+    def test_guard_does_not_cover_deref_after_block(self) -> None:
+        # C. `if (p) {} *p = 1;`: the deref is after the guard, both arms reach
+        # it -- still possibly null.
+        cands = self._guard_candidates(
+            "#include <stdlib.h>\n"
+            "int fc(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    if (p) {}\n"
+            "    *p = 1;\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(len(cands), 1)
+
+    def test_conjunction_guard_eliminates_fp(self) -> None:
+        # D. `if (p && flag) { *p = 1; }`: the true arm implies p non-null.
+        cands = self._guard_candidates(
+            "#include <stdlib.h>\n"
+            "int fd(int n, int flag) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    if (p && flag) { *p = 1; }\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(cands, [])
+
+    def test_disjunction_is_not_a_guard(self) -> None:
+        # E. `if (p || flag) { *p = 1; }`: the true arm does not imply p
+        # non-null (flag alone suffices).
+        cands = self._guard_candidates(
+            "#include <stdlib.h>\n"
+            "int fe(int n, int flag) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    if (p || flag) { *p = 1; }\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(len(cands), 1)
+
+    def test_renull_inside_guard_still_detected(self) -> None:
+        # F. `if (p) { p = NULL; *p = 1; }`: the re-nullification is a fresh
+        # null source after the guard; the guard is stale and must not
+        # eliminate the candidate.
+        cands = self._guard_candidates(
+            "#include <stdlib.h>\n"
+            "int ff(int n) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    if (p) {\n"
+            "        p = NULL;\n"
+            "        *p = 1;\n"
+            "    }\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(len(cands), 1)
+
+    def test_merge_does_not_inherit_non_null(self) -> None:
+        # G. a guard on one arm must not shield the unguarded deref on the
+        # other arm after the merge.
+        cands = self._guard_candidates(
+            "#include <stdlib.h>\n"
+            "int fg(int n, int f) {\n"
+            "    int *p = malloc(sizeof(int));\n"
+            "    if (f) { if (p) {} *p = 1; }\n"
+            "    else { *p = 1; }\n"
+            "    return n;\n"
+            "}\n")
+        self.assertEqual(len(cands), 2)
 
     def test_null_assignment_then_deref(self) -> None:
         # p = NULL then *p: the null_source write defines the chain, and the

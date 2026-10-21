@@ -171,7 +171,6 @@ provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
 - goto 目标不建模；短路坍缩为单 BRANCH
 - 无 SSA / points-to / 跨函数数据流边
 - Python 缺陷检测链未验证
-- `if(p){*p=1}` null_flow 已知误报
 - Cold Store / declarations 重构未纳入 V1.4（归档于 `archive/pr1-full-merge`）
 - Streaming Incremental 可在 legacy 单库布局下独立移植（不依赖 Cold Store），待独立 A/B 验证
 - MCP defect 查询已完成端到端客户端验证（stdio JSON-RPC 真实 server 子进程，initialize/tools/list/8 类 defect query/stale fail-closed 全链路 4/4 PASS，测试 `tests/test_mcp_defect_e2e.py`，见 `docs/v1.4-mcp-e2e-report.md`；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）

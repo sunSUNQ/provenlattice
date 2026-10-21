@@ -1454,6 +1454,22 @@ class SparseCfgBuilder:
             declaration = self._resolve_member(expr, subject)
         return declaration is not None and declaration.is_pointer
 
+    def _is_null_literal(self, node: Any) -> bool:
+        """A null node or the NULL/nullptr macro spelling."""
+        return node is not None and (node.type == "null" or self._text(node) in ("NULL", "nullptr"))
+
+    def _writes_null(self, origin: Any) -> bool:
+        """Whether this write node's right-hand side is the null literal.
+
+        Shared by the annotation block (which stamps `null_source`) and the
+        STORAGE_LOCAL null-write exception -- a null write is a null-ness fact
+        that must publish even for a frame-local name, or a re-nullification
+        inside a guard becomes invisible to the null_flow query.
+        """
+        rhs_field = WRITE_SOURCE_FIELDS.get(origin.type)
+        rhs = origin.child_by_field_name(rhs_field) if rhs_field else None
+        return self._is_null_literal(rhs)
+
     def _access_point(self, expr: Any, event_type: str, origin: Any = None) -> _Point | None:
         root, member, this_root, _exact = self._member_chain(expr)
         # `this->m_` names the field directly. Taking only `_root_identifier`
@@ -1481,7 +1497,18 @@ class SparseCfgBuilder:
             and self._bare_alias_source(
                 expr, origin, declared=(origin.type == "init_declarator")) != ""
         )
-        if storage not in ACCESS_STORAGES and not bare_copy:
+        # The STORAGE_LOCAL null-write exception: `p = NULL;` is a null-ness
+        # fact regardless of storage -- without it a local re-nullification
+        # inside a guard (`if (p) { p = NULL; *p; }`) is invisible and the
+        # deref binds back to the stale allocation. A value write to a null
+        # literal is the same fact for `int *p = NULL;` (declaration).
+        null_write = (
+            storage == STORAGE_LOCAL
+            and event_type == "WRITE"
+            and origin is not None
+            and self._writes_null(origin)
+        )
+        if storage not in ACCESS_STORAGES and not bare_copy and not null_write:
             return None
         if storage == STORAGE_PARAMETER and event_type != "WRITE":
             # Stage 5B publishes the write side of a parameter only. The
@@ -1523,7 +1550,7 @@ class SparseCfgBuilder:
                 # right-hand side is the null literal defines the subject as
                 # null. Number literals (`p = 0`) stay unrecognized -- the
                 # registered stage-4 approximation, not re-litigated here.
-                if rhs.type == "null" or self._text(rhs) in ("NULL", "nullptr"):
+                if self._is_null_literal(rhs):
                     annotations["null_source"] = "true"
             annotations["unconditional"] = (
                 "true" if self._conditional_depth == 0 and not self._under_conditional_expression(expr)
@@ -1573,6 +1600,24 @@ class SparseCfgBuilder:
                 if null_side is not None:
                     polarity = "true_when_null" if operator == "==" else "true_when_non_null"
                     return "CHECK", self._root_identifier(other), polarity, other
+            if operator == "&&":
+                # A conjunction guards each pointer operand: the true arm
+                # implies every operand non-null. `||` guards none (the true
+                # arm can come from the other side). The pointer fact comes
+                # from the declaration index -- a value operand (`flag`) or a
+                # pointer of unknown type is never claimed as a guard.
+                for operand in (condition.child_by_field_name("left"),
+                                condition.child_by_field_name("right")):
+                    name = self._root_identifier(operand)
+                    if name and self._declared_pointer(operand, name):
+                        return "CHECK", name, "true_when_non_null", operand
+        name = self._root_identifier(condition)
+        if condition.type in ("identifier", "field_identifier") and name and self._declared_pointer(condition, name):
+            # `if (p)` reads as "p is non-null on the true arm": the same
+            # guard `if (p != NULL)` spells, with the null arm on the false
+            # branch. Recorded only for pointer declarations -- a bare int
+            # condition is a branch, not a null test.
+            return "CHECK", name, "true_when_non_null", condition
         return "BRANCH", "", "", None
 
     def _is_null(self, node: Any) -> bool:
