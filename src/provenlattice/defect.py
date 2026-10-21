@@ -3262,6 +3262,23 @@ class _Reachability:
                 return True
         return False
 
+    def non_null_side_reaches(self, check: str, target: str) -> bool:
+        """Whether the check's *non-null* arm can reach `target`.
+
+        The complement of `null_side_reaches`: a guard only protects a
+        dereference when the non-null arm is what reaches it. A check on a
+        disjoint arm (its non-null side cannot reach the target at all) is not
+        a guard for that target -- it must not eliminate the candidate.
+        """
+        if target not in self._nodes:
+            return False
+        info = self._points.get(check, {})
+        wanted = "branch=false" if info.get("polarity") == "true_when_null" else "branch=true"
+        for _edge_id, dst, flags in self._adjacency.get(check, ()):
+            if wanted in flags and (dst == target or target in self.from_(dst)):
+                return True
+        return False
+
 
 def _alias_groups(points: Mapping[str, Mapping[str, Any]]) -> dict[str, dict[str, frozenset[str]]]:
     """owner -> {root: roots the annotation ties to it}, in one pass.
@@ -3647,7 +3664,23 @@ def null_flow(
             check_id for check_id in checks_by_owner.get(owner, ())
             if identity_key and _identity(points[check_id], identity=identity) == identity_key
         ]
-        if checks and not any(reach.null_side_reaches(check_id, target_id) for check_id in checks):
+        # A check guards the value it reads at its own position. A redefinition
+        # *after* the check (`if (p) { p = NULL; *p; }`) mints a null source the
+        # check never saw -- the guard is stale and must not eliminate the
+        # candidate. Only checks at-or-after the null source are "fresh" and
+        # count as the guard this edge answers to. Source points carry a line
+        # even when edgeless (a WRITE is not an operation the walker steps
+        # through, but it still has a position).
+        source_line = int(str(points.get(source_id, {}).get("start_line", -1) or -1))
+        fresh_checks = [
+            check_id for check_id in checks
+            if int(str(points.get(check_id, {}).get("start_line", -1) or -1)) >= source_line
+        ]
+        if fresh_checks and any(
+            reach.non_null_side_reaches(check_id, target_id)
+            and not reach.null_side_reaches(check_id, target_id)
+            for check_id in fresh_checks
+        ):
             _record_elimination(
                 _GUARDED, NULL_FLOW_KEY, target_id, target, names, by_reason, records
             )
@@ -3679,14 +3712,14 @@ def null_flow(
                     point=target_id, source=_span(target),
                 ))
                 status = AMBIGUOUS
-            if checks:
+            if fresh_checks:
                 uncertain.append(_uncertain(
                     "PARTIAL_GUARD", decisive=True,
                     detail=(
                         "a check on this identity exists but its null arm still reaches "
                         "the dereference, so some route to it is unguarded"
                     ),
-                    point=checks[0], source=_span(points[checks[0]]),
+                    point=fresh_checks[0], source=_span(points[fresh_checks[0]]),
                 ))
                 status = AMBIGUOUS
             if state == REACH_UNKNOWN:

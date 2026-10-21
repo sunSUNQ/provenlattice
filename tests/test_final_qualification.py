@@ -239,12 +239,12 @@ int null_fp(int n) {
         self.assertEqual(cands, [])
 
     def test_known_fp_if_p_deref(self) -> None:
-        # PR stage-6 known FP: `if (p) { *p = 1; }` still produces 1 candidate
-        # because the null arm of the check reaches the deref via implicit else
+        # issue-pilot#18: the stage-6 known FP is fixed -- `if (p) { *p = 1; }`
+        # is the guarded pattern, the bare pointer condition reads non-null on
+        # the true arm, and the deref on that arm is eliminated.
         self.build({"src/t.c": self.KNOWN_FP})
         cands = self.candidates("null_flow")
-        self.assertEqual(len(cands), 1)
-        self.assertEqual(cands[0]["resolution_status"], "resolved")
+        self.assertEqual(cands, [])
 
     def test_stale_upstream(self) -> None:
         write(self.root, "src/t.c", self.POSITIVE)
