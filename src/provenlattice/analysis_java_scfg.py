@@ -5,18 +5,23 @@ grammar (``parsing.java.JavaTreeSitterParser``). The DFG mint in
 ``sparsedfg.mint_dataflow_edges`` is reused unchanged; this module only builds
 the Java-specific control-flow + access points and annotations that feed it.
 
-Scope (V1, local-variable level):
+Scope (V2, local-variable + field level):
   * local variable declaration / initialization;
   * assignment, compound assignment, update expression;
   * method parameter binding;
   * identifier read/write with lexical scoping and shadowing;
+  * field read/write on a bindable receiver (`this.field`, `obj.field` where
+    `obj` is a known local/parameter); identity is (receiver-root, member-path),
+    so distinct objects' fields never merge without alias evidence;
   * return;
   * if/else branch + merge;
   * while/for loop + back edge.
 
 Deliberately NOT produced (degraded to no data-flow fact, never fabricated):
-  * cross-procedural points-to; heap/field-sensitive analysis; reflection
-    targets; try-with-resources; ALLOC/RELEASE/CONSUMES/DEREFERENCE semantics.
+  * cross-procedural points-to; alias tracking; heap-sensitive analysis;
+    reflection targets; try-with-resources; ALLOC/RELEASE/CONSUMES/DEREFERENCE;
+    field access with a non-`this`/non-local receiver (method-call receiver,
+    array index, nested `a.b.c`, class-name receiver).
 """
 
 from __future__ import annotations
@@ -41,6 +46,7 @@ from .models import (
     ParsedEdge,
     ParsedPoint,
     PointKey,
+    STORAGE_FIELD,
     STORAGE_LOCAL,
     STORAGE_PARAMETER,
     STORAGE_UNKNOWN,
@@ -251,6 +257,60 @@ class JavaSparseCfgBuilder:
             "subject_exact": "true",
         }
 
+    # -- field access (V2: field read/write on this / local-object receivers) --
+    def _field_facts(self, node):
+        """The flow facts for a `field_access`, or None when it cannot be bound.
+
+        Supported and bound to a stable identity:
+          * ``this.field`` -> subject=field, storage=field, decl=field:<owner>:field;
+          * ``obj.field``  -> subject=obj, storage=obj's storage, member="field",
+            decl=obj's local declaration token.
+
+        Returns (subject, subject_decl, subject_storage, subject_member).
+        Anything else (nested field_access, method-call receiver, array index,
+        class-name receiver, unresolved local) returns None so the caller
+        degrades instead of fabricating a precise dependency.
+        """
+        if node is None or node.type != "field_access":
+            return None
+        object_node = node.child_by_field_name("object")
+        field_node = node.child_by_field_name("field")
+        if object_node is None or field_node is None:
+            return None
+        field_name = _node_text(self.source, field_node)
+        if object_node.type == "this":
+            scope = self._current_owner.qualified_name if self._current_owner else ""
+            return (field_name, f"field:{scope}:{field_name}", STORAGE_FIELD, "")
+        if object_node.type == "identifier":
+            obj_name = _node_text(self.source, object_node)
+            resolved = self._lookup(obj_name)
+            if resolved is None:
+                return None
+            token, storage = resolved
+            return (obj_name, token, storage, field_name)
+        return None
+
+    @staticmethod
+    def _field_annotation(decl, storage, member, subject) -> dict[str, str]:
+        return {
+            "subject_decl": decl,
+            "subject_storage": storage,
+            "subject_member": member,
+            "subject": subject,
+            "subject_site": "",
+            "subject_exact": "true",
+        }
+
+    def _emit_field_read(self, node, facts) -> None:
+        subject, decl, storage, member = facts
+        point = self._new_point("READ", node, subject)
+        self.annotations[point.key()] = self._field_annotation(decl, storage, member, subject)
+
+    def _emit_field_write(self, node, facts) -> None:
+        subject, decl, storage, member = facts
+        point = self._new_point("WRITE", node, subject)
+        self.annotations[point.key()] = self._field_annotation(decl, storage, member, subject)
+
     # -- expression walking ------------------------------------------------
     def _walk_expression(self, node) -> None:
         if node is None:
@@ -269,9 +329,14 @@ class JavaSparseCfgBuilder:
             else:
                 self._walk_expression(arg)
         elif t == "field_access":
-            # V1 local-variable level: only the receiver root (if a local) is
-            # read; the member itself is not a local-variable flow fact.
-            self._walk_expression(node.child_by_field_name("object"))
+            # V2: a bindable field access (this.field / obj.field) emits one
+            # field READ; an un-bindable receiver degrades to walking the
+            # receiver object only (no fabricated field dependency).
+            facts = self._field_facts(node)
+            if facts is not None:
+                self._emit_field_read(node, facts)
+            else:
+                self._walk_expression(node.child_by_field_name("object"))
         elif t == "method_invocation":
             self._walk_expression(node.child_by_field_name("object"))
             args = node.child_by_field_name("arguments")
@@ -299,6 +364,17 @@ class JavaSparseCfgBuilder:
         right = node.child_by_field_name("right")
         operator = node.child_by_field_name("operator")
         op_text = _node_text(self.source, operator) if operator is not None else "="
+        if left is not None and left.type == "field_access":
+            facts = self._field_facts(left)
+            if facts is not None:
+                if op_text != "=":
+                    self._emit_field_read(left, facts)  # compound read-before-write
+                self._walk_expression(right)
+                self._emit_field_write(left, facts)
+            else:
+                self._walk_expression(left.child_by_field_name("object"))
+                self._walk_expression(right)
+            return
         name = self._lhs_name(left)
         if name is not None and left.type == "identifier":
             if op_text != "=":
@@ -306,7 +382,7 @@ class JavaSparseCfgBuilder:
             self._walk_expression(right)
             self._emit_write(name, left, STORAGE_LOCAL)
         else:
-            # field access or other LHS: read roots, no local write fact.
+            # array element or other unsupported LHS: read roots, no write fact.
             self._walk_expression(left)
             self._walk_expression(right)
 
