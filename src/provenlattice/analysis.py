@@ -54,6 +54,7 @@ ANALYZER_VERSIONS = {
     "ast:python": 1, "cfg:python": 2, "ast:c": 3, "cfg:c": 3, "events:cpp": 1,
     "sparse_cfg:cpp": 1, "sparse_dfg:cpp": 2,
     "ast:java": 1, "cfg:java": 2,
+    "sparse_cfg:java": 1, "sparse_dfg:java": 1,
 }
 STATUS_CURRENT = "current"
 MAX_ANALYSIS_NODE_PAYLOAD_BYTES = 4096
@@ -118,8 +119,8 @@ CAPABILITY_CONTRACT: dict[str, dict] = {
         # CONSUMES) and the Defect Queries that consume it stay in later
         # phases; the contract must not read this row as more than the CFG.
         "status": "implemented", "domain": "inspection",
-        "languages": ("c", "cpp"), "depends_on": ("events",), "cost_class": "high",
-        "analyzer_ids": ("sparse_cfg:cpp",), "planned_integration": None,
+        "languages": ("c", "cpp", "java"), "depends_on": ("events",), "cost_class": "high",
+        "analyzer_ids": ("sparse_cfg:cpp", "sparse_cfg:java"), "planned_integration": None,
         "level": "level0+structural+access",
     },
     "sparse_dfg": {
@@ -131,9 +132,9 @@ CAPABILITY_CONTRACT: dict[str, dict] = {
         # (the cross-function join stays a defect-layer query, I2). The grade
         # field carries that scope honestly.
         "status": "implemented", "domain": "inspection",
-        "languages": ("c", "cpp"),
+        "languages": ("c", "cpp", "java"),
         "depends_on": ("events", "sparse_cfg"), "cost_class": "high",
-        "analyzer_ids": ("sparse_dfg:cpp",), "planned_integration": None,
+        "analyzer_ids": ("sparse_dfg:cpp", "sparse_dfg:java"), "planned_integration": None,
         "level": "level0+structural+access+dfg",
         "grade": "local-only, diagnostic",
     },

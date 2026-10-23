@@ -27,8 +27,10 @@ QUERY_ANALYZERS = {
     ("events", "cpp"): "events:cpp",
     ("sparse_cfg", "c"): "sparse_cfg:cpp",
     ("sparse_cfg", "cpp"): "sparse_cfg:cpp",
+    ("sparse_cfg", "java"): "sparse_cfg:java",
     ("sparse_dfg", "c"): "sparse_dfg:cpp",
     ("sparse_dfg", "cpp"): "sparse_dfg:cpp",
+    ("sparse_dfg", "java"): "sparse_dfg:java",
 }
 FUNCTION_KINDS = frozenset({
     "function_definition", "async_function_definition", "FUNCTION",
