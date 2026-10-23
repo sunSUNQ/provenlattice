@@ -1,6 +1,6 @@
-# ProvenLattice 1.5.0 Capability Matrix
+# ProvenLattice 1.6.0 Capability Matrix
 
-> 当前能力状态统一入口(2026-10-19,1.5.0 — Java Public Beta)
+> 当前能力状态统一入口(2026-10-23,1.6.0 — Java Public Beta)
 > 资格等级:FUNCTIONAL_VALIDATED > FUNCTIONAL + DIAGNOSTIC > SMOKE + DIAGNOSTIC
 > 全部缺陷查询输出为 Candidate,受 `local-only, diagnostic` 分析范围约束。
 
@@ -43,6 +43,8 @@
 | Semantic Events (15 类) | PR1 | C/C++ | 按需 | ✅ diagnostic | I1-A | 操作粒度事实 | Python 未验证 |
 | Sparse CFG | PR1 | C/C++ | 按需 | ✅ diagnostic | I1-B | 事件可达性 | goto 不建模 |
 | Sparse DFG | PR1 | C/C++ | 按需 | ✅ diagnostic | I1-C | def→use 链 | 无 SSA |
+| Java Sparse CFG | PL-JAVA (PR #30) | Java | 按需 | ✅ diagnostic | sparse_cfg:java | 方法级控制流 + 访问点 | 无跨函数控制流 |
+| Java Sparse DFG | PL-JAVA (PR #30/#31/#32) | Java | 按需 | ✅ diagnostic | sparse_dfg:java | def→use / field / interprocedural param+return | 跨函数仅同文件短名唯一；无 points-to/heap |
 | Ownership Contracts | PR1 | C/C++ | 按需 | ✅ diagnostic | I2-A | 所有权规则 | TOML 数据待填充 |
 | double_free | PR1 | C/C++ | 按需 | ✅ **FUNCTIONAL_VALIDATED** | I2-A | 连续释放检测 | — |
 | use_after_free | PR1 | C/C++ | 按需 | ✅ **FUNCTIONAL_VALIDATED** | I2-B1 | 释放后使用 | 别名精度有限 |

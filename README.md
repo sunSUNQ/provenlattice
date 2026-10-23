@@ -1,4 +1,4 @@
-﻿# ProvenLattice 1.5.0
+﻿# ProvenLattice 1.6.0
 
 **A Provenance-aware Code Knowledge and Analysis Platform for AI Agents**
 

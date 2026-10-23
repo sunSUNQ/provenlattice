@@ -3,6 +3,47 @@
 所有已发布里程碑按时间倒序记录。tag 命名遵循 `provenlattice-*` 前缀约定；
 各阶段的"已完成 / 明确未包含"以对应发布文档为准（`docs/releases/`）。
 
+## ProvenLattice 1.6.0 — Java Sparse CFG/DFG（2026-10-23）
+
+> 已发布：GitHub Release [provenlattice-v1.6.0](https://github.com/sunSUNQ/provenlattice/releases/tag/provenlattice-v1.6.0)（tag 指向 main commit 5d51f1f；wheel/sdist SHA256 见 REPRODUCIBILITY.md 与 Release assets）。PyPI 发布独立决策。
+
+**1.6.0 在 1.5.0 Java Public Beta 基础上新增 Java Sparse CFG/DFG 能力线**。
+**Java 仍为 Public Beta，非 Stable**。
+
+### 新能力
+
+- Java Sparse CFG（`sparse_cfg:java`）：方法级稀疏控制流（CHECK/BRANCH/RETURN
+  + READ/WRITE 访问点 + lexical scoping/shadowing），复用 C/C++ Sparse CFG 能力。
+- Java Sparse DFG（`sparse_dfg:java`）：方法内 def→use（DATA_FLOW_TO），复用
+  `mint_dataflow_edges`，无第二套 DFG 算法。
+- Java Field Data Flow V1：`this.field` / `obj.field` 读写 def-use（receiver 可
+  绑定；identity=(receiver-root, member-path)，不同对象字段不合并）。
+- Java Interprocedural Parameter/Return Data Flow V1：同文件短名唯一匹配下，
+  `caller argument → callee parameter` 与 `callee return → caller call` 的跨方法
+  DATA_FLOW_TO（复用 method-local DFG，无第二套算法）。
+
+### 兼容性
+
+- 既有 Python/C/C++ 能力与行为不变（金样与回归一致）。
+- 升级要求：执行一次完整 `provenlattice index`（跨函数数据流需重新物化
+  `sparse_dfg`）。
+
+### 明确限制（Public Beta 边界）
+
+- Java 跨函数数据流仅同文件短名唯一匹配；跨文件 / 重载 / 非 identifier 实参
+  不绑定（不臆测）。
+- **不支持** points-to、alias 分析、完整 heap flow、完整跨文件 interprocedural
+  flow（这些属于后续 Roadmap，本版本不宣称）。
+- Java Sparse CFG/DFG 为 `local-only, diagnostic` 级别，不宣称 formal
+  qualification。
+- 其余限制同 1.5.0（146 UNKNOWN 保守保留、query-time 结果非持久化、RQ1 formal
+  未取得、JDT 依赖用户自备等）。
+
+### 升级说明
+
+由 1.5.x 升级：执行一次完整 `provenlattice index`，并按需重跑
+`provenlattice analyze --features sparse_cfg,sparse_dfg` 物化新能力。
+
 ## ProvenLattice 1.5.0 — Java Public Beta（2026-10-19）
 
 > 已发布：GitHub Release [provenlattice-v1.5.0](https://github.com/sunSUNQ/provenlattice/releases/tag/provenlattice-v1.5.0)（tag 指向 main commit 0ec6364；wheel/sdist SHA256 见 REPRODUCIBILITY.md 与 Release assets）。PyPI 发布独立决策。
