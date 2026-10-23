@@ -107,7 +107,7 @@ class CapabilityContractTests(unittest.TestCase):
         self.assertEqual(CAPABILITY_CONTRACT["sparse_cfg"]["status"], "implemented")
         self.assertEqual(CAPABILITY_CONTRACT["cfg"]["analyzer_ids"], ("cfg:python", "cfg:c"))
         self.assertEqual(CAPABILITY_CONTRACT["sparse_cfg"]["analyzer_ids"],
-                         ("sparse_cfg:cpp",))
+                         ("sparse_cfg:cpp", "sparse_cfg:java"))
 
 
 class DefaultIsolationTests(unittest.TestCase):

@@ -13,6 +13,8 @@ from .analysis_c_events import EVENTS_SUFFIXES, analyze_c_events_scope
 from .analysis_c_dfg import analyze_c_dfg_scope
 from .analysis_c_scfg import analyze_c_scfg_scope
 from .analysis_cfg import ANALYZER as CFG_ANALYZER, analyze_cfg_scope
+from .analysis_java_dfg import analyze_java_dfg_scope
+from .analysis_java_scfg import JAVA_SUFFIXES, analyze_java_scfg_scope
 from .identity import path_id
 from .scanner import IGNORED_DIRS, SUPPORTED_EXTENSIONS
 from .storage import SQLiteStorage
@@ -33,10 +35,13 @@ REASON_PREFIX = "skipped_"
 
 
 def _supports_feature(entry: dict, feature: str) -> bool:
-    if feature in ("events", "sparse_cfg", "sparse_dfg"):
-        # The semantic analyzers cover the whole C/C++ family (the cpp.toml
-        # extension list), not just the .c/.h pair.
+    if feature == "events":
+        # Vocabulary events cover the C/C++ family only (cpp.toml extension list).
         return PurePosixPath(entry["path"]).suffix.lower() in EVENTS_SUFFIXES
+    if feature in ("sparse_cfg", "sparse_dfg"):
+        # Sparse CFG/DFG cover the C/C++ family plus Java (local-variable level).
+        suffix = PurePosixPath(entry["path"]).suffix.lower()
+        return suffix in EVENTS_SUFFIXES or suffix in JAVA_SUFFIXES
     return (
         entry["language"] == "python"
         or PurePosixPath(entry["path"]).suffix.lower() in C_SOURCE_SUFFIXES
@@ -200,10 +205,12 @@ def analyze_scope(repo: str | Path, scope: str, features, database: str | Path |
             [analyze_c_events_scope(root, scope_path.as_posix(), database)])
     if "sparse_cfg" in plan:
         results["sparse_cfg"] = _merge_feature_results(
-            [analyze_c_scfg_scope(root, scope_path.as_posix(), database)])
+            [analyze_c_scfg_scope(root, scope_path.as_posix(), database),
+             analyze_java_scfg_scope(root, scope_path.as_posix(), database)])
     if "sparse_dfg" in plan:
         results["sparse_dfg"] = _merge_feature_results(
-            [analyze_c_dfg_scope(root, scope_path.as_posix(), database)])
+            [analyze_c_dfg_scope(root, scope_path.as_posix(), database),
+             analyze_java_dfg_scope(root, scope_path.as_posix(), database)])
     if "defect" in plan:
         # query-time capability: the upstream chain above is the whole
         # materialization; candidates are answered by the defect query entry.
