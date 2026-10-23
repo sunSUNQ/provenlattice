@@ -21,16 +21,17 @@ from .analysis import (
 )
 from .analysis_ast import normalize_scope, scoped_sources
 from .analysis_java_scfg import (
+    ARGUMENT_SEPARATOR,
     JAVA_SUFFIXES,
     SCFG_CONTRACT,
     JavaSparseCfgBuilder,
     java_owner_index,
 )
 from .analysis_semantic_common import _LineIndex, tree_diagnostics
-from .identity import event_id, path_id
+from .identity import event_id, path_id, semantic_edge_id
 from .models import PointKey
 from .parsing.java import JavaTreeSitterParser
-from .semantics.events import ACCESS_EVENTS
+from .semantics.events import ACCESS_EVENTS, SemanticEdge
 from .sparsedfg import CONSUMES, DATA_FLOW_TO, mint_dataflow_edges
 from .storage import SQLiteStorage
 
@@ -94,6 +95,9 @@ def analyze_java_dfg_scope(repo, scope: str, database=None) -> dict:
             semantic_edges = mint_dataflow_edges(
                 repo_id, parsed_view, id_by_key, file_id,
                 relative_path=source.relative_path, shard_path="")
+            interprocedural_edges = _mint_interprocedural_edges(
+                repo_id, cfg, owner_ids, id_by_key, semantic_edges, file_id,
+                source.relative_path)
 
             event_type_by_id = {nid: key.event_type for key, nid in id_by_key.items()}
             edges = []
@@ -110,6 +114,9 @@ def analyze_java_dfg_scope(repo, scope: str, database=None) -> dict:
                         payload["control_reachable_note"] = "edgeless access point"
                 edges.append(AnalysisEdge(edge.edge_id, edge.src_event_id, edge.dst_event_id,
                                           edge.relation, payload))
+            for edge in interprocedural_edges:
+                edges.append(AnalysisEdge(edge.edge_id, edge.src_event_id, edge.dst_event_id,
+                                          edge.relation, dict(edge.metadata)))
 
             try:
                 store.replace_analysis_for_file(
@@ -160,3 +167,118 @@ def _owner_of(owner_ids: dict, point) -> str:
     if identity not in owner_ids or owner_ids[identity] is None:
         raise RuntimeError(f"sparse dfg point owner unresolvable: {identity}")
     return owner_ids[identity]
+
+
+INTERPROC_PARAMETER = "interprocedural_parameter"
+INTERPROC_RETURN = "interprocedural_return"
+
+
+def _mint_interprocedural_edges(
+    repo_id: str,
+    cfg,
+    owner_ids: dict,
+    id_by_key: dict,
+    method_edges: list[SemanticEdge],
+    file_id: str,
+    relative_path: str,
+) -> list[SemanticEdge]:
+    """Mint cross-method DATA_FLOW_TO edges across the caller<->callee interface.
+
+    Reuses the method-local DFG facts unchanged: the input_to_sink edges already
+    name each call's argument definition (caller side), and the value_flow edges
+    already name each return value's definition (callee side). This pass only
+    joins those two facts through the callee's parameter/return rows, minting:
+
+      * ``interprocedural_parameter``: caller argument def -> callee parameter WRITE;
+      * ``interprocedural_return``:   callee return-value def -> caller CALL point.
+
+    Callee resolution is same-file short-name only: a short name that maps to
+    exactly one method binds; anything else (overload / unbound / cross-file)
+    stays unbound rather than guessed, matching the method-local discipline.
+    """
+    annotations = cfg.annotations
+    params_by_owner: dict[str, list[str]] = {}
+    returns_by_owner: dict[str, list[str]] = {}
+    owners_by_short: dict[str, set[str]] = {}
+    calls: list[tuple[str, str, str, str]] = []
+
+    for point in cfg.points:
+        triple = (point.owner_kind, point.owner_qualified_name, point.owner_signature)
+        owner_id = owner_ids.get(triple)
+        if owner_id is None:
+            continue
+        info = annotations.get(point.key(), {})
+        point_id = id_by_key[point.key()]
+        short = point.owner_qualified_name.rsplit(".", 1)[-1]
+        if point.event_type == "WRITE" and info.get("subject_storage") == "parameter":
+            params_by_owner.setdefault(owner_id, []).append(point_id)
+            owners_by_short.setdefault(short, set()).add(owner_id)
+        elif point.event_type == "RETURN":
+            returns_by_owner.setdefault(owner_id, []).append(point_id)
+            owners_by_short.setdefault(short, set()).add(owner_id)
+        elif point.event_type == "CALL":
+            calls.append((owner_id, info.get("callee", ""), info.get("arguments", ""), point_id))
+
+    if not calls:
+        return []
+
+    call_event_ids = {call[3] for call in calls}
+    return_event_ids = {eid for eids in returns_by_owner.values() for eid in eids}
+    arg_def_by_call: dict[tuple[str, str], str] = {}
+    return_def_by_return: dict[str, str] = {}
+    for edge in method_edges:
+        if edge.relation != DATA_FLOW_TO:
+            continue
+        flow_class = edge.metadata.get("flow_class", "")
+        if flow_class == "input_to_sink" and edge.dst_event_id in call_event_ids:
+            arg_def_by_call[(edge.dst_event_id, edge.metadata.get("arg_root", ""))] = edge.src_event_id
+        if edge.dst_event_id in return_event_ids:
+            return_def_by_return[edge.dst_event_id] = edge.src_event_id
+
+    edges: dict[str, SemanticEdge] = {}
+
+    def mint(src_id: str, dst_id: str, flow_class: str, caller_id: str, callee_short: str) -> None:
+        edge = SemanticEdge(
+            edge_id=semantic_edge_id(src_id, dst_id, DATA_FLOW_TO, ""),
+            src_event_id=src_id,
+            dst_event_id=dst_id,
+            relation=DATA_FLOW_TO,
+            owner_symbol_id=caller_id,
+            file_id=file_id,
+            flags=(),
+            metadata={
+                "relative_path": relative_path,
+                "shard_path": "",
+                "flow_class": flow_class,
+                "via": [], "via_copies": [],
+                "control_reachable": "true",
+                "callee": callee_short,
+            },
+        )
+        edges.setdefault(edge.edge_id, edge)
+
+    for caller_id, callee_short, args_str, call_eid in calls:
+        if not callee_short:
+            continue
+        callee_set = owners_by_short.get(callee_short, set())
+        if len(callee_set) != 1:
+            continue
+        callee_id = next(iter(callee_set))
+        callee_params = params_by_owner.get(callee_id, [])
+        roots = args_str.split(ARGUMENT_SEPARATOR) if args_str else []
+        for index, root in enumerate(roots):
+            if not root:
+                continue
+            if index >= len(callee_params):
+                continue
+            src = arg_def_by_call.get((call_eid, root))
+            if src is None:
+                continue
+            mint(src, callee_params[index], INTERPROC_PARAMETER, caller_id, callee_short)
+        for ret_eid in returns_by_owner.get(callee_id, []):
+            src = return_def_by_return.get(ret_eid)
+            if src is None:
+                continue
+            mint(src, call_eid, INTERPROC_RETURN, caller_id, callee_short)
+
+    return [edges[eid] for eid in sorted(edges)]

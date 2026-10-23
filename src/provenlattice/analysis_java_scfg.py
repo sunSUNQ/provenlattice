@@ -68,6 +68,12 @@ CAPABILITY_LEVEL = "level0+structural+access"
 
 JAVA_SUFFIXES = frozenset({".java"})
 
+# Serialization separator for a CALL point's argument-root list. Kept local
+# (mirrors sparsedfg.ARGUMENT_SEPARATOR) so the SCFG builder has no DFG-layer
+# import; empty roots keep their ordinal slot so interprocedural binding aligns
+# caller argument i to callee parameter i.
+ARGUMENT_SEPARATOR = "\x1f"
+
 _METHOD_NODES = frozenset(
     {"method_declaration", "constructor_declaration", "compact_constructor_declaration"}
 )
@@ -311,6 +317,47 @@ class JavaSparseCfgBuilder:
         point = self._new_point("WRITE", node, subject)
         self.annotations[point.key()] = self._field_annotation(decl, storage, member, subject)
 
+    def _argument_roots(self, args_node) -> list[str]:
+        """Argument root names, empty slot for anything non-identifier.
+
+        An identifier argument binds by name; anything else (literal, call
+        result, field access, ``this``) keeps an empty slot so the ordinal
+        alignment is preserved without fabricating a root dependency.
+        """
+        if args_node is None:
+            return []
+        roots = []
+        for arg in args_node.named_children:
+            if arg.type == "identifier":
+                roots.append(_node_text(self.source, arg))
+            else:
+                roots.append("")
+        return roots
+
+    def _emit_call(self, node) -> None:
+        """Emit a CALL point for a method invocation.
+
+        The annotation records the callee's short name and the argument-root
+        list (ordinal-preserving). The method-local DFG reads ``arguments`` to
+        mint input_to_sink (argument def -> CALL); the interprocedural pass
+        reads ``callee`` + the same list to bind caller argument i to callee
+        parameter i.
+        """
+        name_node = node.child_by_field_name("name")
+        callee = _node_text(self.source, name_node) if name_node is not None else ""
+        roots = self._argument_roots(node.child_by_field_name("arguments"))
+        point = self._new_point("CALL", node, callee)
+        self.annotations[point.key()] = {
+            "subject": callee,
+            "callee": callee,
+            "arguments": ARGUMENT_SEPARATOR.join(roots),
+            "subject_storage": "",
+            "subject_decl": "",
+            "subject_member": "",
+            "subject_site": "",
+            "subject_exact": "true",
+        }
+
     # -- expression walking ------------------------------------------------
     def _walk_expression(self, node) -> None:
         if node is None:
@@ -342,6 +389,7 @@ class JavaSparseCfgBuilder:
             args = node.child_by_field_name("arguments")
             if args is not None:
                 self._walk_expression(args)
+            self._emit_call(node)
         elif t == "object_creation_expression":
             args = node.child_by_field_name("arguments")
             if args is not None:
