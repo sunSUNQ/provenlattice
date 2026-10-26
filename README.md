@@ -38,7 +38,8 @@ L2 Unified Optional Analysis（按 Capability × Scope 按需物化）
 │   │ Python AST/CFG · C normalized AST/CFG · 短路 · 调用语义   │
 │   └──────────────────────────────────────────────────────────┘
 │   ┌─ Inspection Analysis ────────────────────────────────────┐
-│   │ Semantic Events (15 类) · Sparse CFG · Sparse DFG         │
+│   │ Semantic Events (15 类) · Sparse CFG/DFG                 │
+│   │   (C/C++ + Java：def→use / field / interprocedural)      │
 │   │ 8 类 Typed Defect Query · Evidence Bundle                 │
 │   └──────────────────────────────────────────────────────────┘
 │
@@ -142,6 +143,28 @@ provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
   Maven/Gradle 不会被执行（classpath 手工提供）。
 * **已验证**：479 项测试（Windows/Linux CI 双绿）、三真实仓库端到端、8/8 历史错误绑定修正、168 冲突抽样 0 JDT 错误。**未取得** RQ1 formal qualification。
 
+## Java Sparse CFG / DFG（1.6.0）
+
+1.6.0 在 1.5.0 Java Public Beta 基础上新增 Java 稀疏控制流 / 数据流分析线：
+
+- **Java Sparse CFG**（`sparse_cfg:java`）：方法级稀疏控制流（CHECK/BRANCH/RETURN
+  + READ/WRITE 访问点 + lexical scoping/shadowing），复用 C/C++ Sparse CFG 能力。
+- **Java Sparse DFG**（`sparse_dfg:java`）：方法内 def→use（DATA_FLOW_TO），复用
+  `mint_dataflow_edges`，无第二套 DFG 算法。
+- **Java Field Data Flow V1**：`this.field` / `obj.field` 读写 def-use（receiver 可
+  绑定；identity=(receiver-root, member-path)，不同对象字段不合并）。
+- **Java Interprocedural Parameter/Return Data Flow V1**：同文件短名唯一匹配下，
+  `caller argument → callee parameter` 与 `callee return → caller call` 跨方法边。
+
+```bash
+provenlattice analyze /path/to/java-repo --scope src --features sparse_dfg --json
+provenlattice analysis /path/to/java-repo --feature sparse_dfg --file-path src/Foo.java --json
+```
+
+明确边界：跨函数数据流仅同文件短名唯一匹配；不支持 points-to / alias / 完整
+heap flow / 完整跨文件 interprocedural / 签名级重载消歧。能力等级 `local-only,
+diagnostic`。
+
 ## Validation
 
 以下结果基于 aria2 语料（1,393 文件 / 165k LOC）在 5 轮交错配对运行中测量（1.4.0 基线）：
@@ -162,6 +185,10 @@ provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
 > 报告）：479 项测试 OK（Windows/Linux CI 双绿）；Java 真实仓库 HikariCP/gson/
 > jgit 索引零失败；JGit L1 索引 25.1s；JDT 批处理 8.1s / RSS ~1.2GB；wheel/
 > sdist 干净安装验证通过。
+>
+> **1.6.0 新增验证**（Java Sparse CFG/DFG，见 CHANGELOG 与 docs/capability-matrix.md）：
+> 全量回归 571 passed + 3 subtests；CI 三项全绿（test-windows / test-linux /
+> linux-jdt-verify）；CLI smoke、MCP smoke、wheel+sdist build+install smoke 通过。
 
 ## Limitations
 
@@ -176,22 +203,23 @@ provenlattice java-semantic <repo> --classpath-manifest classpath.txt --json
 - MCP defect 查询已完成端到端客户端验证（stdio JSON-RPC 真实 server 子进程，initialize/tools/list/8 类 defect query/stale fail-closed 全链路 4/4 PASS，测试 `tests/test_mcp_defect_e2e.py`，见 `docs/v1.4-mcp-e2e-report.md`；`mcp__provenlattice__query` 为 MCP 协议内工具名，非 CLI 子命令）
 - `semantics/contracts.toml`（declared 所有权规则数据）和 `semantics/vocabularies/python.toml`（Python 事件词汇表）未迁入
 - Java：L1 已交付（Public Beta）；可选 JDT 精确解析已交付（Windows/JDK21 已验证；Linux JDT VERIFIED——CI ubuntu-latest / Temurin 21 / Maven 钉扎套件，PR #14 CI，fixture 级跨平台对比，见 docs/linux-jdt-verification-report.md）；record 组件、注解元素、匿名类体、隐式默认构造不提取；SCIP INFRA_BLOCKED；Java 不具备 Stable 资格，RQ1 formal 未取得
+- Java Sparse CFG/DFG（1.6.0）：跨函数数据流仅同文件短名唯一匹配；重载 / 跨文件 / 非 identifier 实参不绑定；无 points-to / alias / 完整 heap flow / 完整跨文件 interprocedural；能力等级 `local-only, diagnostic`
 
 ## Documentation
 
 | 文档 | 说明 |
 |---|---|
 | [docs/v1.4-integration-overview.md](docs/v1.4-integration-overview.md) | V1.4 整合背景、能力对照与架构 |
-| [docs/capability-matrix.md](docs/capability-matrix.md) | 当前能力状态统一入口 |
+| [docs/capability-matrix.md](docs/capability-matrix.md) | 当前能力状态统一入口（1.6.0） |
 | [docs/defect-query-guide.md](docs/defect-query-guide.md) | 缺陷查询使用指南 |
 | [docs/roadmap.md](docs/roadmap.md) | Gold Target V2 长期路线 |
 | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) | 资格验证证据链 |
+| [CHANGELOG.md](CHANGELOG.md) | **1.6.0 变更（Java Sparse CFG/DFG、field dataflow、interprocedural param/return）** |
 | [docs/releases/v1.5.0.md](docs/releases/v1.5.0.md) | **1.5.0 发布说明（Java Public Beta）** |
 | [docs/releases/v1.4.md](docs/releases/v1.4.md) | V1.4 发布说明 |
 | [docs/java-support-implementation-plan.md](docs/java-support-implementation-plan.md) | Java 支持设计与证据链 |
 | [docs/pr1-merge-and-final-close.md](docs/pr1-merge-and-final-close.md) | PR1 整合最终收口报告 |
 | [docs/pr1-diverged-main-reconciliation-audit.md](docs/pr1-diverged-main-reconciliation-audit.md) | 分叉审计与恢复方案 |
-| [CHANGELOG.md](CHANGELOG.md) | 变更日志 |
 
 ## Research Direction
 
