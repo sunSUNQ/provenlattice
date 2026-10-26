@@ -82,7 +82,7 @@ provenlattice defect /path/to/repo --type all --json
 #    见 docs/v1.4-mcp-e2e-report.md）。
 ```
 
-## V1.4 New Capabilities
+## 核心能力（Inspection Analysis）
 
 | 能力 | 来源 | 说明 |
 |---|---|---|
@@ -209,17 +209,12 @@ diagnostic`。
 
 | 文档 | 说明 |
 |---|---|
-| [docs/v1.4-integration-overview.md](docs/v1.4-integration-overview.md) | V1.4 整合背景、能力对照与架构 |
 | [docs/capability-matrix.md](docs/capability-matrix.md) | 当前能力状态统一入口（1.6.0） |
 | [docs/defect-query-guide.md](docs/defect-query-guide.md) | 缺陷查询使用指南 |
 | [docs/roadmap.md](docs/roadmap.md) | Gold Target V2 长期路线 |
 | [REPRODUCIBILITY.md](REPRODUCIBILITY.md) | 资格验证证据链 |
-| [CHANGELOG.md](CHANGELOG.md) | **1.6.0 变更（Java Sparse CFG/DFG、field dataflow、interprocedural param/return）** |
-| [docs/releases/v1.5.0.md](docs/releases/v1.5.0.md) | **1.5.0 发布说明（Java Public Beta）** |
-| [docs/releases/v1.4.md](docs/releases/v1.4.md) | V1.4 发布说明 |
-| [docs/java-support-implementation-plan.md](docs/java-support-implementation-plan.md) | Java 支持设计与证据链 |
-| [docs/pr1-merge-and-final-close.md](docs/pr1-merge-and-final-close.md) | PR1 整合最终收口报告 |
-| [docs/pr1-diverged-main-reconciliation-audit.md](docs/pr1-diverged-main-reconciliation-audit.md) | 分叉审计与恢复方案 |
+| [CHANGELOG.md](CHANGELOG.md) | 变更日志（含 1.5.0 / 1.6.0 及历史 release 说明） |
+| [docs/](docs/) | 其余设计、证据、发布与整合报告归档 |
 
 ## Research Direction
 
@@ -252,6 +247,10 @@ Optional JDT Semantic Analyzer（java-semantic）                 ✅ 已交付�
 Classpath manifest + Driver fingerprint 缓存                     ✅ 已交付
 Linux JDT 验证 / JDK 矩阵                                       ✅ VERIFIED (ubuntu CI, PR #14, fixture 级) / 其他 JDK 组合未测
 Java RQ1 formal / Stable 资格                                   ⬜ 未取得（独立立项）
+─── 1.6.0（Java Sparse CFG/DFG）───
+Java Sparse CFG / DFG（sparse_cfg:java / sparse_dfg:java）        ✅ 已交付
+Java Field Data Flow V1                                            ✅ 已交付
+Java Interprocedural Parameter/Return Data Flow V1                 ✅ 已交付（同文件短名唯一）
 ─── 未来 ───
 Canonical CFG / Full-Sparse 双视图收敛                          规划（Gold Target V2 Phase 3）
 精确 alias / points-to / 跨函数数据流                           future candidate
@@ -263,19 +262,19 @@ CI / Plugin / SDK / REST                                      future candidate
 
 ## Status
 
-✅ **1.5.0 = Java Public Beta（Agent Development + Code Inspection 双能力域平台 + Java 支持）**
+✅ **1.6.0 = Java Sparse CFG/DFG（Java Public Beta 增强：+ 稀疏控制流/数据流）**
 
-- 479 项测试通过（417 主基线回归 + 62 Java/文档轮新增），Windows/Linux CI 双绿
+- 571 项测试通过（+3 subtests），Windows/Linux CI 双绿 + Linux JDT VERIFIED
 - L1 parity PASS（Python/C/C++ 基础图谱零变化）
-- Java：L1 已交付 + 可选 JDT 精确解析已交付（diagnostic 级；Public Beta 限制见上）
+- Java：L1 + 可选 JDT 已交付；新增 Sparse CFG/DFG + Field Data Flow + Interprocedural param/return（local-only, diagnostic；Public Beta 限制见上）
 - 八类缺陷查询按需可用（local-only, diagnostic 级）
-- GitHub Release：[provenlattice-v1.5.0](https://github.com/sunSUNQ/provenlattice/releases/tag/provenlattice-v1.5.0)（wheel/sdist SHA256 已验证）
+- GitHub Release：[provenlattice-v1.6.0](https://github.com/sunSUNQ/provenlattice/releases/tag/provenlattice-v1.6.0)（wheel/sdist SHA256 已验证）
 - **当前安装渠道为 GitHub Release**（PyPI 尚未发布）
 
 详细能力矩阵见 [docs/capability-matrix.md](docs/capability-matrix.md)。
 
 ---
 
-**ProvenLattice 1.5.0**
+**ProvenLattice 1.6.0**
 
 *A Provenance-aware Code Knowledge and Analysis Platform for AI Agents*
