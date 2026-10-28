@@ -107,6 +107,9 @@ calls = [
   "pthread_rwlock_tryrdlock", "pthread_rwlock_trywrlock",
   "pthread_spin_lock", "pthread_spin_trylock",
   "sem_wait", "sem_trywait", "sem_timedwait",
+  # POSIX condition waits: blocking waits, distinguished from lock acquisitions
+  # by the events layer's acquire_kind metadata (S3 Lock Semantics).
+  "pthread_cond_wait", "pthread_cond_timedwait",
   # C11 threads
   "mtx_lock", "mtx_trylock", "cnd_wait",
   # Win32
