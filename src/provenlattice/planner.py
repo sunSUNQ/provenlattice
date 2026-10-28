@@ -21,7 +21,7 @@ import json
 from dataclasses import dataclass
 from typing import Callable
 
-from .analysis import CAPABILITY_CONTRACT, capability_record
+from .analysis import ANALYZER_VERSIONS, CAPABILITY_CONTRACT, capability_record
 
 DECISION_BUILD = "build"
 DECISION_REUSE = "reuse"
@@ -181,6 +181,7 @@ def _classify(
     minimum_maturity: int | None,
     available_runtimes: frozenset[str],
     freshness: FreshnessProvider,
+    dependency_statuses: dict[str, str],
 ) -> tuple[str, str | None, str, str | None]:
     analyzer_ids = _analyzers_for(capability_id, language, record) if record else ()
     cost_class = record["cost_class"] if record else "unknown"
@@ -196,6 +197,19 @@ def _classify(
     if minimum_maturity is not None and _MATURITY_ORDER.get(maturity, 0) < minimum_maturity:
         status = STATUS_PARTIAL if maturity == "partially_implemented" else STATUS_CURRENT
         return DECISION_SKIP, "below_minimum_maturity", status, cost_class
+
+    # Fail closed on unavailable dependencies: an unsupported/not-built
+    # dependency makes every dependent capability unplanable as well (build,
+    # reuse and query_only all require the dependency's facts). Each
+    # dependency is inspected in normalized, sorted order so the reported
+    # blocking dependency is deterministic.
+    for dependency in sorted(record.get("depends_on") or ()):
+        normalized = _normalize_capability(dependency)
+        dependency_status = dependency_statuses.get(normalized)
+        if dependency_status == STATUS_UNSUPPORTED:
+            return DECISION_SKIP, f"dependency_unsupported:{normalized}", STATUS_UNSUPPORTED, cost_class
+        if dependency_status == STATUS_NOT_BUILT:
+            return DECISION_SKIP, f"dependency_unavailable:{normalized}", STATUS_NOT_BUILT, cost_class
 
     optional_runtime = record.get("optional_runtime")
     if optional_runtime and optional_runtime not in available_runtimes:
@@ -262,10 +276,25 @@ def plan_capabilities(
     snapshot = {}
     for capability_id in sorted(closure):
         record = capability_record(capability_id)
-        snapshot[capability_id] = None if record is None else {
+        if record is None:
+            snapshot[capability_id] = None
+            continue
+        contract = {
             key: record.get(key)
-            for key in ("status", "languages", "depends_on", "cost_class", "analyzer_ids")
+            for key in (
+                "status", "languages", "depends_on", "cost_class",
+                "analyzer_ids", "query_time", "optional_runtime",
+            )
         }
+        # The analyzer version is part of the contract closure that a plan
+        # names: two otherwise identical requests over the same capabilities
+        # but with different registered analyzer versions must not share a
+        # plan identity, or L4 evidence becomes untraceable.
+        contract["analyzer_versions"] = {
+            analyzer_id: ANALYZER_VERSIONS.get(analyzer_id)
+            for analyzer_id in record.get("analyzer_ids") or ()
+        }
+        snapshot[capability_id] = contract
     plan_id = _plan_id({
         "capabilities": sorted(capabilities),
         "language": language,
@@ -278,23 +307,32 @@ def plan_capabilities(
     })
 
     items: list[PlanItem] = []
+    resolved_statuses: dict[str, str] = {}
     for capability_id in closure:
         record = capability_record(capability_id)
         decision, reason, status, cost_class = _classify(
             capability_id, record, language, minimum_maturity,
-            available_runtimes, freshness,
+            available_runtimes, freshness, resolved_statuses,
         )
         if decision == DECISION_BUILD and cost_class in budgets and budgets[cost_class] <= 0:
             decision, reason = DECISION_SKIP, f"budget_exhausted:{cost_class}"
         elif decision == DECISION_BUILD and cost_class in budgets:
             budgets[cost_class] -= 1
+        resolved_statuses[capability_id] = status
         dependencies = tuple(record["depends_on"]) if record else ()
+        analyzer_ids = _analyzers_for(capability_id, language, record) if record else ()
+        if decision == DECISION_SKIP and reason in (
+            "unsupported_language", "capability_unregistered"
+        ):
+            # A language we do not serve must not advertise executable
+            # analyzers for another language on the skipped item.
+            analyzer_ids = ()
         items.append(PlanItem(
             capability_id=capability_id,
             language=language,
             scope=scope,
             scenario_ids=scenario_ids,
-            analyzer_ids=_analyzers_for(capability_id, language, record) if record else (),
+            analyzer_ids=analyzer_ids,
             maturity=record["status"] if record else "unregistered",
             dependencies=dependencies,
             decision=decision,

@@ -10,7 +10,7 @@ exhaustion and byte-stable deterministic output (plan id + ordering).
 
 import unittest
 
-from provenlattice.analysis import CAPABILITY_CONTRACT
+from provenlattice.analysis import ANALYZER_VERSIONS, CAPABILITY_CONTRACT
 from provenlattice.planner import (
     DECISION_BUILD,
     DECISION_QUERY_ONLY,
@@ -215,6 +215,98 @@ class DeterminismTests(unittest.TestCase):
             [item.capability_id for item in a.items],
             [item.capability_id for item in b.items],
         )
+
+
+class DependencyFailClosedTests(unittest.TestCase):
+    def test_dependent_skipped_when_dependency_unsupported(self):
+        plan = plan_capabilities(
+            PlannerRequest(capabilities=("sparse_cfg",), language="java"))
+        items = {item.capability_id: item for item in plan.items}
+        self.assertEqual(items["events"].decision, DECISION_SKIP)
+        self.assertEqual(items["events"].reason, "unsupported_language")
+        self.assertEqual(items["events"].status, STATUS_UNSUPPORTED)
+        cfg = items["sparse_cfg"]
+        self.assertEqual(cfg.decision, DECISION_SKIP)
+        self.assertEqual(cfg.status, STATUS_UNSUPPORTED)
+        self.assertEqual(cfg.reason, "dependency_unsupported:events")
+
+    def test_query_time_dependent_skipped_when_dependency_unavailable(self):
+        CAPABILITY_CONTRACT["query_parent"] = {
+            "status": "implemented", "languages": ("cpp",),
+            "depends_on": ("missing_dep",), "cost_class": "high",
+            "analyzer_ids": (), "query_time": True,
+        }
+        self.addCleanup(CAPABILITY_CONTRACT.pop, "query_parent", None)
+        plan = plan_capabilities(
+            PlannerRequest(capabilities=("query_parent",), language="cpp"))
+        items = {item.capability_id: item for item in plan.items}
+        self.assertEqual(items["missing_dep"].status, STATUS_UNSUPPORTED)
+        parent = items["query_parent"]
+        self.assertEqual(parent.decision, DECISION_SKIP)
+        self.assertEqual(parent.status, STATUS_UNSUPPORTED)
+        self.assertEqual(parent.reason, "dependency_unsupported:missing_dep")
+
+    def test_healthy_dependency_chain_remains_plannable(self):
+        plan = plan_capabilities(
+            PlannerRequest(capabilities=("sparse_dfg",), language="cpp"))
+        decisions = [item.decision for item in plan.items]
+        self.assertNotIn(DECISION_SKIP, decisions)
+        self.assertEqual(decisions[-1], DECISION_BUILD)
+
+
+class PlanIdentityTests(unittest.TestCase):
+    def test_query_time_change_alters_plan_id(self):
+        def plan_with(query_time):
+            CAPABILITY_CONTRACT["demo_q"] = {
+                "status": "implemented", "languages": ("cpp",),
+                "depends_on": (), "cost_class": "low",
+                "analyzer_ids": ("cfg:cpp",), "query_time": query_time,
+            }
+            self.addCleanup(CAPABILITY_CONTRACT.pop, "demo_q", None)
+            return plan_capabilities(
+                PlannerRequest(capabilities=("demo_q",), language="cpp"))
+
+        self.assertNotEqual(plan_with(False).plan_id, plan_with(True).plan_id)
+
+    def test_optional_runtime_change_alters_plan_id(self):
+        def plan_with(optional_runtime):
+            CAPABILITY_CONTRACT["demo_r"] = {
+                "status": "implemented", "languages": ("java",),
+                "depends_on": (), "cost_class": "low",
+                "analyzer_ids": ("cfg:java",), "optional_runtime": optional_runtime,
+            }
+            self.addCleanup(CAPABILITY_CONTRACT.pop, "demo_r", None)
+            return plan_capabilities(
+                PlannerRequest(capabilities=("demo_r",), language="java",
+                               available_runtimes=("jdk+jdt",)))
+
+        self.assertNotEqual(plan_with(None).plan_id, plan_with("jdk+jdt").plan_id)
+
+    def test_analyzer_version_change_alters_plan_id(self):
+        analyzer = "sparse_cfg:java"
+        original = ANALYZER_VERSIONS[analyzer]
+        self.addCleanup(ANALYZER_VERSIONS.__setitem__, analyzer, original)
+        before = plan_capabilities(
+            PlannerRequest(capabilities=("sparse_cfg",), language="java"))
+        ANALYZER_VERSIONS[analyzer] = original + 1
+        after = plan_capabilities(
+            PlannerRequest(capabilities=("sparse_cfg",), language="java"))
+        self.assertNotEqual(before.plan_id, after.plan_id)
+
+
+class CrossLanguageAnalyzerTests(unittest.TestCase):
+    def test_unsupported_language_item_has_no_foreign_analyzers(self):
+        plan = plan_capabilities(
+            PlannerRequest(capabilities=("events",), language="java"))
+        item = plan.items[0]
+        self.assertEqual(item.decision, DECISION_SKIP)
+        self.assertEqual(item.reason, "unsupported_language")
+        self.assertEqual(item.analyzer_ids, ())
+
+    def test_unregistered_capability_has_no_analyzers(self):
+        plan = plan_capabilities(
+            PlannerRequest(capabilities=("bogus",), language="cpp"))
+        self.assertEqual(plan.items[0].analyzer_ids, ())
 
 
 class ItemShapeTests(unittest.TestCase):
