@@ -47,6 +47,11 @@ from .identity import event_id, path_id
 from .parsing.cpp import CppTreeSitterParser
 from .parsing.events import EventExtractor
 from .semantics.vocabulary import load_vocabulary
+# Read-only reuse of the sparse_cfg walker's subject-recovery convention
+# (module-level pure helpers): the events layer records the same lock "root"
+# identifier and "exact" judgement the walker already computes, so the two
+# layers agree instead of drifting.
+from .sparsecfg import _first_call_argument, _names_the_object, _root_identifier
 from .storage import SQLiteStorage
 
 ANALYZER = analyzer_id("events", "cpp")
@@ -55,6 +60,165 @@ EVENTS_CONTRACT = analyzer_contract("events", "cpp", EVENTS_VERSION)
 VOCABULARY = load_vocabulary("cpp")
 EVENTS_SUFFIXES = frozenset(VOCABULARY.extensions)
 CAPABILITY_LEVEL = "level0"
+
+# Acquire-kind classification for the LOCK/UNLOCK vocabulary. A lock acquisition
+# can block (the common case), fail immediately (`try_lock`), fail after a
+# timeout (`timed_lock`), or be a blocking wait on a condition/semaphore rather
+# than a lock proper. The split lives here as data over the vocabulary's own
+# callee names -- the same `matched_name` the event already records -- so it is
+# one fact, computed once, and never a second registry. Names that are not in
+# any of the three sets are blocking acquisitions.
+ACQUIRE_KIND_TRY = "try"
+ACQUIRE_KIND_TIMED = "timed"
+ACQUIRE_KIND_WAIT = "wait"
+ACQUIRE_KIND_BLOCKING = "blocking"
+
+_ACQUIRE_NAME_TRY = frozenset({
+    "pthread_mutex_trylock", "pthread_rwlock_tryrdlock", "pthread_rwlock_trywrlock",
+    "pthread_spin_trylock", "sem_trywait", "mtx_trylock",
+    "TryEnterCriticalSection", "try_lock", "try_lock_shared",
+})
+_ACQUIRE_NAME_TIMED = frozenset({
+    "pthread_mutex_timedlock", "sem_timedwait",
+})
+_ACQUIRE_NAME_WAIT = frozenset({
+    "pthread_cond_wait", "pthread_cond_timedwait", "cnd_wait",
+    "sem_wait", "WaitForSingleObject", "WaitForMultipleObjects",
+})
+
+
+def _acquire_kind(matched_name: str) -> str:
+    if matched_name in _ACQUIRE_NAME_TRY:
+        return ACQUIRE_KIND_TRY
+    if matched_name in _ACQUIRE_NAME_TIMED:
+        return ACQUIRE_KIND_TIMED
+    if matched_name in _ACQUIRE_NAME_WAIT:
+        return ACQUIRE_KIND_WAIT
+    return ACQUIRE_KIND_BLOCKING
+
+
+def _node_by_span(root) -> dict:
+    """Map every named node's byte span to the node, for subject recovery.
+
+    The event extractor returns hits keyed by the byte range of the node that
+    matched; this index answers "which node was that" so a LOCK/UNLOCK hit can
+    recover its subject without a second matcher implementation.
+    """
+    index: dict[tuple[int, int], object] = {}
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        index[(node.start_byte, node.end_byte)] = node
+        stack.extend(node.named_children)
+    return index
+
+
+def _single_declarator(node) -> object | None:
+    """The declaration's one declarator, or None when identity is unclear.
+
+    `lock_guard<std::mutex> a{m}, b{n};` acquires twice; reporting one argument
+    for both would be a guess about which handle a lock point refers to.
+    """
+    declarators = list(node.children_by_field_name("declarator"))
+    if len(declarators) != 1:
+        return None
+    return declarators[0]
+
+
+def _mmp_argument_node(declarator) -> object | None:
+    """The argument of a most-vexing-parse declaration, or None.
+
+    `guard(m)` and `lk(m, defer_lock)` spell their constructor arguments as a
+    parameter list; the first parameter that is not a function type is the
+    argument, read back through its `type` node.
+    """
+    parameters = declarator.child_by_field_name("parameters")
+    if parameters is None:
+        return None
+    for parameter in parameters.named_children:
+        if parameter.type != "parameter_declaration":
+            return None
+        if parameter.child_by_field_name("declarator") is not None:
+            return None
+        return parameter.child_by_field_name("type")
+    return None
+
+
+def _declaration_argument_node(node) -> object | None:
+    """The expression a RAII declaration locks, not its handle.
+
+    `lock_guard<std::mutex> guard(g_pool_lock);` locks `g_pool_lock`; the name
+    `guard` is a local handle worthless to a lock query. Mirrors the
+    sparse_cfg walker's read of the two tree-sitter shapes (init_declarator
+    value and the most-vexing-parse function_declarator).
+    """
+    declarator = _single_declarator(node)
+    if declarator is None:
+        return None
+    if declarator.type == "function_declarator":
+        return _mmp_argument_node(declarator)
+    if declarator.type != "init_declarator":
+        return None
+    value = declarator.child_by_field_name("value")
+    if value is None:
+        return None
+    if value.type in {"initializer_list", "argument_list"}:
+        value = value.named_children[0] if value.named_children else None
+    return value
+
+
+def _call_receiver_node(node) -> object | None:
+    """The object a member lock call is made on (`m.lock()` -> `m`)."""
+    callee = node.child_by_field_name("function")
+    if callee is None or callee.type != "field_expression":
+        return None
+    return callee.child_by_field_name("argument")
+
+
+def _lock_subject(source: bytes, node, event_type: str) -> tuple[str, bool]:
+    """The root identifier of the object a LOCK/UNLOCK acts on, and exactness.
+
+    Same order the sparse_cfg walker applies: a RAII declaration names its
+    constructor argument; a free-function call names its first argument
+    (`pthread_mutex_lock(&m)` -> `m`); a member call names its receiver
+    (`m.lock()` -> `m`). ``exact`` is False when the name is only the root of a
+    longer designation (``index->slot_locks[i]`` names `index`, not one lock).
+    """
+    if event_type in {"LOCK", "UNLOCK"} and node.type == "declaration":
+        argument = _declaration_argument_node(node)
+        return _root_identifier(source, argument), _names_the_object(argument)
+    argument = _first_call_argument(node)
+    if argument is not None:
+        return _root_identifier(source, argument), _names_the_object(argument)
+    receiver = _call_receiver_node(node)
+    if receiver is not None:
+        return _root_identifier(source, receiver), _names_the_object(receiver)
+    return "", False
+
+
+def _lock_metadata(source: bytes, node, event_type: str, matched_name: str) -> dict:
+    """The lock facts a LOCK/UNLOCK event carries; empty for other events.
+
+    Kept empty for non-lock events so their payloads stay byte-identical to the
+    pre-lock-semantics baseline.
+    """
+    if event_type not in {"LOCK", "UNLOCK"}:
+        return {}
+    raii = event_type == "LOCK" and node is not None and node.type == "declaration"
+    if node is None:
+        return {
+            "lock_identity": "",
+            "subject_exact": False,
+            "acquire_kind": _acquire_kind(matched_name),
+            "raii": raii,
+        }
+    identity, exact = _lock_subject(source, node, event_type)
+    return {
+        "lock_identity": identity,
+        "subject_exact": exact,
+        "acquire_kind": _acquire_kind(matched_name),
+        "raii": raii,
+    }
 
 
 def analyze_c_events_scope(
@@ -114,8 +278,31 @@ def analyze_c_events_scope(
                 store, file_id, outcome.tree.root_node, source_bytes)
             extractor = EventExtractor(source_bytes, VOCABULARY, owners, lines.line_of)
             hits = extractor.extract_hits(outcome.tree.root_node)
-            nodes = [
-                AnalysisNode(
+            index = _node_by_span(outcome.tree.root_node)
+            nodes: list[AnalysisNode] = []
+            for hit in hits:
+                payload = {
+                    "owner_symbol_id": owner_symbol_id(owner_ids, hit.event),
+                    "owner_kind": hit.event.owner_kind,
+                    "owner_qualified_name": hit.event.owner_qualified_name,
+                    "owner_signature": hit.event.owner_signature,
+                    "ordinal": hit.event.ordinal,
+                    "start_byte": hit.start_byte, "end_byte": hit.end_byte,
+                    "start_line": hit.event.start_line,
+                    "end_line": hit.event.end_line,
+                    "matched_name": hit.event.matched_name,
+                    "matched_via": hit.event.matched_via,
+                    "flags": list(hit.event.flags),
+                    "analyzer": ANALYZER, "contract": EVENTS_CONTRACT,
+                    "language": VOCABULARY.language, "level": CAPABILITY_LEVEL,
+                }
+                payload.update(_lock_metadata(
+                    source_bytes,
+                    index.get((hit.start_byte, hit.end_byte)),
+                    hit.event.event_type,
+                    hit.event.matched_name,
+                ))
+                nodes.append(AnalysisNode(
                     event_id(
                         repo_id,
                         owner_symbol_id(owner_ids, hit.event),
@@ -123,24 +310,8 @@ def analyze_c_events_scope(
                         hit.event.ordinal,
                     ),
                     hit.event.event_type,
-                    {
-                        "owner_symbol_id": owner_symbol_id(owner_ids, hit.event),
-                        "owner_kind": hit.event.owner_kind,
-                        "owner_qualified_name": hit.event.owner_qualified_name,
-                        "owner_signature": hit.event.owner_signature,
-                        "ordinal": hit.event.ordinal,
-                        "start_byte": hit.start_byte, "end_byte": hit.end_byte,
-                        "start_line": hit.event.start_line,
-                        "end_line": hit.event.end_line,
-                        "matched_name": hit.event.matched_name,
-                        "matched_via": hit.event.matched_via,
-                        "flags": list(hit.event.flags),
-                        "analyzer": ANALYZER, "contract": EVENTS_CONTRACT,
-                        "language": VOCABULARY.language, "level": CAPABILITY_LEVEL,
-                    },
-                )
-                for hit in hits
-            ]
+                    payload,
+                ))
             diagnostics = tree_diagnostics(outcome.tree.root_node)
             try:
                 store.replace_analysis_for_file(
