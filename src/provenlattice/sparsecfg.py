@@ -107,6 +107,23 @@ WRITE_TARGET_FIELDS: dict[str, str] = {
     "init_declarator": "declarator",
 }
 
+def _is_read_modify_write(node: Any) -> bool:
+    """Whether a write also reads its own target (read-modify-write).
+
+    tree-sitter-c and tree-sitter-cpp both fold `x += y` into an
+    ``assignment_expression`` whose operator is not `=` (a
+    ``compound_assignment_expression`` node never appears in either installed
+    grammar, so the operator is the signal); `x++` and `--x` are an
+    ``update_expression``. A plain `x = y` is not RMW: reading x there, if it
+    happens, is the right-hand side child's own READ, not a self-read.
+    """
+    if node.type == "update_expression":
+        return True
+    if node.type == "assignment_expression":
+        operator = node.child_by_field_name("operator")
+        return operator is not None and operator.type != "="
+    return False
+
 # A declaration names an object; it does not read one. `int x;` and the `x` in
 # `int x = 0;` are the same non-access.
 DECLARED_FIELDS: dict[str, str] = {
@@ -1373,9 +1390,11 @@ class SparseCfgBuilder:
           is one read. The rule does not descend past it: `p->buf[i]`'s
           children are the same access spelled more finely, and the walker will
           reach them on its own (their DEREFERENCE points must not change).
-        * **Skips.** The write target is not also a read; a declarator names an
-          object being declared, not one being read; a callee is what is
-          invoked, not a variable.
+        * **Skips.** A declarator names an object being declared, not one being
+          read; a callee is what is invoked, not a variable. The write target
+          is not read for a plain assignment, but *is* read for a
+          read-modify-write (`x += y`, `x++`/`--x`): there the write consumes
+          the written subject's own value, so both sides are published.
 
         Emission is filtered by storage class, and the filter is the identity
         rather than a heuristic -- see `ACCESS_STORAGES`. The subject comes
@@ -1393,6 +1412,15 @@ class SparseCfgBuilder:
                 point = self._access_point(written, "WRITE", origin=node)
                 if point is not None:
                     points.append(point)
+                if _is_read_modify_write(node):
+                    # The read half of a read-modify-write: `x += y` and `x++`
+                    # consume x's own value, so the same subject is read as well
+                    # as written. This is what lets a concurrent pair of two
+                    # updates on one shared object surface as an honest race
+                    # (read+write, write+write) instead of a silent write-only.
+                    read_point = self._access_point(written, "READ", origin=node)
+                    if read_point is not None:
+                        points.append(read_point)
         skip_fields = (DECLARED_FIELDS.get(node.type), ACCESS_SKIP_FIELDS.get(node.type))
         skip = {
             _span(node.child_by_field_name(field))
