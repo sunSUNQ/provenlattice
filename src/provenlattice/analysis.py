@@ -172,6 +172,23 @@ CAPABILITY_CONTRACT: dict[str, dict] = {
         "query_time": True, "optional_runtime": "jdk+jdt",
         "grade": "local-only, diagnostic",
     },
+    "concurrency_context": {
+        # S2: a query-time reader over the events/sparse_cfg rows
+        # (analysis_concurrency_context.py). It turns THREAD_SPAWN/THREAD_JOIN
+        # vocabulary events and READ/WRITE access facts into a reusable, finite,
+        # provable synchronization-order bundle: same-method spawn-before-join
+        # and cross-method MAY_PARALLEL candidates over shared subjects.
+        # Partial by contract: no complete happens-before, no memory model, and
+        # an unproven MAY_PARALLEL is never upgraded to a resolved fact.
+        "status": "partially_implemented", "domain": "inspection",
+        "languages": ("c", "cpp"),
+        "depends_on": ("events", "sparse_cfg"),
+        "cost_class": "medium", "analyzer_ids": (),
+        "planned_integration": None,
+        "query_time": True,
+        "level": "level0+spawn-join",
+        "grade": "local-only, diagnostic",
+    },
 }
 
 
