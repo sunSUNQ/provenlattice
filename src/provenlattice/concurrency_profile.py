@@ -6,6 +6,13 @@ it runs the delivered S4/S5 scenario rules, converts their unified Candidate
 contract into the existing L4 Evidence model, and reports each scenario's
 ``current`` / ``partial`` / ``unsupported`` / ``stale`` / ``not_built`` state.
 
+The per-scenario state is propagated, not re-invented: the capability state
+comes from the Planner (``plan.items``), the per-file state comes from the
+query surface, and a deterministic severity merge combines them. A skipped,
+unsupported or stale scenario is reported explicitly, never as an empty
+success, and a candidate's evidence carries the real source file when it can be
+recovered.
+
 Nothing here changes the default index, `race_condition`, `lock_order`, CLI/MCP
 defaults or the default query envelope: the profile is opt-in through an
 explicit entry only.
@@ -14,7 +21,7 @@ explicit entry only.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Iterable, Mapping
+from typing import Any, Mapping
 
 from .analysis_ast import normalize_scope, scoped_sources
 from .analysis_query import query_analysis
@@ -29,6 +36,34 @@ CONCURRENCY_PROFILE_ID = "concurrency-v1"
 
 _RACE_SCENARIOS = frozenset({"non_atomic_incdec", "bool_flag_race", "shared_state_race"})
 _LOCK_SCENARIOS = frozenset({"lock_pairing", "lock_discipline"})
+
+# A race scenario consumes S1/S2's sparse_cfg access facts; a lock scenario
+# consumes S3's events lock facts. This is the one place a scenario is tied to
+# the capability whose state it inherits.
+_RACE_CAPABILITY = "sparse_cfg"
+_LOCK_CAPABILITY = "events"
+
+# Deterministic severity merge for the per-scenario state. Lower is healthier;
+# the reported state is the most-severe signal among the capability state and
+# every per-file state. A non-``available`` file state (unsupported language,
+# stale, not-built) raises the scenario state accordingly and is never folded
+# into ``not_built`` silently.
+_SEVERITY = {
+    "current": 0, "partial": 1, "stale": 2, "unsupported": 3, "not_built": 4,
+}
+
+# Query-surface statuses that are not one of the five scenario states are
+# mapped to the nearest honest scenario state rather than dropped.
+_FILE_STATUS_TO_SCENARIO = {
+    "available": "current",
+    "current": "current",
+    "partial": "partial",
+    "stale": "stale",
+    "unsupported": "unsupported",
+    "not_built": "not_built",
+    "unavailable": "not_built",
+    "corrupt": "not_built",
+}
 
 # The single registry: each profile declares the fields frozen in requirements §5.
 CONCURRENCY_V1 = {
@@ -53,18 +88,68 @@ def get_profile(profile_id: str) -> dict[str, Any] | None:
     return PROFILES.get(str(profile_id).strip())
 
 
-def _collect_events(root: Path, scope: str, feature: str, database: Path) -> list[dict]:
+def _scenario_capability(scenario_id: str) -> str:
+    return _RACE_CAPABILITY if scenario_id in _RACE_SCENARIOS else _LOCK_CAPABILITY
+
+
+def _capability_state(plan, capability_id: str) -> tuple[str, str | None]:
+    """The Planner's state and reason for one capability, or a fail-closed
+    ``not_built`` when the capability was not planned."""
+    for item in plan.items:
+        if item.capability_id == capability_id:
+            return item.status, item.reason
+    return "not_built", "capability_not_planned"
+
+
+def _merge_scenario_state(capability_status: str, file_statuses: Mapping[str, list[str]]) -> tuple[str, str | None]:
+    """Merge the capability state and per-file states into one scenario state.
+
+    Deterministic: the most-severe signal wins; a tie keeps the capability
+    status first. The caller keeps the raw per-file states alongside the merged
+    state so nothing is silently folded.
+    """
+    signals = [capability_status]
+    signals.extend(
+        _FILE_STATUS_TO_SCENARIO.get(status, "not_built")
+        for status in file_statuses
+        if status != "available"
+    )
+    merged = max(signals, key=lambda status: _SEVERITY.get(status, 4))
+    if merged == capability_status:
+        return merged, None
+    return merged, "file_state_dominates"
+
+
+def _collect_events(
+    root: Path, scope: str, feature: str, database: Path,
+) -> tuple[list[dict], dict[str, str], dict[str, list[str]]]:
+    """Collect events, their source-file provenance, and per-file query states.
+
+    Returns ``(events, event_paths, file_statuses)`` where ``event_paths`` maps
+    an event id to its repo-relative source path and ``file_statuses`` maps a
+    query-surface status to the list of files that reported it (deterministic
+    order). The provenance map is what later restores a candidate's source file.
+    """
     events: list[dict] = []
+    event_paths: dict[str, str] = {}
+    file_statuses: dict[str, list[str]] = {}
     for source in scoped_sources(root, normalize_scope(scope)):
         env = query_analysis(root, feature, file_path=source.relative_path,
                              database=database)
-        if env.get("status") == "available":
-            events.extend(env.get("events", []))
-    return events
+        status = env.get("status")
+        file_statuses.setdefault(status, []).append(source.relative_path)
+        if status == "available":
+            for event in env.get("events", []):
+                event_paths[event.get("event_id")] = source.relative_path
+                events.append(event)
+    for status in file_statuses:
+        file_statuses[status].sort()
+    return events, event_paths, file_statuses
 
 
 def _candidate_to_evidence(
-    candidate: Mapping[str, Any], repository: str, generation: int, file_path: str | None,
+    candidate: Mapping[str, Any], repository: str, generation: int,
+    event_paths: Mapping[str, str],
 ) -> Evidence:
     scenario_id = candidate["scenario_id"]
     identity = candidate.get("identity") or candidate.get("subject") or "(unresolved)"
@@ -73,6 +158,8 @@ def _candidate_to_evidence(
     start_line = spans[0][0] if spans and spans[0][0] else None
     end_line = spans[-1][1] if spans and spans[-1][1] else None
     references = list(candidate.get("evidence_references", []))
+    related_files = sorted({event_paths[ref] for ref in references if ref in event_paths})
+    file_path = related_files[0] if related_files else None
     return Evidence.create(
         kind="DEFECT_CANDIDATE",
         source_id=identity,
@@ -96,6 +183,8 @@ def _candidate_to_evidence(
             "missing_evidence": list(candidate.get("missing_evidence", [])),
             "profile": CONCURRENCY_PROFILE_ID,
             "query_set_version": CONCURRENCY_V1["query_set_version"],
+            "related_files": related_files,
+            "file_path_missing": not related_files,
         },
     )
 
@@ -107,9 +196,10 @@ def run_concurrency_profile(
     """Run the concurrency-v1 Profile over a scope and return per-scenario results.
 
     Returns ``{"status", "profile", "plan", "scenarios", "evidence"}``. Each
-    scenario entry carries its ``current``/``partial``/``not_built`` state and a
-    reason; a skipped or unsupported scenario is reported explicitly, never as an
-    empty success.
+    scenario entry carries its merged ``current``/``partial``/``unsupported``/
+    ``stale``/``not_built`` state together with the raw capability and per-file
+    states; a skipped, unsupported or stale scenario is reported explicitly,
+    never as an empty success.
     """
     profile = get_profile(profile_id)
     if profile is None:
@@ -136,8 +226,10 @@ def run_concurrency_profile(
 
     analyze_scope(root, scope, ("sparse_cfg", "events"), database=database)
 
-    sparse_events = _collect_events(root, scope, "sparse_cfg", database)
-    event_events = _collect_events(root, scope, "events", database)
+    sparse_events, sparse_paths, sparse_file_statuses = _collect_events(
+        root, scope, "sparse_cfg", database)
+    event_events, event_paths, event_file_statuses = _collect_events(
+        root, scope, "events", database)
 
     race = build_race_scenarios(sparse_events)
     lock = build_lock_scenarios(event_events)
@@ -149,25 +241,31 @@ def run_concurrency_profile(
         candidates_by_scenario.setdefault(candidate["scenario_id"], []).append(candidate)
 
     evidence: list[Evidence] = []
-    scenarios = {}
+    scenarios: dict[str, dict[str, Any]] = {}
     for scenario_id in profile["scenario_ids"]:
-        candidates = candidates_by_scenario.get(scenario_id, [])
-        if scenario_id in _RACE_SCENARIOS and not sparse_events:
-            status, reason = "not_built", "no_sparse_cfg_access_facts"
-        elif scenario_id in _LOCK_SCENARIOS and not event_events:
-            status, reason = "not_built", "no_events_facts"
-        elif candidates:
-            status, reason = "current", None
+        capability = _scenario_capability(scenario_id)
+        capability_status, capability_reason = _capability_state(plan, capability)
+        if capability == _RACE_CAPABILITY:
+            event_paths_for_scenario = sparse_paths
+            file_statuses = sparse_file_statuses
         else:
-            status, reason = "not_built", "no_candidates"
+            event_paths_for_scenario = event_paths
+            file_statuses = event_file_statuses
+        status, reason = _merge_scenario_state(capability_status, file_statuses)
+        candidates = candidates_by_scenario.get(scenario_id, [])
         scenarios[scenario_id] = {
             "status": status,
-            "reason": reason,
+            "reason": reason or capability_reason,
+            "capability": capability,
+            "capability_status": capability_status,
+            "capability_reason": capability_reason,
+            "file_status": {key: list(value) for key, value in file_statuses.items()},
             "candidate_count": len(candidates),
             "candidates": candidates,
         }
         for candidate in candidates:
-            evidence.append(_candidate_to_evidence(candidate, repo_id, generation, None))
+            evidence.append(_candidate_to_evidence(
+                candidate, repo_id, generation, event_paths_for_scenario))
 
     return {
         "status": "complete",

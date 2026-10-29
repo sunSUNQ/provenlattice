@@ -1,8 +1,9 @@
 """S6 concurrency Profile Registry and L5 integration tests (Parent #28).
 
 Freezes the concurrency-v1 Profile declaration, the single Planner-plan-to-scenario
-execution adapter, the Candidate-to-L4-Evidence conversion, and the per-scenario
-current/not_built states. The default CLI/MCP behavior must stay unchanged.
+execution adapter, the Candidate-to-L4-Evidence conversion, the per-scenario
+five-state propagation (current/partial/unsupported/stale/not_built) and the
+evidence source-file provenance. The default CLI/MCP behavior must stay unchanged.
 """
 
 import tempfile
@@ -13,6 +14,7 @@ from provenlattice.concurrency_profile import (
     CONCURRENCY_PROFILE_ID,
     CONCURRENCY_V1,
     PROFILES,
+    _merge_scenario_state,
     get_profile,
     run_concurrency_profile,
 )
@@ -85,10 +87,14 @@ class RaceProfileTests(unittest.TestCase):
         self.assertEqual(scenarios["shared_state_race"]["status"], "current")
         self.assertEqual(scenarios["non_atomic_incdec"]["candidate_count"], 1)
 
-    def test_lock_scenarios_reported_not_built_without_locks(self):
+    def test_lock_scenarios_are_partial_not_built(self):
+        # lock scenarios consume the `events` capability, which carries
+        # level-0 vocabulary events only and is frozen partially_implemented;
+        # the scenario must reflect that, never fold it silently to not_built.
         scenarios = self.result()["scenarios"]
-        self.assertEqual(scenarios["lock_pairing"]["status"], "not_built")
-        self.assertEqual(scenarios["lock_discipline"]["status"], "not_built")
+        self.assertEqual(scenarios["lock_pairing"]["status"], "partial")
+        self.assertEqual(scenarios["lock_discipline"]["status"], "partial")
+        self.assertEqual(scenarios["lock_pairing"]["capability"], "events")
 
     def test_candidates_are_converted_to_l4_evidence(self):
         result = self.result()
@@ -97,6 +103,13 @@ class RaceProfileTests(unittest.TestCase):
             self.assertEqual(item["kind"], "DEFECT_CANDIDATE")
             self.assertIn("scenario_id", item["metadata"])
             self.assertIn("candidate_state", item["metadata"])
+
+    def test_evidence_carries_source_file_path(self):
+        items = [i for i in self.result()["evidence"] if i["source_path"]]
+        self.assertTrue(items)
+        for item in items:
+            self.assertEqual(item["source_path"], "src/a.c")
+            self.assertIn("src/a.c", item["metadata"]["related_files"])
 
 
 class LockProfileTests(unittest.TestCase):
@@ -116,11 +129,71 @@ class LockProfileTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def test_lock_pairing_is_current_for_unpaired_acquire(self):
-        scenarios = run_concurrency_profile(
-            self.root, database=self.database, scope="src")["scenarios"]
-        self.assertEqual(scenarios["lock_pairing"]["status"], "current")
-        self.assertGreaterEqual(scenarios["lock_pairing"]["candidate_count"], 1)
+    def test_lock_pairing_is_partial_for_unpaired_acquire(self):
+        scenario = run_concurrency_profile(
+            self.root, database=self.database, scope="src")["scenarios"]["lock_pairing"]
+        self.assertEqual(scenario["status"], "partial")
+        self.assertGreaterEqual(scenario["candidate_count"], 1)
+        # The candidate's evidence keeps the real source path.
+        evidence = run_concurrency_profile(
+            self.root, database=self.database, scope="src")["evidence"]
+        pairing = [i for i in evidence if i["metadata"]["scenario_id"] == "lock_pairing"]
+        self.assertTrue(pairing)
+        self.assertEqual(pairing[0]["source_path"], "src/a.c")
+
+
+class UnsupportedLanguageTests(unittest.TestCase):
+    def test_python_scope_reports_unsupported(self):
+        temp = tempfile.TemporaryDirectory()
+        root = Path(temp.name) / "repo"
+        write(root, "src/a.py", "def f():\n    pass\n")
+        database = Path(temp.name) / "graph.db"
+        full_index(root, database)
+        try:
+            result = run_concurrency_profile(root, database=database, scope="src")
+        finally:
+            temp.cleanup()
+        for scenario_id in ("non_atomic_incdec", "lock_pairing"):
+            self.assertEqual(result["scenarios"][scenario_id]["status"], "unsupported")
+
+
+class FiveStateMergeTests(unittest.TestCase):
+    def test_capability_state_is_preserved(self):
+        for status in ("current", "partial", "stale", "unsupported", "not_built"):
+            merged, reason = _merge_scenario_state(status, {"available": ["a.c"]})
+            self.assertEqual(merged, status)
+            self.assertIsNone(reason)
+
+    def test_file_unsupported_dominates_current_capability(self):
+        merged, reason = _merge_scenario_state("current", {"unsupported": ["a.py"]})
+        self.assertEqual(merged, "unsupported")
+        self.assertEqual(reason, "file_state_dominates")
+
+    def test_file_stale_dominates_partial_capability(self):
+        merged, _ = _merge_scenario_state("partial", {"stale": ["a.c"]})
+        self.assertEqual(merged, "stale")
+
+    def test_most_severe_file_state_wins(self):
+        merged, _ = _merge_scenario_state(
+            "current", {"stale": ["a.c"], "not_built": ["b.c"], "unsupported": ["c.py"]})
+        self.assertEqual(merged, "not_built")
+
+    def test_available_files_do_not_change_state(self):
+        merged, _ = _merge_scenario_state("current", {"available": ["a.c", "b.c"]})
+        self.assertEqual(merged, "current")
+
+
+class NotBuiltTests(unittest.TestCase):
+    def test_unindexed_repo_reports_not_built(self):
+        temp = tempfile.TemporaryDirectory()
+        root = Path(temp.name) / "repo"
+        write(root, "src/a.c", "int g; void f(void) { g++; }\n")
+        database = Path(temp.name) / "graph.db"
+        try:
+            result = run_concurrency_profile(root, database=database, scope="src")
+        finally:
+            temp.cleanup()
+        self.assertEqual(result["status"], "not_built")
 
 
 class UnknownProfileTests(unittest.TestCase):
