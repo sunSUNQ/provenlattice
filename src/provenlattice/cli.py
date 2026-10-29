@@ -83,6 +83,14 @@ def build_parser() -> argparse.ArgumentParser:
     defect_query_cmd.add_argument(
         "--max-candidates", type=int, default=20,
         help="budget cap: truncation is reported, never hidden as an empty result")
+    concurrency_profile_cmd = command("concurrency-profile")
+    concurrency_profile_cmd.add_argument("repo")
+    concurrency_profile_cmd.add_argument(
+        "--profile", default="concurrency-v1",
+        help="explicit concurrency Profile to run (registry key)")
+    concurrency_profile_cmd.add_argument(
+        "--scope", default=None,
+        help="repo-relative scope to plan/run; defaults to the Profile's requested_scope")
     command("status")
     java_semantic_cmd = command("java-semantic")
     java_semantic_cmd.add_argument("repo")
@@ -217,6 +225,10 @@ def run(args: argparse.Namespace) -> dict:
                 "error": {"code": error.code, "detail": error.detail},
                 "defect_type": args.type,
             }
+    if args.command == "concurrency-profile":
+        from .concurrency_profile import run_concurrency_profile
+        return run_concurrency_profile(
+            args.repo, args.profile, database=database, scope=args.scope)
     if args.command == "java-semantic":
         from . import java_semantic as jsem
 
