@@ -139,6 +139,45 @@ class WaitKindTests(LockSemanticsBase):
         self.assertEqual(locks[0]["acquire_kind"], "blocking")
 
 
+class C11WaitKindTests(LockSemanticsBase):
+    def setUp(self) -> None:
+        super().setUp()
+        write(self.root, "src/c11_wait.c",
+              "#include <threads.h>\n"
+              "cnd_t cond;\n"
+              "mtx_t mtx;\n"
+              "int waiter(void) {\n"
+              "    return cnd_wait(&cond, &mtx);\n"
+              "}\n")
+        self.analyze_events()
+
+    def test_cnd_wait_is_wait(self) -> None:
+        waits = [e for e in self.events("src/c11_wait.c")
+                 if e["matched_name"] == "cnd_wait"]
+        self.assertEqual(len(waits), 1)
+        self.assertEqual(waits[0]["acquire_kind"], "wait")
+
+
+class TimedAcquireKindTests(LockSemanticsBase):
+    def setUp(self) -> None:
+        super().setUp()
+        write(self.root, "src/timed_lock.c",
+              "#include <pthread.h>\n"
+              "#include <time.h>\n"
+              "pthread_mutex_t mtx;\n"
+              "int timed(void) {\n"
+              "    struct timespec deadline;\n"
+              "    return pthread_mutex_timedlock(&mtx, &deadline);\n"
+              "}\n")
+        self.analyze_events()
+
+    def test_pthread_mutex_timedlock_is_timed(self) -> None:
+        locks = [e for e in self.events("src/timed_lock.c")
+                 if e["matched_name"] == "pthread_mutex_timedlock"]
+        self.assertEqual(len(locks), 1)
+        self.assertEqual(locks[0]["acquire_kind"], "timed")
+
+
 class RaiiLockTests(LockSemanticsBase):
     def setUp(self) -> None:
         super().setUp()
