@@ -2,18 +2,24 @@
 
 A query-time reader over the events/sparse_cfg rows. It converts the
 THREAD_SPAWN/THREAD_JOIN vocabulary events and the READ/WRITE access facts into
-a reusable, honest bundle that the S4/S5 scenario rules will consume:
+a reusable, honest bundle that the S4/S5 scenario rules will consume.
 
-* ``thread_entry_points`` -- the thread functions the graph saw a spawn for;
-* ``spawn_before_join`` -- same-method spawn→join ordering (program order), the
-  only happens-before subset the graph can assert without a thread identity;
-* ``may_parallel`` -- shared, non-local subjects touched by two or more methods,
-  expressed as a MAY_PARALLEL *candidate*, never a resolved race;
-* ``missing_evidence`` -- the facts the graph cannot assert, named honestly.
+Fail-closed contract:
 
-This capability deliberately does not promise a complete happens-before or a
-memory model, and it never upgrades an unproven MAY_PARALLEL into a resolved
-fact.
+* a spawn and a join are paired **only** when their thread-handle identities
+  are provably the same object and the spawn precedes the join in program
+  order. The events layer does not currently stamp a handle on THREAD_JOIN, so
+  this capability reports ``thread_handle_identity`` missing evidence instead of
+  pairing by owner + source order (which would merge different threads);
+* MAY_PARALLEL is always a **candidate** (``status: "ambiguous"``), never a
+  resolved claim, and is associated with the specific shared subject (S1's
+  stable ``subject_decl`` identity), its access events and thread entry points;
+* an unresolved identity (no ``subject_decl``) is marked ``unresolved`` and
+  reported as missing evidence, never merged with a different object by display
+  name alone.
+
+It does not promise a complete happens-before, a memory model, points-to, or a
+thread-pool analysis.
 """
 
 from __future__ import annotations
@@ -48,18 +54,16 @@ def _owner(event: Mapping[str, Any]) -> str:
     return event.get("owner_qualified_name") or event.get("owner_symbol_id") or ""
 
 
-def _position(event: Mapping[str, Any]) -> int:
-    return int(event.get("start_byte") or 0)
+def _byte(value: Any) -> int:
+    return int(value or 0)
 
 
 def build_concurrency_context(events: Iterable[Mapping[str, Any]]) -> dict:
     """Build the concurrency_context bundle from sparse_cfg events.
 
-    ``events`` is the ``env["events"]`` list of a ``sparse_cfg`` query: each item
-    carries ``event_type``, an owner identity and, for vocabulary events, the
-    ``annotations`` (``subject``, ``subject_storage``, ``thread_function``).
-    The function is pure and deterministic: the same events yield the same
-    bundle, keys in stable order.
+    ``events`` is the ``env["events"]`` list of a ``sparse_cfg`` query. The
+    function is pure and deterministic: the same events yield the same bundle,
+    with keys and lists in stable order.
     """
     events = list(events)
     spawns: list[Mapping[str, Any]] = []
@@ -75,67 +79,133 @@ def build_concurrency_context(events: Iterable[Mapping[str, Any]]) -> dict:
         elif event_type == "THREAD_JOIN":
             joins.append(event)
 
-    joins_by_owner: dict[str, list[Mapping[str, Any]]] = {}
-    for join in joins:
-        joins_by_owner.setdefault(_owner(join), []).append(join)
+    spawn_facts = [
+        {
+            "event_id": event.get("event_id"),
+            "owner": _owner(event),
+            "handle": _annotations(event).get("subject", ""),
+            "handle_decl": _annotations(event).get("subject_decl", ""),
+            "thread_function": _annotations(event).get("thread_function", ""),
+            "start_byte": _byte(event.get("start_byte")),
+            "end_byte": _byte(event.get("end_byte")),
+        }
+        for event in spawns
+    ]
+    join_facts = [
+        {
+            "event_id": event.get("event_id"),
+            "owner": _owner(event),
+            "handle": _annotations(event).get("subject", ""),
+            "handle_decl": _annotations(event).get("subject_decl", ""),
+            "start_byte": _byte(event.get("start_byte")),
+            "end_byte": _byte(event.get("end_byte")),
+        }
+        for event in joins
+    ]
 
-    spawn_before_join: list[dict[str, Any]] = []
-    for spawn in spawns:
-        owner = _owner(spawn)
-        for join in joins_by_owner.get(owner, []):
-            # Program order within one method is the only ordering the graph
-            # can assert without a thread identity: the spawn statement runs
-            # before the join statement, so the spawned work is joined here.
-            if _position(spawn) < _position(join):
-                spawn_before_join.append({
-                    "owner": owner,
-                    "thread_function": _annotations(spawn).get("thread_function", ""),
-                    "spawn": spawn.get("event_id"),
-                    "join": join.get("event_id"),
+    missing_evidence: set[str] = set()
+    capability_gaps: list[str] = []
+    joins_have_handle = any(join["handle_decl"] for join in join_facts)
+    if joins and not joins_have_handle:
+        missing_evidence.add("thread_handle_identity")
+        capability_gaps.append(
+            "THREAD_JOIN carries no thread handle in the events layer, so a "
+            "spawn and a join cannot be proven to name the same thread; no "
+            "spawn->join pair is asserted"
+        )
+
+    # Pair a spawn and a join only when their handle identities are the same
+    # declared object (handle_decl) in the same method and the spawn precedes
+    # the join. Without a shared handle this must not fire -- pairing two
+    # different threads by owner+order would fabricate a happens-before edge.
+    spawn_join_pairs: list[dict[str, Any]] = []
+    for spawn in spawn_facts:
+        if not spawn["handle_decl"]:
+            missing_evidence.add("thread_handle_identity")
+            continue
+        if not spawn["thread_function"]:
+            missing_evidence.add("spawn_without_thread_function")
+        for join in join_facts:
+            if (
+                join["handle_decl"] == spawn["handle_decl"]
+                and join["owner"] == spawn["owner"]
+                and spawn["start_byte"] < join["start_byte"]
+            ):
+                spawn_join_pairs.append({
+                    "owner": spawn["owner"],
+                    "handle_decl": spawn["handle_decl"],
+                    "thread_function": spawn["thread_function"],
+                    "spawn": spawn["event_id"],
+                    "join": join["event_id"],
                 })
 
-    owners_by_subject: dict[str, set[str]] = {}
-    storage_of_subject: dict[str, str] = {}
+    # Shared-object identity uses S1's stable subject_decl. An access whose
+    # identity is unresolved (no subject_decl, unknown storage) is kept apart as
+    # `unresolved` and never merged with another object by display name alone.
+    by_decl: dict[str, dict[str, Any]] = {}
     for event in events:
         if event.get("event_type") not in _ACCESS_EVENT_TYPES:
             continue
         annotations = _annotations(event)
-        subject = annotations.get("subject")
-        if not subject:
-            continue
+        subject = annotations.get("subject", "")
+        decl = annotations.get("subject_decl", "")
         storage = annotations.get("subject_storage") or STORAGE_UNKNOWN
+        if not subject and not decl:
+            continue
         if storage not in SHARED_STORAGES:
             continue
-        owners_by_subject.setdefault(subject, set()).add(_owner(event))
-        storage_of_subject.setdefault(subject, storage)
-
-    may_parallel = [
-        {
+        key = decl if decl else f"unresolved\x1f{subject}"
+        record = by_decl.setdefault(key, {
+            "identity": decl or None,
             "subject": subject,
-            "storage": storage_of_subject[subject],
-            "owners": sorted(owners),
-        }
-        for subject, owners in sorted(owners_by_subject.items())
-        if len(owners) >= 2
-    ]
+            "storage": storage,
+            "exact": annotations.get("subject_exact", "false"),
+            "owners": set(),
+            "accesses": [],
+        })
+        record["owners"].add(_owner(event))
+        record["accesses"].append({
+            "event_id": event.get("event_id"),
+            "event_type": event.get("event_type"),
+            "owner": _owner(event),
+            "start_byte": _byte(event.get("start_byte")),
+            "end_byte": _byte(event.get("end_byte")),
+            "exact": annotations.get("subject_exact", "false"),
+        })
 
-    missing_evidence: set[str] = set()
-    spawn_owners = {_owner(spawn) for spawn in spawns}
-    join_owners = {_owner(join) for join in joins}
-    if spawn_owners - join_owners:
-        missing_evidence.add("spawn_without_join")
-    for spawn in spawns:
-        if not _annotations(spawn).get("thread_function"):
-            missing_evidence.add("spawn_without_thread_function")
+    # A thread entry owner is a method whose name is a spawned thread_function;
+    # this is how a MAY_PARALLEL candidate is tied to the specific thread entry.
+    entry_owners = entry_points
+    may_parallel = []
+    for key in sorted(by_decl):
+        record = by_decl[key]
+        if len(record["owners"]) < 2:
+            continue
+        if record["identity"] is None:
+            missing_evidence.add("unresolved_identity")
+        may_parallel.append({
+            "identity": record["identity"],
+            "subject": record["subject"],
+            "storage": record["storage"],
+            "exact": record["exact"],
+            "unresolved": record["identity"] is None,
+            "owners": sorted(record["owners"]),
+            "thread_entry_owners": sorted(record["owners"] & entry_owners),
+            "accesses": sorted(
+                record["accesses"],
+                key=lambda access: (access["start_byte"], access["end_byte"], access["event_id"] or ""),
+            ),
+            "status": "ambiguous",
+        })
 
     return {
         "thread_entry_points": sorted(entry_points),
-        "spawn_points": len(spawns),
-        "join_points": len(joins),
-        "spawn_before_join": spawn_before_join,
+        "spawns": spawn_facts,
+        "joins": join_facts,
+        "spawn_join_pairs": spawn_join_pairs,
         "may_parallel": may_parallel,
-        "may_parallel_decided": bool(spawns),
         "missing_evidence": sorted(missing_evidence),
+        "capability_gaps": capability_gaps,
     }
 
 
