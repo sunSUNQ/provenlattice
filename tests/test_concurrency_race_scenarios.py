@@ -14,6 +14,7 @@ from provenlattice.analysis_concurrency_context import build_concurrency_context
 from provenlattice.analysis_query import query_analysis
 from provenlattice.concurrency_race_scenarios import build_race_scenarios
 from provenlattice import defect
+from provenlattice.defect_query import query_defect_candidates
 from provenlattice.graph import full_index
 from provenlattice.orchestrator import analyze_scope
 
@@ -449,6 +450,56 @@ class CompetingDeterminismTests(CompetingAccessBase):
             list(sparse["events"]), edges=list(sparse["edges"]),
             lock_facts=list(locks["events"]))
         self.assertEqual(first, second)
+
+
+class DefectQueryEndToEndTests(unittest.TestCase):
+    """End-to-end through ``query_defect_candidates`` (the CLI/MCP path).
+
+    ``defect.run`` drives the scenario builders over ``query_analysis`` events;
+    the CLI/MCP ``defect`` command instead constructs its events from the
+    ``sparse_cfg:cpp`` rows and dispatches by name. This pins that second path
+    for the newly registered single-query entry point, and freezes the ``all``
+    surface to the original eight -- the concurrency scenario queries must not
+    silently expand it (frozen requirement §5/§8).
+    """
+
+    FIXTURE = (
+        "#include <pthread.h>\n"
+        "int g_count;\n"
+        "void *worker(void *a) { g_count++; return 0; }\n"
+        "void updater(void) { g_count += 1; }\n"
+        "void spawner(void) { pthread_t t; pthread_create(&t, NULL, worker, NULL); }\n"
+    )
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name) / "repo"
+        write(self.root, "src/a.c", self.FIXTURE)
+        self.database = Path(self.temp.name) / "graph.db"
+        full_index(self.root, self.database)
+        analyze_scope(self.root, "src", ("defect",), database=self.database)
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def test_non_atomic_incdec_over_cli_path(self):
+        env = query_defect_candidates(
+            self.root, defect_type="non_atomic_incdec", database=self.database)
+        self.assertEqual(env["status"], "available", env.get("reason"))
+        incdec = [c for c in env["candidates"] if c["query"] == "non_atomic_incdec"]
+        self.assertEqual(len(incdec), 1)
+        self.assertEqual(
+            incdec[0]["metadata"]["confirmation_state"], "unconfirmed")
+
+    def test_all_does_not_silently_include_scenario_queries(self):
+        env = query_defect_candidates(
+            self.root, defect_type="all", database=self.database)
+        self.assertEqual(env["status"], "available", env.get("reason"))
+        self.assertEqual(
+            set(env["provenance"]["queries"]), set(defect.ALL_QUERIES))
+        queries = {c["query"] for c in env["candidates"]}
+        for excluded in ("non_atomic_incdec", "bool_flag_race", "lock_pairing"):
+            self.assertNotIn(excluded, queries)
 
 
 if __name__ == "__main__":

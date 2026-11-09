@@ -26,7 +26,12 @@ from .evidence import DefectEvidenceBundle, assemble_evidence_v2
 from .semantics.vocabulary import load_defect_patterns
 from .storage import SQLiteStorage
 
-SUPPORTED_DEFECT_QUERIES = tuple(defect.QUERY_NAMES)
+# The default ``--type all`` surface. This is ``defect.ALL_QUERIES`` (the
+# original eight), NOT ``defect.QUERY_NAMES``: the concurrency scenario queries
+# (``non_atomic_incdec`` / ``bool_flag_race`` / ``lock_pairing``) are legal
+# single-query entry points but must not silently expand ``--type all`` (frozen
+# requirement §5/§8). ``defect.QUERY_NAMES`` stays the validation/error table.
+SUPPORTED_DEFECT_QUERIES = tuple(defect.ALL_QUERIES)
 UPSTREAM_FEATURES = ("events:cpp", "sparse_cfg:cpp", "sparse_dfg:cpp")
 CAPABILITY_GRADE = "local-only, diagnostic"
 

@@ -110,6 +110,20 @@ QUERY_NAMES = (
     NON_ATOMIC_INCDEC, BOOL_FLAG_RACE, LOCK_PAIRING,
     NULL_FLOW, USE_AFTER_FREE, DOUBLE_FREE, TAINT_PATH, ERROR_HANDLING,
 )
+# The default ``--type all`` surface, kept separate from ``QUERY_NAMES`` on
+# purpose. ``QUERY_NAMES`` is the full legal-name table (dispatch + error
+# reporting); ``ALL_QUERIES`` is the set ``defect --type all`` actually runs.
+# The three concurrency scenario queries (``non_atomic_incdec`` /
+# ``bool_flag_race`` / ``lock_pairing``) are legal single-query entry points
+# but are deliberately NOT part of ``all``: folding them in would silently
+# change the default output envelope and default cost before the Profile's
+# explicit query-set/version semantics land (frozen requirement §5/§8).
+# ``defect_query.query_defect_candidates`` drives its ``"all"`` loop off this
+# tuple, not off ``QUERY_NAMES``.
+ALL_QUERIES = (
+    RESOURCE_LIFETIME, LOCK_ORDER, RACE_CONDITION,
+    NULL_FLOW, USE_AFTER_FREE, DOUBLE_FREE, TAINT_PATH, ERROR_HANDLING,
+)
 
 # The matrix keys the stage 6 queries answer. `taint_path` has no matrix family:
 # `defect-evidence-matrix-v1.md` puts a taint analysis outside V2 (:286), and
@@ -590,6 +604,15 @@ def non_atomic_incdec(
     events: Iterable[Any], edges: Iterable[Any], *,
     subject: str | None = None, max_candidates: int = 20,
 ) -> DefectQueryResult:
+    """The ``non_atomic_incdec`` scenario, over ``events`` only.
+
+    ``edges`` is accepted for dispatcher uniformity but deliberately not
+    consumed: S1 is the pure-query stage, and the held-lockset that would emit
+    access-level ``competing_access`` pairs needs *both* ``edges`` and
+    ``lock_facts``, which a single defect query does not receive. The result
+    therefore carries top-level scenario candidates only (``have_lockset=False``
+    inside ``build_race_scenarios``), and that degradation is by design.
+    """
     from .concurrency_race_scenarios import build_race_scenarios  # noqa: PLC0415
     return _scenario_query_result(
         NON_ATOMIC_INCDEC, build_race_scenarios(events),
@@ -601,6 +624,13 @@ def bool_flag_race(
     events: Iterable[Any], edges: Iterable[Any], *,
     subject: str | None = None, max_candidates: int = 20,
 ) -> DefectQueryResult:
+    """The ``bool_flag_race`` scenario, over ``events`` only.
+
+    ``edges`` is accepted for dispatcher uniformity but deliberately not
+    consumed; see ``non_atomic_incdec`` for the reason. The result carries
+    top-level scenario candidates only, never access-level ``competing_access``
+    pairs.
+    """
     from .concurrency_race_scenarios import build_race_scenarios  # noqa: PLC0415
     return _scenario_query_result(
         BOOL_FLAG_RACE, build_race_scenarios(events),
@@ -612,6 +642,13 @@ def lock_pairing(
     events: Iterable[Any], edges: Iterable[Any], *,
     subject: str | None = None, max_candidates: int = 20,
 ) -> DefectQueryResult:
+    """The ``lock_pairing`` scenario, over ``events`` only.
+
+    ``edges`` is accepted for dispatcher uniformity but deliberately not
+    consumed: pairing is a vocabulary-level (control-flow-free) approximation,
+    so there is no edge walk to feed. The result carries top-level scenario
+    candidates only.
+    """
     from .concurrency_lock_scenarios import build_lock_scenarios  # noqa: PLC0415
     return _scenario_query_result(
         LOCK_PAIRING, build_lock_scenarios(events),
