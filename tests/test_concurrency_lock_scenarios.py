@@ -15,6 +15,7 @@ from pathlib import Path
 
 from provenlattice.analysis_query import query_analysis
 from provenlattice.concurrency_lock_scenarios import build_lock_scenarios
+from provenlattice import defect
 from provenlattice.graph import full_index
 from provenlattice.orchestrator import analyze_scope
 
@@ -91,6 +92,7 @@ class UnpairedAcquireTests(LockScenarioTestBase):
         self.assertEqual(candidate["subject"], "g_lock")
         self.assertEqual(candidate["identity"], "g_lock")
         self.assertEqual(candidate["candidate_state"], "ambiguous")
+        self.assertEqual(candidate["confirmation_state"], "unconfirmed")
         self.assertIn("control_flow", candidate["missing_evidence"])
 
     def test_candidate_carries_unified_contract_fields(self):
@@ -98,6 +100,13 @@ class UnpairedAcquireTests(LockScenarioTestBase):
         for field in ("scenario_id", "source_spans", "related_locks",
                       "candidate_state", "evidence_references", "missing_evidence"):
             self.assertIn(field, candidate)
+
+    def test_registered_lock_pairing_query(self):
+        result = defect.run("lock_pairing", self.events(), [])
+        self.assertEqual(len(result.candidates), 1)
+        self.assertEqual(result.candidates[0].query, "lock_pairing")
+        self.assertEqual(
+            result.candidates[0].metadata["confirmation_state"], "unconfirmed")
 
 
 class PairedLockTests(LockScenarioTestBase):
@@ -114,6 +123,32 @@ class PairedLockTests(LockScenarioTestBase):
         pairing = [c for c in self.result()["candidates"]
                    if c["scenario_id"] == "lock_pairing"]
         self.assertEqual(pairing, [])
+
+    def test_different_lock_identities_never_pair(self):
+        events = [
+            make_event("LOCK", "a", start_byte=1),
+            make_event("UNLOCK", "b", start_byte=2),
+        ]
+        pairing = [
+            c for c in build_lock_scenarios(events)["candidates"]
+            if c["scenario_id"] == "lock_pairing"
+        ]
+        self.assertEqual(
+            {(c["rule"], c["identity"]) for c in pairing},
+            {("unpaired_acquire", "a"), ("unpaired_release", "b")},
+        )
+
+    def test_confirmed_omitted_unlock_relation_upgrades_confirmation_only(self):
+        events = [make_event("LOCK", "a", start_byte=1)]
+        relation = {
+            "relation": "UNLOCK_OMITTED_ON_PATH",
+            "locks": ["a"],
+            "candidate_state": "confirmed",
+        }
+        candidate = build_lock_scenarios(events, relations=[relation])["candidates"][0]
+        self.assertEqual(candidate["confirmation_state"], "confirmed")
+        self.assertEqual(candidate["candidate_state"], "ambiguous")
+        self.assertNotIn("control_flow", candidate["missing_evidence"])
 
 
 class UnpairedReleaseTests(LockScenarioTestBase):

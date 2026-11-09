@@ -42,6 +42,31 @@ DEFAULT_TOP_K = 3
 _MAX_COMPETING_ACCESS = 100
 
 
+def _is_atomic_type(type_token: str) -> bool:
+    """Whether a declaration token names a C/C++ atomic object.
+
+    This is deliberately a narrow spelling check over the already-published
+    ``subject_type`` fact, not a second type system.  It covers the built-in C
+    spellings and ``std::atomic<T>`` while leaving an unknown type unknown.
+    """
+    compact = "".join(str(type_token).split()).lower()
+    return (
+        "_atomic(" in compact
+        or compact.startswith("_atomic")
+        or compact.startswith("atomic_")
+        or "std::atomic<" in compact
+    )
+
+
+def _confirmation_state(subject: Mapping[str, Any]) -> str:
+    """Keep proposal and confirmation as separate, forward-compatible axes."""
+    return (
+        "confirmed"
+        if subject.get("confirmed") is True or subject.get("status") == "confirmed"
+        else "unconfirmed"
+    )
+
+
 def _annotations(event: Mapping[str, Any]) -> Mapping[str, Any]:
     return event.get("annotations") or {}
 
@@ -285,14 +310,21 @@ def build_race_scenarios(
             competing.extend(
                 _build_competing_pairs(subject, accesses, held_by_event))
 
-        types = {access["subject_type"] for access in accesses} - {""}
-        is_bool = bool(types & _BOOL_TYPES)
+        type_tokens = [str(access["subject_type"]).strip() for access in accesses]
+        types = {token for token in type_tokens if token}
+        type_known = bool(type_tokens) and all(type_tokens) and len(types) == 1
+        is_bool = type_known and next(iter(types)) in _BOOL_TYPES
+        if any(_is_atomic_type(token) for token in type_tokens if token):
+            continue
         has_read = any(access["event_type"] == _READ for access in accesses)
         has_write = any(access["event_type"] == _WRITE for access in accesses)
         rmw_spans = _rmw_spans(accesses)
 
         candidate_state = "unresolved" if subject["unresolved"] else "ambiguous"
-        missing_evidence = ["may_parallel", "lock_protection"]
+        confirmation_state = _confirmation_state(subject)
+        missing_evidence = ["lock_protection"]
+        if confirmation_state == "unconfirmed":
+            missing_evidence.insert(0, "may_parallel")
         if subject["unresolved"]:
             missing_evidence.insert(0, "identity_unresolved")
 
@@ -308,6 +340,8 @@ def build_race_scenarios(
             "related_accesses": accesses,
             "evidence_references": [access["event_id"] for access in accesses],
             "missing_evidence": missing_evidence,
+            "confirmation_state": confirmation_state,
+            "type_state": "known" if type_known else "unknown",
         }
 
         # General shared-state race: any shared subject with an access.

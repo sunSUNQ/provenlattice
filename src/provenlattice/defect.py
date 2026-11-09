@@ -95,6 +95,9 @@ DISQUALIFIED_EVIDENCE_CAP = 500
 RESOURCE_LIFETIME = "resource_lifetime"
 LOCK_ORDER = "lock_order"
 RACE_CONDITION = "race_condition"
+NON_ATOMIC_INCDEC = "non_atomic_incdec"
+BOOL_FLAG_RACE = "bool_flag_race"
+LOCK_PAIRING = "lock_pairing"
 # Stage 6's four DFG-consuming queries. Each answers one matrix key except
 # `taint_path`, which answers none (see `TAINT_KEY`).
 NULL_FLOW = "null_flow"
@@ -104,6 +107,7 @@ TAINT_PATH = "taint_path"
 ERROR_HANDLING = "error_handling"
 QUERY_NAMES = (
     RESOURCE_LIFETIME, LOCK_ORDER, RACE_CONDITION,
+    NON_ATOMIC_INCDEC, BOOL_FLAG_RACE, LOCK_PAIRING,
     NULL_FLOW, USE_AFTER_FREE, DOUBLE_FREE, TAINT_PATH, ERROR_HANDLING,
 )
 
@@ -496,6 +500,9 @@ def run(
         RESOURCE_LIFETIME: resource_lifetime,
         LOCK_ORDER: lock_order,
         RACE_CONDITION: race_condition,
+        NON_ATOMIC_INCDEC: non_atomic_incdec,
+        BOOL_FLAG_RACE: bool_flag_race,
+        LOCK_PAIRING: lock_pairing,
         NULL_FLOW: null_flow,
         USE_AFTER_FREE: use_after_free,
         DOUBLE_FREE: double_free,
@@ -515,6 +522,101 @@ def run(
     if "adjacency" in accepted:
         supplied["adjacency"] = adjacency if adjacency is not None else build_adjacency(edges)
     return function(events, edges, **supplied)
+
+
+def _scenario_query_result(
+    query: str,
+    bundle: Mapping[str, Any],
+    *,
+    subject: str | None,
+    max_candidates: int,
+) -> DefectQueryResult:
+    """Adapt a concurrency scenario Candidate to the public defect surface."""
+    rows = [
+        row for row in bundle.get("candidates", ())
+        if row.get("scenario_id") == query
+        and (
+            subject is None
+            or subject in {row.get("subject"), row.get("identity")}
+        )
+    ]
+    candidates: list[Candidate] = []
+    for row in rows:
+        references = tuple(str(ref) for ref in row.get("evidence_references", ()) if ref)
+        identity = str(row.get("identity") or row.get("subject") or "(unresolved)")
+        spans = row.get("source_spans") or ()
+        anchor_span = {
+            "relative_path": "",
+            "start_line": spans[0][0] if spans else 0,
+            "end_line": spans[-1][1] if spans else 0,
+        }
+        resolution = str(row.get("candidate_state") or AMBIGUOUS)
+        missing = tuple(str(item) for item in row.get("missing_evidence", ()))
+        candidates.append(Candidate(
+            defect_key=f"concurrency.{query}",
+            query=query,
+            subject={"id": identity, "name": row.get("subject") or identity},
+            anchor=references[0] if references else identity,
+            discriminator="|".join((query, identity, row.get("rule", ""), *references)),
+            resolution_status=resolution,
+            confidence=0.2 if resolution == UNRESOLVED else 0.4,
+            facts=({
+                "scenario_id": query,
+                "confirmation_state": row.get("confirmation_state", "unconfirmed"),
+            },),
+            uncertain_facts=tuple(
+                _uncertain(item, decisive=True) for item in missing
+            ),
+            source_evidence=references,
+            missing_evidence=missing,
+            metadata={
+                "scenario_id": query,
+                "rule": row.get("rule"),
+                "candidate_state": resolution,
+                "confirmation_state": row.get("confirmation_state", "unconfirmed"),
+                "anchor_span": anchor_span,
+            },
+        ))
+    candidates.sort(key=Candidate.sort_key)
+    return DefectQueryResult(
+        query=query,
+        candidates=tuple(candidates[:max_candidates]),
+        coverage=dict(bundle.get("coverage") or {}),
+        truncated=len(candidates) > max_candidates,
+    )
+
+
+def non_atomic_incdec(
+    events: Iterable[Any], edges: Iterable[Any], *,
+    subject: str | None = None, max_candidates: int = 20,
+) -> DefectQueryResult:
+    from .concurrency_race_scenarios import build_race_scenarios  # noqa: PLC0415
+    return _scenario_query_result(
+        NON_ATOMIC_INCDEC, build_race_scenarios(events),
+        subject=subject, max_candidates=max_candidates,
+    )
+
+
+def bool_flag_race(
+    events: Iterable[Any], edges: Iterable[Any], *,
+    subject: str | None = None, max_candidates: int = 20,
+) -> DefectQueryResult:
+    from .concurrency_race_scenarios import build_race_scenarios  # noqa: PLC0415
+    return _scenario_query_result(
+        BOOL_FLAG_RACE, build_race_scenarios(events),
+        subject=subject, max_candidates=max_candidates,
+    )
+
+
+def lock_pairing(
+    events: Iterable[Any], edges: Iterable[Any], *,
+    subject: str | None = None, max_candidates: int = 20,
+) -> DefectQueryResult:
+    from .concurrency_lock_scenarios import build_lock_scenarios  # noqa: PLC0415
+    return _scenario_query_result(
+        LOCK_PAIRING, build_lock_scenarios(events),
+        subject=subject, max_candidates=max_candidates,
+    )
 
 
 # ----------------------------------------------------------------------

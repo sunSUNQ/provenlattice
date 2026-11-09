@@ -103,7 +103,26 @@ def _base_candidate(
         "evidence_references": [lock.get("event_id") for lock in locks],
         "missing_evidence": list(dict.fromkeys(missing)),
         "candidate_state": "unresolved" if unresolved else "ambiguous",
+        "confirmation_state": "unconfirmed",
     }
+
+
+def _confirmed_lock_identities(
+    relations: Iterable[Mapping[str, Any]] | None,
+) -> set[str]:
+    """Locks with a *confirmed* omitted-unlock relation from the S3 interface."""
+    confirmed: set[str] = set()
+    for relation in relations or ():
+        if relation.get("relation") != "UNLOCK_OMITTED_ON_PATH":
+            continue
+        if not (
+            relation.get("confirmed") is True
+            or relation.get("status") == "confirmed"
+            or relation.get("candidate_state") == "confirmed"
+        ):
+            continue
+        confirmed.update(str(lock) for lock in relation.get("locks", ()) if lock)
+    return confirmed
 
 
 def _pairing_missing(identity: str, exact: bool) -> list[str]:
@@ -279,7 +298,10 @@ def _build_discipline(events: Iterable[Mapping[str, Any]]) -> list[dict[str, Any
     return sorted(candidates, key=lambda c: (c["rule"], c["subject"], c["owner"]))
 
 
-def build_lock_scenarios(events: Iterable[Mapping[str, Any]]) -> dict:
+def build_lock_scenarios(
+    events: Iterable[Mapping[str, Any]], *,
+    relations: Iterable[Mapping[str, Any]] | None = None,
+) -> dict:
     """Build lock_pairing and lock_discipline candidates from S3 events.
 
     ``events`` is the ``env["events"]`` list of an ``events`` query (S3's level-0
@@ -293,6 +315,18 @@ def build_lock_scenarios(events: Iterable[Mapping[str, Any]]) -> dict:
     """
     events = list(events)
     candidates = _build_pairing(events) + _build_discipline(events)
+    confirmed_identities = _confirmed_lock_identities(relations)
+    for candidate in candidates:
+        if (
+            candidate["scenario_id"] == _SCENARIO_PAIRING
+            and candidate["rule"] == _RULE_UNPAIRED_ACQUIRE
+            and candidate.get("identity") in confirmed_identities
+        ):
+            candidate["confirmation_state"] = "confirmed"
+            candidate["missing_evidence"] = [
+                item for item in candidate["missing_evidence"]
+                if item != _MISSING_CONTROL_FLOW
+            ]
     return {
         "candidates": candidates,
         "coverage": {

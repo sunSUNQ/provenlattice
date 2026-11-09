@@ -361,7 +361,7 @@ def run_concurrency_profile(
 
     race = build_race_scenarios(
         sparse_events, edges=sparse_edges, lock_facts=event_events)
-    lock = build_lock_scenarios(event_events)
+    lock = build_lock_scenarios(event_events, relations=lockset["relations"])
 
     candidates_by_scenario: dict[str, list[dict]] = {
         scenario_id: [] for scenario_id in profile["scenario_ids"]

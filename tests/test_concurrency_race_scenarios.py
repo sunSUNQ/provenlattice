@@ -13,6 +13,7 @@ from pathlib import Path
 from provenlattice.analysis_concurrency_context import build_concurrency_context
 from provenlattice.analysis_query import query_analysis
 from provenlattice.concurrency_race_scenarios import build_race_scenarios
+from provenlattice import defect
 from provenlattice.graph import full_index
 from provenlattice.orchestrator import analyze_scope
 
@@ -69,6 +70,7 @@ class NonAtomicIncdecTests(RaceScenarioTestBase):
         self.assertEqual(candidate["subject"], "g_count")
         self.assertEqual(candidate["identity"], "global:g_count")
         self.assertEqual(candidate["candidate_state"], "ambiguous")
+        self.assertEqual(candidate["confirmation_state"], "unconfirmed")
         self.assertTrue(candidate["rmw_spans"], "RMW spans must be non-empty")
 
     def test_candidate_carries_unified_contract_fields(self):
@@ -77,6 +79,12 @@ class NonAtomicIncdecTests(RaceScenarioTestBase):
                       "candidate_state", "evidence_references", "missing_evidence"):
             self.assertIn(field, candidate)
         self.assertIn("lock_protection", candidate["missing_evidence"])
+
+    def test_registered_defect_query_returns_unconfirmed_candidate(self):
+        result = defect.run("non_atomic_incdec", self.events(), [])
+        self.assertEqual(len(result.candidates), 1)
+        self.assertEqual(
+            result.candidates[0].metadata["confirmation_state"], "unconfirmed")
 
 
 class BoolFlagRaceTests(RaceScenarioTestBase):
@@ -91,11 +99,28 @@ class BoolFlagRaceTests(RaceScenarioTestBase):
         self.assertEqual(len(flags), 1)
         self.assertEqual(flags[0]["subject"], "g_flag")
         self.assertEqual(flags[0]["candidate_state"], "ambiguous")
+        self.assertEqual(flags[0]["confirmation_state"], "unconfirmed")
+
+    def test_missing_type_fact_does_not_guess_bool(self):
+        events = self.events()
+        for event in events:
+            if event.get("event_type") in {"READ", "WRITE"}:
+                event["annotations"]["subject_type"] = ""
+        result = build_race_scenarios(events)
+        self.assertEqual(
+            [c for c in result["candidates"] if c["scenario_id"] == "bool_flag_race"],
+            [],
+        )
 
     def test_non_bool_subject_is_not_a_flag_race(self):
         # g_flag is _Bool, so it is a flag race; the same subject is also a
         # shared_state_race but must not double as non_atomic_incdec (no RMW).
         self.assertEqual(self.candidates("non_atomic_incdec"), [])
+
+    def test_registered_bool_query(self):
+        result = defect.run("bool_flag_race", self.events(), [])
+        self.assertEqual(len(result.candidates), 1)
+        self.assertEqual(result.candidates[0].defect_key, "concurrency.bool_flag_race")
 
 
 class SharedStateRaceTests(RaceScenarioTestBase):
@@ -134,6 +159,37 @@ class ExclusionTests(RaceScenarioTestBase):
     def test_local_variable_is_not_a_race(self):
         subjects = {candidate["subject"] for candidate in self.result()["candidates"]}
         self.assertNotIn("l", subjects)
+
+    def test_builtin_atomic_increment_is_not_a_race(self):
+        events = [
+            {
+                "event_id": "read", "event_type": "READ",
+                "owner_qualified_name": "a", "start_line": 1, "end_line": 1,
+                "annotations": {
+                    "subject": "g_atomic", "subject_decl": "global:g_atomic",
+                    "subject_storage": "global", "subject_exact": "true",
+                    "subject_type": "_Atomic int", "access_kind": "READ",
+                    "is_write": "false",
+                },
+            },
+            {
+                "event_id": "write", "event_type": "WRITE",
+                "owner_qualified_name": "b", "start_line": 2, "end_line": 2,
+                "annotations": {
+                    "subject": "g_atomic", "subject_decl": "global:g_atomic",
+                    "subject_storage": "global", "subject_exact": "true",
+                    "subject_type": "_Atomic int", "access_kind": "READ_MODIFY_WRITE",
+                    "is_write": "true",
+                },
+            },
+        ]
+        context = {"may_parallel": [{
+            "identity": "global:g_atomic", "subject": "g_atomic",
+            "storage": "global", "exact": True, "unresolved": False,
+            "owners": ["a", "b"], "thread_entry_owners": [],
+            "status": "ambiguous",
+        }]}
+        self.assertEqual(build_race_scenarios(events, context=context)["candidates"], [])
 
 
 class UnresolvedIdentityTests(RaceScenarioTestBase):
