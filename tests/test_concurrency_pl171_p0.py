@@ -1,18 +1,19 @@
-"""PL171-CWD-P0 detector rules (PAIR-01 / PAIR-02 / PAIR-03) — GATE-1 unit.
+"""PL171-CWD-P0 detector rules — GATE-1 unit (V2 contract).
 
-Freezes the three P0 detector behaviour changes against synthetic fixtures, one
-per gate scenario:
+Freezes the P0 detector behaviour changes against synthetic fixtures:
 
-1. pre-spawn pair        -> filtered  (PAIR-01)
-2. post-join pair        -> filtered  (PAIR-03)
-3. mutex/mutex same lock -> filtered  (PAIR-02, identity was already enough)
-4. read-lock vs write-lock on one rwlock -> kept (PAIR-02 restores the TP)
+1. pre-spawn access only      -> trimmed to <2, dropped  (PAIR-01)
+2. post-join + unguarded peer -> kept (NOT all-other-guarded, PAIR-05)
+3. mutex/mutex same lock      -> filtered  (PAIR-02)
+4. read-lock vs write-lock on one rwlock -> kept (PAIR-06 restores the TP)
 5. incomplete lock scope (UNLOCK_OMITTED_ON_PATH) -> kept
-6. different lock object -> kept
-7. no-lock race          -> kept
+6. different lock object      -> kept
+7. no-lock race               -> kept
+8. mixed pre/post-spawn       -> trimmed, kept (PAIR-01 keeps a >=2-access pair)
+9. mixed pre/post-join        -> kept (not provably post-join, PAIR-05)
 
-Scenarios 1/2/3 must return no candidate; 4/5/6/7 must return one. The contract
-is `pl171_p0_detector_contract.md` §5 GATE-1.
+The contract is the Issue #72 frozen V2 matrix §5 GATE-1; see
+`test_concurrency_pl171_p0_v2.py` for the full 9-scenario matrix.
 """
 
 import tempfile
@@ -61,8 +62,10 @@ void starter(void) {
 }
 """
 
-# 2. PAIR-03: an access after the last THREAD_JOIN cannot race a worker that has
-# already finished.
+# 2. PAIR-05: a post-join access on one end, with the *other* end unguarded, is
+# NOT provably safe (the guard "all other accesses correctly guarded" fails), so
+# the pair must stay. The old PAIR-03 dropped this -- the excluded cross-lifetime
+# over-fire the V2 contract fixes.
 POST_JOIN = r"""
 #include <pthread.h>
 int shared = 0;
@@ -183,7 +186,7 @@ void starter(void) {
 }
 """
 
-# 9. PAIR-03 counter-example: a side that touches the subject both before AND
+# 9. PAIR-05 counter-example: a side that touches the subject both before AND
 # after the join is not provably post-join, so the pair must stay (the pre-join
 # write genuinely races the worker). Tests the `first > max(join)` all-
 # quantifier -- the old `last > max(join)` dropped this pair, a false negative.
@@ -205,13 +208,13 @@ void starter(void) {
 
 
 class PL171P0DetectorTests(unittest.TestCase):
-    """GATE-1 unit matrix for the three P0 detector rules."""
+    """GATE-1 unit matrix for the P0 detector rules (V2 contract)."""
 
     def test_01_pre_spawn_pair_filtered(self):
         self.assertEqual(_races(PRE_SPAWN), [])
 
-    def test_02_post_join_pair_filtered(self):
-        self.assertEqual(_races(POST_JOIN), [])
+    def test_02_post_join_unguarded_peer_kept(self):
+        self.assertEqual(len(_races(POST_JOIN)), 1)
 
     def test_03_mutex_mutex_same_lock_filtered(self):
         self.assertEqual(_races(MUTEX_MUTEX), [])

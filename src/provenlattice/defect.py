@@ -2570,25 +2570,57 @@ def race_condition(
         method_list = sorted(methods)
         for index, owner_a in enumerate(method_list):
             for owner_b in method_list[index + 1:]:
-                kind_a, decided_a, atomic_a, protection_a = side(owner_a)
-                kind_b, decided_b, atomic_b, protection_b = side(owner_b)
+                # PAIR-01 (pre-spawn trim): a side that spawns the other end's
+                # entry cannot race the not-yet-started worker with an access
+                # before that spawn, so those accesses are trimmed OUT of the
+                # side -- never the worker side. The trim is pair-specific, so
+                # the memoized `side()` is only valid when nothing was trimmed.
+                short_a = _short_name((names or {}).get(owner_a, ""))
+                short_b = _short_name((names or {}).get(owner_b, ""))
+                points_a, trim_a = _trim_pre_spawn_accesses(
+                    owner_a, methods[owner_a], short_b, points, spawn_index,
+                )
+                points_b, trim_b = _trim_pre_spawn_accesses(
+                    owner_b, methods[owner_b], short_a, points, spawn_index,
+                )
+                if trim_a or trim_b:
+                    disqualified_pre_spawn += 1
+                    access_ids_a = [
+                        point_id for point_id in points_a
+                        if points[point_id]["event_type"] in RACE_ACCESS_EVENTS
+                    ]
+                    access_ids_b = [
+                        point_id for point_id in points_b
+                        if points[point_id]["event_type"] in RACE_ACCESS_EVENTS
+                    ]
+                    if not access_ids_a or not access_ids_b:
+                        # A cross-method race needs a real access on each side.
+                        # Trimming a side to empty removes the pair (and keeps
+                        # `_race_candidate`'s anchor indexable).
+                        continue
+                    kind_a, decided_a = _access_kind(points, points_a)
+                    kind_b, decided_b = _access_kind(points, points_b)
+                    atomic_a = _touches_atomically(points, points_a, key, identity=identity)
+                    atomic_b = _touches_atomically(points, points_b, key, identity=identity)
+                    protection_a = _race_bundle_protection(access_ids_a, race_fact_index)
+                    protection_b = _race_bundle_protection(access_ids_b, race_fact_index)
+                else:
+                    kind_a, decided_a, atomic_a, protection_a = side(owner_a)
+                    kind_b, decided_b, atomic_b, protection_b = side(owner_b)
                 if kind_a == "read" and kind_b == "read":
                     read_read_pairs += 1
                     continue
                 if atomic_a and atomic_b:
                     disqualified_atomic += 1
                     continue
-                lifecycle = _lifecycle_declines(
-                    owner_a, owner_b, methods[owner_a], methods[owner_b],
-                    points, spawn_index, names,
-                )
-                if lifecycle:
-                    # One end runs before the other's spawn (PAIR-01) or after
-                    # its join (PAIR-03); distinguish for the coverage block.
-                    if lifecycle == "pre_spawn":
-                        disqualified_pre_spawn += 1
-                    else:
-                        disqualified_post_lifecycle += 1
+                # PAIR-05 (safe post-join): drop only when one end is provably
+                # post-join AND every other access is correctly guarded.
+                if _safe_post_join_declines(
+                    owner_a, owner_b, points_a, points_b, points, spawn_index,
+                    names, protection_a, protection_b, lock_modes,
+                    race_fact_index.get("omitted") or set(), kind_a, kind_b,
+                ):
+                    disqualified_post_lifecycle += 1
                     continue
                 if _race_bundle_same_lock(
                     protection_a, protection_b, race_fact_index,
@@ -2606,7 +2638,7 @@ def race_condition(
                     access_proxy_pairs += 1
                 candidates.append(
                     _race_candidate(
-                        name, key, owner_a, owner_b, methods[owner_a], methods[owner_b],
+                        name, key, owner_a, owner_b, points_a, points_b,
                         kind_a, kind_b, decided_a, decided_b,
                         protection_a, protection_b, points, names,
                         spawn_index,
@@ -3128,7 +3160,7 @@ def _spawn_index(points: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
     candidate count and the repository's point count. `spawns_of` and `joins_of`
     carry the positions (start_byte) of each method's THREAD_SPAWN and
     THREAD_JOIN points so the pair loop can decide, per end, whether an access
-    runs before the other end's spawn (PAIR-01) or after its join (PAIR-03).
+    runs before the other end's spawn (PAIR-01) or after its join (PAIR-05).
     """
     entry_of: dict[str, set[str]] = {}
     entries: set[str] = set()
@@ -3165,7 +3197,98 @@ def _access_positions(
     ]
 
 
-def _lifecycle_declines(
+def _trim_pre_spawn_accesses(
+    owner: str,
+    side_points: Sequence[str],
+    other_short: str,
+    points: Mapping[str, Mapping[str, Any]],
+    spawn_index: Mapping[str, Any],
+) -> tuple[list[str], int]:
+    """PAIR-01: trim a spawning side's pre-spawn accesses, never the worker's.
+
+    ``side_points`` are ``owner``'s point ids on the shared subject. When
+    ``owner`` spawns ``other_short``'s entry, every READ/WRITE whose exec_point
+    precedes the earliest such spawn is provably pre-thread (the worker does not
+    exist yet), so it is trimmed OUT of the side's access set. The worker side
+    has no spawn of the other end, so its accesses are never trimmed. Fail
+    closed: no matching spawn leaves the side unchanged.
+
+    Returns ``(kept_point_ids, trimmed_count)``. Non-access points (ALLOC/
+    RELEASE/…) are kept: they are context, not race accesses.
+    """
+    spawn_bytes = [
+        byte for byte, entry in spawn_index.get("spawns_of", {}).get(owner, ())
+        if entry == other_short
+    ]
+    if not spawn_bytes:
+        return list(side_points), 0
+    first_spawn = min(spawn_bytes)
+    kept: list[str] = []
+    trimmed = 0
+    for point_id in side_points:
+        info = points[point_id]
+        if (
+            info["event_type"] in RACE_ACCESS_EVENTS
+            and int(info.get("start_byte") or 0) < first_spawn
+        ):
+            trimmed += 1
+        else:
+            kept.append(point_id)
+    return kept, trimmed
+
+
+def _lock_mode_covers(
+    lock: str,
+    owner: str,
+    kind: str,
+    lock_modes: Mapping[tuple[str, str], frozenset[str]],
+) -> bool:
+    """Whether holding ``lock`` covers ``kind`` of access on ``owner``.
+
+    An exclusive or write-capable hold covers both a read and a write; a
+    read-capable hold covers only a read, so a read hold does not cover a write
+    (PAIR-06's mode rule applied to a single side). An unresolved mode fails
+    closed (not covered).
+    """
+    modes = lock_modes.get((owner, lock), frozenset())
+    if not modes:
+        return False
+    if kind == "write" and "read" in modes:
+        return False
+    return True
+
+
+def _side_guarded(
+    protection: Mapping[str, Any],
+    kind: str,
+    owner: str,
+    lock_modes: Mapping[tuple[str, str], frozenset[str]],
+    omitted: set[tuple[str, str]],
+) -> bool:
+    """Whether one side's accesses are all correctly guarded (GRD good).
+
+    GRD good (derived, fail-closed): the side resolves to a common held lock the
+    producer attributed via PROTECTS (``status == RESOLVED``, so no limitation),
+    at least one such lock's acquire mode covers the side's access kind, and no
+    (access, lock) pair is UNLOCK_OMITTED_ON_PATH -- a lock that may leak does
+    not provably serialize the access.
+    """
+    if protection.get("status") != RESOLVED:
+        return False
+    locks = protection.get("locks") or ()
+    if not locks:
+        return False
+    access_ids = protection.get("access_event_ids") or ()
+    for lock in locks:
+        if not _lock_mode_covers(lock, owner, kind, lock_modes):
+            continue
+        if any((access_id, lock) in omitted for access_id in access_ids):
+            continue
+        return True
+    return False
+
+
+def _safe_post_join_declines(
     owner_a: str,
     owner_b: str,
     points_a: Sequence[str],
@@ -3173,52 +3296,40 @@ def _lifecycle_declines(
     points: Mapping[str, Mapping[str, Any]],
     spawn_index: Mapping[str, Any],
     names: Mapping[str, str] | None,
-) -> str | None:
-    """The lifecycle reason to decline a pair, or None.
+    protection_a: Mapping[str, Any],
+    protection_b: Mapping[str, Any],
+    lock_modes: Mapping[tuple[str, str], frozenset[str]],
+    omitted: set[tuple[str, str]],
+    kind_a: str,
+    kind_b: str,
+) -> bool:
+    """PAIR-05: drop a pair only when one end is provably post-join and every
+    other access is correctly guarded (GRD good).
 
-    PAIR-01 (pre-spawn): an end whose method spawns the other end's entry, and
-    whose *every* access lies before that spawn, cannot race the not-yet-started
-    worker. PAIR-03 (post-join): an end whose method joins, and whose *every*
-    access lies after every join in that method, cannot race a worker that has
-    already finished.
-
-    The judgment is per-*access-set* and conservative: a pair is decline only
-    when the whole side is provably not concurrent. A side that touches the
-    subject both before and after a spawn/join is NOT provably non-concurrent
-    (UNCERTAIN => KEEP), so ``min``/``max`` are the *all* quantifiers, not the
-    existence quantifiers -- PAIR-01 asks ``last < min(spawn)`` (every access
-    precedes the earliest spawn) and PAIR-03 asks ``first > max(join)`` (every
-    access follows the latest join). Returns ``"pre_spawn"`` or
-    ``"post_lifecycle"`` for the first such end.
+    An end whose method joins and whose *every* access follows the last join
+    cannot race the worker it joined -- but only when every access on the other
+    side is correctly guarded. Without that guard the "post-join" reasoning is
+    the excluded cross-lifetime PAIR-04 (a different lifetime's join does not
+    order this pair), so the pair is kept (fail-closed).
     """
-    spawns_of = spawn_index.get("spawns_of") or {}
     joins_of = spawn_index.get("joins_of") or {}
-    short_a = _short_name((names or {}).get(owner_a, ""))
-    short_b = _short_name((names or {}).get(owner_b, ""))
-    for owner, side_points, other_short in (
-        (owner_a, points_a, short_b),
-        (owner_b, points_b, short_a),
+    for owner, side_points, other_kind, other_owner, other_protection in (
+        (owner_a, points_a, kind_b, owner_b, protection_b),
+        (owner_b, points_b, kind_a, owner_a, protection_a),
     ):
         positions = _access_positions(points, side_points)
         if not positions:
             continue
-        first_access = min(positions)
-        last_access = max(positions)
-        if other_short:
-            spawn_bytes = [
-                byte for byte, entry in spawns_of.get(owner, ())
-                if entry == other_short
-            ]
-            # All accesses precede the earliest spawn -> nothing runs after the
-            # worker starts, so the whole side is provably pre-spawn.
-            if spawn_bytes and last_access < min(spawn_bytes):
-                return "pre_spawn"
         join_bytes = joins_of.get(owner, ())
-        # All accesses follow the latest join -> nothing runs while the worker
-        # is alive, so the whole side is provably post-join.
-        if join_bytes and first_access > max(join_bytes):
-            return "post_lifecycle"
-    return None
+        if not join_bytes:
+            continue
+        # Every access of this side follows the last join -> provably post-join.
+        if min(positions) <= max(join_bytes):
+            continue
+        # Safe only when the other side is GRD good.
+        if _side_guarded(other_protection, other_kind, other_owner, lock_modes, omitted):
+            return True
+    return False
 
 
 def _may_parallel_detail(
