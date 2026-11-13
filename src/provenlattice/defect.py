@@ -2593,8 +2593,10 @@ def race_condition(
                         point_id for point_id in points_b
                         if points[point_id]["event_type"] in RACE_ACCESS_EVENTS
                     ]
-                    if len(access_ids_a) + len(access_ids_b) < 2:
-                        # Trimmed below two accesses: no cross-method pair remains.
+                    if not access_ids_a or not access_ids_b:
+                        # A cross-method race needs a real access on each side.
+                        # Trimming a side to empty removes the pair (and keeps
+                        # `_race_candidate`'s anchor indexable).
                         continue
                     kind_a, decided_a = _access_kind(points, points_a)
                     kind_b, decided_b = _access_kind(points, points_b)

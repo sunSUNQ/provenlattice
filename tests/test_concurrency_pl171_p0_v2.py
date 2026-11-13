@@ -211,6 +211,26 @@ void *incr(void *arg) { shared++; return NULL; }
 void *read(void *arg) { return (void *)(long)shared; }
 """
 
+# Regression (PAIR-01 trim): the spawner's only access is pre-spawn (trimmed to
+# empty) while the worker has two accesses. The pair must be dropped cleanly --
+# a cross-method race needs an access on each side -- and must not crash the
+# detector (the `_race_candidate` anchor indexes points_a[0]).
+FULLY_TRIMMED_SPAWNER = r"""
+#include <pthread.h>
+int shared = 0;
+void *worker(void *arg) {
+    shared = 1;
+    shared = 2;
+    return NULL;
+}
+void starter(void) {
+    pthread_t t;
+    shared = 10;
+    pthread_create(&t, NULL, worker, NULL);
+    pthread_join(t, NULL);
+}
+"""
+
 
 class PL171P0V2DetectorTests(unittest.TestCase):
     """GATE-1 unit matrix for the Issue #72 V2 candidate-level rules."""
@@ -247,6 +267,11 @@ class PL171P0V2DetectorTests(unittest.TestCase):
 
     def test_09_no_lock_race_kept(self):
         self.assertEqual(len(_races(NO_LOCK)), 1)
+
+    def test_10_spawner_fully_trimmed_dropped(self):
+        # The spawner's only access is pre-spawn; the worker keeps two. Trim
+        # empties the spawner side, so the pair must be dropped without crashing.
+        self.assertEqual(_races(FULLY_TRIMMED_SPAWNER), [])
 
 
 if __name__ == "__main__":
