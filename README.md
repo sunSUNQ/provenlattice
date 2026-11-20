@@ -157,6 +157,29 @@ v1.7.0 面向并发类漏洞检测，补齐图谱的并发语义事实、关联�
 * FE-8 scenario relations 与 `MAY_CALL` 为查询期、默认 OFF、不注册 CAPABILITY。
 * 候选仍为 Candidate（`resolved` ≠ Verified Finding）。
 
+## Agent/Skill API V1（skill 面向接口，阶段③）
+
+面向 skill 的薄接口 + 能力清单 + 消费契约（Issue #86，走法 B）。**只读出接口/清单/需求**，
+不实施 6 类并发事实的 additive 投影（另立 Issue），不把 skill 接进图谱，不改 skill 本体。
+
+| 交付物 | 位置 | 说明 |
+|---|---|---|
+| Skill 薄接口 | [`src/provenlattice/evidence_projection/skill_api.py`](src/provenlattice/evidence_projection/skill_api.py) | `list_skill_capabilities()` 能力清单 + `resolve_evidence(...)` 证据接口 |
+| Skill 消费契约 | [`docs/skill-interface-requirements.md`](docs/skill-interface-requirements.md) | skill 侧 `supporting_locations[]` 13 字段映射、7 类事实现状、消费纪律、前向兼容约定 |
+
+- **能力清单**（`list_skill_capabilities()`）：按 `defect_type` 组织，如实区分 `projected_facts`
+  （语义事实）与 `projected_evidence`（证据/锚点位置），并如实声明 `not_projected_facts`
+  （5 类 `produced_not_projected`：thread_context / parallel_feasibility / common_locks /
+  spawn_join / interprocedural_path）与 `not_produced_facts`（`happens_before`，图谱无 HB 一阶
+  relation）。
+- **证据接口**（`resolve_evidence(...)`）：纯 facade，组装 `Registry → adapter → IR`，输出经
+  `validate_evidence_ir_v1` 校验通过的 Canonical Evidence IR V1；`run.projector_version` 恒冻结为
+  `NOT_APPLICABLE`。
+- **fail-closed**：未知 `defect_type` 透传 `UnknownDefectTypeError`；投影异常原样上抛；IR 校验失败
+  抛 `EvidenceIRValidationError`，绝不返回无效 IR。
+- **依赖闭环**：仅复用已交付的 Registry（#83）+ Canonical Evidence IR V1（#79）+ FactBundle v2.1
+  （#78）；不 import skill，不读 GT/Prompt/Scorer。
+
 ## Validation
 
 | 检查项 | 结果 |
