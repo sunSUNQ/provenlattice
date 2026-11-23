@@ -1371,8 +1371,12 @@ class SparseCfgBuilder:
         elif event_type == "CALL":
             access = _memory_call_facts(node, event.matched_name, self.source)
             if access is not None:
-                access["object"] = self._memory_call_object_fact(node)
+                object_fact = self._memory_call_object_fact(node)
+                access["object"] = object_fact
                 annotations[MEMORY_ACCESS_KEY] = _facts_json(access)
+                extent = self._memory_call_buffer_extent_fact(node, object_fact)
+                if extent is not None:
+                    annotations[BUFFER_EXTENT_KEY] = _facts_json(extent)
         arguments = _call_arguments(node, self.source)
         if arguments:
             annotations["arguments"] = arguments
@@ -1434,10 +1438,9 @@ class SparseCfgBuilder:
             return None
         return access
 
-    def _memory_call_object_fact(self, node: Any) -> dict[str, str]:
-        """Resolve a memory API's destination argument, not its return target."""
-        argument = _first_call_argument(node)
-        identity = _unwrap_parentheses(argument)
+    def _memory_destination_argument(self, node: Any) -> tuple[Any, bool] | None:
+        """Normalize the first argument once for destination identity and extent."""
+        identity = _unwrap_parentheses(_first_call_argument(node))
         while identity is not None and identity.type == "cast_expression":
             identity = _unwrap_parentheses(identity.child_by_field_name("value"))
         addressed = False
@@ -1445,9 +1448,17 @@ class SparseCfgBuilder:
             _operator_of(identity, self.source) == "&"
         ):
             if not self._direct_builtin_address_of(identity):
-                return _object_fact({})
+                return None
             identity = _unwrap_parentheses(identity.child_by_field_name("argument"))
             addressed = True
+        return identity, addressed
+
+    def _memory_call_object_fact(self, node: Any) -> dict[str, str]:
+        """Resolve a memory API's destination argument, not its return target."""
+        destination = self._memory_destination_argument(node)
+        if destination is None:
+            return _object_fact({})
+        identity, addressed = destination
         if identity is None or identity.type not in {"identifier", "field_expression"}:
             return _object_fact({})
         if not addressed and not self._memory_value_preserves_identity(identity):
@@ -1459,6 +1470,24 @@ class SparseCfgBuilder:
         if not subject:
             return _object_fact({})
         return _object_fact(self._subject_facts(identity, subject))
+
+    def _memory_call_buffer_extent_fact(
+        self, node: Any, object_fact: Mapping[str, str]
+    ) -> dict[str, Any] | None:
+        """Resolve the same normalized destination through the array extent map."""
+        destination = self._memory_destination_argument(node)
+        if destination is None:
+            return None
+        identity, addressed = destination
+        if identity is None or identity.type not in {"identifier", "field_expression"}:
+            return None
+        if not addressed and not self._memory_value_preserves_identity(identity) and (
+            self._direct_value_declaration(identity) is not None
+        ):
+            return None
+        return self._buffer_extent_facts(
+            identity, object_fact=object_fact, direct_target=True
+        )
 
     def _subject_node(self, event_type: str, matched_name: str, node: Any) -> Any:
         """The expression the subject name was recovered from.
@@ -2412,7 +2441,12 @@ class SparseCfgBuilder:
         return None
 
     def _buffer_extent_facts(
-        self, expr: Any, annotations: Mapping[str, str] | None = None
+        self,
+        expr: Any,
+        annotations: Mapping[str, str] | None = None,
+        *,
+        object_fact: Mapping[str, str] | None = None,
+        direct_target: bool = False,
     ) -> dict[str, Any] | None:
         """The declared or explicitly-unknown extent for a memory access.
 
@@ -2425,10 +2459,15 @@ class SparseCfgBuilder:
         """
         commuted = self._commuted_subscript(expr)
         pointer_commuted = self._commuted_pointer_addition(expr)
-        inherited = _object_fact(annotations or {})
+        inherited = (
+            dict(object_fact) if object_fact is not None
+            else _object_fact(annotations or {})
+        )
 
         def unknown(limitation: str) -> dict[str, Any] | None:
-            if expr.type not in {"subscript_expression", "pointer_expression"}:
+            if expr.type not in {"subscript_expression", "pointer_expression"} and not (
+                direct_target and expr.type in {"identifier", "field_expression"}
+            ):
                 return None
             return {
                 "source": "unknown", "unit": "elements", "expression": None,
@@ -3457,9 +3496,10 @@ def _first_call_argument(node: Any) -> Any:
 # set or any defect query -- they only *describe* facts a later bounds query
 # (M5-M8) can consume:
 #
-#   buffer_extent_v1   on an ALLOC point (source="allocation") and on a
+#   buffer_extent_v1   on an ALLOC point (source="allocation"), on a
 #                      READ/WRITE/DEREFERENCE whose root resolves to a fixed
-#                      array declaration (source="declared_array")
+#                      array declaration (source="declared_array"), and on a
+#                      memory-API CALL whose destination resolves to one
 #   memory_access_v1   on a READ/WRITE/DEREFERENCE that carries a subscript
 #                      index or pointer offset, and on a memory-API CALL that
 #                      carries a length argument

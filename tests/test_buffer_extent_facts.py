@@ -427,6 +427,46 @@ void unevaluated_and_conditional(bool c, int i) {
     i[cpp_swapped] = 0;
 }
 """,
+    "src/memory_destinations.c": r"""struct MemoryDestinationMember { char data[4]; };
+void memory_destination_golden(void) {
+    char dst[4];
+    memset(dst, 0, 8);
+}
+void memory_destination_functions(void) {
+    char copy_dst[4];
+    char move_dst[5];
+    int numbers[4];
+    char source[8];
+    memcpy(copy_dst, source, 4);
+    memmove(move_dst, source, 5);
+    memset((void *)numbers, 0, 16);
+}
+void assigned_array_memory_call(void) {
+    char dst[4];
+    char src[4];
+    char *r;
+    r = memcpy(dst, src, 16);
+}
+void memory_destination_fail_closed(int n, char *pointer, int scalar) {
+    char source[4];
+    char dynamic[n];
+    struct MemoryDestinationMember s;
+    memcpy(pointer, source, n);
+    memmove(dynamic, source, n);
+    memset(s.data, 0, 4);
+    memset(scalar, 0, 4);
+    memset(pointer+n, 0, 4);
+    memset(unresolved, 0, 4);
+}
+""",
+    "src/memory_destinations.cpp": r"""void std_memory_destination_extents(void) {
+    char dst[4];
+    char src[4];
+    std::memcpy(dst, src, 4);
+    std::memmove(dst, src, 4);
+    std::memset(dst, 0, 8);
+}
+""",
     "src/facts.cpp": r"""struct Flex {
     char data[];
     void set(int i) { data[i] = 0; }
@@ -586,6 +626,144 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(by_function["memcpy"]["unit"], "bytes")
         self.assertEqual(by_function["memset"]["constant"], 64)
         self.assertEqual(by_function["memset"]["status"], "constant")
+
+    def test_memory_call_destination_extent_golden(self) -> None:
+        self.materialize()
+        relative = "src/memory_destinations.c"
+        events = [
+            event for event in self.events(relative)
+            if event["owner_qualified_name"] == "memory_destination_golden"
+        ]
+        call = next(event for event in events if event["event_type"] == "CALL")
+        self.assertFalse(any(event["event_type"] == "DEREFERENCE" for event in events))
+
+        access = self.fact(call, "memory_access_v1")
+        self.assertEqual(access["kind"], "memory_length")
+        self.assertEqual(access["function"], "memset")
+        self.assertEqual(access["unit"], "bytes")
+        self.assertEqual(access["constant"], 8)
+        self.assertEqual(access["object"]["decl"], "local:dst")
+
+        extent = self.fact(call, "buffer_extent_v1")
+        self.assertEqual(extent["source"], "declared_array")
+        self.assertEqual(extent["unit"], "elements")
+        self.assertEqual(extent["constant"], 4)
+        self.assertEqual(extent["status"], "constant")
+        self.assertEqual(extent["bytes"]["unit"], "bytes")
+        self.assertEqual(extent["bytes"]["constant"], 4)
+        self.assertEqual(extent["bytes"]["status"], "constant")
+        self.assertEqual(extent["object"]["decl"], "local:dst")
+        self.assertIn("scoped_decl", extent["object"])
+        self.assertEqual(
+            {key: value for key, value in extent["object"].items() if key != "scoped_decl"},
+            access["object"],
+        )
+
+    def test_memory_api_destination_extents_cover_functions_units_and_assignment(self) -> None:
+        self.materialize()
+        relative = "src/memory_destinations.c"
+        lines = SOURCES[relative].splitlines()
+        calls = {
+            (event["owner_qualified_name"], lines[event["start_line"] - 1].strip()): event
+            for event in self.events(relative)
+            if event["event_type"] == "CALL"
+        }
+        expected = {
+            "memcpy(copy_dst, source, 4);": ("local:copy_dst", 4),
+            "memmove(move_dst, source, 5);": ("local:move_dst", 5),
+        }
+        for line, (declaration, size) in expected.items():
+            event = calls[("memory_destination_functions", line)]
+            extent = self.fact(event, "buffer_extent_v1")
+            self.assertEqual(extent["object"]["decl"], declaration)
+            self.assertEqual(extent["constant"], size)
+            self.assertEqual(extent["bytes"]["constant"], size)
+            self.assertEqual(
+                self.fact(event, "memory_access_v1")["object"]["decl"], declaration
+            )
+
+        numbers = calls[("memory_destination_functions", "memset((void *)numbers, 0, 16);")]
+        extent = self.fact(numbers, "buffer_extent_v1")
+        self.assertEqual(extent["object"]["decl"], "local:numbers")
+        self.assertEqual(extent["constant"], 4)
+        self.assertEqual(extent["unit"], "elements")
+        self.assertEqual(extent["bytes"]["expression"], "4 * sizeof(int)")
+        self.assertIsNone(extent["bytes"]["constant"])
+        self.assertEqual(extent["bytes"]["status"], "unknown")
+        self.assertIn("target ABI", extent["bytes"]["limitation"])
+
+        assigned = calls[("assigned_array_memory_call", "r = memcpy(dst, src, 16);")]
+        access = self.fact(assigned, "memory_access_v1")
+        extent = self.fact(assigned, "buffer_extent_v1")
+        self.assertEqual(access["object"]["decl"], "local:dst")
+        self.assertEqual(extent["object"]["decl"], "local:dst")
+        self.assertNotEqual(extent["object"]["decl"], "local:r")
+        self.assertEqual(extent["constant"], 4)
+        self.assertEqual(access["constant"], 16)
+
+    def test_memory_call_destination_extent_fail_closed_boundaries(self) -> None:
+        self.materialize()
+        relative = "src/memory_destinations.c"
+        lines = SOURCES[relative].splitlines()
+        calls = {
+            lines[event["start_line"] - 1].strip(): event
+            for event in self.events(relative)
+            if event["owner_qualified_name"] == "memory_destination_fail_closed"
+            and event["event_type"] == "CALL"
+        }
+
+        pointer = self.fact(calls["memcpy(pointer, source, n);"], "buffer_extent_v1")
+        self.assertEqual(pointer["source"], "unknown")
+        self.assertEqual(pointer["status"], "unknown")
+        self.assertIsNone(pointer["constant"])
+        self.assertEqual(pointer["object"]["decl"], "parameter:pointer")
+
+        dynamic = self.fact(calls["memmove(dynamic, source, n);"], "buffer_extent_v1")
+        self.assertEqual(dynamic["status"], "unknown")
+        self.assertEqual(dynamic["expression"], "n")
+        self.assertIsNone(dynamic["constant"])
+        self.assertEqual(dynamic["object"]["decl"], "local:dynamic")
+
+        member_event = calls["memset(s.data, 0, 4);"]
+        member = self.fact(member_event, "buffer_extent_v1")
+        member_access = self.fact(member_event, "memory_access_v1")
+        self.assertEqual(member["source"], "unknown")
+        self.assertEqual(member["status"], "unknown")
+        self.assertEqual(member["object"]["decl"], "local:s")
+        self.assertEqual(member["object"]["member"], "data")
+        self.assertEqual(member_access["object"], member["object"])
+
+        unresolved = self.fact(calls["memset(unresolved, 0, 4);"], "buffer_extent_v1")
+        self.assertEqual(unresolved["source"], "unknown")
+        self.assertEqual(unresolved["status"], "unknown")
+        self.assertEqual(unresolved["object"]["decl"], "")
+        for line in ("memset(scalar, 0, 4);", "memset(pointer+n, 0, 4);"):
+            self.assertNotIn(
+                "buffer_extent_v1", calls[line].get("annotations", {}), line
+            )
+
+    def test_exact_std_memory_apis_share_destination_extent_contract(self) -> None:
+        self.materialize()
+        relative = "src/memory_destinations.cpp"
+        lines = SOURCES[relative].splitlines()
+        calls = {
+            lines[event["start_line"] - 1].strip(): event
+            for event in self.events(relative)
+            if event["event_type"] == "CALL"
+        }
+        for function, line in (
+            ("std::memcpy", "std::memcpy(dst, src, 4);"),
+            ("std::memmove", "std::memmove(dst, src, 4);"),
+            ("std::memset", "std::memset(dst, 0, 8);"),
+        ):
+            event = calls[line]
+            access = self.fact(event, "memory_access_v1")
+            extent = self.fact(event, "buffer_extent_v1")
+            self.assertEqual(access["function"], function)
+            self.assertEqual(access["object"]["decl"], "local:dst")
+            self.assertEqual(extent["object"]["decl"], "local:dst")
+            self.assertEqual(extent["constant"], 4)
+            self.assertEqual(extent["bytes"]["constant"], 4)
 
     def test_unknown_vla_macro_pointer_and_parameter_extents_stay_unknown(self) -> None:
         self.materialize()
@@ -1142,6 +1320,7 @@ class BufferExtentFactsTests(unittest.TestCase):
         }
         custom = calls["N::memset(a, 0, 4);"]
         self.assertNotIn("memory_access_v1", custom.get("annotations", {}))
+        self.assertNotIn("buffer_extent_v1", custom.get("annotations", {}))
         standard = calls["std::memset(a, 0, 4);"]
         fact = self.fact(standard, "memory_access_v1")
         self.assertEqual(fact["kind"], "memory_length")
@@ -1151,6 +1330,10 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(fact["status"], "constant")
         self.assertEqual(fact["constant"], 4)
         self.assertEqual(fact["object"]["decl"], "local:a")
+        extent = self.fact(standard, "buffer_extent_v1")
+        self.assertEqual(extent["constant"], 8)
+        self.assertEqual(extent["bytes"]["constant"], 8)
+        self.assertEqual(extent["object"]["decl"], "local:a")
 
     def test_cpp_memory_destination_conversion_does_not_preserve_object(self) -> None:
         self.materialize()
@@ -1559,15 +1742,25 @@ class BufferExtentFactsTests(unittest.TestCase):
         first = self.materialize()
         self.assertIn("src/facts.c", first["features"]["sparse_cfg"]["materialized"])
         before = json.dumps(self.events(), sort_keys=True, separators=(",", ":"))
+        memory_before = json.dumps(
+            self.events("src/memory_destinations.c"), sort_keys=True, separators=(",", ":")
+        )
         second = self.materialize()
         self.assertIn("src/facts.c", second["features"]["sparse_cfg"]["reused"])
         self.assertEqual(before, json.dumps(self.events(), sort_keys=True, separators=(",", ":")))
+        self.assertEqual(
+            memory_before,
+            json.dumps(
+                self.events("src/memory_destinations.c"), sort_keys=True, separators=(",", ":")
+            ),
+        )
 
         with closing(sqlite3.connect(self.database)) as connection:
             connection.execute(
                 "UPDATE analysis_state SET feature_version=5 "
                 "WHERE feature='sparse_cfg:cpp' AND file_id IN "
-                "(SELECT file_id FROM files WHERE path='src/facts.c')"
+                "(SELECT file_id FROM files WHERE path IN "
+                "('src/facts.c', 'src/memory_destinations.c'))"
             )
             connection.commit()
         stale = query_analysis(
@@ -1576,22 +1769,40 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(stale["status"], "stale")
         self.materialize()
         self.assertEqual(before, json.dumps(self.events(), sort_keys=True, separators=(",", ":")))
+        self.assertEqual(
+            memory_before,
+            json.dumps(
+                self.events("src/memory_destinations.c"), sort_keys=True, separators=(",", ":")
+            ),
+        )
 
     def test_source_change_invalidates_and_recomputes_extent(self) -> None:
         self.materialize()
         path = self.root / "src/facts.c"
         path.write_text(path.read_text().replace("char buf[64];", "char buf[65];", 1))
-        incremental_update(self.root, self.database)
-        stale = query_analysis(
-            self.root, "sparse_cfg", file_path="src/facts.c", database=self.database
+        memory_path = self.root / "src/memory_destinations.c"
+        memory_path.write_text(
+            memory_path.read_text().replace("char dst[4];", "char dst[6];", 1)
         )
-        self.assertEqual(stale["status"], "stale")
+        incremental_update(self.root, self.database)
+        for relative in ("src/facts.c", "src/memory_destinations.c"):
+            stale = query_analysis(
+                self.root, "sparse_cfg", file_path=relative, database=self.database
+            )
+            self.assertEqual(stale["status"], "stale", relative)
         self.materialize()
         self.assertEqual(self.extent("DEREFERENCE", "buf[n-1]")["constant"], 65)
+        golden = next(
+            event for event in self.events("src/memory_destinations.c")
+            if event["owner_qualified_name"] == "memory_destination_golden"
+            and event["event_type"] == "CALL"
+        )
+        self.assertEqual(self.fact(golden, "buffer_extent_v1")["constant"], 6)
 
     def test_scfg_version_and_dfg_dependency_freshness(self) -> None:
-        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 7)
+        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 8)
         self.assertEqual(ANALYZER_VERSIONS["sparse_dfg:cpp"], 4)
+        self.assertEqual(ANALYZER_VERSIONS["events:cpp"], 3)
         self.materialize("sparse_dfg")
         with closing(sqlite3.connect(self.database)) as connection:
             connection.row_factory = sqlite3.Row
@@ -1600,7 +1811,7 @@ class BufferExtentFactsTests(unittest.TestCase):
                 "AND file_id IN (SELECT file_id FROM files WHERE path='src/facts.c')"
             ).fetchone()
             metadata = json.loads(row["metadata"])
-            metadata["dependencies"]["sparse_cfg:cpp"] = "cpp-sparse_cfg-v6"
+            metadata["dependencies"]["sparse_cfg:cpp"] = "cpp-sparse_cfg-v7"
             connection.execute(
                 "UPDATE analysis_state SET metadata=? WHERE feature='sparse_dfg:cpp' "
                 "AND file_id IN (SELECT file_id FROM files WHERE path='src/facts.c')",
@@ -1626,7 +1837,10 @@ class BufferExtentFactsTests(unittest.TestCase):
 
     def test_oob_shaped_array_access_produces_no_defect_candidate(self) -> None:
         clean_root = Path(self.temp.name) / "clean_repo"
-        write(clean_root / "src/clean.c", "void clean(void) { char a[4]; a[4] = 0; }\n")
+        write(
+            clean_root / "src/clean.c",
+            "void clean(void) { char a[4]; a[4] = 0; memset(a, 0, 8); }\n",
+        )
         clean_db = Path(self.temp.name) / "clean.db"
         full_index(clean_root, clean_db)
         analyze_scope(clean_root, "src", ("defect",), database=clean_db)

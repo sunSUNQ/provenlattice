@@ -1,6 +1,7 @@
 # Buffer / Extent / Size Facts V1
 
-Status: frozen output contract for issue-pilot #82. This layer **produces facts
+Status: frozen output contract for issue-pilot #82, additively extended for
+memory-API destination arrays by issue-pilot #94. This layer **produces facts
 only**. It does not decide whether an access is in bounds, report an
 overflow/OOB defect, add a graph relation, or extend the public Evidence
 projection.
@@ -258,7 +259,28 @@ overloaded assignment and `posix_memalign((void **)&s.handle, ...)` through an
 integer member hidden by a same-spelled tag, while retaining an unambiguous
 pointer member.
 
-### 4.3 Unknown access targets
+### 4.3 Memory-API destination arrays
+
+An existing `memory_access_v1.kind="memory_length"` CALL also carries
+`buffer_extent_v1` when its first argument names a destination whose extent V1
+can resolve or explicitly classify. The destination expression is normalized
+once and shared by the access object and extent lookup; an outer assignment
+result is never consulted. Thus `char dst[4]; memset(dst, 0, 8);` has, on the
+same CALL, a byte length of 8 and a declared extent of 4 elements / 4 bytes. No
+additional `dst[i]` event is required. The same rule covers unqualified and
+exact `std::` spellings of `memcpy`, `memmove`, and `memset`.
+
+The extent resolver uses the exact declaration key and copies the cached extent
+template before attaching the destination identity. A resolved fact retains the
+access object identity and may additionally carry `scoped_decl`; direct member
+destinations retain root-plus-member identity. Element/byte units follow §4.1,
+so `int a[4]` still has 4 elements and an explicitly unknown target-ABI byte
+size. Pointer, VLA, unresolved, and unsupported member targets fail closed with
+unknown/unsupported facts rather than borrowing a declaration or guessing a
+size. Computed destinations and resolved non-array scalar values do not acquire
+an array extent fact.
+
+### 4.4 Unknown access targets
 
 A subscript or pointer dereference whose target cannot be resolved to a direct
 fixed array receives `source="unknown"`, null values, and a limitation. This is
@@ -392,6 +414,12 @@ field from another namespace type or nested C tag cannot prove that the actual
 member is a pointer or array, so its object remains empty/unknown. A computed
 destination whose object cannot be identified conservatively has empty/unknown
 identity.
+The same CALL additively carries the destination's `buffer_extent_v1` under
+§4.3. Length and extent remain independent values and units: the third argument
+is always bytes, while a declared array's top-level extent is elements and its
+nested `bytes` projection follows the character/target-ABI rules. Both facts use
+the same normalized first argument and object identity, including when the CALL
+is the right side of an assignment.
 Dynamic lengths remain expressions with null constants. String-copy bounds are
 not modeled as general byte extents in V1.
 
@@ -423,15 +451,17 @@ fail closed when the contract does not supply the value it needs.
 
 The metadata structure change advances:
 
-- `sparse_cfg:cpp`: **5 -> 6** (`cpp-sparse_cfg-v6`);
-- `sparse_dfg:cpp`: **3 -> 4** (`cpp-sparse_dfg-v4`).
+- `sparse_cfg:cpp`: **5 -> 6** (`cpp-sparse_cfg-v6`) for the original facts,
+  **6 -> 7** for issue-pilot #84, and **7 -> 8** (`cpp-sparse_cfg-v8`) for #94
+  memory-API destination extents;
+- `sparse_dfg:cpp`: **3 -> 4** (`cpp-sparse_dfg-v4`), unchanged by #94.
 
-`events:cpp` remained version 2 at the time of this change because the event
-vocabulary/identity producer was unchanged; it was later advanced to 3 by
-issue-pilot #90 (member-level lock designations). SCFG freshness rejects the
-old analyzer version/source hash. SDFG also records the SCFG dependency
-contract, so `dependency_staleness` rejects a cache built under
-`cpp-sparse_cfg-v5` even if its own source hash is unchanged.
+`events:cpp` remained version 2 at the time of the original change because the
+event vocabulary/identity producer was unchanged; it was later advanced to 3 by
+issue-pilot #90 (member-level lock designations), and remains 3 after #94. SCFG
+freshness rejects the old analyzer version/source hash. SDFG also records the
+SCFG dependency contract, so `dependency_staleness` rejects a cache built under
+`cpp-sparse_cfg-v7` even if its own source hash is unchanged.
 
 No defect query or defect category consumes these annotations in V1. In
 particular, an extent of 4 plus an index of 4 is only a pair of facts; it does not
@@ -443,9 +473,12 @@ cast/octal handling, bounded integer overflow/shift failures, commuted
 subscripts, cast array bases, member/conditional and unevaluated access
 direction, RMW, direct allocation result binding, C++ overload/conversion
 fail-closed boundaries, exact/ambiguous member type evidence, memory-API
-destination identity, raw strings/comments/token boundaries, byte-unit/expression fidelity,
-byte determinism, default-index absence, version/dependency/source freshness,
-and zero defect candidates for an OOB-shaped local-array fixture. A positive
+destination identity and same-CALL extents, exact `std::` coverage,
+pointer/VLA/unresolved/member destination failures, non-character element/byte
+units, assignment-target independence, raw strings/comments/token boundaries,
+byte-unit/expression fidelity, byte determinism, default-index absence,
+version/dependency/source freshness, and zero defect candidates for OOB-shaped
+subscript and memory-CALL fixtures. A positive
 double-free control also verifies that removing both new annotation keys from
 materialized SCFG/SDFG payloads leaves the complete defect query response
 byte-identical.
