@@ -39,6 +39,7 @@ from __future__ import annotations
 
 import bisect
 import inspect
+import json
 import re
 import tomllib
 from collections import Counter, defaultdict, deque
@@ -59,6 +60,8 @@ from .sparsecfg import (
     ARGUMENT_SEPARATOR,
     BRANCH_FALSE,
     BRANCH_TRUE,
+    BUFFER_EXTENT_KEY,
+    MEMORY_ACCESS_KEY,
     SUBJECT_FROM_ASSIGNMENT,
     SUBJECT_FROM_RECEIVER,
     ControlPath,
@@ -112,6 +115,9 @@ TAINT_PATH = "taint_path"
 ERROR_HANDLING = "error_handling"
 MISMATCHED_FREE = "mismatched_free"
 INTEGER_OVERFLOW = "integer_overflow"
+# B2 (M5/M6/M8): the write-direction bounds query over the frozen
+# `buffer_extent_v1` / `memory_access_v1` facts published by #82/#94.
+OUT_OF_BOUNDS_WRITE = "out_of_bounds_write"
 # No matrix key: `defect-evidence-matrix-v1.md` has no state-machine row, and
 # inventing a number would make the table unverifiable. Addressed by its query
 # name, exactly as `taint_path` is.
@@ -127,7 +133,7 @@ STATE_MACHINE = "state_machine"
 QUERY_NAMES = (
     RESOURCE_LIFETIME, LOCK_ORDER, RACE_CONDITION,
     NULL_FLOW, USE_AFTER_FREE, DOUBLE_FREE, TAINT_PATH, ERROR_HANDLING,
-    MISMATCHED_FREE, INTEGER_OVERFLOW,
+    MISMATCHED_FREE, INTEGER_OVERFLOW, OUT_OF_BOUNDS_WRITE,
 )
 
 # The matrix keys the stage 6 queries answer. `taint_path` has no matrix family:
@@ -142,6 +148,10 @@ DOUBLE_FREE_KEY = "4.2"
 # the matrix with grade B; the query below is the one that produces candidates
 # for it, so the key is a real matrix number and not a name standing in for one.
 INTEGER_OVERFLOW_KEY = "2.1"
+# B2 has no matrix number for the same reason `mismatch`/`taint` have none:
+# M5/M6/M8 are capability rows, not keys this repository can cite. The key is a
+# name, so no reader mistakes it for a matrix lookup.
+OOB_WRITE_KEY = "oob_write"
 USE_AFTER_FREE_KEY = "4.3"
 TAINT_KEY = "taint"
 ERROR_HANDLING_KEY = "9.1"
@@ -197,6 +207,11 @@ ERROR_HANDLING_CONFIDENCE = {RESOLVED: 0.4, AMBIGUOUS: 0.2}
 # size) is as well-evidenced as anything else at this level, and it is the
 # *confirmation* that is missing, not the candidate.
 INTEGER_OVERFLOW_CONFIDENCE = {AMBIGUOUS: 0.3, UNRESOLVED: 0.1}
+# B2 bands. A declared-array candidate is a direct comparison of two published
+# constants, so it can reach `resolved`; a heap candidate additionally depends
+# on an allocation join and control reachability, and stays `ambiguous` when
+# that reachability is unknown rather than being dropped.
+OOB_WRITE_CONFIDENCE = {RESOLVED: 0.5, AMBIGUOUS: 0.3, UNRESOLVED: 0.1}
 # A compared-but-never-assigned state is one graph fact with several innocent
 # explanations (memcpy, initializer in another TU, a macro), so it sits at the
 # lowest band that survives the default gate: worth showing, never asserted.
@@ -463,6 +478,23 @@ _MISSING_DISCARDED_RESULT = (
     "outside this query entirely -- and so is a result passed straight on as an "
     "argument, which no branch examines and no variable holds"
 )
+# B2 keeps the byte/element comparison narrow on purpose: the graph carries no
+# target ABI, so only a character-typed pointee may be compared element-for-byte.
+_MISSING_OOB_UNITS = (
+    "the target ABI element size: a heap allocation's extent is bytes while a "
+    "subscript index is elements, and the graph does not hold sizeof(T) for the "
+    "pointee, so only char/signed char/unsigned char accesses are compared"
+)
+_MISSING_OOB_REACH = (
+    "the control path from the allocation to the access: a heap candidate is "
+    "joined to the nearest same-identity ALLOC in the same owner, and when no "
+    "CONTROL_REACHES path connects the two the candidate stays ambiguous"
+)
+_MISSING_OOB_NEGATIVE_INDEX = (
+    "negative constant indices: the #82 fact layer folds only non-negative "
+    "signed-int expressions, so `a[-1]` arrives as status=expression and B2 V1 "
+    "records it as coverage rather than evaluating the expression text"
+)
 
 # Matrix grades, used only for *selection* (see Candidate.rank_key). The grade
 # column was carried in defect_patterns.toml from the start but nothing read it,
@@ -644,6 +676,7 @@ def run(
         ERROR_HANDLING: error_handling,
         MISMATCHED_FREE: mismatched_free,
         INTEGER_OVERFLOW: integer_overflow,
+        OUT_OF_BOUNDS_WRITE: out_of_bounds_write,
         STATE_MACHINE: state_machine,
     }
     try:
@@ -5166,6 +5199,424 @@ def integer_overflow(
         query=INTEGER_OVERFLOW, candidates=tuple(candidates[:max_candidates]),
         coverage=coverage, truncated=truncated,
     )
+
+
+def _object_display_name(obj: Mapping[str, Any]) -> str:
+    """The object's source spelling, with the identity token left in `decl`."""
+    member = str(obj.get("member", ""))
+    if member:
+        return member
+    decl = str(obj.get("decl", ""))
+    return decl.rsplit(":", 1)[-1] if ":" in decl else decl
+
+
+def _annotation_fact(event: Mapping[str, Any], key: str) -> dict[str, Any] | None:
+    """One JSON annotation, decoded; malformed data is absent, not a crash."""
+    raw = (event.get("annotations") or {}).get(key)
+    if not raw:
+        return None
+    if isinstance(raw, Mapping):
+        return dict(raw)
+    try:
+        value = json.loads(raw)
+    except (TypeError, ValueError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def _fact_object_key(fact: Mapping[str, Any]) -> tuple[str, str, str, str]:
+    obj = fact.get("object") or {}
+    return (
+        str(obj.get("decl", "")), str(obj.get("storage", "")),
+        str(obj.get("type", "")), str(obj.get("member", "")),
+    )
+
+
+def _event_owner(event: Mapping[str, Any]) -> tuple[str, str, str]:
+    return (
+        str(event.get("owner_kind", "")),
+        str(event.get("owner_qualified_name", "")),
+        str(event.get("owner_signature", "")),
+    )
+
+
+def _owner_path(
+    adjacency: Adjacency, points: Points, start: str, target: str,
+) -> tuple[str, dict[str, Any] | None]:
+    """Whether control reaches `target` from `start`, and one path if it does."""
+    if start not in points or target not in points:
+        return REACH_UNKNOWN, None
+    if start == target:
+        return REACHABLE, {
+            "points": [start], "types": [points[start].get("event_type", "")],
+            "edges": [],
+        }
+    queue: deque[tuple[str, tuple[str, ...], tuple[str, ...]]] = deque(
+        [(start, (start,), ())])
+    seen = {start}
+    while queue:
+        node, path_points, path_edges = queue.popleft()
+        for edge_id, dst, _flags in adjacency.get(node, ()):
+            if dst in seen:
+                continue
+            next_points = (*path_points, dst)
+            next_edges = (*path_edges, edge_id)
+            if dst == target:
+                return REACHABLE, {
+                    "points": list(next_points),
+                    "types": [points.get(item, {}).get("event_type", "") for item in next_points],
+                    "edges": list(next_edges),
+                }
+            seen.add(dst)
+            queue.append((dst, next_points, next_edges))
+    return DISJOINT, None
+
+
+def out_of_bounds_write(
+    events: Iterable[Any],
+    edges: Iterable[Any],
+    *,
+    subject: str | None = None,
+    identity: bool = True,
+    max_hops: int = 64,
+    max_paths: int = 8,
+    max_candidates: int = 20,
+    names: Mapping[str, str] | None = None,
+    points: Points | None = None,
+    adjacency: Adjacency | None = None,
+    defect_keys: Collection[str] | None = None,
+) -> DefectQueryResult:
+    """B2: provable write-direction out-of-bounds candidates (M5/M6/M8).
+
+    The query is a pure reader of the frozen `buffer_extent_v1` /
+    `memory_access_v1` facts (#82, #94). It never re-parses source, never
+    re-derives an extent, and never guesses a size:
+
+    * a declared array is compared element-for-element when both the extent and
+      the index are constants;
+    * an allocation is joined by owner + object identity to the nearest
+      preceding same-identity ALLOC, and compared only when the pointee is a
+      character type (the graph holds no target ABI, so any other element type
+      is `unit_mismatch`);
+    * a memory API (`memcpy`/`memmove`/`memset`) compares its constant byte
+      length against the destination's constant byte extent on the same CALL.
+
+    Read-direction accesses, dynamic indices/sizes, unknown extents, negative
+    indices (the fact layer folds only non-negative constants), VLA/flexible
+    arrays and unsupported shapes are coverage, never silent.
+    """
+    events = list(events)
+    points, adjacency = _published_graph(events, edges, points, adjacency)
+    wanted = _wanted(OOB_WRITE_KEY, defect_keys)
+
+    population = {
+        "memory_access_points": 0,
+        "buffer_extent_points": 0,
+        "write_accesses": 0,
+        "read_accesses": 0,
+        "memory_length_calls": 0,
+    }
+    exclusions: Counter = Counter()
+
+    allocations: dict[tuple, list[Mapping[str, Any]]] = defaultdict(list)
+    releases: dict[tuple, list[int]] = defaultdict(list)
+    for event in events:
+        extent = _annotation_fact(event, BUFFER_EXTENT_KEY)
+        if extent is not None:
+            population["buffer_extent_points"] += 1
+            if extent.get("source") == "allocation":
+                allocations[(_event_owner(event), _fact_object_key(extent))].append(event)
+        if event.get("event_type") == "RELEASE":
+            annotations = event.get("annotations") or {}
+            release_object = {
+                "object": {
+                    "decl": str(annotations.get("subject_decl", "")),
+                    "storage": str(annotations.get("subject_storage", "")),
+                    "type": str(annotations.get("subject_type", "")),
+                    "member": str(annotations.get("subject_member", "")),
+                },
+            }
+            releases[(_event_owner(event), _fact_object_key(release_object))].append(
+                int(event.get("start_byte") or 0))
+
+    candidates: list[Candidate] = []
+    for event in sorted(events, key=lambda item: str(item.get("event_id", ""))):
+        access = _annotation_fact(event, MEMORY_ACCESS_KEY)
+        if access is None:
+            continue
+        population["memory_access_points"] += 1
+        operation = str(access.get("access", ""))
+        kind = str(access.get("kind", ""))
+        event_id = str(event.get("event_id", ""))
+        info = points.get(event_id, {})
+        owner = _event_owner(event)
+        obj = access.get("object") or {}
+        decl = str(obj.get("decl", ""))
+        member = str(obj.get("member", ""))
+        name = _object_display_name(obj)
+        if subject is not None and subject not in {decl, member, name}:
+            continue
+
+        if kind == "memory_length":
+            population["memory_length_calls"] += 1
+            if not wanted:
+                continue
+            extent = _annotation_fact(event, BUFFER_EXTENT_KEY)
+            if extent is None or extent.get("source") != "declared_array":
+                exclusions["unknown_extent"] += 1
+                continue
+            byte_extent = extent.get("bytes") or {}
+            length = access.get("constant")
+            extent_bytes = byte_extent.get("constant")
+            if (
+                byte_extent.get("status") != "constant" or extent_bytes is None
+                or access.get("status") != "constant" or length is None
+            ):
+                exclusions["unknown_extent"] += 1
+                continue
+            if int(length) <= int(extent_bytes):
+                exclusions["within_extent"] += 1
+                continue
+            candidates.append(_oob_candidate(
+                event=event, info=info, access=access, extent=extent,
+                facets=("M8", "M5"), index=int(length), extent_value=int(extent_bytes),
+                unit="bytes", alloc=None, path=None, names=names,
+                identity=identity, reachable=REACHABLE,
+            ))
+            continue
+
+        if operation not in {"WRITE", "READ_MODIFY_WRITE"}:
+            population["read_accesses"] += 1
+            exclusions["read_direction"] += 1
+            continue
+        population["write_accesses"] += 1
+        if not wanted:
+            continue
+        if kind not in {"subscript", "pointer_offset"}:
+            exclusions["unsupported"] += 1
+            continue
+
+        extent = _annotation_fact(event, BUFFER_EXTENT_KEY)
+        source = (extent or {}).get("source", "")
+        if source == "declared_array":
+            if (
+                extent.get("status") != "constant"
+                or extent.get("unit") != "elements"
+                or access.get("status") != "constant"
+                or access.get("unit") != "elements"
+            ):
+                if access.get("status") != "constant":
+                    if str(access.get("expression", "")).lstrip().startswith("-"):
+                        exclusions["negative_index_not_constant"] += 1
+                    else:
+                        exclusions["dynamic_index"] += 1
+                else:
+                    exclusions["unknown_extent"] += 1
+                continue
+            index = int(access["constant"])
+            extent_value = int(extent["constant"])
+            if 0 <= index < extent_value:
+                exclusions["valid"] += 1
+                continue
+            candidates.append(_oob_candidate(
+                event=event, info=info, access=access, extent=extent,
+                facets=("M8", "M5"), index=index, extent_value=extent_value,
+                unit="elements", alloc=None, path=None, names=names,
+                identity=identity, reachable=REACHABLE,
+            ))
+            continue
+
+        if source not in {"unknown", "allocation"}:
+            exclusions["unknown_extent"] += 1
+            continue
+        # A pointer access: the element extent comes from the nearest preceding
+        # same-identity ALLOC in this owner, never from the spelling.
+        if access.get("status") != "constant":
+            exclusions["dynamic_index"] += 1
+            if str(access.get("expression", "")).lstrip().startswith("-"):
+                exclusions["negative_index_not_constant"] += 1
+            continue
+        if access.get("unit") != "elements":
+            exclusions["unit_mismatch"] += 1
+            continue
+        if obj.get("type") != "char":
+            exclusions["unit_mismatch"] += 1
+            continue
+        access_byte = int(event.get("start_byte") or 0)
+        joined = [
+            alloc for alloc in allocations.get((owner, _fact_object_key({"object": obj})), ())
+            if int(alloc.get("start_byte") or 0) <= access_byte
+        ]
+        if not joined:
+            exclusions["no_join"] += 1
+            continue
+        alloc = max(joined, key=lambda item: int(item.get("start_byte") or 0))
+        alloc_extent = _annotation_fact(alloc, BUFFER_EXTENT_KEY) or {}
+        if (
+            alloc_extent.get("status") != "constant"
+            or alloc_extent.get("unit") != "bytes"
+        ):
+            exclusions["unknown_extent"] += 1
+            continue
+        alloc_start = int(alloc.get("start_byte") or 0)
+        if any(alloc_start < mark < access_byte
+               for mark in releases.get((owner, _fact_object_key(alloc_extent)), ())):
+            exclusions["intervening_release"] += 1
+            continue
+        reach, path = _owner_path(
+            adjacency, points, str(alloc.get("event_id", "")), event_id)
+        if reach == DISJOINT:
+            exclusions["control_disjoint"] += 1
+            continue
+        alloc_bytes = int(alloc_extent["constant"])
+        index = int(access["constant"])
+        if 0 <= index < alloc_bytes:
+            exclusions["valid"] += 1
+            continue
+        candidates.append(_oob_candidate(
+            event=event, info=info, access=access, extent=extent,
+            facets=("M8", "M6"), index=index, extent_value=alloc_bytes,
+            unit="bytes", alloc=alloc, alloc_extent=alloc_extent, path=path,
+            names=names, identity=identity, reachable=reach,
+        ))
+
+    candidates.sort(key=Candidate.rank_key)
+    truncated = len(candidates) > max_candidates
+    coverage = {
+        "population": dict(sorted(population.items())),
+        "candidates": len(candidates),
+        "candidates_by_key": _count_by_key(candidates),
+        "exclusions": dict(sorted(exclusions.items())),
+        "negative_index_scope": (
+            "V1 records negative constant indices as coverage; the frozen fact "
+            "layer folds only non-negative expressions"),
+        "max_hops": max_hops,
+        "max_paths": max_paths,
+        "semantic_points": len(points),
+        "semantic_edges": sum(len(item) for item in adjacency.values()),
+        "points_by_type": _points_by_type(points),
+    }
+    return DefectQueryResult(
+        query=OUT_OF_BOUNDS_WRITE, candidates=tuple(candidates[:max_candidates]),
+        coverage=coverage, truncated=truncated,
+    )
+
+
+def _oob_candidate(
+    *,
+    event: Mapping[str, Any],
+    info: Mapping[str, Any],
+    access: Mapping[str, Any],
+    extent: Mapping[str, Any],
+    facets: tuple[str, str],
+    index: int,
+    extent_value: int,
+    unit: str,
+    alloc: Mapping[str, Any] | None,
+    path: Mapping[str, Any] | None,
+    names: Mapping[str, str] | None,
+    identity: bool,
+    reachable: str,
+    alloc_extent: Mapping[str, Any] | None = None,
+) -> Candidate:
+    event_id = str(event.get("event_id", ""))
+    obj = access.get("object") or extent.get("object") or {}
+    decl = str(obj.get("decl", ""))
+    member = str(obj.get("member", ""))
+    name = _object_display_name(obj)
+    owner_symbol_id = str(event.get("owner_symbol_id", ""))
+    identity_key = _identity(info, identity=identity) if info else ""
+    if not identity_key:
+        identity_key = f"{obj.get('storage', '')}:{name}"
+    status = RESOLVED if decl and reachable == REACHABLE else (
+        UNRESOLVED if not decl else AMBIGUOUS)
+    missing = [_MISSING_OOB_UNITS]
+    if alloc is not None:
+        missing.append(_MISSING_OOB_REACH)
+    facts: list[dict[str, Any]] = [
+        {"kind": "buffer_extent", **dict(extent)},
+        {"kind": "memory_access", **dict(access)},
+    ]
+    if info:
+        facts.insert(0, _point_fact(event_id, info, names))
+    if alloc is not None:
+        facts.append({
+            "kind": "allocation",
+            "point": str(alloc.get("event_id", "")),
+            "source": _span(points_span(alloc)),
+            "extent": dict(alloc_extent or {}),
+        })
+        facts.append({
+            "kind": "reachability",
+            "from": str(alloc.get("event_id", "")),
+            "to": event_id,
+            "status": reachable,
+        })
+    paths: tuple[dict[str, Any], ...] = (dict(path),) if path else ()
+    return Candidate(
+        defect_key=OOB_WRITE_KEY,
+        query=OUT_OF_BOUNDS_WRITE,
+        subject={
+            "kind": "buffer_object",
+            "name": name,
+            "decl": decl,
+            "storage": str(obj.get("storage", "")),
+            "type": str(obj.get("type", "")),
+            "member": member,
+            "method": _method_name(info, names) if info else "",
+            "owner_symbol_id": owner_symbol_id,
+        },
+        anchor=event_id,
+        discriminator=(
+            f"{identity_key}|{owner_symbol_id}|{access.get('kind', '')}|"
+            f"{decl}|{member}|{index}|{extent_value}|{unit}"
+        ),
+        resolution_status=status,
+        confidence=OOB_WRITE_CONFIDENCE[status],
+        facts=tuple(facts),
+        uncertain_facts=(() if status == RESOLVED else (
+            _uncertain(
+                "REACHABILITY" if reachable != REACHABLE else "OBJECT_IDENTITY",
+                decisive=True,
+                detail=(
+                    "control does not prove the allocation reaches the access"
+                    if reachable != REACHABLE
+                    else "the access object has no resolved declaration identity"
+                ),
+                point=event_id, source=_span(info) if info else "",
+            ),
+        )),
+        paths=paths,
+        source_evidence=_source_evidence((event_id,), {event_id: info}) if info else (),
+        missing_evidence=tuple(missing),
+        metadata={
+            "facets": list(facets),
+            "access": str(access.get("access", "")),
+            "access_kind": str(access.get("kind", "")),
+            "index": index,
+            "extent": extent_value,
+            "unit": unit,
+            "extent_source": str(extent.get("source", "")),
+            "allocation_point": str(alloc.get("event_id", "")) if alloc else "",
+            "reach": reachable,
+            "anchor_span": {
+                "relative_path": str(event.get("relative_path", "")),
+                "start_line": int(event.get("start_line", 0) or 0),
+                "end_line": int(event.get("end_line", 0) or 0),
+            },
+            "methods": [item for item in (
+                _method_name(info, names) if info else "",) if item],
+        },
+    )
+
+
+def points_span(event: Mapping[str, Any]) -> dict[str, Any]:
+    """The span fields `_span` reads, for an event that is not in `points`."""
+    return {
+        "relative_path": str(event.get("relative_path", "")),
+        "start_line": int(event.get("start_line", 0) or 0),
+        "end_line": int(event.get("end_line", 0) or 0),
+    }
 
 
 def state_machine(

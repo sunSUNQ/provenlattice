@@ -54,6 +54,7 @@
 | race_condition | PR1 | C/C++ | 按需 | ✅ FUNCTIONAL + DIAGNOSTIC | overnight | 共享变量竞态 | ambiguous-only |
 | error_handling | PR1 | C/C++ | 按需 | ◐ SMOKE + DIAGNOSTIC | overnight | 未检查返回值 | 精度受 API contract 限制 |
 | taint_path | PR1 | C/C++ | 按需 | ◐ SMOKE + DIAGNOSTIC | overnight | source→sink | 4 source/3 sink 仅 |
+| out_of_bounds_write (M5/M6/M8) | B2 V1 (#82/#94 facts) | C/C++ | 按需 | ◐ DIAGNOSTIC | issue-pilot#93 | 写方向越界候选 | 仅常量;负下标进 coverage;非 char 堆访问记 unit_mismatch |
 
 ## L3 Task Services
 

@@ -47,6 +47,7 @@ provenlattice defect /path/to/repo --type all \
 | taint_path | taint | source→sink 传播 |
 | error_handling | 9.1 | 返回值未检查 |
 | mismatched_free | mismatch | 分配器与释放函数不配对（CWE-590/762/763） |
+| out_of_bounds_write | oob_write | 写方向越界：常量下标/偏移、堆分配、`memcpy/memmove/memset` 长度（M5/M6/M8） |
 
 ## 3. 结果 JSON 结构
 
@@ -131,6 +132,7 @@ provenlattice defect /path/to/repo --type all \
 | 边界 | 全部 | 方法内分析,无跨函数边;无 SSA/points-to |
 | 边界 | error_handling | 精度受 API contract 知识限制 |
 | 边界 | taint_path | 仅 4 source/3 sink,无 sanitizer/跨函数 |
+| 边界 | out_of_bounds_write | V1 仅报告可证明常量：负下标/动态下标/动态大小/未知 extent/VLA/灵活数组进入 coverage;非 char 元素与堆分配的单位比较记 `unit_mismatch`;堆候选需 ALLOC 与访问控制可达,中间 release 不判定 |
 
 ## 7. 故障排查
 
