@@ -1800,7 +1800,7 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(self.fact(golden, "buffer_extent_v1")["constant"], 6)
 
     def test_scfg_version_and_dfg_dependency_freshness(self) -> None:
-        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 8)
+        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 9)
         self.assertEqual(ANALYZER_VERSIONS["sparse_dfg:cpp"], 4)
         self.assertEqual(ANALYZER_VERSIONS["events:cpp"], 3)
         self.materialize("sparse_dfg")

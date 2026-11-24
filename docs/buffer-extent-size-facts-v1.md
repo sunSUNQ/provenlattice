@@ -278,7 +278,10 @@ so `int a[4]` still has 4 elements and an explicitly unknown target-ABI byte
 size. Pointer, VLA, unresolved, and unsupported member targets fail closed with
 unknown/unsupported facts rather than borrowing a declaration or guessing a
 size. Computed destinations and resolved non-array scalar values do not acquire
-an array extent fact.
+a **proved** array extent. An address-of a resolved non-array scalar is still
+published as `source="unknown"` with the `pointer target is not a direct
+fixed-array declaration` limitation (fail-closed); a plain scalar value access
+carries no `buffer_extent_v1` annotation.
 
 ### 4.4 Unknown access targets
 
@@ -452,8 +455,9 @@ fail closed when the contract does not supply the value it needs.
 The metadata structure change advances:
 
 - `sparse_cfg:cpp`: **5 -> 6** (`cpp-sparse_cfg-v6`) for the original facts,
-  **6 -> 7** for issue-pilot #84, and **7 -> 8** (`cpp-sparse_cfg-v8`) for #94
-  memory-API destination extents;
+  **6 -> 7** for issue-pilot #84, **7 -> 8** for #89 G1 ATOMIC event
+  recognition, and **8 -> 9** (`cpp-sparse_cfg-v9`) for #94 memory-API
+  destination extents;
 - `sparse_dfg:cpp`: **3 -> 4** (`cpp-sparse_dfg-v4`), unchanged by #94.
 
 `events:cpp` remained version 2 at the time of the original change because the
@@ -461,7 +465,7 @@ event vocabulary/identity producer was unchanged; it was later advanced to 3 by
 issue-pilot #90 (member-level lock designations), and remains 3 after #94. SCFG
 freshness rejects the old analyzer version/source hash. SDFG also records the
 SCFG dependency contract, so `dependency_staleness` rejects a cache built under
-`cpp-sparse_cfg-v7` even if its own source hash is unchanged.
+`cpp-sparse_cfg-v8` even if its own source hash is unchanged.
 
 No defect query or defect category consumes these annotations in V1. In
 particular, an extent of 4 plus an index of 4 is only a pair of facts; it does not

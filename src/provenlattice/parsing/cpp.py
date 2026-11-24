@@ -147,9 +147,24 @@ class CppExtractor:
         qualified = ".".join(part for part in (*(item[0] for item in self.scope), *explicit_scope, short_name) if part)
         kind = "Method" if any(item[1] in {"Class", "Struct"} for item in self.scope) or explicit_scope else "Function"
         signature = self._signature(declarator, short_name)
+        # Linkage is a graph fact the query-time definition follow needs: an
+        # external prototype must never be bound to a same-named `static`
+        # function in another translation unit (issue-pilot#92 audit). A
+        # `static` *member* function keeps external linkage; the keyword there
+        # means "no this", not internal linkage.
+        internal_linkage = kind == "Function" and any(
+            child.type == "storage_class_specifier"
+            and self.text(child).strip() == "static"
+            for child in node.children
+        )
+        metadata = {
+            "definition": node.type == "function_definition",
+            "linkage": "internal" if internal_linkage else "external",
+        }
+        if self._has_c_linkage(node):
+            metadata["c_linkage"] = True
         self.symbols.append(ParsedSymbol(kind, short_name, qualified, self.line(node), self.line(node, end=True),
-                                         signature, not short_name.startswith("_"),
-                                         {"definition": node.type == "function_definition"}))
+                                         signature, not short_name.startswith("_"), metadata))
         if kind in {"Function", "Method"}:
             self.function_names.add(short_name)
         if node.type == "function_definition":
@@ -317,6 +332,17 @@ class CppExtractor:
     def _split_qualified(self, name: str) -> tuple[list[str], str]:
         parts = [item for item in re.split(r"::|\.", name) if item]
         return parts[:-1], parts[-1] if parts else ""
+
+    def _has_c_linkage(self, node: Any) -> bool:
+        """Whether the function sits inside an ``extern "C"`` specification."""
+        current = node.parent
+        while current is not None:
+            if current.type == "linkage_specification":
+                for child in current.named_children:
+                    if child.type == "string_literal" and self.text(child).strip() == '"C"':
+                        return True
+            current = current.parent
+        return False
 
     def _signature(self, declarator: Any | None, name: str) -> str:
         function = self._find_function_declarator(declarator)

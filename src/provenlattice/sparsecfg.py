@@ -44,6 +44,9 @@ CONTROL_REACHES = "CONTROL_REACHES"
 DECLARATION = "DECLARATION"
 LOCAL_DECLARATION_KEY = "local_declaration_v1"
 LOCAL_ACCESS_KEY = "local_access_v1"
+# G2b (issue-pilot#97): additive candidate objects for a pointer bound by a
+# conditional address expression (`p = cond ? &a : &b`). Never a must-alias.
+SUBJECT_CANDIDATES_KEY = "subject_candidates_v1"
 CONTROL_POSITION_KEY = "control_position_v1"
 
 # Edge flags (design doc §6, plus `fallthrough` for switch chains). The sorted
@@ -543,6 +546,7 @@ class SparseCfgBuilder:
             return
         self._annotate_escapes(span)
         self._annotate_aliases(span)
+        self._annotate_conditional_candidates(span, body)
         # Every dangling open falls into the synthetic exit. Returns and throws
         # already emitted their own exit edges inside the walk. The open's own
         # flags ride along: a `while (c)` condition's false arm reaches the exit
@@ -942,6 +946,310 @@ class SparseCfgBuilder:
             names = alias_of.get(id(point))
             if names:
                 point.annotations["alias"] = ";".join(sorted(names))
+
+    # ------------------------------------------------------------------
+    # G2b (issue-pilot#97): conditional-pointer candidates
+
+    def _annotate_conditional_candidates(self, span: Any, body: Any) -> None:
+        """Run the pass with the owner span visible to subject resolution."""
+        if span is None:
+            return
+        self._span = span
+        try:
+            self._annotate_conditional_candidates_impl(body)
+        finally:
+            self._span = None
+
+    def _annotate_conditional_candidates_impl(self, body: Any) -> None:
+        """Stamp the candidate objects of a conditional pointer binding.
+
+        `T *p = cond ? &a : &b;` (or the assignment spelling) binds a
+        method-local / parameter pointer to one of two address constants.  The
+        published access points already name `p`; this pass adds the additive
+        `subject_candidates_v1` annotation so a query-time reader can answer
+        "which objects may this access touch" without a points-to analysis.
+
+        Fail-closed boundaries: only the unique, unconditional, same-method
+        binding is used.  A second write, a taken address (`&p`), an enclosing
+        control construct, a non-local target, or an arm that is not `&object`
+        of a resolvable declaration produces no candidates; a binding that is
+        present but unusable is stamped `status="unknown"` rather than dropped
+        silently.  The annotation is a candidate (`confidence="may"`), never a
+        must-alias or definite points-to result.
+        """
+        if self._span is None:
+            return
+        bindings: list[dict[str, Any]] = []
+        writes: dict[str, int] = {}
+        address_taken: set[str] = set()
+        self._collect_conditional_bindings(body, bindings, writes, address_taken)
+        if not bindings:
+            return
+        owner_key = (self._span.kind, self._span.qualified_name, self._span.signature)
+        by_name: dict[str, list[dict[str, Any]]] = {}
+        for binding in bindings:
+            by_name.setdefault(binding["name"], []).append(binding)
+        nodes_by_span = self._method_nodes_by_span(body)
+        for name in sorted(by_name):
+            group = by_name[name]
+            binding = group[0]
+            declaration = self._resolve(binding["lhs"], name)
+            if declaration is not None and not declaration.is_pointer:
+                continue
+            if declaration is None:
+                storage = ""
+                unresolved_pointer = True
+            else:
+                storage = declaration.storage
+                if storage not in {STORAGE_LOCAL, STORAGE_PARAMETER}:
+                    # A field/global binding is shared across methods; the
+                    # method-local call-site claim does not apply.
+                    continue
+                unresolved_pointer = False
+            shape = self._conditional_binding_candidates(binding["value"])
+            if shape[0] is None:
+                # Neither arm is an address expression: not this shape.
+                continue
+            if len(group) != 1:
+                status, candidates, limitation = (
+                    "unknown", [], "multiple_conditional_bindings")
+            elif unresolved_pointer:
+                status, candidates, limitation = (
+                    "unresolved", [], "pointer_identity_unresolved")
+            else:
+                status, candidates, limitation = shape
+            if len(group) == 1 and writes.get(name, 0) > 1:
+                status, candidates, limitation = "unknown", [], "binding_not_unique"
+            if name in address_taken:
+                status, candidates, limitation = "unknown", [], "address_escapes"
+            if self._binding_inside_control(binding["node"], body):
+                status, candidates, limitation = "unknown", [], "conditional_binding"
+            for point in self._points:
+                if (
+                    (point.owner_kind, point.owner_qualified_name,
+                     point.owner_signature) != owner_key
+                    or point.start_byte <= binding["node"].start_byte
+                ):
+                    continue
+                annotations = point.annotations
+                if annotations.get("subject") != name:
+                    continue
+                if storage and annotations.get("subject_storage") != storage:
+                    continue
+                point_member = self._conditional_access_member(
+                    point, name, nodes_by_span)
+                self._stamp_conditional_annotation(
+                    annotations, point_member, status, candidates, limitation)
+            # Vocabulary hits (LOCK/UNLOCK) are published by the event layer
+            # from `self._annotations`; their points are not appended to
+            # `self._points`, so they need the same stamp through the hit
+            # position index.
+            for key, annotations in self._annotations.items():
+                if key.event_type not in {"LOCK", "UNLOCK"}:
+                    continue
+                if (key.owner_kind, key.owner_qualified_name,
+                        key.owner_signature) != owner_key:
+                    continue
+                position = self._hit_positions.get(key, (0, 0))[0]
+                if position <= binding["node"].start_byte:
+                    continue
+                if annotations.get("subject") != name:
+                    continue
+                if storage and annotations.get("subject_storage") != storage:
+                    continue
+                self._stamp_conditional_annotation(
+                    annotations, annotations.get("subject_member", ""),
+                    status, candidates, limitation)
+
+    @staticmethod
+    def _stamp_conditional_annotation(
+        annotations: dict[str, str], point_member: str, status: str,
+        candidates: list[dict[str, str]], limitation: str,
+    ) -> None:
+        stamped = [
+            {**candidate, "member": candidate["member"] + point_member}
+            for candidate in candidates
+        ]
+        annotations[SUBJECT_CANDIDATES_KEY] = _facts_json({
+            "version": 1,
+            "source": "conditional_address_binding",
+            "confidence": "may",
+            "status": status,
+            "candidates": stamped,
+            "limitation": limitation,
+        })
+
+    def _method_nodes_by_span(self, body: Any) -> dict[tuple[int, int], Any]:
+        nodes: dict[tuple[int, int], Any] = {}
+        stack = [body]
+        while stack:
+            node = stack.pop()
+            nodes[(node.start_byte, node.end_byte)] = node
+            stack.extend(node.named_children)
+        return nodes
+
+    def _collect_conditional_bindings(
+        self,
+        node: Any,
+        bindings: list[dict[str, Any]],
+        writes: dict[str, int],
+        address_taken: set[str],
+    ) -> None:
+        if node.type == "declaration":
+            for declarator in node.children_by_field_name("declarator"):
+                if declarator.type != "init_declarator":
+                    continue
+                name = _declarator_name(self.source, declarator)
+                value = declarator.child_by_field_name("value")
+                if not name or value is None:
+                    continue
+                writes[name] = writes.get(name, 0) + 1
+                if value.type == "conditional_expression":
+                    bindings.append({
+                        "name": name,
+                        "node": declarator,
+                        "lhs": self._identifier_node(declarator, name),
+                        "value": value,
+                    })
+        elif node.type == "assignment_expression":
+            left = _unwrap_parentheses(node.child_by_field_name("left"))
+            if left is not None and left.type == "identifier":
+                # Only a write to the pointer variable itself rebinds it;
+                # `p->datum = 1` and `*p = 1` write through the pointer.
+                name = self._text(left)
+                if name:
+                    writes[name] = writes.get(name, 0) + 1
+                    if _operator_of(node, self.source) == "=":
+                        value = node.child_by_field_name("right")
+                        if value is not None and value.type == "conditional_expression":
+                            bindings.append({
+                                "name": name,
+                                "node": node,
+                                "lhs": left,
+                                "value": value,
+                            })
+        elif node.type == "update_expression":
+            argument = node.child_by_field_name("argument")
+            if argument is not None and argument.type == "identifier":
+                name = self._text(argument)
+                if name:
+                    writes[name] = writes.get(name, 0) + 1
+        elif (
+            node.type == "pointer_expression"
+            and _operator_of(node, self.source) == "&"
+        ):
+            argument = node.child_by_field_name("argument")
+            # `&p` takes the pointer variable's own address; `&p->m` takes a
+            # member's address through it and does not escape the binding.
+            if argument is not None and argument.type == "identifier":
+                name = self._text(argument)
+                if name:
+                    address_taken.add(name)
+        for child in node.named_children:
+            self._collect_conditional_bindings(
+                child, bindings, writes, address_taken)
+
+    def _identifier_node(self, node: Any, name: str) -> Any:
+        stack = [node]
+        while stack:
+            current = stack.pop(0)
+            if current.type == "identifier" and self._text(current) == name:
+                return current
+            stack.extend(current.named_children)
+        return node
+
+    def _binding_inside_control(self, node: Any, body: Any) -> bool:
+        ancestor = node.parent
+        while ancestor is not None and ancestor is not body:
+            if ancestor.type in {
+                "if_statement", "while_statement", "do_statement",
+                "for_statement", "for_range_loop", "switch_statement",
+                "case_statement", "conditional_expression",
+                "lambda_expression",
+            }:
+                return True
+            if (
+                ancestor.type == "binary_expression"
+                and _operator_of(ancestor, self.source)
+                in self.profile.short_circuit_operators
+            ):
+                return True
+            ancestor = ancestor.parent
+        return False
+
+    def _conditional_binding_candidates(
+        self, conditional: Any,
+    ) -> tuple[str | None, list[dict[str, str]], str]:
+        arms = [
+            conditional.child_by_field_name(arm_name)
+            for arm_name in ("consequence", "alternative")
+        ]
+        targets = [self._address_arm_target(arm) for arm in arms]
+        if not any(target is not None for target in targets):
+            # A plain value conditional (`x = cond ? 1 : 2`) is not the
+            # pointer-candidate shape; no annotation belongs on its accesses.
+            return None, [], ""
+        candidates: list[dict[str, str]] = []
+        for arm_name, target in zip(("consequence", "alternative"), targets):
+            candidate = self._candidate_from_target(target, arm_name)
+            if candidate is None:
+                return "unknown", [], "arm_unresolved"
+            candidates.append(candidate)
+        by_key: dict[tuple[str, str, str], dict[str, str]] = {}
+        for candidate in candidates:
+            by_key.setdefault(
+                (candidate["decl"], candidate["storage"], candidate["member"]),
+                candidate,
+            )
+        distinct = [by_key[key] for key in sorted(by_key)]
+        if len(distinct) < 2:
+            # Both arms name one object: the ordinary single identity already
+            # says everything, and there is no candidate set to publish.
+            return None, [], ""
+        return "candidate", distinct, ""
+
+    def _address_arm_target(self, node: Any) -> Any:
+        node = _unwrap_parentheses(node)
+        while node is not None and node.type == "cast_expression":
+            node = _unwrap_parentheses(node.child_by_field_name("value"))
+        if (
+            node is None
+            or node.type != "pointer_expression"
+            or _operator_of(node, self.source) != "&"
+        ):
+            return None
+        return _unwrap_parentheses(node.child_by_field_name("argument"))
+
+    def _candidate_from_target(self, target: Any, arm: str) -> dict[str, str] | None:
+        if target is None:
+            return None
+        root, member, this_root, _exact = self._member_chain(target)
+        subject = member if this_root else root
+        if not subject:
+            return None
+        facts = self._subject_facts(target, subject)
+        decl = facts.get("subject_decl", "")
+        if not decl:
+            return None
+        return {
+            "decl": decl,
+            "storage": facts.get("subject_storage", ""),
+            "type": facts.get("subject_type", ""),
+            "member": facts.get("subject_member", ""),
+            "arm": arm,
+        }
+
+    def _conditional_access_member(
+        self, point: "_Point", name: str, nodes_by_span: dict[tuple[int, int], Any],
+    ) -> str:
+        member = point.annotations.get("subject_member", "")
+        if member:
+            return member
+        node = nodes_by_span.get((point.start_byte, point.end_byte))
+        if node is None:
+            return ""
+        root, member, _this_root, _exact = self._member_chain(node)
+        return member if root == name else ""
 
     def _under_conditional_expression(self, node: Any) -> bool:
         """Whether the expression sits inside `&&`/`||` or a lambda body.

@@ -22,7 +22,7 @@ from typing import Any, Mapping, TypedDict
 
 from . import contracts, defect
 from .analysis import AnalysisStore, dependency_staleness
-from .analysis_concurrency_context import build_concurrency_context
+from .analysis_concurrency_context import build_concurrency_context, call_lock_inputs
 from .analysis_query import AnalysisRequestError
 from .concurrency_lock_scenarios import build_access_lockset
 from .concurrency_race_scenarios import build_race_scenarios
@@ -590,7 +590,16 @@ def query_defect_candidates(
             for query_name, _ in (category_specs or ())
         )
         if race_requested:
-            lockset = build_access_lockset(events, lockset_edges, lock_facts)
+            # The race query is the consumer the P1 limitation tightening is
+            # measured on: without the additive call inputs this projection
+            # stays method-level and SAME_LOCK keeps failing closed on every
+            # unknown CALL (issue-pilot#92).
+            call_callees, lock_free_callees = call_lock_inputs(repo, database)
+            lockset = build_access_lockset(
+                events, lockset_edges, lock_facts,
+                call_callees=call_callees,
+                lock_free_callees=lock_free_callees,
+            )
             concurrency_context = build_concurrency_context(events)
             race_scenarios = build_race_scenarios(
                 events, concurrency_context, edges=lockset_edges,

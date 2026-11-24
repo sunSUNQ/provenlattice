@@ -399,6 +399,7 @@ def _threaded_dataflow(
     lock_by_id: Mapping[str, Mapping[str, Any]],
     opaque_calls: frozenset[str] = frozenset(),
     raii_scopes: Iterable[tuple[str, int, int]] = (),
+    *, source_entry: bool = False,
 ) -> tuple[
     dict[str, frozenset[str]], dict[str, list[str]],
     dict[str, frozenset[str]], dict[str, frozenset[str]],
@@ -452,7 +453,23 @@ def _threaded_dataflow(
     # incoming edge (a body fragmented by returns keeps the entry explicit).
     entries: set[str] = {nid for nid in ids if not pred[nid]}
     if ids:
-        first = min(ids, key=lambda nid: (int(threaded[nid].get("start_line") or 0), nid))
+        if source_entry:
+            # The first point in *source* order, not by event id: several
+            # points share one line (`CALL`/`LOCK`/helper CALL on the lock
+            # line), and an id tie-break can attach the synthetic entry to a
+            # later point. The empty entry meet then erases the lock that
+            # point had acquired. The additive path opts in; the frozen
+            # legacy projection keeps its original id tie-break.
+            first = min(ids, key=lambda nid: (
+                int(threaded[nid].get("start_line") or 0),
+                int(threaded[nid].get("start_byte") or 0),
+                int(threaded[nid].get("end_byte") or 0),
+                str(threaded[nid].get("event_type") or ""),
+                nid,
+            ))
+        else:
+            first = min(ids, key=lambda nid: (
+                int(threaded[nid].get("start_line") or 0), nid))
         entries.add(first)
     for nid in entries:
         succ[_ENTRY].append(nid)
@@ -663,9 +680,64 @@ def _threaded_dataflow(
     return held_in, succ, tainted_in, tainted_out
 
 
+def _cfg_rank(
+    succ: Mapping[str, Iterable[str]], threaded: Mapping[str, Mapping[str, Any]],
+) -> dict[str, int]:
+    """A deterministic CFG order for points that share one source span.
+
+    An UNLOCK and its known CALL sit at the same call expression, but the
+    chain still orders them. The event id must not be that tie-break (issue
+    #92 review): sorting by id can select the point *after* the unlock and
+    silently drop both the held lock and the limitation. A depth-first walk
+    from the synthetic entry follows the CFG's own successor order, so the
+    earlier point of a same-span group gets the lower rank on every rebuild.
+    """
+    rank: dict[str, int] = {}
+    counter = 0
+
+    def source_key(nid: str) -> tuple:
+        node = threaded[nid]
+        return (
+            int(node.get("start_line") or 0),
+            int(node.get("start_byte") or 0),
+            int(node.get("end_byte") or 0),
+            str(node.get("event_type") or ""),
+            str(node.get("matched_name") or ""),
+            nid,
+        )
+
+    stack = [_ENTRY]
+    while stack:
+        nid = stack.pop()
+        if nid in rank:
+            continue
+        rank[nid] = counter
+        counter += 1
+        children: list[str] = []
+        seen: set[str] = set()
+        for child in succ.get(nid, ()):
+            if child in seen or child in rank:
+                continue
+            seen.add(child)
+            children.append(child)
+        if nid == _ENTRY:
+            # `succ[_ENTRY]` is filled from a set of fragment roots; sort the
+            # roots so the rank does not depend on hash iteration order. Inside
+            # one fragment the edge order is the CFG order and is preserved.
+            children.sort(key=source_key)
+        for child in reversed(children):
+            stack.append(child)
+    for nid in sorted(threaded, key=source_key):
+        if nid not in rank:
+            rank[nid] = counter
+            counter += 1
+    return rank
+
+
 def _flow_successor(
     access: Mapping[str, Any], threaded: Mapping[str, Mapping[str, Any]],
     *, byte_spans: bool = True,
+    cfg_rank: Mapping[str, int] | None = None,
 ) -> str | None:
     """The threaded point an access point flows into, or None for the exit.
 
@@ -674,7 +746,12 @@ def _flow_successor(
     its own edgeless statement flows into the next threaded point in source
     order (or the method exit when there is none). ``byte_spans=False`` is the
     frozen legacy projection used when the additive call input is omitted.
+    Same-span points are ordered by ``cfg_rank`` (the CFG's own order), never
+    by event id: an UNLOCK and its known CALL share a span but not a position.
     """
+    def order(nid: str) -> tuple[int, str]:
+        return ((cfg_rank.get(nid, 1 << 30), nid) if cfg_rank else (0, nid))
+
     lo = int(access.get("start_line") or 0)
     hi = int(access.get("end_line") or lo)
     if not byte_spans:
@@ -701,7 +778,7 @@ def _flow_successor(
         key=lambda key: (
             int(threaded[key].get("end_byte") or 0)
             - int(threaded[key].get("start_byte") or 0),
-            -int(threaded[key].get("start_byte") or 0), key,
+            -int(threaded[key].get("start_byte") or 0), *order(key),
         ),
     ):
         node = threaded[nid]
@@ -720,7 +797,7 @@ def _flow_successor(
             int(threaded[key].get("start_line") or 0),
             int(threaded[key].get("start_byte") or 0),
             int(threaded[key].get("end_byte") or 0)
-            - int(threaded[key].get("start_byte") or 0), key,
+            - int(threaded[key].get("start_byte") or 0), *order(key),
         ),
     ):
         node = threaded[nid]
@@ -990,7 +1067,9 @@ def build_access_lockset(
         })
         held_in, succ, tainted_in, tainted_out = _threaded_dataflow(
             threaded, edges_by_owner.get(owner, ()), lock_by_id,
-            opaque_calls=opaque_calls, raii_scopes=raii_scopes)
+            opaque_calls=opaque_calls, raii_scopes=raii_scopes,
+            source_entry=not legacy_call_limitations)
+        cfg_rank = _cfg_rank(succ, threaded)
 
         # Identity limitations remain method-level: they describe the lock fact
         # itself, not a particular CALL-crossing hold interval. With no additive
@@ -1010,7 +1089,8 @@ def build_access_lockset(
             key=lambda pair: (int(pair[1].get("start_byte") or 0), pair[0]),
         ):
             successor = _flow_successor(
-                ev, threaded, byte_spans=not legacy_call_limitations)
+                ev, threaded, byte_spans=not legacy_call_limitations,
+                cfg_rank=cfg_rank)
             held = held_in[successor] if successor is not None else held_in[_EXIT]
             # A RAII guard held over this access's byte position protects it:
             # the lock is held from its declaration to its scope end (Issue #69),
