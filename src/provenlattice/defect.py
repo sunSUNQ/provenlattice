@@ -495,6 +495,10 @@ _MISSING_OOB_NEGATIVE_INDEX = (
     "signed-int expressions, so `a[-1]` arrives as status=expression and B2 V1 "
     "records it as coverage rather than evaluating the expression text"
 )
+_MISSING_OOB_BUDGET = (
+    "the path search budget: max_hops/max_paths were exhausted before a "
+    "reaching allocation could be proven, so this candidate is ambiguous"
+)
 
 # Matrix grades, used only for *selection* (see Candidate.rank_key). The grade
 # column was carried in defect_patterns.toml from the start but nothing read it,
@@ -5272,6 +5276,113 @@ def _owner_path(
     return DISJOINT, None
 
 
+def _scope_byte(token: Any) -> int | None:
+    """The declaration byte an identity token carries (`...:name:byte`)."""
+    _head, _, tail = str(token or "").rpartition(":")
+    return int(tail) if tail.isdigit() else None
+
+
+def _event_plain_decl(event: Mapping[str, Any]) -> str:
+    for key in (MEMORY_ACCESS_KEY, BUFFER_EXTENT_KEY):
+        fact = _annotation_fact(event, key)
+        if fact is not None:
+            decl = (fact.get("object") or {}).get("decl")
+            if decl:
+                return str(decl)
+    return str((event.get("annotations") or {}).get("subject_decl", ""))
+
+
+def _event_scope(
+    event: Mapping[str, Any],
+    plain: str,
+    scopes: Mapping[tuple[str, str], tuple[int, ...]],
+) -> int | None:
+    """The declaration a use belongs to, from frozen `scoped_decl` positions.
+
+    The fact layer publishes `scoped_decl` on access objects; allocation,
+    write and release facts carry only the plain token. A declaration byte is
+    inferred as the nearest preceding scope of the same token in the same
+    owner, which is exactly the shadowing rule the declaration index applies.
+    """
+    for key in (MEMORY_ACCESS_KEY, BUFFER_EXTENT_KEY):
+        fact = _annotation_fact(event, key)
+        if fact is not None:
+            scoped = (fact.get("object") or {}).get("scoped_decl")
+            byte = _scope_byte(scoped) if scoped else None
+            if byte is not None:
+                return byte
+    owner = str(event.get("owner_symbol_id", ""))
+    candidates = scopes.get((owner, plain), ())
+    position = int(event.get("start_byte") or 0)
+    before = [byte for byte in candidates if byte <= position]
+    return max(before) if before else None
+
+
+def _blocked_path(
+    adjacency: Adjacency,
+    points: Points,
+    start: str,
+    target: str,
+    *,
+    blocked: frozenset[str],
+    max_hops: int,
+    max_paths: int,
+) -> tuple[str, dict[str, Any] | None, bool]:
+    """Reachability with the query budgets enforced, not merely reported.
+
+    `blocked` points are definitions (later allocations, writes, releases)
+    that, when on the only route, kill the definition under test. `max_hops`
+    bounds the edge count and `max_paths <= 0` forbids the walk; either budget
+    firing returns `unknown` (never `reachable` and never a full path).
+    """
+    if max_paths <= 0 or max_hops <= 0:
+        return REACH_UNKNOWN, None, True
+    if start not in points or target not in points:
+        return REACH_UNKNOWN, None, False
+    if start == target:
+        return REACHABLE, {
+            "points": [start], "types": [points[start].get("event_type", "")],
+            "edges": [],
+        }, False
+    queue: deque[tuple[str, tuple[str, ...], tuple[str, ...]]] = deque(
+        [(start, (start,), ())])
+    seen = {start}
+    truncated = False
+    while queue:
+        node, path_points, path_edges = queue.popleft()
+        if len(path_edges) >= max_hops:
+            truncated = True
+            continue
+        for edge_id, dst, _flags in adjacency.get(node, ()):
+            if dst in seen or dst in blocked:
+                continue
+            next_points = (*path_points, dst)
+            next_edges = (*path_edges, edge_id)
+            if dst == target:
+                return REACHABLE, {
+                    "points": list(next_points),
+                    "types": [points.get(item, {}).get("event_type", "")
+                              for item in next_points],
+                    "edges": list(next_edges),
+                }, truncated
+            seen.add(dst)
+            queue.append((dst, next_points, next_edges))
+    return (REACH_UNKNOWN if truncated else DISJOINT), None, truncated
+
+
+def _fixup_reason(definitions: Sequence[Mapping[str, Any]], start: int, end: int) -> str:
+    """Why a definition cannot be shown to reach the access."""
+    kinds = {
+        item["kind"] for item in definitions
+        if start < int(item["start"]) <= end
+    }
+    if "release" in kinds:
+        return "intervening_release"
+    if "write" in kinds or "alloc" in kinds:
+        return "reassigned"
+    return "control_disjoint"
+
+
 def out_of_bounds_write(
     events: Iterable[Any],
     edges: Iterable[Any],
@@ -5288,22 +5399,19 @@ def out_of_bounds_write(
 ) -> DefectQueryResult:
     """B2: provable write-direction out-of-bounds candidates (M5/M6/M8).
 
-    The query is a pure reader of the frozen `buffer_extent_v1` /
-    `memory_access_v1` facts (#82, #94). It never re-parses source, never
-    re-derives an extent, and never guesses a size:
+    A pure reader of the frozen `buffer_extent_v1` / `memory_access_v1` facts:
+    no source re-parse, no second extent model, no guessed sizes.
 
-    * a declared array is compared element-for-element when both the extent and
-      the index are constants;
-    * an allocation is joined by owner + object identity to the nearest
-      preceding same-identity ALLOC, and compared only when the pointee is a
-      character type (the graph holds no target ABI, so any other element type
-      is `unit_mismatch`);
-    * a memory API (`memcpy`/`memmove`/`memset`) compares its constant byte
-      length against the destination's constant byte extent on the same CALL.
-
-    Read-direction accesses, dynamic indices/sizes, unknown extents, negative
-    indices (the fact layer folds only non-negative constants), VLA/flexible
-    arrays and unsupported shapes are coverage, never silent.
+    * declared array: constant element index vs constant element extent;
+    * allocation: each preceding same-object ALLOC is a reaching definition
+      only when a CONTROL_REACHES path survives the later same-object
+      definitions (allocation/write/release) on the way to the access. That is
+      what keeps a conditional second allocation, a conditional free and a
+      plain `p = q` from being read as unconditional kills;
+    * memory API: constant byte length vs the destination's constant byte
+      extent, declared array or heap;
+    * `max_hops` / `max_paths` bound the walk; exhausting a budget downgrades
+      the candidate to ambiguous rather than returning a full resolved path.
     """
     events = list(events)
     points, adjacency = _published_graph(events, edges, points, adjacency)
@@ -5318,26 +5426,50 @@ def out_of_bounds_write(
     }
     exclusions: Counter = Counter()
 
-    allocations: dict[tuple, list[Mapping[str, Any]]] = defaultdict(list)
-    releases: dict[tuple, list[int]] = defaultdict(list)
+    scopes: dict[tuple[str, str], set[int]] = defaultdict(set)
     for event in events:
-        extent = _annotation_fact(event, BUFFER_EXTENT_KEY)
-        if extent is not None:
-            population["buffer_extent_points"] += 1
-            if extent.get("source") == "allocation":
-                allocations[(_event_owner(event), _fact_object_key(extent))].append(event)
-        if event.get("event_type") == "RELEASE":
-            annotations = event.get("annotations") or {}
-            release_object = {
-                "object": {
-                    "decl": str(annotations.get("subject_decl", "")),
-                    "storage": str(annotations.get("subject_storage", "")),
-                    "type": str(annotations.get("subject_type", "")),
-                    "member": str(annotations.get("subject_member", "")),
-                },
-            }
-            releases[(_event_owner(event), _fact_object_key(release_object))].append(
-                int(event.get("start_byte") or 0))
+        owner = str(event.get("owner_symbol_id", ""))
+        for key in (MEMORY_ACCESS_KEY, BUFFER_EXTENT_KEY):
+            fact = _annotation_fact(event, key)
+            if fact is None:
+                continue
+            obj = fact.get("object") or {}
+            byte = _scope_byte(obj.get("scoped_decl"))
+            if byte is not None and obj.get("decl"):
+                scopes[(owner, str(obj["decl"]))].add(byte)
+    scope_table = {key: tuple(sorted(value)) for key, value in scopes.items()}
+
+    definitions: dict[
+        tuple[str, str, int | None], list[dict[str, Any]]
+    ] = defaultdict(list)
+    for event in events:
+        event_type = str(event.get("event_type", ""))
+        plain = _event_plain_decl(event)
+        if not plain:
+            continue
+        owner = str(event.get("owner_symbol_id", ""))
+        scope = _event_scope(event, plain, scope_table)
+        start = int(event.get("start_byte") or 0)
+        if event_type == "ALLOC":
+            extent = _annotation_fact(event, BUFFER_EXTENT_KEY)
+            if extent is None or extent.get("source") != "allocation":
+                continue
+            definitions[(owner, plain, scope)].append({
+                "kind": "alloc", "event": event, "start": start,
+                "extent": extent,
+            })
+        elif event_type == "RELEASE":
+            definitions[(owner, plain, scope)].append({
+                "kind": "release", "event": event, "start": start,
+            })
+        elif event_type == "WRITE" and (
+            event.get("annotations") or {}
+        ).get("subject_decl"):
+            definitions[(owner, plain, scope)].append({
+                "kind": "write", "event": event, "start": start,
+            })
+    for items in definitions.values():
+        items.sort(key=lambda item: (item["start"], str(item["event"].get("event_id", ""))))
 
     candidates: list[Candidate] = []
     for event in sorted(events, key=lambda item: str(item.get("event_id", ""))):
@@ -5349,39 +5481,74 @@ def out_of_bounds_write(
         kind = str(access.get("kind", ""))
         event_id = str(event.get("event_id", ""))
         info = points.get(event_id, {})
-        owner = _event_owner(event)
+        owner = str(event.get("owner_symbol_id", ""))
         obj = access.get("object") or {}
         decl = str(obj.get("decl", ""))
         member = str(obj.get("member", ""))
         name = _object_display_name(obj)
         if subject is not None and subject not in {decl, member, name}:
             continue
+        scope = _scope_byte(obj.get("scoped_decl")) if obj.get("scoped_decl") else None
+        if scope is None:
+            scope = _event_scope(event, decl, scope_table)
+        identity = (owner, decl, scope)
+        access_byte = int(event.get("start_byte") or 0)
+        relevant = [
+            item for item in definitions.get(identity, ())
+            if int(item["start"]) <= access_byte
+        ]
 
         if kind == "memory_length":
             population["memory_length_calls"] += 1
             if not wanted:
                 continue
-            extent = _annotation_fact(event, BUFFER_EXTENT_KEY)
-            if extent is None or extent.get("source") != "declared_array":
-                exclusions["unknown_extent"] += 1
-                continue
-            byte_extent = extent.get("bytes") or {}
             length = access.get("constant")
-            extent_bytes = byte_extent.get("constant")
-            if (
-                byte_extent.get("status") != "constant" or extent_bytes is None
-                or access.get("status") != "constant" or length is None
-            ):
+            if access.get("status") != "constant" or length is None:
                 exclusions["unknown_extent"] += 1
                 continue
-            if int(length) <= int(extent_bytes):
+            extent = _annotation_fact(event, BUFFER_EXTENT_KEY)
+            if extent is not None and extent.get("source") == "declared_array":
+                byte_extent = extent.get("bytes") or {}
+                if (
+                    byte_extent.get("status") != "constant"
+                    or byte_extent.get("constant") is None
+                ):
+                    exclusions["unknown_extent"] += 1
+                    continue
+                if int(length) <= int(byte_extent["constant"]):
+                    exclusions["within_extent"] += 1
+                    continue
+                candidates.append(_oob_candidate(
+                    event=event, info=info, access=access, extent=extent,
+                    facets=("M8", "M5"), index=int(length),
+                    extent_value=int(byte_extent["constant"]), unit="bytes",
+                    alloc=None, path=None, names=names, identity=identity,
+                    reachable=REACHABLE,
+                ))
+                continue
+            if not any(item["kind"] == "alloc" for item in relevant):
+                exclusions["unknown_extent"] += 1
+                continue
+            resolved = _resolve_heap(
+                event, identity, relevant, points, adjacency,
+                max_hops=max_hops, max_paths=max_paths,
+            )
+            if resolved is None:
+                exclusions["unknown_extent"] += 1
+                continue
+            alloc, path, alloc_bytes, reach, budget, extras = resolved
+            if int(length) <= alloc_bytes:
                 exclusions["within_extent"] += 1
                 continue
             candidates.append(_oob_candidate(
-                event=event, info=info, access=access, extent=extent,
-                facets=("M8", "M5"), index=int(length), extent_value=int(extent_bytes),
-                unit="bytes", alloc=None, path=None, names=names,
-                identity=identity, reachable=REACHABLE,
+                event=event, info=info,
+                access=access, extent=extent or {},
+                facets=("M8", "M6"), index=int(length),
+                extent_value=alloc_bytes, unit="bytes", alloc=alloc,
+                alloc_extent=_annotation_fact(alloc, BUFFER_EXTENT_KEY) or {},
+                path=path, names=names, identity=identity,
+                reachable=reach, extra_allocations=extras,
+                budget_truncated=budget,
             ))
             continue
 
@@ -5429,55 +5596,36 @@ def out_of_bounds_write(
         if source not in {"unknown", "allocation"}:
             exclusions["unknown_extent"] += 1
             continue
-        # A pointer access: the element extent comes from the nearest preceding
-        # same-identity ALLOC in this owner, never from the spelling.
         if access.get("status") != "constant":
             exclusions["dynamic_index"] += 1
             if str(access.get("expression", "")).lstrip().startswith("-"):
                 exclusions["negative_index_not_constant"] += 1
             continue
-        if access.get("unit") != "elements":
+        if access.get("unit") != "elements" or obj.get("type") != "char":
             exclusions["unit_mismatch"] += 1
             continue
-        if obj.get("type") != "char":
-            exclusions["unit_mismatch"] += 1
-            continue
-        access_byte = int(event.get("start_byte") or 0)
-        joined = [
-            alloc for alloc in allocations.get((owner, _fact_object_key({"object": obj})), ())
-            if int(alloc.get("start_byte") or 0) <= access_byte
-        ]
-        if not joined:
+        index = int(access["constant"])
+        if not any(item["kind"] == "alloc" for item in relevant):
             exclusions["no_join"] += 1
             continue
-        alloc = max(joined, key=lambda item: int(item.get("start_byte") or 0))
-        alloc_extent = _annotation_fact(alloc, BUFFER_EXTENT_KEY) or {}
-        if (
-            alloc_extent.get("status") != "constant"
-            or alloc_extent.get("unit") != "bytes"
-        ):
-            exclusions["unknown_extent"] += 1
+        resolved = _resolve_heap(
+            event, identity, relevant, points, adjacency,
+            max_hops=max_hops, max_paths=max_paths,
+        )
+        if resolved is None:
+            exclusions[_fixup_reason(relevant, 0, access_byte)] += 1
             continue
-        alloc_start = int(alloc.get("start_byte") or 0)
-        if any(alloc_start < mark < access_byte
-               for mark in releases.get((owner, _fact_object_key(alloc_extent)), ())):
-            exclusions["intervening_release"] += 1
-            continue
-        reach, path = _owner_path(
-            adjacency, points, str(alloc.get("event_id", "")), event_id)
-        if reach == DISJOINT:
-            exclusions["control_disjoint"] += 1
-            continue
-        alloc_bytes = int(alloc_extent["constant"])
-        index = int(access["constant"])
+        alloc, path, alloc_bytes, reach, budget, extras = resolved
         if 0 <= index < alloc_bytes:
             exclusions["valid"] += 1
             continue
         candidates.append(_oob_candidate(
-            event=event, info=info, access=access, extent=extent,
+            event=event, info=info, access=access, extent=extent or {},
             facets=("M8", "M6"), index=index, extent_value=alloc_bytes,
-            unit="bytes", alloc=alloc, alloc_extent=alloc_extent, path=path,
-            names=names, identity=identity, reachable=reach,
+            unit="bytes", alloc=alloc,
+            alloc_extent=_annotation_fact(alloc, BUFFER_EXTENT_KEY) or {},
+            path=path, names=names, identity=identity, reachable=reach,
+            extra_allocations=extras, budget_truncated=budget,
         ))
 
     candidates.sort(key=Candidate.rank_key)
@@ -5502,6 +5650,101 @@ def out_of_bounds_write(
     )
 
 
+def _resolve_heap(
+    event: Mapping[str, Any],
+    identity: tuple[str, str, int | None],
+    relevant: Sequence[Mapping[str, Any]],
+    points: Points,
+    adjacency: Adjacency,
+    *,
+    max_hops: int,
+    max_paths: int,
+) -> tuple[Mapping[str, Any], dict[str, Any] | None, int, str, bool, tuple[str, ...]] | None:
+    """The reaching allocation that proves (or disproves) this access's bounds.
+
+    Returns `(alloc, path, bytes, reach, budget, other_allocations)` or None
+    when no allocation can be joined. Each preceding ALLOC is a reaching
+    definition only when a control path survives every later same-identity
+    definition; a later allocation/write/release that sits on the only route
+    kills it. Budget exhaustion is returned as `unknown` plus a flag.
+    """
+    event_id = str(event.get("event_id", ""))
+    access_byte = int(event.get("start_byte") or 0)
+    allocs = [item for item in relevant if item["kind"] == "alloc"]
+    if not allocs:
+        return None
+    # A write on an allocation's own statement is that allocation's binding,
+    # not a later reassignment (`p = malloc(8)` has both an ALLOC and a WRITE).
+    alloc_lines = {
+        int(item["event"].get("start_line", 0) or 0) for item in allocs
+    }
+    plain_writes = [
+        item for item in relevant
+        if item["kind"] == "write"
+        and int(item["event"].get("start_line", 0) or 0) not in alloc_lines
+    ]
+    reaching: list[tuple[Mapping[str, Any], dict[str, Any] | None, int]] = []
+    budget_hit = False
+    budget_alloc: Mapping[str, Any] | None = None
+    blocked_kinds: set[str] = set()
+    for alloc in allocs:
+        alloc_start = int(alloc["start"])
+        reassigned = any(
+            alloc_start < int(item["start"]) <= access_byte
+            for item in plain_writes
+        )
+        if reassigned:
+            blocked_kinds.add("write")
+            continue
+        # ALLOC and RELEASE are threaded points; a later one blocks only the
+        # paths that actually run through it. WRITE points are edgeless, so a
+        # plain reassignment is handled lexically above instead.
+        blocked = frozenset(
+            str(item["event"].get("event_id", ""))
+            for item in relevant
+            if int(item["start"]) > alloc_start
+            and str(item["kind"]) in {"alloc", "release"}
+        )
+        status, path, truncated = _blocked_path(
+            adjacency, points, str(alloc["event"].get("event_id", "")), event_id,
+            blocked=blocked, max_hops=max_hops, max_paths=max_paths,
+        )
+        if status == REACHABLE:
+            extent = alloc.get("extent") or {}
+            if (
+                extent.get("status") == "constant"
+                and extent.get("unit") == "bytes"
+                and extent.get("constant") is not None
+            ):
+                reaching.append((alloc["event"], path, int(extent["constant"])))
+            continue
+        blocked_kinds.update(
+            str(item["kind"]) for item in relevant
+            if int(item["start"]) > alloc_start
+        )
+        if status == REACH_UNKNOWN or truncated:
+            budget_hit = True
+            if budget_alloc is None:
+                budget_alloc = alloc["event"]
+    if reaching:
+        chosen = min(reaching, key=lambda item: item[2])
+        extras = tuple(
+            str(item[0].get("event_id", "")) for item in reaching
+            if item[0] is not chosen[0]
+        )
+        return chosen[0], chosen[1], chosen[2], REACHABLE, False, extras
+    if budget_hit and budget_alloc is not None:
+        extent = _annotation_fact(budget_alloc, BUFFER_EXTENT_KEY) or {}
+        if extent.get("constant") is not None:
+            return (
+                budget_alloc, None, int(extent["constant"]),
+                REACH_UNKNOWN, True, (),
+            )
+    if "release" in blocked_kinds:
+        return None
+    return None
+
+
 def _oob_candidate(
     *,
     event: Mapping[str, Any],
@@ -5518,6 +5761,8 @@ def _oob_candidate(
     identity: bool,
     reachable: str,
     alloc_extent: Mapping[str, Any] | None = None,
+    extra_allocations: tuple[str, ...] = (),
+    budget_truncated: bool = False,
 ) -> Candidate:
     event_id = str(event.get("event_id", ""))
     obj = access.get("object") or extent.get("object") or {}
@@ -5533,6 +5778,8 @@ def _oob_candidate(
     missing = [_MISSING_OOB_UNITS]
     if alloc is not None:
         missing.append(_MISSING_OOB_REACH)
+    if budget_truncated:
+        missing.append(_MISSING_OOB_BUDGET)
     facts: list[dict[str, Any]] = [
         {"kind": "buffer_extent", **dict(extent)},
         {"kind": "memory_access", **dict(access)},
@@ -5579,6 +5826,9 @@ def _oob_candidate(
                 "REACHABILITY" if reachable != REACHABLE else "OBJECT_IDENTITY",
                 decisive=True,
                 detail=(
+                    "the path search budget was exhausted before the "
+                    "allocation could be proven to reach the access"
+                    if budget_truncated else
                     "control does not prove the allocation reaches the access"
                     if reachable != REACHABLE
                     else "the access object has no resolved declaration identity"
@@ -5598,6 +5848,12 @@ def _oob_candidate(
             "unit": unit,
             "extent_source": str(extent.get("source", "")),
             "allocation_point": str(alloc.get("event_id", "")) if alloc else "",
+            "allocation_points": [
+                item for item in (
+                    str(alloc.get("event_id", "")) if alloc else "",
+                    *extra_allocations,
+                ) if item
+            ],
             "reach": reachable,
             "anchor_span": {
                 "relative_path": str(event.get("relative_path", "")),

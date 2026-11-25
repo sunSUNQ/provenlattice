@@ -120,6 +120,91 @@ void run(void) {
 }
 """
 
+SHADOWED_OUTER_OOB = r"""
+#include <stdlib.h>
+void touch(int c) {
+    char *p = malloc(4);
+    if (c) { char *p = malloc(8); p[4] = 0; }
+    p[4] = 0;
+}
+"""
+
+SHADOWED_INNER_OOB = r"""
+#include <stdlib.h>
+void touch(int c) {
+    char *p = malloc(8);
+    if (c) { char *p = malloc(4); p[4] = 0; }
+    p[4] = 0;
+}
+"""
+
+CROSS_TU_A = r"""
+#include <stdlib.h>
+static void f(void) {
+    char *p = malloc(4);
+    p[4] = 0;
+}
+"""
+
+CROSS_TU_B = r"""
+#include <stdlib.h>
+static void f(void) {
+    char *p = malloc(8);
+    p[4] = 0;
+}
+"""
+
+PLAIN_REASSIGNMENT = r"""
+#include <stdlib.h>
+void touch(char *q) {
+    char *p = malloc(4);
+    p = q;
+    p[4] = 0;
+}
+"""
+
+BRANCH_ALLOCATION = r"""
+#include <stdlib.h>
+void touch(int c) {
+    char *p = malloc(4);
+    if (c) { p = malloc(8); }
+    p[4] = 0;
+}
+"""
+
+CONDITIONAL_RELEASE = r"""
+#include <stdlib.h>
+void touch(int c) {
+    char *p = malloc(4);
+    if (c) { free(p); return; }
+    p[4] = 0;
+}
+"""
+
+HEAP_MEMORY_API = r"""
+#include <stdlib.h>
+#include <string.h>
+void over(void) {
+    char *p = malloc(4);
+    memset(p, 0, 8);
+}
+void exact(void) {
+    char *p = malloc(8);
+    memcpy(p, "ab", 4);
+}
+"""
+
+BUDGETED_PATH = r"""
+#include <stdlib.h>
+void sink(void) { }
+void touch(void) {
+    char *p = malloc(4);
+    sink();
+    sink();
+    p[4] = 0;
+}
+"""
+
 
 class OutOfBoundsWriteTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -264,6 +349,77 @@ class OutOfBoundsWriteTests(unittest.TestCase):
         bundles = {bundle["candidate_id"] for bundle in env["evidence_bundles"]}
         for candidate in env["candidates"]:
             self.assertIn(candidate["evidence_id"], bundles)
+
+    def test_shadowed_pointers_do_not_share_extents(self) -> None:
+        for body, expected_extent in (
+            (SHADOWED_OUTER_OOB, 4),
+            (SHADOWED_INNER_OOB, 4),
+        ):
+            with self.subTest(body=body[:40]):
+                self.setUp()
+                self.build(body)
+                candidates = self.candidates()
+                self.assertEqual(len(candidates), 1)
+                self.assertEqual(candidates[0]["metadata"]["extent"], expected_extent)
+                self.tearDown()
+
+    def test_cross_translation_unit_static_functions_are_isolated(self) -> None:
+        write(self.root, "src/a.c", CROSS_TU_A)
+        write(self.root, "src/b.c", CROSS_TU_B)
+        full_index(self.root, self.database)
+        analyze_scope(self.root, "src", ("defect",), database=self.database)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(
+            candidates[0]["metadata"]["anchor_span"]["relative_path"], "src/a.c")
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+
+    def test_plain_reassignment_kills_the_old_allocation(self) -> None:
+        self.build(PLAIN_REASSIGNMENT)
+        env = self.query(confidence_gate=None)
+        self.assertEqual(
+            [c for c in env["candidates"] if c["query"] == "out_of_bounds_write"],
+            [])
+        self.assertGreaterEqual(
+            env["coverage"]["exclusions"].get("reassigned", 0), 1)
+
+    def test_branch_allocation_still_proves_the_shorter_path(self) -> None:
+        self.build(BRANCH_ALLOCATION)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+        self.assertTrue(candidates[0]["paths"])
+
+    def test_conditional_release_does_not_hide_the_free_path(self) -> None:
+        self.build(CONDITIONAL_RELEASE)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+
+    def test_heap_memory_api_uses_the_allocation_extent(self) -> None:
+        self.build(HEAP_MEMORY_API)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        candidate = candidates[0]
+        self.assertEqual(candidate["metadata"]["facets"], ["M8", "M6"])
+        self.assertEqual(candidate["metadata"]["index"], 8)
+        self.assertEqual(candidate["metadata"]["extent"], 4)
+
+    def test_path_budget_downgrades_reachability(self) -> None:
+        self.build(BUDGETED_PATH)
+        constrained = self.query(max_hops=1, max_paths=1)
+        limited = [c for c in constrained["candidates"]
+                   if c["query"] == "out_of_bounds_write"]
+        self.assertEqual(len(limited), 1)
+        self.assertEqual(limited[0]["resolution_status"], "ambiguous")
+        self.assertEqual(limited[0]["paths"], [])
+        self.assertTrue(any("budget" in item
+                            for item in limited[0]["missing_evidence"]))
+        unrestricted = [c for c in self.query()["candidates"]
+                        if c["query"] == "out_of_bounds_write"]
+        self.assertEqual(len(unrestricted), 1)
+        self.assertEqual(unrestricted[0]["resolution_status"], "resolved")
+        self.assertTrue(unrestricted[0]["paths"])
 
 
 if __name__ == "__main__":

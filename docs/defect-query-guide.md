@@ -132,7 +132,7 @@ provenlattice defect /path/to/repo --type all \
 | 边界 | 全部 | 方法内分析,无跨函数边;无 SSA/points-to |
 | 边界 | error_handling | 精度受 API contract 知识限制 |
 | 边界 | taint_path | 仅 4 source/3 sink,无 sanitizer/跨函数 |
-| 边界 | out_of_bounds_write | V1 仅报告可证明常量：负下标/动态下标/动态大小/未知 extent/VLA/灵活数组进入 coverage;非 char 元素与堆分配的单位比较记 `unit_mismatch`;堆候选需 ALLOC 与访问控制可达,中间 release 不判定 |
+| 边界 | out_of_bounds_write | V1 仅报告可证明常量：负下标/动态下标/动态大小/未知 extent/VLA/灵活数组进入 coverage;非 char 元素与堆分配的单位比较记 `unit_mismatch`;堆候选按“later 同身份定义不阻断的可达路径”判定,普通重绑定记 `reassigned`,互斥 release 不排除;`max_hops/max_paths` 耗尽时降级为 ambiguous |
 
 ## 7. 故障排查
 
