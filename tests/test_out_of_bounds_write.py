@@ -288,6 +288,42 @@ void touch(char *q, int c) {
 }
 """
 
+JOINT_REBINDING = r"""
+#include <stdlib.h>
+void touch(char *q, char *r, int c) {
+    char *p = malloc(4);
+    if (c) { p = q; } else { p = r; }
+    p[4] = 0;
+}
+"""
+
+CHECK_GUARD_REBINDING = r"""
+#include <stdlib.h>
+void touch(char *q, int *guard) {
+    char *p = malloc(4);
+    if (guard) { p = q; }
+    p[4] = 0;
+}
+"""
+
+REBINDING_BUDGET = r"""
+#include <stdlib.h>
+void touch(char *q, int c) {
+    char *p = malloc(4);
+    if (c) { p = q; }
+    p[4] = 0;
+}
+"""
+
+INNER_SHADOW_RELEASE = r"""
+#include <stdlib.h>
+void touch(void) {
+    char *p = malloc(4);
+    { char *p = malloc(8); free(p); }
+    p[4] = 0;
+}
+"""
+
 SHADOW_RELEASE = r"""
 #include <stdlib.h>
 void touch(void) {
@@ -341,16 +377,18 @@ class OutOfBoundsWriteTests(unittest.TestCase):
         self.assertIn("extent", " ".join(
             fact.get("kind", "") for fact in candidate["facts"]))
 
-    def test_valid_dynamic_and_negative_indices_are_coverage(self) -> None:
+    def test_valid_dynamic_and_negative_indices(self) -> None:
         self.build(BOUNDS_MATRIX)
         env = self.query()
         candidates = [c for c in env["candidates"]
                       if c["query"] == "out_of_bounds_write"]
-        self.assertEqual(candidates, [])
+        # #104 publishes negative constant indices, so `a[-1]` is a candidate.
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["index"], -1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
         exclusions = env["coverage"]["exclusions"]
         self.assertGreaterEqual(exclusions.get("valid", 0), 2)
         self.assertGreaterEqual(exclusions.get("dynamic_index", 0), 1)
-        self.assertGreaterEqual(exclusions.get("negative_index_not_constant", 0), 1)
 
     def test_read_modify_write_counts_as_a_write_direction(self) -> None:
         self.build(RMW)
@@ -591,15 +629,56 @@ class OutOfBoundsWriteTests(unittest.TestCase):
         self.assertEqual(candidates[0]["metadata"]["extent"], 4)
         self.assertEqual(candidates[0]["metadata"]["index"], 4)
 
-    def test_shadow_exit_release_blocks_the_outer_allocation(self) -> None:
+    def test_shadow_release_scope_is_an_explicit_uncertainty(self) -> None:
+        # The fact layer publishes no scoped identity for a release, so a free
+        # under a shadowed name cannot be attributed to one declaration. The
+        # three-state answer is an ambiguous candidate with an explicit
+        # limitation -- neither a resolved finding nor a silent drop.
         self.build(SHADOW_RELEASE)
         env = self.query(confidence_gate=None)
         accesses = [
             c for c in env["candidates"] if c["query"] == "out_of_bounds_write"
         ]
-        self.assertEqual(accesses, [])
+        self.assertEqual(len(accesses), 1)
+        self.assertEqual(accesses[0]["resolution_status"], "ambiguous")
+        self.assertTrue(any(
+            "released declaration" in item
+            for item in accesses[0]["missing_evidence"]))
+
+
+    def test_joint_rebindings_on_all_arms_kill_the_allocation(self) -> None:
+        self.build(JOINT_REBINDING)
+        env = self.query(confidence_gate=None)
+        self.assertEqual(
+            [c for c in env["candidates"] if c["query"] == "out_of_bounds_write"],
+            [])
         self.assertGreaterEqual(
-            env["coverage"]["exclusions"].get("intervening_release", 0), 1)
+            env["coverage"]["exclusions"].get("reassigned", 0), 1)
+
+    def test_check_guard_rebinding_keeps_the_other_arm(self) -> None:
+        self.build(CHECK_GUARD_REBINDING)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+
+    def test_rebinding_budget_downgrades_instead_of_excluding(self) -> None:
+        self.build(REBINDING_BUDGET)
+        constrained = self.query(max_hops=1, max_paths=1)
+        limited = [c for c in constrained["candidates"]
+                   if c["query"] == "out_of_bounds_write"]
+        self.assertEqual(len(limited), 1)
+        self.assertEqual(limited[0]["resolution_status"], "ambiguous")
+        self.assertTrue(any("budget" in item
+                            for item in limited[0]["missing_evidence"]))
+
+    def test_inner_shadow_release_is_scope_ambiguous(self) -> None:
+        self.build(INNER_SHADOW_RELEASE)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["resolution_status"], "ambiguous")
+        self.assertTrue(any(
+            "released declaration" in item
+            for item in candidates[0]["missing_evidence"]))
 
 
 if __name__ == "__main__":

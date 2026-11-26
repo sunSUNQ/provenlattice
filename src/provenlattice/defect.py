@@ -508,14 +508,14 @@ _MISSING_OOB_REACH = (
     "path can be proven -- disjoint, budget-truncated, or killed by an "
     "unconditional rebinding -- the candidate stays ambiguous or is declined"
 )
-_MISSING_OOB_NEGATIVE_INDEX = (
-    "negative constant indices: the #82 fact layer folds only non-negative "
-    "signed-int expressions, so `a[-1]` arrives as status=expression and B2 V1 "
-    "records it as coverage rather than evaluating the expression text"
-)
 _MISSING_OOB_BUDGET = (
     "the path search budget: max_hops/max_paths were exhausted before a "
     "reaching allocation could be proven, so this candidate is ambiguous"
+)
+_MISSING_OOB_RELEASE_SCOPE = (
+    "the released declaration: an unscoped free in a shadowed name context "
+    "cannot be attributed to one scope, so the candidate stays ambiguous "
+    "rather than being resolved or silently dropped"
 )
 _LOCAL_ACCESS_KEY = "local_access_v1"
 _CONTROL_POSITION_KEY = "control_position_v1"
@@ -5514,19 +5514,23 @@ def out_of_bounds_write(
                 "extent": extent,
             })
         elif event_type == "RELEASE":
-            # A release carries no scoped token of its own. Applying it to
-            # every known scope of the same plain token is the fail-closed
-            # reading: it can suppress a candidate, never invent one, and it
-            # covers a `free` that sits just after a shadowed block.
-            release_scopes = (
-                {scope} if _explicit_scope(event) is not None else {
-                    byte for _start, byte in scope_table.get((owner, plain), ())
-                }
-            ) or {None}
-            for release_scope in release_scopes:
-                definitions[(owner, plain, release_scope)].append({
-                    "kind": "release", "event": event, "start": start,
-                })
+            # A release carries no scoped token of its own. The inferred scope
+            # is definite; when the name is shadowed, the other scopes get a
+            # *potential* release that marks a candidate ambiguous instead of
+            # silently deciding which declaration was freed.
+            known_scopes = {
+                byte for _start, byte in scope_table.get((owner, plain), ())
+            }
+            definitions[(owner, plain, scope)].append({
+                "kind": "release", "event": event, "start": start,
+            })
+            if _explicit_scope(event) is None and len(known_scopes) > 1:
+                for other_scope in known_scopes:
+                    if other_scope != scope:
+                        definitions[(owner, plain, other_scope)].append({
+                            "kind": "release_potential", "event": event,
+                            "start": start,
+                        })
         elif event_type == "WRITE":
             # Only a write to the pointer value itself is a rebinding. An
             # element write (`p[4] = 0`, `*p = 0`) is an access, not a new
@@ -5632,7 +5636,7 @@ def out_of_bounds_write(
             if resolved is None:
                 exclusions["unknown_extent"] += 1
                 continue
-            alloc, path, alloc_bytes, reach, budget, extras = resolved
+            alloc, path, alloc_bytes, reach, budget, extras, release_uncertain = resolved
             if int(length) <= alloc_bytes:
                 exclusions["within_extent"] += 1
                 continue
@@ -5644,7 +5648,7 @@ def out_of_bounds_write(
                 alloc_extent=_annotation_fact(alloc, BUFFER_EXTENT_KEY) or {},
                 path=path, names=names, identity=identity,
                 reachable=reach, extra_allocations=extras,
-                budget_truncated=budget,
+                budget_truncated=budget, release_uncertain=release_uncertain,
             ))
             continue
 
@@ -5711,7 +5715,7 @@ def out_of_bounds_write(
         if resolved is None:
             exclusions[_fixup_reason(relevant, 0, access_byte)] += 1
             continue
-        alloc, path, alloc_bytes, reach, budget, extras = resolved
+        alloc, path, alloc_bytes, reach, budget, extras, release_uncertain = resolved
         if 0 <= index < alloc_bytes:
             exclusions["valid"] += 1
             continue
@@ -5722,6 +5726,7 @@ def out_of_bounds_write(
             alloc_extent=_annotation_fact(alloc, BUFFER_EXTENT_KEY) or {},
             path=path, names=names, identity=identity, reachable=reach,
             extra_allocations=extras, budget_truncated=budget,
+            release_uncertain=release_uncertain,
         ))
 
     candidates.sort(key=Candidate.rank_key)
@@ -5732,8 +5737,9 @@ def out_of_bounds_write(
         "candidates_by_key": _count_by_key(candidates),
         "exclusions": dict(sorted(exclusions.items())),
         "negative_index_scope": (
-            "V1 records negative constant indices as coverage; the frozen fact "
-            "layer folds only non-negative expressions"),
+            "negative constant indices are published by #104 and reported when "
+            "both the index and extent are constant; non-constant negative "
+            "expressions remain coverage"),
         "max_hops": max_hops,
         "max_paths": max_paths,
         "semantic_points": len(points),
@@ -5746,8 +5752,8 @@ def out_of_bounds_write(
     )
 
 
-def _write_kills_path(
-    write_event: Mapping[str, Any],
+def _writes_kill_path(
+    writes: Sequence[Mapping[str, Any]],
     alloc_id: str,
     access_id: str,
     points: Points,
@@ -5757,47 +5763,52 @@ def _write_kills_path(
     *,
     max_hops: int,
     max_paths: int,
-) -> bool:
-    """Whether a pointer rebinding executes on every alloc-to-access path.
+) -> str:
+    """How a set of pointer rebindings relates to every alloc-to-access path.
 
-    Direct predecessors cannot answer "all paths", so each predecessor is
-    turned into a blockade: a non-branch point blocks the point, a branch
-    predecessor blocks only the edge for its arm. If the access is still
-    reachable, the write sits on one arm only and must not kill the
-    allocation; if nothing reaches, every path runs through the write.
-    Unknown predecessor resolution or an exhausted budget is fail-closed and
-    treats the write as a kill.
+    All rebindings are blockaded together, not one at a time: two arms that
+    each rebind leave no path at all and must kill the allocation, while one
+    conditional rebinding leaves the other arm free. Predecessor points are
+    blocked whole; BRANCH/CHECK predecessors block only the edge for their
+    arm. Returns "kill", "bypass", or "unknown" when a budget exhausted the
+    search -- the caller turns "unknown" into an ambiguous candidate rather
+    than a definite exclusion.
     """
-    control = _annotation_fact(write_event, _CONTROL_POSITION_KEY) or {}
-    predecessors = control.get("predecessors") or []
-    if not predecessors:
-        return True
     blocked_points: set[str] = set()
     blocked_edges: set[str] = set()
-    for predecessor in predecessors:
-        event_type = str(predecessor.get("event_type", ""))
-        ordinal = int(predecessor.get("ordinal", -1))
-        ids = ordinal_index.get((owner, event_type, ordinal), ())
-        if not ids:
-            return True
-        flags = frozenset(predecessor.get("flags") or ())
-        if event_type == "BRANCH" and flags:
-            matched = False
-            for point_id in ids:
-                for edge_id, _dst, edge_flags in adjacency.get(point_id, ()):
-                    if flags <= frozenset(edge_flags):
-                        blocked_edges.add(edge_id)
-                        matched = True
-            if not matched:
+    for write_event in writes:
+        control = _annotation_fact(write_event, _CONTROL_POSITION_KEY) or {}
+        predecessors = control.get("predecessors") or []
+        if not predecessors:
+            return "kill"
+        for predecessor in predecessors:
+            event_type = str(predecessor.get("event_type", ""))
+            ordinal = int(predecessor.get("ordinal", -1))
+            ids = ordinal_index.get((owner, event_type, ordinal), ())
+            if not ids:
+                return "kill"
+            flags = frozenset(predecessor.get("flags") or ())
+            if event_type in {"BRANCH", "CHECK"} and flags:
+                matched = False
+                for point_id in ids:
+                    for edge_id, _dst, edge_flags in adjacency.get(point_id, ()):
+                        if flags <= frozenset(edge_flags):
+                            blocked_edges.add(edge_id)
+                            matched = True
+                if not matched:
+                    blocked_points.update(ids)
+            else:
                 blocked_points.update(ids)
-        else:
-            blocked_points.update(ids)
     status, _path, _truncated = _blocked_path(
         adjacency, points, alloc_id, access_id,
         blocked=frozenset(blocked_points), max_hops=max_hops,
         max_paths=max_paths, blocked_edges=frozenset(blocked_edges),
     )
-    return status != REACHABLE
+    if status == REACHABLE:
+        return "bypass"
+    if status == DISJOINT:
+        return "kill"
+    return "unknown"
 
 
 def _resolve_heap(
@@ -5810,24 +5821,27 @@ def _resolve_heap(
     *,
     max_hops: int,
     max_paths: int,
-) -> tuple[Mapping[str, Any], dict[str, Any] | None, int, str, bool, tuple[str, ...]] | None:
+) -> tuple[
+    Mapping[str, Any], dict[str, Any] | None, int, str, bool,
+    tuple[str, ...], bool,
+] | None:
     """The reaching allocation that proves (or disproves) this access's bounds.
 
-    Returns `(alloc, path, bytes, reach, budget, other_allocations)` or None
-    when no allocation can be joined. Each preceding ALLOC is a reaching
-    definition only when a control path survives every later same-identity
-    definition; a later allocation/write/release that sits on the only route
-    kills it. Budget exhaustion is returned as `unknown` plus a flag.
+    Returns `(alloc, path, bytes, reach, budget, other_allocations,
+    release_uncertain)`, or None when no allocation can be joined. Rebindings
+    are blockaded as a set, so two arms that each rebind kill the old
+    allocation while one conditional rebinding leaves the other arm free.
+    Budget exhaustion and a potential (shadow-ambiguous) release are returned
+    as uncertainty flags; the caller downgrades the candidate instead of
+    dropping it.
     """
     event_id = str(event.get("event_id", ""))
     access_byte = int(event.get("start_byte") or 0)
+    owner = str(event.get("owner_symbol_id", ""))
     allocs = [item for item in relevant if item["kind"] == "alloc"]
     if not allocs:
         return None
     writes = [item for item in relevant if item["kind"] == "write"]
-    # Each allocation's own binding is the nearest preceding pointer write
-    # (`p = malloc(4)` has a WRITE for `p` before the ALLOC). Every other
-    # pointer write is a rebinding.
     binding_ids = set()
     for alloc in allocs:
         preceding = [
@@ -5841,24 +5855,33 @@ def _resolve_heap(
         item for item in writes
         if str(item["event"].get("event_id", "")) not in binding_ids
     ]
-    proven: list[tuple[Mapping[str, Any], dict[str, Any] | None, int]] = []
-    truncated: list[tuple[Mapping[str, Any], int]] = []
+    proven: list[tuple[Mapping[str, Any], dict[str, Any] | None, int, bool]] = []
+    truncated: list[tuple[Mapping[str, Any], int, bool]] = []
     blocked_kinds: set[str] = set()
     for alloc in allocs:
         alloc_start = int(alloc["start"])
         alloc_id = str(alloc["event"].get("event_id", ""))
-        owner = str(event.get("owner_symbol_id", ""))
-        killed = any(
-            alloc_start < int(item["start"]) <= access_byte
-            and _write_kills_path(
-                item["event"], alloc_id, event_id, points, adjacency,
-                ordinal_index, owner, max_hops=max_hops, max_paths=max_paths,
+        between_writes = [
+            item for item in plain_writes
+            if alloc_start < int(item["start"]) <= access_byte
+        ]
+        if between_writes:
+            phase = _writes_kill_path(
+                [item["event"] for item in between_writes],
+                alloc_id, event_id, points, adjacency, ordinal_index, owner,
+                max_hops=max_hops, max_paths=max_paths,
             )
-            for item in plain_writes
-        )
-        if killed:
-            blocked_kinds.add("write")
-            continue
+            if phase == "kill":
+                blocked_kinds.add("write")
+                continue
+        else:
+            phase = "bypass"
+        potential_releases = [
+            item for item in relevant
+            if item["kind"] == "release_potential"
+            and alloc_start < int(item["start"]) <= access_byte
+        ]
+        release_uncertain = bool(potential_releases)
         blocked = frozenset(
             str(item["event"].get("event_id", ""))
             for item in relevant
@@ -5866,7 +5889,7 @@ def _resolve_heap(
             and str(item["kind"]) in {"alloc", "release"}
         )
         status, path, was_truncated = _blocked_path(
-            adjacency, points, str(alloc["event"].get("event_id", "")), event_id,
+            adjacency, points, alloc_id, event_id,
             blocked=blocked, max_hops=max_hops, max_paths=max_paths,
         )
         extent = alloc.get("extent") or {}
@@ -5876,28 +5899,39 @@ def _resolve_heap(
             and extent.get("constant") is not None
         )
         if status == REACHABLE:
+            if phase == "unknown":
+                if known:
+                    truncated.append(
+                        (alloc["event"], int(extent["constant"]), release_uncertain))
+                continue
             if known:
-                proven.append((alloc["event"], path, int(extent["constant"])))
+                proven.append((
+                    alloc["event"], path, int(extent["constant"]),
+                    release_uncertain,
+                ))
             continue
         blocked_kinds.update(
             str(item["kind"]) for item in relevant
             if int(item["start"]) > alloc_start
         )
         if (status == REACH_UNKNOWN or was_truncated) and known:
-            truncated.append((alloc["event"], int(extent["constant"])))
-    pool: list[tuple[Mapping[str, Any], dict[str, Any] | None, int, bool]] = [
-        (event, path, size, False) for event, path, size in proven
-    ] + [(event, None, size, True) for event, size in truncated]
+            truncated.append(
+                (alloc["event"], int(extent["constant"]), release_uncertain))
+    pool = [(event, path, size, False, uncertain)
+            for event, path, size, uncertain in proven]
+    pool += [(event, None, size, True, uncertain)
+             for event, size, uncertain in truncated]
     if not pool:
         return None
-    chosen, path, size, from_budget = min(pool, key=lambda item: item[2])
+    chosen, path, size, from_budget, release_uncertain = min(
+        pool, key=lambda item: item[2])
     extras = tuple(
         str(item[0].get("event_id", "")) for item in pool
         if item[0] is not chosen
     )
     if from_budget:
-        return chosen, None, size, REACH_UNKNOWN, True, extras
-    return chosen, path, size, REACHABLE, False, extras
+        return chosen, None, size, REACH_UNKNOWN, True, extras, release_uncertain
+    return chosen, path, size, REACHABLE, False, extras, release_uncertain
 
 
 def _oob_candidate(
@@ -5918,6 +5952,7 @@ def _oob_candidate(
     alloc_extent: Mapping[str, Any] | None = None,
     extra_allocations: tuple[str, ...] = (),
     budget_truncated: bool = False,
+    release_uncertain: bool = False,
 ) -> Candidate:
     event_id = str(event.get("event_id", ""))
     obj = access.get("object") or extent.get("object") or {}
@@ -5930,11 +5965,15 @@ def _oob_candidate(
         identity_key = f"{obj.get('storage', '')}:{name}"
     status = RESOLVED if decl and reachable == REACHABLE else (
         UNRESOLVED if not decl else AMBIGUOUS)
+    if release_uncertain and status == RESOLVED:
+        status = AMBIGUOUS
     missing = [_MISSING_OOB_UNITS]
     if alloc is not None:
         missing.append(_MISSING_OOB_REACH)
     if budget_truncated:
         missing.append(_MISSING_OOB_BUDGET)
+    if release_uncertain:
+        missing.append(_MISSING_OOB_RELEASE_SCOPE)
     facts: list[dict[str, Any]] = [
         {"kind": "buffer_extent", **dict(extent)},
         {"kind": "memory_access", **dict(access)},
