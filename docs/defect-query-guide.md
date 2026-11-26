@@ -26,7 +26,7 @@ provenlattice defect /path/to/repo --type double_free --json
 provenlattice defect /path/to/repo --type use_after_free --json
 provenlattice defect /path/to/repo --type null_flow --json
 
-# 全部九类
+# 全部已注册查询
 provenlattice defect /path/to/repo --type all --json
 
 # 带预算限制
@@ -48,6 +48,29 @@ provenlattice defect /path/to/repo --type all \
 | error_handling | 9.1 | 返回值未检查 |
 | mismatched_free | mismatch | 分配器与释放函数不配对（CWE-590/762/763） |
 | out_of_bounds_write | oob_write | 写方向越界：常量下标/偏移、堆分配、`memcpy/memmove/memset` 长度（M5/M6/M8） |
+| uninitialized_use | uninit | 方法内局部对象/局部指针在定义前读取（M9，CWE-457） |
+
+### uninitialized_use（M9）
+
+复用 `sparse_cfg` v7 的 `local_declaration_v1` / `local_access_v1` /
+`control_position_v1` 事实，按 scoped declaration token 连接声明与访问：
+
+- 状态：`uninitialized`（每条发布路径都无定义，`resolution_status=resolved`）、
+  `maybe_uninitialized`（部分路径有定义）、`unknown`（方法覆盖不完整，显式
+  带 coverage reason）、`initialized`（不产生候选）。
+- 反例不报：声明初始化、使用前赋值、if/else 两臂均赋值、未初始化分支
+  early return、静态零初始化、参数、不可达访问。
+- 边界：只覆盖 straight-line、if/else、early return；宏、goto、循环、
+  switch/条件表达式、lambda/异常、未知写穿、partial parse 为显式
+  `unknown`/coverage，不静默当作安全。局部指针解引用（`*p`）本身会触发
+  `unknown_write_through`，因此该形状是显式 `unknown` 候选，而非 definite。
+- 已知 FN：写入 span 是目标标识符本身，同一赋值右侧的自引用
+  （`x = x + 1`）在 V1 中被当作写入之后的读取；`int x = x;` 的初始化自读被当作
+  声明初始化，不产生候选。裸条件读取（`if (x)` / `if (x) return`）上游未发布
+  `local_access_v1`，V1 在 coverage 的 `uninitialized_bare_condition_reads` 中
+  计数，并在 `uninitialized_missing_evidence` 暴露
+  `MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION`，不静默当作安全；条件表达式内的
+  写入按 maybe/unknown 处理，不当作无条件定义。
 
 ## 3. 结果 JSON 结构
 
@@ -130,6 +153,8 @@ provenlattice defect /path/to/repo --type all \
 | FN | CONSUMES | 仅直接传递形状(`f(malloc(n))`),赋值形状走 DATA_FLOW_TO |
 | FN | sparse CFG | goto 目标不建模,短路坍缩为单 BRANCH |
 | 边界 | 全部 | 方法内分析,无跨函数边;无 SSA/points-to |
+| 边界 | uninitialized_use | 仅 straight-line/if-else/early-return；宏/goto/循环/条件表达式/写穿为显式 unknown；条件表达式内的写入按 maybe/unknown |
+| FN | uninitialized_use | `x = x + 1` 的 RHS 读取被当作写入之后；`int x = x;` 自初始化不产生候选；裸条件 `if (x)` 读取上游未发布，仅在 `uninitialized_bare_condition_reads` 计数暴露；参数/静态对象的调用期或零初始化语义不在候选内 |
 | 边界 | error_handling | 精度受 API contract 知识限制 |
 | 边界 | taint_path | 仅 4 source/3 sink,无 sanitizer/跨函数 |
 | 边界 | out_of_bounds_write | V1 仅报告可证明常量：负下标/动态下标/动态大小/未知 extent/VLA/灵活数组进入 coverage;非 char 元素与堆分配的单位比较记 `unit_mismatch`;堆候选按“later 同身份定义不阻断的可达路径”判定,普通重绑定记 `reassigned`,互斥 release 不排除;`max_hops/max_paths` 耗尽时降级为 ambiguous |

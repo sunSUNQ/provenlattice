@@ -30,7 +30,7 @@
       "type": "string",
       "enum": ["ok", "partial", "empty", "unsupported_only", "stale", "not_built", "failed", "timeout"]
     },
-    "defect_type": { "type": "string", "enum": ["race_condition", "double_free"] },
+    "defect_type": { "type": "string", "enum": ["race_condition", "double_free", "lock_order", "resource_lifetime", "use_after_free", "null_flow", "mismatched_free"] },
     "error": { "type": ["string", "null"] },
     "reason": { "type": ["string", "null"] },
     "facts": {

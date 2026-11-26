@@ -24,6 +24,16 @@ ANALYSIS_FEATURES_HELP = (
 )
 
 
+def _non_negative_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(f"expected an integer: {value!r}") from error
+    if parsed < 0:
+        raise argparse.ArgumentTypeError(f"expected a non-negative integer: {value!r}")
+    return parsed
+
+
 def _add_analysis_options(command: argparse.ArgumentParser, *, multi_target: bool) -> None:
     command.add_argument("--analysis", metavar="FEATURES", default=None,
                          help=ANALYSIS_FEATURES_HELP)
@@ -76,7 +86,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--type", default="all",
         help="defect query: all, or one of resource_lifetime, lock_order, "
              "race_condition, null_flow, use_after_free, double_free, "
-             "taint_path, error_handling, mismatched_free, out_of_bounds_write "
+             "taint_path, error_handling, mismatched_free, out_of_bounds_write, "
+             "uninitialized_use "
              "(or a matrix key 3.1/4.1/4.2/4.3/9.1/taint)")
     defect_query_cmd.add_argument(
         "--category", default=None,
@@ -126,6 +137,22 @@ def build_parser() -> argparse.ArgumentParser:
     callees.add_argument("symbol")
     references = command("references")
     references.add_argument("symbol")
+    raw_references = command("raw-references")
+    raw_references.add_argument("raw_name")
+    raw_references.add_argument(
+        "--match", choices=("exact", "prefix", "substring"), default="exact",
+        help="case-sensitive raw-name match mode (default: exact)")
+    raw_references.add_argument("--file-id")
+    raw_references.add_argument("--owner-symbol-id")
+    raw_references.add_argument("--resolved-symbol-id")
+    raw_references.add_argument(
+        "--status", choices=("resolved", "ambiguous", "unresolved"))
+    raw_references.add_argument(
+        "--limit", type=_non_negative_int, default=20,
+        help="maximum returned records (default: 20)")
+    raw_references.add_argument(
+        "--max-bytes", type=_non_negative_int, default=None,
+        help="maximum serialized data+evidence payload; envelope not counted")
     dependencies = command("dependencies")
     dependencies.add_argument("shard")
     dependents = command("dependents")
@@ -278,6 +305,13 @@ def run(args: argparse.Namespace) -> dict:
             return query.get_callees(args.symbol)
         if args.command == "references":
             return query.get_references(args.symbol)
+        if args.command == "raw-references":
+            return query.get_raw_references(
+                raw_name=args.raw_name, match=args.match,
+                file_id=args.file_id, owner_symbol_id=args.owner_symbol_id,
+                resolved_symbol_id=args.resolved_symbol_id, status=args.status,
+                limit=args.limit, max_bytes=args.max_bytes,
+            )
         if args.command == "dependencies":
             return query.get_dependencies(args.shard)
         if args.command == "dependents":

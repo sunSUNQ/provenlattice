@@ -17,6 +17,46 @@ SYMBOL_KINDS = ("Namespace", "Class", "Struct", "Interface", "Function", "Method
 CROSS_RELATIONS = {"DESCRIBES", "CONSTRAINS", "IMPLEMENTED_BY", "VERIFIED_BY",
                    "BELONGS_TO", "DOCUMENTS"}
 
+RAW_REFERENCE_MATCH_MODES = ("exact", "prefix", "substring")
+
+
+def _raw_name_clause(match: str, value: str) -> tuple[str, tuple]:
+    """Case-sensitive SQL clause for the three name-match modes.
+
+    ``instr`` is deliberately used instead of ``LIKE``: SQLite's default LIKE
+    is case-insensitive for ASCII, and ``%`` / ``_`` / ``\\`` would need
+    escaping. ``instr`` treats those characters literally and matches the
+    in-memory overlay predicate exactly.
+    """
+    if match == "exact":
+        return "raw_name = ?", (value,)
+    if match == "prefix":
+        return "instr(raw_name, ?) = 1", (value,)
+    if match == "substring":
+        return "instr(raw_name, ?) > 0", (value,)
+    raise ValueError(
+        f"unsupported raw-name match mode: {match!r}; "
+        f"expected one of {RAW_REFERENCE_MATCH_MODES}"
+    )
+
+
+def _raw_name_matches(row: dict, match: str, value: str) -> bool:
+    name = str(row.get("raw_name") or "")
+    if match == "exact":
+        return name == value
+    if match == "prefix":
+        return name.startswith(value)
+    if match == "substring":
+        return value in name
+    raise ValueError(f"unsupported raw-name match mode: {match!r}")
+
+
+def _bounded_payload_bytes(data: list, evidence: list) -> int:
+    return len(json.dumps(
+        {"data": data, "evidence": [item.to_dict() for item in evidence]},
+        ensure_ascii=False, separators=(",", ":"),
+    ))
+
 
 def _parse_analysis_request(analysis):
     if analysis is None:
@@ -467,23 +507,126 @@ class GraphQuery:
     def get_raw_references(
         self, *, raw_name: str | None = None, file_id: str | None = None,
         owner_symbol_id: str | None = None, resolved_symbol_id: str | None = None,
-        status: str | None = None,
+        status: str | None = None, match: str = "exact",
+        limit: int | None = None, max_bytes: int | None = None,
     ) -> dict:
+        """Bounded, named raw-reference query.
+
+        ``match`` is case-sensitive ``exact`` / ``prefix`` / ``substring``.
+        ``limit`` bounds the returned records; ``max_bytes`` bounds the
+        serialized ``data + evidence`` payload (the envelope itself is not
+        counted). Both bounds are stable: rows are sorted by
+        ``(file_id, start_line, id)`` before either bound is applied, and an
+        overlay's ADD/UPDATE/DELETE is merged before the bound.
+        """
         started = time.perf_counter()
-        filters = {"raw_name": raw_name, "file_id": file_id,
-                   "owner_symbol_id": owner_symbol_id,
-                   "resolved_symbol_id": resolved_symbol_id, "status": status}
-        active = {key: value for key, value in filters.items() if value is not None}
-        where = " AND ".join(f"{key}=?" for key in active)
-        sql = "SELECT * FROM raw_references" + (f" WHERE {where}" if where else "")
-        rows = self.view.query(
-            "RawReference", sql, tuple(active.values()),
-            lambda row: all(row.get(key) == value for key, value in active.items()),
-        )
+        if match not in RAW_REFERENCE_MATCH_MODES:
+            raise ValueError(
+                f"unsupported raw-name match mode: {match!r}; "
+                f"expected one of {RAW_REFERENCE_MATCH_MODES}"
+            )
+        if match != "exact" and raw_name is None:
+            raise ValueError("match=prefix/substring requires raw_name")
+        if limit is not None and limit < 0:
+            raise ValueError("limit must be >= 0")
+        if max_bytes is not None and max_bytes < 0:
+            raise ValueError("max_bytes must be >= 0")
+
+        clauses: list[str] = []
+        params: list = []
+        if raw_name is not None:
+            clause, values = _raw_name_clause(match, raw_name)
+            clauses.append(clause)
+            params.extend(values)
+        for column, value in (
+            ("file_id", file_id),
+            ("owner_symbol_id", owner_symbol_id),
+            ("resolved_symbol_id", resolved_symbol_id),
+            ("status", status),
+        ):
+            if value is not None:
+                clauses.append(f"{column}=?")
+                params.append(value)
+        where = " WHERE " + " AND ".join(clauses) if clauses else ""
+        base_sql = "SELECT * FROM raw_references" + where
+
+        total_row = self.storage.row(
+            "SELECT COUNT(*) AS count FROM raw_references" + where, tuple(params))
+        total = int(total_row["count"]) if total_row else 0
+        has_overlays = bool(self.view.layers)
+        if limit is not None and not has_overlays:
+            # No overlay means SQL can safely bound the base scan. Overlay
+            # ADD/UPDATE/DELETE must be merged first, so that path fetches the
+            # effective rows and applies the bound after the merge.
+            sql = base_sql + " ORDER BY file_id, COALESCE(start_line, 0), id LIMIT ?"
+            query_params = tuple(params) + (limit,)
+        else:
+            sql = base_sql
+            query_params = tuple(params)
+
+        def predicate(row: dict) -> bool:
+            if raw_name is not None and not _raw_name_matches(row, match, raw_name):
+                return False
+            return all(
+                row.get(column) == value
+                for column, value in (
+                    ("file_id", file_id),
+                    ("owner_symbol_id", owner_symbol_id),
+                    ("resolved_symbol_id", resolved_symbol_id),
+                    ("status", status),
+                )
+                if value is not None
+            )
+
+        rows = self.view.query("RawReference", sql, query_params, predicate)
         rows.sort(key=lambda row: (row["file_id"], row.get("start_line") or 0, row["id"]))
-        data = [decode_row(row) for row in rows]
-        return self._result(data, started, [self._raw_reference_evidence(row) for row in data],
-                            query_type="raw_references", anchor=raw_name or resolved_symbol_id or "")
+        if has_overlays:
+            total = len(rows)
+
+        selected = rows if limit is None else rows[:limit]
+        data: list[dict] = []
+        evidence: list[Evidence] = []
+        payload_bytes = 0
+        for row in selected:
+            item = decode_row(row)
+            item_evidence = self._raw_reference_evidence(row)
+            if max_bytes is None:
+                data.append(item)
+                evidence.append(item_evidence)
+                continue
+            trial_data = data + [item]
+            trial_evidence = evidence + [item_evidence]
+            trial_bytes = _bounded_payload_bytes(trial_data, trial_evidence)
+            if trial_bytes > max_bytes:
+                break
+            data, evidence, payload_bytes = trial_data, trial_evidence, trial_bytes
+        if max_bytes is not None:
+            # payload_bytes was accumulated inside the bounded loop.
+            pass
+        elif limit is not None:
+            payload_bytes = _bounded_payload_bytes(data, evidence)
+        else:
+            # No bound was requested: do not pay an extra full payload
+            # serialization just to report a byte count. Existing unbounded
+            # callers keep their original cost; bounded callers get `bytes`.
+            payload_bytes = None
+
+        truncated = len(data) < total
+        result = self._result(
+            data, started, evidence, query_type="raw_references",
+            anchor=raw_name or resolved_symbol_id or "",
+        )
+        result["raw_references"] = {
+            "match": match,
+            "limit": limit,
+            "max_bytes": max_bytes,
+            "max_bytes_scope": "data+evidence",
+            "returned": len(data),
+            "total": total,
+            "truncated": truncated,
+            "bytes": payload_bytes,
+        }
+        return result
 
     MAX_CALL_CANDIDATES = 8
     MAX_CALL_SITES = 16

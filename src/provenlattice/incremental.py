@@ -14,6 +14,60 @@ from .shard import ShardStrategy
 from .storage import SQLiteStorage
 
 
+def _quick_index_ok(storage: SQLiteStorage, old_states: dict[str, dict],
+                    old_fingerprints: dict[str, str]) -> bool:
+    """Cheap integrity gate for the no-change fast path.
+
+    ``file_state`` and ``shards`` are the small tables that must agree with the
+    whole graph before an unchanged update may skip loading nodes/edges. A
+    mismatch falls back to the normal rebuild/error path instead of silently
+    returning a false "unchanged" answer.
+    """
+    files = storage.row("SELECT COUNT(*) AS count FROM files")
+    shards = storage.row("SELECT COUNT(*) AS count FROM shards")
+    return bool(
+        files and shards
+        and int(files["count"]) == len(old_states)
+        and int(shards["count"]) == len(old_fingerprints)
+    )
+
+
+def _file_node_metadata_changed(old: dict, new) -> bool:
+    """Fast File-node comparison that never serialises ``new.metadata``.
+
+    File metadata carries the full parsed file under ``parsed``. The source
+    hash and the parser identity are the equivalence condition: if the bytes
+    and parser are unchanged, the deterministic parse cannot differ. If either
+    signal is absent, callers fall back to the original full comparison.
+    """
+    try:
+        old_meta = json.loads(old["metadata"])
+    except (TypeError, ValueError):
+        return True
+    new_meta = new.metadata or {}
+    old_parsed = old_meta.get("parsed") or {}
+    new_parsed = new_meta.get("parsed") or {}
+    old_parser = old_parsed.get("parser")
+    new_parser = new_parsed.get("parser")
+    if not old_parser or not new_parser:
+        return old["metadata"] != json.dumps(new.metadata, sort_keys=True)
+    return (
+        old_meta.get("relative_path") != new_meta.get("relative_path")
+        or old_meta.get("shard_path") != new_meta.get("shard_path")
+        or old_parser != new_parser
+    )
+
+
+def _node_changed(old: dict, new) -> bool:
+    if (
+        old["source_hash"], old["start_line"], old["end_line"]
+    ) != (new.source_hash, new.start_line, new.end_line):
+        return True
+    if new.kind == "File":
+        return _file_node_metadata_changed(old, new)
+    return old["metadata"] != json.dumps(new.metadata, sort_keys=True)
+
+
 def incremental_update(
     repo: str | Path, database: str | Path | None = None, *, strategy: ShardStrategy | None = None,
     repository_id_override: str | None = None,
@@ -29,11 +83,7 @@ def incremental_update(
         if generation == 0:
             raise RuntimeError("repository is not indexed; run `provenlattice index` first")
         old_states = storage.file_states(repo_id)
-        old_cache = storage.parser_cache(repo_id)
-        old_nodes = storage.snapshot_ids("nodes")
-        old_edges = storage.snapshot_ids("edges")
         old_fingerprints = storage.shard_fingerprints()
-        old_references = storage.raw_reference_cache(repo_id)
 
         current_paths = set(source_by_path)
         old_paths = set(old_states)
@@ -45,6 +95,11 @@ def incremental_update(
         }
         changed = added | modified | deleted
         if not changed:
+            if not _quick_index_ok(storage, old_states, old_fingerprints):
+                raise RuntimeError(
+                    "index integrity check failed (files/shards/file_state mismatch); "
+                    "run `provenlattice index` to rebuild"
+                )
             return {
                 "repo_id": repo_id,
                 "graph_generation": generation,
@@ -52,9 +107,15 @@ def incremental_update(
                 "delta": Delta().to_dict(),
                 "metrics": Metrics(
                     files_scanned=len(sources), files_reused=len(sources),
-                    shards_reused=len(storage.shard_fingerprints()), database_size=storage.database_size,
+                    shards_reused=len(old_fingerprints),
+                    database_size=storage.database_size,
                 ).to_dict(),
             }
+
+        old_cache = storage.parser_cache(repo_id)
+        old_nodes = storage.snapshot_ids("nodes")
+        old_edges = storage.snapshot_ids("edges")
+        old_references = storage.raw_reference_cache(repo_id)
 
         parsed_files = {}
         parse_failures = 0
@@ -121,14 +182,7 @@ def incremental_update(
         common_node_ids = set(old_nodes) & set(new_nodes)
         updated_nodes = 0
         for node_id in common_node_ids:
-            old = old_nodes[node_id]
-            new = new_nodes[node_id]
-            if (
-                old["source_hash"], old["start_line"], old["end_line"], old["metadata"]
-            ) != (
-                new.source_hash, new.start_line, new.end_line,
-                json.dumps(new.metadata, sort_keys=True),
-            ):
+            if _node_changed(old_nodes[node_id], new_nodes[node_id]):
                 updated_nodes += 1
         new_fingerprints = {shard.shard_id: shard.api_fingerprint for shard in shards}
         dirty = sorted(

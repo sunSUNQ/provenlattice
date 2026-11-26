@@ -76,6 +76,7 @@ CATEGORY_QUERIES: dict[str, tuple[tuple[str, dict[str, object]], ...]] = {
         (defect.DOUBLE_FREE, {}),
         (defect.MISMATCHED_FREE, {}),
         (defect.OUT_OF_BOUNDS_WRITE, {}),
+        (defect.UNINITIALIZED_USE, {}),
     ),
     "concurrency": (
         (defect.RACE_CONDITION, {}),

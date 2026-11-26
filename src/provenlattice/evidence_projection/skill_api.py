@@ -126,6 +126,7 @@ ANCHOR_CLASSES = ("primary", "supporting", "unresolved")
 SEMANTIC_ROLES = (
     "candidate_anchor", "racing_access", "held_lock",
     "release_site", "unresolved_location",
+    "resource_alloc", "dereference", "call", "control", "null_value", "fact",
 )
 
 # ---------------------------------------------------------------------------
@@ -252,6 +253,82 @@ _DOUBLE_FREE_PROJECTED_FACTS = {
     },
 }
 
+# Generic candidate-bound facts for the five new projectors. Each block keeps
+# the engine's candidate.facts[] rows verbatim (fact_type, file/line, event id,
+# method) and the engine's own uncertain_facts / missing_evidence lists.
+_GENERIC_PROJECTED_FACTS = {
+    "lock_order": {
+        "lock_facts": {
+            "source": (
+                "engine lock_order candidate LOCK/UNLOCK facts + lock identities "
+                "(candidate.facts[].lock / lock_identity / role / side)"
+            ),
+            "limitations": [
+                "MAY_PARALLEL remains an uncertain fact; the graph does not prove concurrency",
+                "lock aliasing is not resolved; two spellings may be two locks",
+                "lock-order inversion is a candidate, not a verified deadlock",
+            ],
+        },
+    },
+    "resource_lifetime": {
+        "resource_facts": {
+            "source": (
+                "engine resource_lifetime candidate ALLOC/RELEASE/CALL/CHECK/"
+                "BRANCH/RETURN facts"
+            ),
+            "limitations": [
+                "ownership contracts are not first-class facts; missing_evidence carries them",
+                "aliasing/reassignment and release-inside-callee remain unknown",
+            ],
+        },
+    },
+    "use_after_free": {
+        "lifetime_facts": {
+            "source": (
+                "engine use_after_free candidate RELEASE + DEREFERENCE/RETURN facts"
+            ),
+            "limitations": [
+                "one RELEASE fact may legitimately support several UAF candidates",
+                "alias precision is limited; missing_evidence carries the caveat",
+            ],
+        },
+    },
+    "null_flow": {
+        "null_flow_facts": {
+            "source": (
+                "engine null_flow candidate NULL/WRITE/DEREFERENCE facts"
+            ),
+            "limitations": [
+                "the null value and the dereference are local-method facts",
+                "guarded dereference remains a known false-positive surface",
+            ],
+        },
+    },
+    "mismatched_free": {
+        "allocator_facts": {
+            "source": (
+                "engine mismatched_free candidate ALLOC + RELEASE facts and the "
+                "declared allocator pair"
+            ),
+            "limitations": [
+                "only declared allocator pairs are recognized; unknown release fails closed",
+                "cross-function ownership contracts are not implied",
+            ],
+        },
+    },
+}
+
+_GENERIC_NOT_PRODUCED_FACTS = {
+    "lock_order": {
+        "happens_before": _NOT_PRODUCED_FACTS["happens_before"],
+        "guarded_by": _NOT_PRODUCED_FACTS["guarded_by"],
+    },
+    "resource_lifetime": {},
+    "use_after_free": {},
+    "null_flow": {},
+    "mismatched_free": {},
+}
+
 _PROJECTED_EVIDENCE = {
     "supporting_locations": {
         "fields": list(SUPPORTING_LOCATION_FIELDS),
@@ -273,8 +350,14 @@ ANCHOR_SEMANTICS = {
         "candidate_anchor": "the anchor location of a candidate",
         "racing_access": "a located racing access (race_condition)",
         "held_lock": "a lock held at an access",
-        "release_site": "a release/free site (double_free)",
+        "release_site": "a release/free site (double_free / lifetime defects)",
         "unresolved_location": "a location that could not be resolved",
+        "resource_alloc": "an allocation site (resource_lifetime)",
+        "dereference": "a dereference site (null_flow / use_after_free)",
+        "call": "a call fact location",
+        "control": "a check/branch/return fact location",
+        "null_value": "a null-value fact location",
+        "fact": "a generic engine fact location",
     },
 }
 
@@ -340,6 +423,10 @@ def _defect_manifest(defect_type: str, projector_version: str) -> dict[str, Any]
         projected_facts = dict(_DOUBLE_FREE_PROJECTED_FACTS)
         not_projected_facts = {}
         not_produced_facts = {}
+    elif defect_type in _GENERIC_PROJECTED_FACTS:
+        projected_facts = dict(_GENERIC_PROJECTED_FACTS[defect_type])
+        not_projected_facts = {}
+        not_produced_facts = dict(_GENERIC_NOT_PRODUCED_FACTS.get(defect_type, {}))
     else:  # unreachable via the production REGISTRY; defensive fail-closed
         raise registry.UnknownDefectTypeError(
             "unknown defect_type: %r" % (defect_type,))

@@ -165,6 +165,22 @@ REGISTRY.register_projector(AdapterProjector(
     _analyze=adapter.analyze_double_free,
 ))
 
+# Generic fact projectors (projector-registry expansion). Each entry is a
+# read-only wrapper over the adapter's static entry point; the registry remains
+# pure forwarding, so its bundle is byte-identical to the direct entry.
+for _entry, _analyze in (
+    (C.ENTRY_LOCK_ORDER, adapter.analyze_lock_order),
+    (C.ENTRY_RESOURCE_LIFETIME, adapter.analyze_resource_lifetime),
+    (C.ENTRY_USE_AFTER_FREE, adapter.analyze_use_after_free),
+    (C.ENTRY_NULL_FLOW, adapter.analyze_null_flow),
+    (C.ENTRY_MISMATCHED_FREE, adapter.analyze_mismatched_free),
+):
+    REGISTRY.register_projector(AdapterProjector(
+        defect_type=C.ENTRY_DEFECT_TYPE[_entry],
+        projector_version=PROJECTOR_MECHANISM_VERSION,
+        _analyze=_analyze,
+    ))
+
 
 __all__ = [
     "PROJECTOR_MECHANISM_VERSION",

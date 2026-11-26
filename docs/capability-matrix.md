@@ -55,6 +55,7 @@
 | error_handling | PR1 | C/C++ | 按需 | ◐ SMOKE + DIAGNOSTIC | overnight | 未检查返回值 | 精度受 API contract 限制 |
 | taint_path | PR1 | C/C++ | 按需 | ◐ SMOKE + DIAGNOSTIC | overnight | source→sink | 4 source/3 sink 仅 |
 | out_of_bounds_write (M5/M6/M8) | B2 V1 (#82/#94 facts) | C/C++ | 按需 | ◐ DIAGNOSTIC | issue-pilot#93 | 写方向越界候选 | 仅常量;负下标进 coverage;非 char 堆访问记 unit_mismatch |
+| uninitialized_use | #81（M9） | C/C++ | 按需 | ✅ implemented (diagnostic) | M9 Golden + 全量回归 | 局部对象定义前读取 | 仅 straight-line/if-else/early-return；宏/goto/循环/写穿为显式 unknown；条件表达式内写入按 maybe/unknown；`x = x + 1` / `int x = x;` / 裸条件 `if (x)` 为已知 FN |
 
 ## L3 Task Services
 

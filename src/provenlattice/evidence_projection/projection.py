@@ -503,6 +503,256 @@ def project_candidate(cand: Mapping[str, Any]) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# generic fact projection (projector-registry expansion)
+# ---------------------------------------------------------------------------
+
+# Fact type -> semantic role. The roles are a superset of the frozen v2.1
+# race/double-free roles; they are only emitted by the generic adapter entries.
+GENERIC_FACT_ROLE = {
+    "ALLOC": "resource_alloc",
+    "RELEASE": "release_site",
+    "LOCK": "held_lock",
+    "UNLOCK": "held_lock",
+    "DEREFERENCE": "dereference",
+    "READ": "racing_access",
+    "WRITE": "racing_access",
+    "READ_MODIFY_WRITE": "racing_access",
+    "CALL": "call",
+    "CHECK": "control",
+    "BRANCH": "control",
+    "RETURN": "control",
+    "NULL": "null_value",
+}
+
+# Event vocabulary that can appear in candidate.facts[] but has no dedicated
+# semantic role above. They stay ``fact`` locations; the type is preserved.
+GENERIC_EVENT_TYPES = frozenset({
+    "THROW", "ATOMIC", "THREAD_SPAWN", "THREAD_JOIN", "EXIT", "TRAP", "ASSUME",
+})
+GENERIC_FACT_TYPES = frozenset(GENERIC_FACT_ROLE) | GENERIC_EVENT_TYPES | {"fact"}
+
+
+def _generic_fact_rows(cand: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Project one candidate's ``facts[]`` into located candidate-bound rows.
+
+    The engine already carries the real fact/event id in ``point`` and the
+    real source location in ``source``. This function never invents either:
+    a fact with neither an id nor a location is dropped, and a fact with a
+    location but no id keeps ``event_id=""`` / ``source_fact_id=""``.
+    """
+    ckey = candidate_key(cand)
+    rows: list[dict[str, Any]] = []
+    seen: set[tuple[Any, ...]] = set()
+    for fact in cand.get("facts") or []:
+        if not isinstance(fact, Mapping):
+            continue
+        fact_type = str(fact.get("event") or fact.get("fact") or "").strip()
+        if not fact_type and fact.get("lock"):
+            # lock_order facts carry the lock identity/role instead of an
+            # ``event`` scalar; each one is a LOCK acquisition fact.
+            fact_type = "LOCK"
+        source = fact.get("source") or fact.get("location") or ""
+        file, line = parse_source(source)
+        if not file:
+            file = str(fact.get("relative_path") or fact.get("file") or "")
+        if not line:
+            try:
+                line = int(fact.get("line") or 0)
+            except (TypeError, ValueError):
+                line = 0
+        event_id = str(fact.get("point") or fact.get("event_id") or "")
+        if not fact_type or (not event_id and not (file and line)):
+            continue
+        key = (file, line, event_id, fact_type)
+        if key in seen:
+            continue
+        seen.add(key)
+        owner = str(fact.get("method") or fact.get("function") or "")
+        attributes = {
+            k: v for k, v in fact.items()
+            if k not in {"method", "function", "source", "location", "point",
+                         "event_id", "relative_path", "file", "line"}
+        }
+        rows.append({
+            "method": owner,
+            "file": file,
+            "line": line,
+            "line_span": [line, line],
+            "kind": fact_type,
+            "fact_id": event_id,
+            "fact_type": fact_type,
+            "non_atomic": False,
+            "decided": True,
+            "access_type": fact_type,
+            "owner": owner,
+            "method_symbol_id": str(fact.get("method_symbol_id") or ""),
+            "owner_symbol_id": str(fact.get("owner_symbol_id") or
+                                   (cand.get("subject") or {}).get("owner_symbol_id") or ""),
+            "event_id": event_id,
+            "source_fact_id": event_id,
+            "provenance": "candidate.facts",
+            "held_locks": [],
+            "candidate_key": ckey,
+            "attributes": attributes,
+        })
+    rows.sort(key=lambda r: (r["file"], r["line"], r["event_id"], r["access_type"]))
+    return rows
+
+
+def _generic_primary_anchor(cand: Mapping[str, Any],
+                            rows: list[dict[str, Any]]) -> dict[str, Any] | None:
+    span = (cand.get("metadata") or {}).get("anchor_span") or {}
+    if span.get("relative_path") or span.get("start_line"):
+        start = int(span.get("start_line") or 0)
+        return {
+            "file": str(span.get("relative_path") or ""),
+            "line": start,
+            "line_span": [start, int(span.get("end_line") or start or 0)],
+            "provenance": "candidate.metadata.anchor_span",
+        }
+    for row in rows:
+        if row["file"] and row["line"]:
+            return {
+                "file": row["file"],
+                "line": row["line"],
+                "line_span": list(row["line_span"]),
+                "provenance": "candidate.facts[0]",
+            }
+    return None
+
+
+def project_candidate_generic(cand: Mapping[str, Any]) -> dict[str, Any]:
+    """Candidate-bound generic projection: located facts + primary anchor.
+
+    The generic shape deliberately reuses ``access_rows`` for IR V1
+    compatibility: ``ir.factbundle_v2_1_to_ir`` reads ``access_rows`` and uses
+    ``access_type`` as the fact type. No IR V1 schema change is required for
+    the prototype.
+    """
+    ckey = candidate_key(cand)
+    subj = cand.get("subject") or {}
+    rows = _generic_fact_rows(cand)
+    return {
+        "candidate_key": ckey,
+        "evidence_id": str(cand.get("evidence_id") or ""),
+        "defect_key": str(cand.get("defect_key") or ""),
+        "discriminator": str(cand.get("discriminator") or ""),
+        "subject": str(subj.get("name") or ""),
+        "identity": str(subj.get("identity") or ""),
+        "resolution_status": str(cand.get("resolution_status") or ""),
+        "confidence": cand.get("confidence"),
+        "primary_anchor": _generic_primary_anchor(cand, rows),
+        "access_rows": rows,
+        "release_sites": [],
+        "uncertain_facts": list(cand.get("uncertain_facts") or []),
+        "missing_evidence": list(cand.get("missing_evidence") or []),
+    }
+
+
+def build_supporting_locations_generic(
+    projected: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Flatten generic anchors/facts into ``supporting_locations[]``."""
+    locs: list[dict[str, Any]] = []
+    for pc in projected:
+        ckey = pc["candidate_key"]
+        pa = pc.get("primary_anchor")
+        if pa is not None:
+            locs.append({
+                "file": pa["file"], "line": pa["line"],
+                "line_span": list(pa["line_span"]),
+                "role": "candidate_anchor",
+                "semantic_role": SEM_PRIMARY,
+                "anchor_class": ANCHOR_PRIMARY if (pa["file"] and pa["line"])
+                                else ANCHOR_UNRESOLVED,
+                "owner": "", "access_type": "", "source_fact_id": "", "event_id": "",
+                "provenance": pa.get("provenance") or "",
+                "candidate_key": ckey, "held_locks": [],
+            })
+        for row in pc.get("access_rows") or []:
+            fact_type = str(row.get("access_type") or "")
+            locs.append({
+                "file": row["file"], "line": row["line"],
+                "line_span": list(row["line_span"]),
+                "role": fact_type.lower() or "fact",
+                "semantic_role": GENERIC_FACT_ROLE.get(fact_type, "fact"),
+                "anchor_class": ANCHOR_SUPPORTING if (row["file"] and row["line"])
+                                else ANCHOR_UNRESOLVED,
+                "owner": row.get("owner") or row.get("method") or "",
+                "access_type": fact_type,
+                "source_fact_id": row.get("source_fact_id") or "",
+                "event_id": row.get("event_id") or "",
+                "provenance": row.get("provenance") or "",
+                "candidate_key": ckey, "held_locks": [],
+            })
+    seen: set[tuple[Any, ...]] = set()
+    out: list[dict[str, Any]] = []
+    for loc in locs:
+        key = (loc["candidate_key"], loc["file"], loc["line"],
+               loc["event_id"], loc["semantic_role"])
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(loc)
+    out.sort(key=lambda l: (l["candidate_key"], _RANK.get(l["anchor_class"], 3),
+                            l["file"], l["line"], l["event_id"],
+                            l["semantic_role"]))
+    return out
+
+
+def generic_location_coverage(
+    projected: list[dict[str, Any]],
+    supporting: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Explicit generic degradation report, including v2.1 compatibility keys."""
+    supporting = supporting if supporting is not None else \
+        build_supporting_locations_generic(projected)
+    with_primary = 0
+    with_facts = 0
+    located_facts = 0
+    total_facts = 0
+    unlocated: list[str] = []
+    by_fact_type: dict[str, int] = {}
+    by_role: dict[str, int] = {}
+    for pc in projected:
+        rows = pc.get("access_rows") or []
+        located = [r for r in rows if r.get("file") and r.get("line")]
+        total_facts += len(rows)
+        located_facts += len(located)
+        if pc.get("primary_anchor"):
+            with_primary += 1
+        if located:
+            with_facts += 1
+        for row in rows:
+            typ = str(row.get("access_type") or "")
+            by_fact_type[typ] = by_fact_type.get(typ, 0) + 1
+        if not pc.get("primary_anchor") and not located:
+            unlocated.append(pc["candidate_key"])
+    for loc in supporting:
+        role = str(loc.get("semantic_role") or "")
+        by_role[role] = by_role.get(role, 0) + 1
+    located_support = sum(1 for loc in supporting
+                          if loc.get("file") and loc.get("line"))
+    return {
+        "candidates": len(projected),
+        "with_primary_anchor": with_primary,
+        "with_access_locations": with_facts,
+        "with_support_locations": with_primary + with_facts - sum(
+            1 for pc in projected
+            if pc.get("primary_anchor")
+            and any(r.get("file") and r.get("line") for r in (pc.get("access_rows") or []))),
+        "with_fact_locations": with_facts,
+        "located_facts": located_facts,
+        "total_facts": total_facts,
+        "supporting_locations": len(supporting),
+        "located_supporting_locations": located_support,
+        "unlocated_candidates": unlocated,
+        "by_fact_type": dict(sorted(by_fact_type.items())),
+        "by_semantic_role": dict(sorted(by_role.items())),
+    }
+
+
+# ---------------------------------------------------------------------------
 # bundle-level assembly
 # ---------------------------------------------------------------------------
 
@@ -634,7 +884,11 @@ def evidence_locations(projected: list[dict[str, Any]]) -> list[dict[str, Any]]:
 # ---------------------------------------------------------------------------
 
 
-def assert_candidate_binding(bundle: Mapping[str, Any]) -> list[str]:
+def assert_candidate_binding(
+    bundle: Mapping[str, Any],
+    *,
+    allow_shared_release: bool | None = None,
+) -> list[str]:
     """Prove the Candidate <-> Evidence binding on a finished FactBundle.
 
     Returns a list of problems (empty == bound). Structural, no heuristics:
@@ -650,7 +904,20 @@ def assert_candidate_binding(bundle: Mapping[str, Any]) -> list[str]:
          events are deliberately NOT checked this way: the engine legitimately
          cites one access event as evidence for several candidates that differ
          only in their access pair, and that is not a merge.
+
+    ``use_after_free`` is the one exception to rule 4: one real ``free(p)`` can
+    legitimately support both a dereference-use candidate and a return-use
+    candidate. The check therefore allows a shared RELEASE fact when every
+    owner is a UAF candidate (or when the caller explicitly allows it).
     """
+    if allow_shared_release is None:
+        # Only double_free needs the strict "one RELEASE fact, one candidate"
+        # rule. For the generic lifetime/resource defects the same engine
+        # release event can legitimately be cited by several candidates.
+        allow_shared_release = bundle.get("defect_type") in {
+            "use_after_free", "resource_lifetime", "null_flow",
+            "mismatched_free",
+        }
     probs: list[str] = []
     ev = bundle.get("evidence_locations") or []
     if not isinstance(ev, list):
@@ -675,6 +942,9 @@ def assert_candidate_binding(bundle: Mapping[str, Any]) -> list[str]:
         for r in (pc.get("access_rows") or []):
             if r.get("source_fact_id"):
                 ids.add(r["source_fact_id"])
+                if r.get("access_type") == "RELEASE":
+                    release_owner.setdefault(
+                        r["source_fact_id"], set()).add(k)
         own_events[k] = ids
 
     if len(keys) != len(set(keys)):
@@ -700,7 +970,7 @@ def assert_candidate_binding(bundle: Mapping[str, Any]) -> list[str]:
                          "candidate's fact (cross-candidate merge)" % (sid,))
 
     for eid, owners in sorted(release_owner.items()):
-        if len(owners) > 1:
+        if len(owners) > 1 and not allow_shared_release:
             probs.append("RELEASE fact %r claimed by several candidates: %r"
                          % (eid, sorted(owners)))
     return probs
@@ -718,4 +988,6 @@ __all__ = [
     "project_candidate_release_sites", "project_candidate",
     "build_supporting_locations", "location_coverage", "evidence_locations",
     "assert_candidate_binding",
+    "GENERIC_FACT_ROLE", "GENERIC_FACT_TYPES", "project_candidate_generic",
+    "build_supporting_locations_generic", "generic_location_coverage",
 ]

@@ -46,13 +46,15 @@ def fake_analyze(case_workdir, database, target_symbols=(), **kwargs):
 
 
 class BuiltinRegistrationTests(unittest.TestCase):
-    """M1: module load registers exactly race_condition + double_free."""
+    """M1: module load registers the seven production projectors."""
 
-    def test_production_registry_has_exactly_two_builtins(self):
+    def test_production_registry_has_seven_builtins(self):
         caps = registry.REGISTRY.list_projector_capabilities()
         self.assertEqual([c["defect_type"] for c in caps],
-                         ["double_free", "race_condition"])
-        self.assertEqual(len(caps), 2)
+                         ["double_free", "lock_order", "mismatched_free",
+                          "null_flow", "race_condition", "resource_lifetime",
+                          "use_after_free"])
+        self.assertEqual(len(caps), 7)
 
     def test_builtin_projector_versions(self):
         for cap in registry.REGISTRY.list_projector_capabilities():
@@ -64,6 +66,16 @@ class BuiltinRegistrationTests(unittest.TestCase):
         df = registry.REGISTRY.get_projector("double_free")
         self.assertEqual(race._analyze, adapter.analyze_shared_access)
         self.assertEqual(df._analyze, adapter.analyze_double_free)
+        expected = {
+            "lock_order": adapter.analyze_lock_order,
+            "resource_lifetime": adapter.analyze_resource_lifetime,
+            "use_after_free": adapter.analyze_use_after_free,
+            "null_flow": adapter.analyze_null_flow,
+            "mismatched_free": adapter.analyze_mismatched_free,
+        }
+        for defect_type, entry in expected.items():
+            self.assertEqual(
+                registry.REGISTRY.get_projector(defect_type)._analyze, entry)
 
 
 class FailClosedTests(unittest.TestCase):
@@ -99,8 +111,7 @@ class CapabilityTests(unittest.TestCase):
     def test_capability_fields_and_order(self):
         caps = registry.REGISTRY.list_projector_capabilities()
         self.assertEqual([set(c) for c in caps],
-                         [{"defect_type", "projector_version"},
-                          {"defect_type", "projector_version"}])
+                         [{"defect_type", "projector_version"}] * 7)
         types = [c["defect_type"] for c in caps]
         self.assertEqual(types, sorted(types))
 
@@ -222,21 +233,27 @@ class ExtensibilityTests(unittest.TestCase):
         types = [c["defect_type"]
                  for c in registry.REGISTRY.list_projector_capabilities()]
         self.assertNotIn("test_only", types)
-        self.assertEqual(types, ["double_free", "race_condition"])
+        self.assertEqual(types, ["double_free", "lock_order", "mismatched_free",
+                                 "null_flow", "race_condition",
+                                 "resource_lifetime", "use_after_free"])
 
     def test_test_only_not_in_production_schema_enum(self):
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
         enum = schema["properties"]["defect_type"]["enum"]
         self.assertNotIn("test_only", enum)
-        self.assertEqual(set(enum), {"race_condition", "double_free"})
+        self.assertEqual(set(enum), {
+            "race_condition", "double_free", "lock_order",
+            "resource_lifetime", "use_after_free", "null_flow",
+            "mismatched_free",
+        })
 
     def test_scope_controlled(self):
-        # The production REGISTRY exposes exactly the two GATE-0 defect types;
+        # The production REGISTRY exposes the seven production defect types;
         # a separate Registry() is fully independent.
         independent = registry.Registry()
         independent.register_projector(
             registry.AdapterProjector("test_only", "1", fake_analyze))
-        self.assertEqual(len(registry.REGISTRY.list_projector_capabilities()), 2)
+        self.assertEqual(len(registry.REGISTRY.list_projector_capabilities()), 7)
         self.assertEqual(len(independent.list_projector_capabilities()), 1)
 
 

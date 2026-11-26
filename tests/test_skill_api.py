@@ -80,7 +80,9 @@ class ManifestTruthfulnessTests(unittest.TestCase):
         manifest = skill_api.list_skill_capabilities()
         self.assertEqual(manifest["manifest_version"], skill_api.MANIFEST_VERSION)
         self.assertEqual(sorted(manifest["defect_types"]),
-                         ["double_free", "race_condition"])
+                         ["double_free", "lock_order", "mismatched_free",
+                          "null_flow", "race_condition", "resource_lifetime",
+                          "use_after_free"])
 
     def test_manifest_defect_types_match_registry(self):
         manifest = skill_api.list_skill_capabilities()

@@ -558,6 +558,14 @@ def _validate_source_envelope(env: Any) -> list[str]:
     return []
 
 
+# Defect types whose candidates may legitimately cite one shared RELEASE fact.
+# double_free is deliberately absent: its candidates must own distinct
+# releases, so the strict one-owner rule stays there.
+_SHARED_RELEASE_DEFECT_TYPES = frozenset({
+    "use_after_free", "resource_lifetime", "null_flow", "mismatched_free",
+})
+
+
 def _validate_binding(ir: Mapping[str, Any]) -> list[str]:
     """Cross-candidate binding proof (M4): every fact/location/provenance entry
     binds to a real candidate id, and a RELEASE fact is owned by one candidate.
@@ -581,6 +589,10 @@ def _validate_binding(ir: Mapping[str, Any]) -> list[str]:
             probs.append("provenance[%d].candidate_id %r not in candidate ids"
                          % (i, p.get("candidate_id")))
 
+    candidate_defect = {
+        str(c.get("id") or ""): str(c.get("defect_type") or "")
+        for c in candidates if isinstance(c, Mapping)
+    }
     release_owners: dict[str, set[str]] = {}
     for f in (ir.get("facts") or []):
         if not isinstance(f, Mapping):
@@ -588,7 +600,12 @@ def _validate_binding(ir: Mapping[str, Any]) -> list[str]:
         if f.get("type") == "RELEASE" and f.get("fact_id"):
             release_owners.setdefault(f["fact_id"], set()).add(f["candidate_id"])
     for fid, owners in sorted(release_owners.items()):
-        if len(owners) > 1:
+        # One real free() may legitimately support several use_after_free
+        # candidates (dereference-use and return-use). The strict one-owner
+        # rule stays for double_free and every other defect type.
+        if len(owners) > 1 and not all(
+                candidate_defect.get(owner) in _SHARED_RELEASE_DEFECT_TYPES
+                for owner in owners):
             probs.append("RELEASE fact %r claimed by several candidates: %r"
                          % (fid, sorted(owners)))
     return probs

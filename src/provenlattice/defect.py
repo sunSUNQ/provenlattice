@@ -130,10 +130,18 @@ OUT_OF_BOUNDS_WRITE = "out_of_bounds_write"
 # precision for a candidate the reader cannot trust yet. Opt-in until either the
 # initializer point exists or the rule is shown calibrated on a benchmark.
 STATE_MACHINE = "state_machine"
+# M9 (parent #80): a local object read (or a local pointer dereferenced) before
+# any provable definition. The query is deliberately a named key rather than a
+# matrix number: `defect-evidence-matrix-v1.md` has no M9 row, and inventing a
+# number would make the table unverifiable. It reads the #84 local
+# declaration/access/control-position facts; see
+# `docs/c-local-declaration-access-v1.md`.
+UNINITIALIZED_USE = "uninitialized_use"
+UNINITIALIZED_USE_KEY = "uninit"
 QUERY_NAMES = (
     RESOURCE_LIFETIME, LOCK_ORDER, RACE_CONDITION,
     NULL_FLOW, USE_AFTER_FREE, DOUBLE_FREE, TAINT_PATH, ERROR_HANDLING,
-    MISMATCHED_FREE, INTEGER_OVERFLOW, OUT_OF_BOUNDS_WRITE,
+    MISMATCHED_FREE, INTEGER_OVERFLOW, OUT_OF_BOUNDS_WRITE, UNINITIALIZED_USE,
 )
 
 # The matrix keys the stage 6 queries answer. `taint_path` has no matrix family:
@@ -216,6 +224,14 @@ OOB_WRITE_CONFIDENCE = {RESOLVED: 0.5, AMBIGUOUS: 0.3, UNRESOLVED: 0.1}
 # explanations (memcpy, initializer in another TU, a macro), so it sits at the
 # lowest band that survives the default gate: worth showing, never asserted.
 STATE_MACHINE_CONFIDENCE = {AMBIGUOUS: 0.3, UNRESOLVED: 0.1}
+# An uninitialized use is decided by three graph facts: the declaration's
+# initializer state, the prior local writes, and the control positions that say
+# which branch path each one sits on. When all three answer, the candidate is
+# the best-evidenced band in this file (0.5, same as null_flow). A path that is
+# only partly covered, or a method whose #84 coverage is unknown, is
+# `ambiguous` at the lowest visible band -- the use is still worth reading, but
+# the graph cannot say every path lacks a definition.
+UNINITIALIZED_USE_CONFIDENCE = {RESOLVED: 0.5, AMBIGUOUS: 0.3}
 
 # SUB-11 / R11 precision guardrail. Confidence above is a *band*, not a
 # measurement, so the gate is a band cut, not a probability threshold: a
@@ -682,6 +698,7 @@ def run(
         INTEGER_OVERFLOW: integer_overflow,
         OUT_OF_BOUNDS_WRITE: out_of_bounds_write,
         STATE_MACHINE: state_machine,
+        UNINITIALIZED_USE: uninitialized_use,
     }
     try:
         function = functions[query]
@@ -7589,6 +7606,769 @@ def error_handling(
 
 # ----------------------------------------------------------------------
 # evidence
+
+
+# ----------------------------------------------------------------------
+# M9 (issue-pilot #81): local definite assignment / uninitialized use
+#
+# The query is a pure reader over the #84 facts (docs/c-local-declaration-
+# access-v1.md): `local_declaration_v1`, `local_access_v1` and
+# `control_position_v1`. It joins accesses to declarations by the scoped
+# declaration token only -- never by spelling, line or array position -- and
+# decides a use's state from three facts:
+#
+#   * the declaration's `initialized` flag (a written initializer or a
+#     static/thread-local zero initializer is a definition at method entry);
+#   * prior local WRITEs to the same declaration, in source order;
+#   * each WRITE's control position, so a write inside one if/else arm is not
+#     mistaken for a write on the other arm (or after an early return).
+#
+# Fail-closed: a method whose #84 coverage is unknown never yields a definite
+# uninitialized candidate -- the candidate becomes `unknown` with the coverage
+# reasons, or is skipped when the known facts already prove initialization
+# (an extra write cannot uninitialize a local). A use that is unreachable on
+# the published control positions is not a use at all.
+
+_UNINIT_ENTRY = ("entry",)
+_UNINIT_DEFINITE = "uninitialized"
+_UNINIT_MAYBE = "maybe_uninitialized"
+_UNINIT_UNKNOWN = "unknown"
+
+
+def _uninit_field(event: Any, name: str, default: Any = "") -> Any:
+    if isinstance(event, Mapping):
+        return event.get(name, default)
+    return getattr(event, name, default)
+
+
+def _uninit_json(value: Any) -> Any:
+    if isinstance(value, str):
+        try:
+            return json.loads(value or "null")
+        except (TypeError, ValueError):
+            return None
+    return value
+
+
+def _uninit_annotations(event: Any) -> Mapping[str, Any]:
+    """The annotation channel, whichever shape the caller published.
+
+    The defect service merges the annotations into ``metadata``; a caller that
+    hands the query a raw ``query_analysis`` event gets them under
+    ``annotations``. Both are dicts of JSON strings and both are accepted.
+    """
+    metadata = _uninit_json(_uninit_field(event, "metadata", None))
+    if not isinstance(metadata, Mapping):
+        metadata = {}
+    annotations = _uninit_json(_uninit_field(event, "annotations", None))
+    if not isinstance(annotations, Mapping):
+        annotations = {}
+    return {**annotations, **metadata}
+
+
+def _uninit_fact(annotations: Mapping[str, Any], key: str) -> Mapping[str, Any] | None:
+    fact = _uninit_json(annotations.get(key))
+    return fact if isinstance(fact, Mapping) else None
+
+
+def _uninit_number(value: Any) -> int | None:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _uninit_contexts(position: Mapping[str, Any]) -> tuple[tuple, ...]:
+    """The control contexts reaching a carrier, as a sorted tuple of signatures.
+
+    A predecessor is ``(event_type, ordinal, flags)``; the synthetic method
+    entry is its own ``("entry",)``. Two carriers share a context when the
+    signatures are equal -- that is the published contract's join
+    (`control_position_v1`), not a line-number or source-order guess.
+    """
+    contexts: list[tuple] = []
+    predecessors = position.get("predecessors")
+    if isinstance(predecessors, (list, tuple)):
+        for predecessor in predecessors:
+            if not isinstance(predecessor, Mapping):
+                continue
+            flags = tuple(sorted(str(flag) for flag in (predecessor.get("flags") or ())))
+            contexts.append((
+                "event", str(predecessor.get("event_type") or ""),
+                _uninit_number(predecessor.get("ordinal")), flags,
+            ))
+    if position.get("entry"):
+        contexts.append(_UNINIT_ENTRY)
+    return tuple(sorted(set(contexts), key=repr))
+
+
+def _uninit_context_label(context: tuple) -> str:
+    if context == _UNINIT_ENTRY:
+        return "entry"
+    return f"{context[1]}#{context[2]}[{','.join(context[3])}]"
+
+
+def _uninit_context_json(contexts: Iterable[tuple]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    for context in contexts:
+        if context == _UNINIT_ENTRY:
+            items.append({"entry": True, "event_type": "", "ordinal": None, "flags": []})
+        else:
+            items.append({
+                "entry": False, "event_type": context[1],
+                "ordinal": context[2], "flags": list(context[3]),
+            })
+    return items
+
+
+def _uninit_branch_polarity(context: tuple) -> bool | None:
+    if len(context) != 4 or context[0] != "event" or context[1] != "BRANCH":
+        return None
+    flags = set(context[3])
+    true = "branch=true" in flags
+    false = "branch=false" in flags
+    if true == false:
+        return None
+    return true
+
+
+def _uninit_disjoint(left: tuple, right: tuple) -> bool:
+    """Two branch contexts that cannot be on one path.
+
+    Same ``if`` (same ordinal), opposite answer. This is what keeps the write
+    in the taken arm from covering the read on the fall-through arm, while a
+    write at a *different* branch stays `possible` rather than being guessed
+    either way.
+    """
+    left_polarity = _uninit_branch_polarity(left)
+    right_polarity = _uninit_branch_polarity(right)
+    if left_polarity is None or right_polarity is None:
+        return False
+    return left[2] == right[2] and left_polarity != right_polarity
+
+
+def _uninit_write_reach(write: Mapping[str, Any], use_context: tuple) -> str:
+    """How one prior write reaches the use on one control context.
+
+    A write inside a branch condition (`n && (x = 1)`) may not execute on the
+    fall-through path, so it is never an unconditional definition: it stays
+    `possible` rather than covering the use. The published control positions
+    put such a write before the branch point, which is why the context alone
+    cannot prove coverage.
+    """
+    if write.get("conditional"):
+        return "possible"
+    write_contexts = tuple(write.get("contexts") or ())
+    if _UNINIT_ENTRY in write_contexts:
+        # A write before the first branch reaches every later path.
+        return "covered"
+    if use_context in write_contexts:
+        return "covered"
+    if write_contexts and all(
+            _uninit_disjoint(context, use_context) for context in write_contexts):
+        return "disjoint"
+    return "possible"
+
+
+def _uninit_evaluate(
+    use_contexts: tuple[tuple, ...], writes: Sequence[Mapping[str, Any]],
+) -> tuple[str | None, tuple[tuple[str, str], ...]]:
+    """The state before one use, and one outcome per reaching context.
+
+    ``covered`` means a prior definition provably reaches the use on that
+    context, ``uncovered`` means every prior write is provably on another
+    branch, and ``possible`` is the honest middle: a write exists whose
+    context neither matches nor contradicts this one.
+    """
+    outcomes: list[tuple[str, str]] = []
+    for context in use_contexts:
+        outcome = "uncovered"
+        for write in writes:
+            reach = _uninit_write_reach(write, context)
+            if reach == "covered":
+                outcome = "covered"
+                break
+            if reach == "possible":
+                outcome = "possible"
+        outcomes.append((_uninit_context_label(context), outcome))
+    if not outcomes:
+        return None, ()
+    states = {outcome for _, outcome in outcomes}
+    if states == {"covered"}:
+        return "initialized", tuple(outcomes)
+    if states == {"uncovered"}:
+        return _UNINIT_DEFINITE, tuple(outcomes)
+    return _UNINIT_MAYBE, tuple(outcomes)
+
+
+def _uninit_span(record: Mapping[str, Any]) -> str:
+    return (
+        f"{record.get('relative_path', '')}:"
+        f"{record.get('start_line', 0)}-{record.get('end_line', 0)}"
+    )
+
+
+def _uninit_record_key(record: Mapping[str, Any]) -> tuple[int, str]:
+    start = record.get("start_byte")
+    return (start if isinstance(start, int) else 0, str(record.get("event_id") or ""))
+
+
+def _uninit_collect(
+    events: Iterable[Any],
+) -> tuple[
+    dict[str, dict[str, Any]], list[dict[str, Any]], dict[str, int],
+    dict[tuple[str, str], list[tuple[int, int]]],
+]:
+    declarations: dict[str, dict[str, Any]] = {}
+    accesses: list[dict[str, Any]] = []
+    branch_spans: dict[tuple[str, str], list[tuple[int, int]]] = defaultdict(list)
+    branch_conditions: list[tuple[str, str]] = []
+    population = {
+        "declaration_events": 0,
+        "declarations": 0,
+        "duplicate_declarations": 0,
+        "unresolved_declarations": 0,
+        "unsupported_declarations": 0,
+        "access_events": 0,
+        "unsupported_accesses": 0,
+        "accesses_without_position": 0,
+        "bare_condition_reads": 0,
+    }
+    for event in events:
+        event_type = str(_uninit_field(event, "event_type", "") or "")
+        annotations = _uninit_annotations(event)
+        if event_type == "BRANCH":
+            start = _uninit_number(_uninit_field(event, "start_byte", 0))
+            end = _uninit_number(_uninit_field(event, "end_byte", 0))
+            owner = str(_uninit_field(event, "owner_symbol_id", "") or "")
+            path = str(
+                _uninit_field(event, "relative_path", "")
+                or annotations.get("relative_path", "") or "")
+            if start is not None and end is not None and end > start:
+                branch_spans[(path, owner)].append((start, end))
+            expression = str(annotations.get("expression") or "").strip()
+            if expression:
+                branch_conditions.append((owner, expression))
+            continue
+        if event_type == "DECLARATION":
+            fact = _uninit_fact(annotations, "local_declaration_v1")
+            if fact is None:
+                continue
+            population["declaration_events"] += 1
+            token = str(fact.get("declaration") or "")
+            if not token:
+                population["unresolved_declarations"] += 1
+                continue
+            position = _uninit_fact(annotations, "control_position_v1")
+            record = {
+                "token": token,
+                "fact": dict(fact),
+                "event_id": str(_uninit_field(event, "event_id", "") or ""),
+                "name": str(_uninit_field(event, "matched_name", "") or ""),
+                "owner_symbol_id": str(
+                    _uninit_field(event, "owner_symbol_id", "") or ""),
+                "relative_path": str(
+                    _uninit_field(event, "relative_path", "")
+                    or annotations.get("relative_path", "") or ""),
+                "start_line": _uninit_number(_uninit_field(event, "start_line", 0)) or 0,
+                "end_line": _uninit_number(_uninit_field(event, "end_line", 0)) or 0,
+                "start_byte": _uninit_number(_uninit_field(event, "start_byte", 0)),
+                "position": dict(position) if position is not None else None,
+            }
+            existing = declarations.get(token)
+            if existing is not None:
+                # One declarator publishes one token; a duplicate would be a
+                # producer defect. Keep the deterministically smaller record
+                # rather than letting SQLite row order decide.
+                population["duplicate_declarations"] += 1
+                if _uninit_record_key(record) >= _uninit_record_key(existing):
+                    continue
+            declarations[token] = record
+            if fact.get("status") != "supported":
+                population["unsupported_declarations"] += 1
+            continue
+        if event_type not in {"READ", "WRITE", "DEREFERENCE"}:
+            continue
+        fact = _uninit_fact(annotations, "local_access_v1")
+        if fact is None:
+            continue
+        population["access_events"] += 1
+        if fact.get("status") != "supported":
+            population["unsupported_accesses"] += 1
+        position = _uninit_fact(annotations, "control_position_v1")
+        if position is None:
+            population["accesses_without_position"] += 1
+        accesses.append({
+            "fact": dict(fact),
+            "event_id": str(_uninit_field(event, "event_id", "") or ""),
+            "event_type": event_type,
+            "direction": str(fact.get("direction") or event_type),
+            "target": str(fact.get("target") or ""),
+            "status": str(fact.get("status") or ""),
+            "declaration": str(fact.get("declaration") or ""),
+            "name": str(_uninit_field(event, "matched_name", "") or ""),
+            "expression": str(annotations.get("expression") or ""),
+            "owner_symbol_id": str(
+                _uninit_field(event, "owner_symbol_id", "") or ""),
+            "relative_path": str(
+                _uninit_field(event, "relative_path", "")
+                or annotations.get("relative_path", "") or ""),
+            "start_line": _uninit_number(_uninit_field(event, "start_line", 0)) or 0,
+            "end_line": _uninit_number(_uninit_field(event, "end_line", 0)) or 0,
+            "start_byte": _uninit_number(_uninit_field(event, "start_byte", 0)),
+            "end_byte": _uninit_number(_uninit_field(event, "end_byte", 0)),
+            "position": dict(position) if position is not None else None,
+            "contexts": _uninit_contexts(position) if position is not None else (),
+        })
+    population["declarations"] = len(declarations)
+    uninitialized_names_by_owner: dict[str, set[str]] = {}
+    for record in declarations.values():
+        if record["fact"].get("initialized") is not True:
+            uninitialized_names_by_owner.setdefault(
+                record["owner_symbol_id"], set()).add(record["name"])
+    for owner, expression in branch_conditions:
+        if expression in uninitialized_names_by_owner.get(owner, ()):
+            # A bare `if (x)` condition read of an uninitialized local. The
+            # producer does not publish a local_access_v1 fact for this shape,
+            # so the query cannot turn it into a candidate; counting it keeps
+            # the gap visible instead of silently reading as "analyzed and
+            # safe". An initialized local's bare condition is not a gap.
+            population["bare_condition_reads"] += 1
+    # A short-circuit/conditional initializer (`int y = (n && (x = 1));`) has
+    # no BRANCH point of its own, but the initializer span and expression are
+    # published. A write inside such an initializer is not an unconditional
+    # definition either, so it joins the same conditional-span index.
+    for record in declarations.values():
+        fact = record["fact"]
+        start = _uninit_number(fact.get("initializer_start_byte"))
+        end = _uninit_number(fact.get("initializer_end_byte"))
+        expression = str(fact.get("initializer_expression") or "")
+        if (
+            start is not None and end is not None and end > start
+            and any(operator in expression for operator in ("&&", "||", "?"))
+        ):
+            branch_spans[
+                (record["relative_path"], record["owner_symbol_id"])
+            ].append((start, end))
+    return declarations, accesses, population, branch_spans
+
+
+def _uninit_coverage_reasons(
+    declaration: Mapping[str, Any], use: Mapping[str, Any],
+) -> set[str]:
+    reasons: set[str] = set()
+    if declaration.get("fact", {}).get("coverage_status") != "complete":
+        reasons.add("declaration_coverage_unknown")
+    if use.get("fact", {}).get("coverage_status") != "complete":
+        reasons.add("access_coverage_unknown")
+    for record in (declaration.get("position"), use.get("position")):
+        if not isinstance(record, Mapping):
+            reasons.add("missing_control_position")
+            continue
+        if record.get("coverage_status") != "complete":
+            reasons.add("position_coverage_unknown")
+        if record.get("status") == "unknown":
+            reasons.add("position_status_unknown")
+        for reason in record.get("coverage_reasons") or ():
+            if reason:
+                reasons.add(str(reason))
+    return reasons
+
+
+def _uninit_candidate(
+    declaration: Mapping[str, Any],
+    use: Mapping[str, Any],
+    state: str,
+    outcomes: tuple[tuple[str, str], ...],
+    writes: Sequence[Mapping[str, Any]],
+    reasons: Collection[str],
+    *,
+    names: Mapping[str, str] | None,
+    identity: bool,
+) -> Candidate:
+    fact = declaration["fact"]
+    token = declaration["token"]
+    name = declaration.get("name") or use.get("name") or ""
+    owner_symbol_id = str(
+        use.get("owner_symbol_id") or declaration.get("owner_symbol_id") or "")
+    method = _method_name({"owner_symbol_id": owner_symbol_id}, names)
+    declaration_span = _uninit_span(declaration)
+    use_span = _uninit_span(use)
+    if state == _UNINIT_DEFINITE:
+        resolution = RESOLVED
+        confidence = UNINITIALIZED_USE_CONFIDENCE[RESOLVED]
+    else:
+        resolution = AMBIGUOUS
+        confidence = UNINITIALIZED_USE_CONFIDENCE[AMBIGUOUS]
+
+    facts: list[dict[str, Any]] = [
+        {
+            "event": "DECLARATION",
+            "declaration": token,
+            "kind": fact.get("kind", ""),
+            "storage": fact.get("storage", ""),
+            "storage_class": fact.get("storage_class", ""),
+            "type": fact.get("type", ""),
+            "initialized": fact.get("initialized"),
+            "initializer": fact.get("initializer", ""),
+            "source": declaration_span,
+        },
+        {
+            "event": use.get("event_type", ""),
+            "direction": use.get("direction", ""),
+            "target": use.get("target", ""),
+            "declaration": token,
+            "expression": use.get("expression", ""),
+            "source": use_span,
+        },
+    ]
+    for write in sorted(
+        writes, key=lambda item: (item.get("start_byte") or 0, item.get("event_id") or "")
+    ):
+        facts.append({
+            "event": "WRITE",
+            "declaration": token,
+            "expression": write.get("expression", ""),
+            "contexts": [_uninit_context_label(context) for context in write["contexts"]],
+            "source": _uninit_span(write),
+        })
+
+    uncertain: list[dict[str, Any]] = []
+    missing: tuple[str, ...] = ()
+    if state == _UNINIT_MAYBE:
+        uncovered = [label for label, outcome in outcomes if outcome != "covered"]
+        uncertain.append(_uncertain(
+            "PATH_COVERAGE", decisive=True,
+            contexts=uncovered,
+            detail=(
+                "at least one published control context reaches this use "
+                "without a prior definition, so the read is not provably "
+                "initialized on every path"
+            ),
+        ))
+        missing = ("path_coverage_incomplete",)
+    elif state == _UNINIT_UNKNOWN:
+        uncertain.append(_uncertain(
+            "COVERAGE", decisive=True,
+            reasons=sorted(reasons),
+            detail=(
+                "the method's local-fact coverage is unknown for this use, so "
+                "the definite-assignment state cannot be answered; this is an "
+                "explicit unknown, not a safety claim"
+            ),
+        ))
+        tokens = tuple(sorted({f"coverage_{reason}" for reason in reasons}))
+        missing = tokens or ("coverage_unknown",)
+
+    # The use's own contexts are recorded from the published position, not
+    # from the per-context outcomes (the outcome labels are strings).
+    use_position = use.get("position") or {}
+    contexts = _uninit_context_json(
+        _uninit_contexts(use_position) if isinstance(use_position, Mapping) else ()
+    )
+    paths: tuple[dict[str, Any], ...] = ()
+    if use.get("event_id"):
+        paths = ({
+            "points": [use["event_id"]],
+            "types": [use.get("event_type", "")],
+            "edges": [],
+            "state": state,
+            "contexts": contexts,
+        },)
+
+    return Candidate(
+        defect_key=UNINITIALIZED_USE_KEY,
+        query=UNINITIALIZED_USE,
+        subject={
+            "kind": (
+                "local_pointer" if fact.get("kind") == "pointer" else "local_object"),
+            "name": name,
+            "identity": token if identity else name,
+            "storage": fact.get("storage", ""),
+            "type": fact.get("type", ""),
+            "member": "",
+            "decl": fact.get("decl", ""),
+            "method": method,
+            "owner_symbol_id": owner_symbol_id,
+        },
+        anchor=str(use.get("event_id") or ""),
+        discriminator=f"{token}|{state}|{use.get('event_id', '')}|{use.get('direction', '')}",
+        resolution_status=resolution,
+        confidence=confidence,
+        facts=tuple(facts),
+        uncertain_facts=tuple(uncertain),
+        paths=paths,
+        source_evidence=tuple(dict.fromkeys(
+            span for span in (declaration_span, use_span) if span
+        )),
+        missing_evidence=missing,
+        metadata={
+            "state": state,
+            "declaration": token,
+            "declaration_span": {
+                "relative_path": declaration.get("relative_path", ""),
+                "start_line": declaration.get("start_line", 0),
+                "end_line": declaration.get("end_line", 0),
+            },
+            "use_event_id": use.get("event_id", ""),
+            "use_direction": use.get("direction", ""),
+            "use_target": use.get("target", ""),
+            "expression": use.get("expression", ""),
+            "contexts": contexts,
+            "path_outcomes": [
+                {"context": label, "outcome": outcome} for label, outcome in outcomes
+            ],
+            "prior_writes": len(writes),
+            "coverage_reasons": sorted(reasons),
+            "anchor_span": {
+                "relative_path": use.get("relative_path", ""),
+                "start_line": use.get("start_line", 0),
+                "end_line": use.get("end_line", 0),
+            },
+            "methods": [method] if method else [],
+            "exit_point": "",
+            "flow_class": "definite_assignment",
+            "reach": "",
+            "path_recorded": bool(paths),
+            "paths_truncated": False,
+        },
+    )
+
+
+def uninitialized_use(
+    events: Iterable[Any],
+    edges: Iterable[Any],
+    *,
+    subject: str | None = None,
+    identity: bool = True,
+    max_hops: int = 64,
+    max_paths: int = 8,
+    max_candidates: int = 20,
+    names: Mapping[str, str] | None = None,
+    defect_keys: Collection[str] | None = None,
+) -> DefectQueryResult:
+    """M9: a local object used before every modeled path defines it.
+
+    The population is the #84 supported declaration/access set. A use is a
+    ``READ`` of the declared object, or a ``DEREFERENCE`` of a declared local
+    pointer (the dereference reads the pointer itself). A WRITE is a definition;
+    the declaration's initializer and a static/thread-local zero initializer are
+    definitions at method entry.
+
+    The query answers four states, and only the first three become candidates:
+
+    * ``uninitialized`` -- no prior definition reaches any published context;
+    * ``maybe_uninitialized`` -- some contexts are covered, some are not (or a
+      prior write sits on a branch that neither matches nor contradicts this
+      one), so the graph refuses to merge the paths into one answer;
+    * ``unknown`` -- the method's #84 coverage is unknown (macro, goto,
+      loop/conditional/lambda/exception, unknown write-through, partial parse)
+      or the declaration's initializer could not be modeled; explicit coverage
+      evidence accompanies the candidate;
+    * ``initialized`` -- a definition reaches every context, so no candidate.
+
+    A use that is unreachable on the published control positions is not a use.
+    A parameter has no published local declaration and therefore no candidate:
+    call-site binding belongs to D1, not to this query.
+
+    Known V1 limitation: a WRITE's published span is its target identifier, so
+    a read inside the same assignment's right-hand side (`x = x + 1`) sorts
+    after that write. The facts carry no enclosing-statement span, so the
+    query documents the gap rather than inventing an ordering.
+
+    Two more gaps stay explicit: a bare `if (x)` / `if (x) return` condition has
+    no published `local_access_v1` fact, so it is counted in
+    ``uninitialized_bare_condition_reads`` and exposed as
+    ``MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION`` instead of becoming a
+    candidate; `int x = x;` is treated as a declaration initializer definition
+    (known FN). A write inside a branch condition is never an unconditional
+    definition and keeps a `maybe_uninitialized` state. A missing storage class
+    or write target is an explicit ``unknown``, never a default-safe value.
+    """
+    del edges  # a pure reader over the published event facts, no walk
+    wanted = _wanted(UNINITIALIZED_USE_KEY, defect_keys)
+    declarations, accesses, population, conditional_spans = _uninit_collect(events)
+    writes_by_declaration: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    unmodelled_writes_by_declaration: dict[
+        str, list[dict[str, Any]]] = defaultdict(list)
+    for access in accesses:
+        if access["status"] != "supported" or access["direction"] != "WRITE":
+            continue
+        if access["target"] != "direct":
+            # A write whose target kind is missing or indirect is not a
+            # provable direct definition. Dropping it would let the query
+            # claim `uninitialized`; downgrading the declaration's uses to
+            # unknown keeps the missing fact visible.
+            unmodelled_writes_by_declaration[access["declaration"]].append(access)
+            continue
+        start = access.get("start_byte")
+        end = access.get("end_byte")
+        spans = conditional_spans.get(
+            (access["relative_path"], access["owner_symbol_id"]), ())
+        access["conditional"] = bool(
+            start is not None
+            and end is not None
+            and any(
+                span_start <= start and end <= span_end
+                for span_start, span_end in spans
+            )
+        )
+        writes_by_declaration[access["declaration"]].append(access)
+
+    counts = {
+        "uses": 0,
+        "uses_initialized": 0,
+        "uses_unreachable": 0,
+        "uses_unresolved_declaration": 0,
+        "uses_declaration_not_published": 0,
+        "uses_unsupported_declaration": 0,
+        "uses_model_unknown": 0,
+        "uses_coverage_unknown": 0,
+        "definite": 0,
+        "maybe": 0,
+        "unknown": 0,
+    }
+    candidates: list[Candidate] = []
+    for use in sorted(
+        accesses, key=lambda item: (
+            item.get("owner_symbol_id") or "",
+            item.get("start_byte") if item.get("start_byte") is not None else 0,
+            item.get("event_id") or "",
+        ),
+    ):
+        if use["status"] != "supported":
+            continue
+        is_use = use["direction"] == "READ" or (
+            use["direction"] == "DEREFERENCE" and use["target"] == "pointer")
+        if not is_use:
+            continue
+        counts["uses"] += 1
+        token = use["declaration"]
+        if not token:
+            counts["uses_unresolved_declaration"] += 1
+            continue
+        declaration = declarations.get(token)
+        if declaration is None:
+            # Parameters have no published object declaration; a parameter
+            # pointer is out of this query's population, not silently safe.
+            counts["uses_declaration_not_published"] += 1
+            continue
+        fact = declaration["fact"]
+        if fact.get("status") != "supported" or fact.get("kind") not in {"scalar", "pointer"}:
+            counts["uses_unsupported_declaration"] += 1
+            continue
+        name = declaration.get("name") or use.get("name") or ""
+        if subject is not None and name != subject:
+            continue
+        initialized = fact.get("initialized")
+        if initialized is True:
+            counts["uses_initialized"] += 1
+            continue
+
+        reasons = _uninit_coverage_reasons(declaration, use)
+        declaration_position = declaration.get("position")
+        if isinstance(declaration_position, Mapping) and (
+                declaration_position.get("status") == "unreachable"):
+            counts["uses_unreachable"] += 1
+            continue
+        position = use.get("position")
+        if isinstance(position, Mapping) and position.get("status") == "unreachable":
+            counts["uses_unreachable"] += 1
+            continue
+
+        if initialized is not False:
+            counts["uses_model_unknown"] += 1
+            reasons.add("declaration_initialize_unmodelled")
+            state, outcomes, writes = _UNINIT_UNKNOWN, (), ()
+        else:
+            storage_class = str(fact.get("storage_class") or "")
+            if storage_class not in {"automatic", "register"}:
+                reasons.add(f"storage_class_{storage_class or 'unknown'}")
+            prior_unmodelled = [
+                write
+                for write in unmodelled_writes_by_declaration.get(token, ())
+                if write.get("start_byte") is None
+                or use.get("start_byte") is None
+                or write["start_byte"] < use["start_byte"]
+            ]
+            if prior_unmodelled:
+                reasons.add("write_target_missing")
+            writes = [
+                write for write in writes_by_declaration.get(token, ())
+                if write.get("start_byte") is not None
+                and use.get("start_byte") is not None
+                and write["start_byte"] < use["start_byte"]
+            ]
+            if any(
+                write.get("start_byte") is None
+                for write in writes_by_declaration.get(token, ())
+            ):
+                reasons.add("write_span_missing")
+            contexts = (
+                _uninit_contexts(position) if isinstance(position, Mapping) else ())
+            hard_unknown = any(
+                reason.startswith("storage_class_")
+                or reason == "write_target_missing"
+                for reason in reasons
+            )
+            state, outcomes = _uninit_evaluate(contexts, writes)
+            if state is None:
+                state = _UNINIT_UNKNOWN
+                reasons.add("missing_control_position")
+            elif hard_unknown or (state != "initialized" and reasons):
+                state = _UNINIT_UNKNOWN
+
+        if reasons:
+            counts["uses_coverage_unknown"] += 1
+        if state == "initialized":
+            counts["uses_initialized"] += 1
+            continue
+        if not wanted:
+            continue
+        if state == _UNINIT_DEFINITE:
+            counts["definite"] += 1
+        elif state == _UNINIT_MAYBE:
+            counts["maybe"] += 1
+        else:
+            counts["unknown"] += 1
+        candidates.append(_uninit_candidate(
+            declaration, use, state, outcomes, writes, reasons,
+            names=names, identity=identity,
+        ))
+
+    candidates.sort(key=Candidate.rank_key)
+    truncated = len(candidates) > max_candidates
+    coverage = {
+        "uninitialized_population": dict(sorted(population.items())),
+        "uninitialized_bare_condition_reads":
+            population.get("bare_condition_reads", 0),
+        "uninitialized_missing_evidence": (
+            ["MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION"]
+            if population.get("bare_condition_reads") else []),
+        "uninitialized_uses": counts["uses"],
+        "uninitialized_uses_initialized": counts["uses_initialized"],
+        "uninitialized_uses_unreachable": counts["uses_unreachable"],
+        "uninitialized_uses_unresolved_declaration":
+            counts["uses_unresolved_declaration"],
+        "uninitialized_uses_declaration_not_published":
+            counts["uses_declaration_not_published"],
+        "uninitialized_uses_unsupported_declaration":
+            counts["uses_unsupported_declaration"],
+        "uninitialized_uses_model_unknown": counts["uses_model_unknown"],
+        "uninitialized_uses_coverage_unknown": counts["uses_coverage_unknown"],
+        "uninitialized_definite": counts["definite"],
+        "uninitialized_maybe": counts["maybe"],
+        "uninitialized_unknown": counts["unknown"],
+        "uninitialized_candidates": len(candidates),
+        "uninitialized_candidates_by_key": _count_by_key(candidates),
+        "max_hops": max_hops,
+        "max_paths": max_paths,
+    }
+    return DefectQueryResult(
+        query=UNINITIALIZED_USE,
+        candidates=tuple(candidates[:max_candidates]),
+        coverage=coverage, truncated=truncated,
+    )
 
 
 def candidate_evidence(

@@ -75,6 +75,13 @@ SEMANTIC_ROLES = ("candidate_anchor", "racing_access", "held_lock",
                   "release_site", "unresolved_location")
 ANCHOR_CLASSES = ("primary", "supporting", "unresolved")
 
+# Generic fact projection (projector-registry expansion). These are only
+# admitted for the new generic entries; race/double_free keep the narrower
+# enums above.
+GENERIC_SEMANTIC_ROLES = SEMANTIC_ROLES + (
+    "resource_alloc", "dereference", "call", "control", "null_value", "fact",
+)
+
 # --- terminal status derivation --------------------------------------------
 
 # source status (source.query_defect) -> envelope terminal status
@@ -123,7 +130,13 @@ def _facts_block(entry: str, projected: list[dict[str, Any]]) -> dict[str, Any]:
     ``release_sites.value[]`` (release_sites). Mirrors the v1 flat fact-field
     names so a v1-keyed consumer still finds its keys, with the v2.1
     per-candidate binding added.
+
+    The generic entries -> ``candidate_facts.value[]``. That block keeps the
+    candidate-level binding plus every located ``facts[]`` row the engine
+    produced; it is additive and never renames the two frozen blocks.
     """
+    if _is_generic(entry):
+        return _generic_facts_block(projected)
     fact_name = "shared_accesses" if _is_race(entry) else "release_sites"
     field = "access_rows" if _is_race(entry) else "release_sites"
     value: list[dict[str, Any]] = []
@@ -141,6 +154,28 @@ def _facts_block(entry: str, projected: list[dict[str, Any]]) -> dict[str, Any]:
     return {fact_name: {"value": value}}
 
 
+def _generic_facts_block(projected: list[dict[str, Any]]) -> dict[str, Any]:
+    """Candidate-bound generic fact block for the five new projectors."""
+    value: list[dict[str, Any]] = []
+    for pc in projected:
+        value.append({
+            "candidate_key": pc["candidate_key"],
+            "evidence_id": pc.get("evidence_id", ""),
+            "defect_key": pc.get("defect_key", ""),
+            "discriminator": pc.get("discriminator", ""),
+            "subject": pc["subject"],
+            "identity": pc["identity"],
+            "resolution_status": pc.get("resolution_status", ""),
+            "confidence": pc.get("confidence"),
+            "facts": pc.get("access_rows") or [],
+            "uncertain_facts": pc.get("uncertain_facts") or [],
+            "missing_evidence": pc.get("missing_evidence") or [],
+            "primary_anchor": pc.get("primary_anchor"),
+        })
+    value.sort(key=lambda item: item["candidate_key"])
+    return {"candidate_facts": {"value": value}}
+
+
 def _request_block(entry: str, case_workdir: str | Path, database: str | Path | None,
                    target_symbols: Any) -> dict[str, Any]:
     return {
@@ -154,13 +189,22 @@ def _request_block(entry: str, case_workdir: str | Path, database: str | Path | 
     }
 
 
-def _stamp_v2(bundle: dict[str, Any], projected: list[dict[str, Any]]) -> dict[str, Any]:
+def _stamp_v2(
+    bundle: dict[str, Any],
+    projected: list[dict[str, Any]],
+    *,
+    generic: bool = False,
+    supporting: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     bundle["schema_version"] = SCHEMA_VERSION
     bundle["contract_version"] = CONTRACT_VERSION
     bundle["projection_version"] = PROJECTION_VERSION
     bundle["adapter_version"] = ADAPTER_VERSION
     bundle["core_adapter_version"] = CORE_ADAPTER_VERSION
-    bundle["location_coverage"] = P.location_coverage(projected)
+    bundle["location_coverage"] = (
+        P.generic_location_coverage(projected, supporting)
+        if generic else P.location_coverage(projected)
+    )
     bundle["evidence_locations"] = P.evidence_locations(projected)
     return bundle
 
@@ -169,19 +213,37 @@ def _is_race(entry: str) -> bool:
     return entry == C.ENTRY_SHARED_ACCESS
 
 
+def _is_double_free(entry: str) -> bool:
+    return entry == C.ENTRY_DOUBLE_FREE
+
+
+def _is_generic(entry: str) -> bool:
+    return entry in C.GENERIC_ENTRIES
+
+
 def _build_bundle(
     entry: str,
     *,
     case_workdir: str | Path,
     database: str | Path | None,
     target_symbols: Any = (),
+    query_kwargs: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Self-contained v1 + v2.1 envelope, driven by one real engine query."""
+    """Self-contained v1 + v2.1 envelope, driven by one real engine query.
+
+    ``query_kwargs`` is only supplied by the generic entries; it forwards the
+    engine's own query knobs (``max_candidates``, ``max_paths``, ``max_hops``,
+    ``confidence_gate``, ...). The frozen race/double-free entries keep their
+    original ignore-kwargs behaviour.
+    """
 
     defect_type = C.ENTRY_DEFECT_TYPE[entry]
+    forwarded = dict(query_kwargs or {})
+    for reserved in ("repo", "defect_type", "database", "subject"):
+        forwarded.pop(reserved, None)
     src = query_defect(
         case_workdir, defect_type=defect_type, database=database,
-        subject=_subject_from_target_symbols(target_symbols),
+        subject=_subject_from_target_symbols(target_symbols), **forwarded,
     )
     status = _SOURCE_TO_ENVELOPE.get(src["status"], ST_FAILED)
 
@@ -196,18 +258,29 @@ def _build_bundle(
         "reason": src.get("reason"),
     }
 
+    generic = _is_generic(entry)
     if status == ST_OK:
         # live facts only: a fail-closed terminal (stale/not_built/failed/empty)
         # carries zero projected candidates -- it may not assert any binding.
-        projected = _projected_from_result(src["result"])
+        if generic:
+            projected = [
+                P.project_candidate_generic(candidate)
+                for candidate in (src["result"].get("candidates") or [])
+            ]
+        else:
+            projected = _projected_from_result(src["result"])
     else:
         projected = []
 
     bundle["facts"] = _facts_block(entry, projected)
-    bundle["supporting_locations"] = P.build_supporting_locations(
-        projected, role_fact_name=("shared_accesses" if _is_race(entry)
-                                   else "release_sites"))
-    return _stamp_v2(bundle, projected)
+    if generic:
+        supporting = P.build_supporting_locations_generic(projected)
+    else:
+        supporting = P.build_supporting_locations(
+            projected, role_fact_name=("shared_accesses" if _is_race(entry)
+                                       else "release_sites"))
+    bundle["supporting_locations"] = supporting
+    return _stamp_v2(bundle, projected, generic=generic, supporting=supporting)
 
 
 # --- public entry points ----------------------------------------------------
@@ -243,6 +316,73 @@ def analyze_double_free(
         target_symbols=target_symbols)
 
 
+def _analyze_generic(
+    entry: str,
+    case_workdir: str | Path,
+    database: str | Path | None,
+    target_symbols: Any = (),
+    **kwargs: Any,
+) -> dict:
+    return _build_bundle(
+        entry, case_workdir=case_workdir, database=database,
+        target_symbols=target_symbols, query_kwargs=kwargs)
+
+
+def analyze_lock_order(
+    case_workdir: str | Path,
+    database: str | Path | None,
+    target_symbols: Any = (),
+    **kwargs: Any,
+) -> dict:
+    """Lock Order -> FactBundle v2.1 (candidate-bound lock facts)."""
+    return _analyze_generic(C.ENTRY_LOCK_ORDER, case_workdir, database,
+                            target_symbols, **kwargs)
+
+
+def analyze_resource_lifetime(
+    case_workdir: str | Path,
+    database: str | Path | None,
+    target_symbols: Any = (),
+    **kwargs: Any,
+) -> dict:
+    """Resource Lifetime -> FactBundle v2.1 (candidate-bound resource facts)."""
+    return _analyze_generic(C.ENTRY_RESOURCE_LIFETIME, case_workdir, database,
+                            target_symbols, **kwargs)
+
+
+def analyze_use_after_free(
+    case_workdir: str | Path,
+    database: str | Path | None,
+    target_symbols: Any = (),
+    **kwargs: Any,
+) -> dict:
+    """Use After Free -> FactBundle v2.1 (candidate-bound lifetime facts)."""
+    return _analyze_generic(C.ENTRY_USE_AFTER_FREE, case_workdir, database,
+                            target_symbols, **kwargs)
+
+
+def analyze_null_flow(
+    case_workdir: str | Path,
+    database: str | Path | None,
+    target_symbols: Any = (),
+    **kwargs: Any,
+) -> dict:
+    """Null Flow -> FactBundle v2.1 (candidate-bound null/deref facts)."""
+    return _analyze_generic(C.ENTRY_NULL_FLOW, case_workdir, database,
+                            target_symbols, **kwargs)
+
+
+def analyze_mismatched_free(
+    case_workdir: str | Path,
+    database: str | Path | None,
+    target_symbols: Any = (),
+    **kwargs: Any,
+) -> dict:
+    """Mismatched Free -> FactBundle v2.1 (candidate-bound allocator facts)."""
+    return _analyze_generic(C.ENTRY_MISMATCHED_FREE, case_workdir, database,
+                            target_symbols, **kwargs)
+
+
 # --- validation -------------------------------------------------------------
 
 
@@ -268,6 +408,9 @@ def validate_bundle_v2(entry: str, bundle: Mapping[str, Any]) -> list[str]:
     if bundle.get("defect_type") != C.ENTRY_DEFECT_TYPE.get(entry):
         probs.append("defect_type does not match entry %r" % (entry,))
 
+    generic = bundle.get("defect_type") in C.GENERIC_DEFECT_TYPES
+    allowed_roles = GENERIC_SEMANTIC_ROLES if generic else SEMANTIC_ROLES
+
     for k in V2_ADDED_KEYS:
         if k not in bundle:
             probs.append("missing v2 key: " + k)
@@ -291,11 +434,19 @@ def validate_bundle_v2(entry: str, bundle: Mapping[str, Any]) -> list[str]:
                 probs.append("supporting_location missing " + k)
         if not str(loc.get("candidate_key") or ""):
             probs.append("supporting_location empty candidate_key")
-        if loc.get("semantic_role") not in SEMANTIC_ROLES:
+        if loc.get("semantic_role") not in allowed_roles:
             probs.append("bad semantic_role: %r" % (loc.get("semantic_role"),))
         if loc.get("anchor_class") not in ANCHOR_CLASSES:
             probs.append("bad anchor_class: %r" % (loc.get("anchor_class"),))
-        if loc.get("access_type") not in ACCESS_TYPES:
+        if generic:
+            # Generic fact types are engine-owned (ARITH/THROW/THREAD_JOIN/...)
+            # and must be preserved verbatim; only a fact location with no type
+            # is a contract violation. The candidate anchor legitimately has
+            # no access_type, exactly as in the frozen v2.1 shape.
+            if loc.get("semantic_role") != "candidate_anchor" \
+                    and not str(loc.get("access_type") or ""):
+                probs.append("empty access_type on generic location")
+        elif loc.get("access_type") not in ACCESS_TYPES:
             probs.append("bad access_type: %r" % (loc.get("access_type"),))
         if loc.get("anchor_class") != "unresolved" and not (
                 loc.get("file") and loc.get("line")):
@@ -318,5 +469,7 @@ __all__ = [
     "ADAPTER_VERSION", "CORE_ADAPTER_VERSION", "V2_ADDED_KEYS",
     "ST_OK", "ST_PARTIAL", "ST_EMPTY", "ST_UNSUPPORTED_ONLY",
     "ST_STALE", "ST_NOT_BUILT", "ST_FAILED", "ST_TIMEOUT",
-    "analyze_shared_access", "analyze_double_free", "validate_bundle_v2",
+    "analyze_shared_access", "analyze_double_free",
+    "analyze_lock_order", "analyze_resource_lifetime", "analyze_use_after_free",
+    "analyze_null_flow", "analyze_mismatched_free", "validate_bundle_v2",
 ]
