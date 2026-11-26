@@ -5459,15 +5459,22 @@ def out_of_bounds_write(
     no source re-parse, no second extent model, no guessed sizes.
 
     * declared array: constant element index vs constant element extent;
-    * allocation: each preceding same-object ALLOC is a reaching definition
+    * allocation: every preceding same-object ALLOC is a reaching definition
       only when a CONTROL_REACHES path survives the later same-object
-      definitions (allocation/write/release) on the way to the access. That is
-      what keeps a conditional second allocation, a conditional free and a
-      plain `p = q` from being read as unconditional kills;
+      definitions. Rebindings (`p = q`, `p = malloc(n)`, `p = q + 1`) are
+      blockaded as a set, so two arms that each rebind kill the old allocation
+      while one conditional rebinding leaves the other arm free; BRANCH and
+      CHECK predecessors block only their own arm; a missing control-position
+      fact is unknown, not a definite kill;
     * memory API: constant byte length vs the destination's constant byte
       extent, declared array or heap;
-    * `max_hops` / `max_paths` bound the walk; exhausting a budget downgrades
-      the candidate to ambiguous rather than returning a full resolved path.
+    * an unscoped release under a shadowed name is definite only for the
+      inferred scope; the other scopes get a potential release and the
+      candidate stays ambiguous with a RELEASE_SCOPE fact;
+    * `max_hops` / `max_paths` bound every walk; exhausting a budget downgrades
+      the candidate to ambiguous rather than returning a resolved path;
+    * negative constant indices are published by #104 and reported when both
+      index and extent are constant.
     """
     events = list(events)
     points, adjacency = _published_graph(events, edges, points, adjacency)
@@ -5622,7 +5629,7 @@ def out_of_bounds_write(
                     event=event, info=info, access=access, extent=extent,
                     facets=("M8", "M5"), index=int(length),
                     extent_value=int(byte_extent["constant"]), unit="bytes",
-                    alloc=None, path=None, names=names, identity=identity,
+                    alloc=None, path=None, names=names,
                     reachable=REACHABLE,
                 ))
                 continue
@@ -5646,7 +5653,7 @@ def out_of_bounds_write(
                 facets=("M8", "M6"), index=int(length),
                 extent_value=alloc_bytes, unit="bytes", alloc=alloc,
                 alloc_extent=_annotation_fact(alloc, BUFFER_EXTENT_KEY) or {},
-                path=path, names=names, identity=identity,
+                path=path, names=names,
                 reachable=reach, extra_allocations=extras,
                 budget_truncated=budget, release_uncertain=release_uncertain,
             ))
@@ -5689,7 +5696,7 @@ def out_of_bounds_write(
                 event=event, info=info, access=access, extent=extent,
                 facets=("M8", "M5"), index=index, extent_value=extent_value,
                 unit="elements", alloc=None, path=None, names=names,
-                identity=identity, reachable=REACHABLE,
+                reachable=REACHABLE,
             ))
             continue
 
@@ -5724,7 +5731,7 @@ def out_of_bounds_write(
             facets=("M8", "M6"), index=index, extent_value=alloc_bytes,
             unit="bytes", alloc=alloc,
             alloc_extent=_annotation_fact(alloc, BUFFER_EXTENT_KEY) or {},
-            path=path, names=names, identity=identity, reachable=reach,
+            path=path, names=names, reachable=reach,
             extra_allocations=extras, budget_truncated=budget,
             release_uncertain=release_uncertain,
         ))
@@ -5852,7 +5859,6 @@ def _resolve_heap(
     plain_writes = writes
     proven: list[tuple[Mapping[str, Any], dict[str, Any] | None, int, bool]] = []
     truncated: list[tuple[Mapping[str, Any], int, bool]] = []
-    blocked_kinds: set[str] = set()
     for alloc in allocs:
         alloc_start = int(alloc["start"])
         alloc_id = str(alloc["event"].get("event_id", ""))
@@ -5867,7 +5873,6 @@ def _resolve_heap(
                 max_hops=max_hops, max_paths=max_paths,
             )
             if phase == "kill":
-                blocked_kinds.add("write")
                 continue
         else:
             phase = "bypass"
@@ -5905,10 +5910,6 @@ def _resolve_heap(
                     release_uncertain,
                 ))
             continue
-        blocked_kinds.update(
-            str(item["kind"]) for item in relevant
-            if int(item["start"]) > alloc_start
-        )
         if (status == REACH_UNKNOWN or was_truncated) and known:
             truncated.append(
                 (alloc["event"], int(extent["constant"]), release_uncertain))
@@ -5942,7 +5943,6 @@ def _oob_candidate(
     alloc: Mapping[str, Any] | None,
     path: Mapping[str, Any] | None,
     names: Mapping[str, str] | None,
-    identity: bool,
     reachable: str,
     alloc_extent: Mapping[str, Any] | None = None,
     extra_allocations: tuple[str, ...] = (),
@@ -5955,7 +5955,7 @@ def _oob_candidate(
     member = str(obj.get("member", ""))
     name = _object_display_name(obj)
     owner_symbol_id = str(event.get("owner_symbol_id", ""))
-    identity_key = _identity(info, identity=identity) if info else ""
+    identity_key = _identity(info) if info else ""
     if not identity_key:
         identity_key = f"{obj.get('storage', '')}:{name}"
     status = RESOLVED if decl and reachable == REACHABLE else (
