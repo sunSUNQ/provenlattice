@@ -80,18 +80,26 @@ a flexible array member. A missing annotation means the fact does not apply to
 that point (for example, a scalar write has no buffer index); it does **not**
 mean zero or in bounds.
 
-For array extents, allocation sizes, memory lengths, and subscript indices, V1
-folds only non-negative numeric literals (including C's zero-prefixed octal
-spelling) and `*`, `<<`, and `+` whose operands are recursively foldable,
-through parentheses. Every literal and intermediate result must fit a signed
-32-bit int. Unsigned-suffixed literals, negative results, wider results, and
-invalid or potentially overflowing shifts are retained without a constant. Thus
-V1 never uses Python's unbounded arithmetic to invent C/C++ unsigned wraparound,
-and UB such as `1 << -1` cannot abort analysis. Pointer offsets have one
-explicit signed projection, specified in §5.2: subtraction negates an already
-proved non-negative magnitude. V1 does not evaluate identifiers, macros,
-`sizeof`, calls, casts, or general arithmetic. In particular, `(_Bool)2` and
-`(bool)2` are retained expressions, not the incorrect constant 2; no cast is
+For array extents, allocation sizes, and memory lengths, V1 folds only
+non-negative numeric literals (including C's zero-prefixed octal spelling) and
+`*`, `<<`, and `+` whose operands are recursively foldable, through parentheses.
+Subscript indices and pointer offsets use the same bounded folder with negative
+constants explicitly enabled. Every folded value and intermediate result must
+fit a signed 32-bit int. A leading minus has identical semantics whether the
+grammar retains it in a single numeric token or in a unary expression, including
+zero-prefixed octal spellings. Only a **decimal** magnitude of 2147483648 may be
+negated to produce `INT32_MIN`; hexadecimal, octal, and binary magnitudes must
+not exceed `INT32_MAX`. Thus `-0x80000000`, `-(020000000000)`, and their binary
+counterpart remain expressions rather than incorrectly publishing
+`constant=-2147483648`. Outside index/offset positions, negative results remain
+unevaluated. Unsigned-suffixed literals, wider results, and invalid or
+potentially overflowing shifts are retained without a constant. Thus V1 never
+uses Python's unbounded arithmetic to invent C/C++ unsigned wraparound, and UB
+such as `1 << -1` cannot abort analysis. Pointer offsets have one explicit
+signed projection, specified in §5.2: subtraction negates an already proved
+signed magnitude, and negating `INT32_MIN` fails closed. V1 does not evaluate
+identifiers, macros, `sizeof`, calls, casts, or general arithmetic. In particular,
+`(_Bool)2` and `(bool)2` are retained expressions, not the incorrect constant 2; no cast is
 folded without target-type semantics. No guessed value is substituted for a
 failed fold. Compact expressions preserve semantic whitespace in ordinary/raw
 string and character literals, between multi-word type tokens such as
@@ -378,8 +386,13 @@ left operand (or a numeric literal).
 
 For `*(p + k)` and `*(p - k)`, V1 emits `kind="pointer_offset"` and
 `unit="elements"`. The expression/value describe the signed offset from `p`;
-for example, `*(p - 2)` has expression `-(2)` and constant `-2`. Dynamic offsets
-retain their expression with a null constant. Built-in commuted addition is
+for example, `*(p - 2)` has expression `-(2)` and constant `-2`, while
+`*(p + -2)` retains expression `-2` and the same constant. Negative literals and
+the supported recursive operators follow §3, including consistent signed-octal
+folding and the decimal-only `INT32_MIN` magnitude exception. A non-decimal 2³¹
+magnitude therefore remains an expression, and pointer subtraction never turns
+it into a positive constant through a second negation. Dynamic offsets retain
+their expression with a null constant. Built-in commuted addition is
 normalized with declaration evidence: `*(i + a)` and `*(i + p)` use `a`/`p` as
 the base object and `i` as the offset, while `*(a + i)` and `*(p + i)` retain
 that same base/offset orientation. If neither operand provides enough
@@ -455,8 +468,10 @@ The metadata structure change advances:
 
 - `sparse_cfg:cpp`: **5 -> 6** (`cpp-sparse_cfg-v6`) for the original facts,
   **6 -> 7** for issue-pilot #84, **7 -> 8** for #89 G1 ATOMIC event
-  recognition, and **8 -> 9** (`cpp-sparse_cfg-v9`) for #94 memory-API
-  destination extents;
+  recognition, **8 -> 9** (`cpp-sparse_cfg-v9`) for #94 memory-API destination
+  extents, **9 -> 10** for #104 negative index/offset facts, **10 -> 11** for
+  #134 local declaration/access fact gaps, and **11 -> 12** for #141 signed
+  negative-literal boundary corrections;
 - `sparse_dfg:cpp`: **3 -> 4** (`cpp-sparse_dfg-v4`), unchanged by #94.
 
 `events:cpp` remained version 2 at the time of the original change because the
@@ -464,7 +479,7 @@ event vocabulary/identity producer was unchanged; it was later advanced to 3 by
 issue-pilot #90 (member-level lock designations), and remains 3 after #94. SCFG
 freshness rejects the old analyzer version/source hash. SDFG also records the
 SCFG dependency contract, so `dependency_staleness` rejects a cache built under
-`cpp-sparse_cfg-v8` even if its own source hash is unchanged.
+`cpp-sparse_cfg-v11` even if its own source hash is unchanged.
 
 No defect query or defect category consumes these annotations in V1. In
 particular, an extent of 4 plus an index of 4 is only a pair of facts; it does not

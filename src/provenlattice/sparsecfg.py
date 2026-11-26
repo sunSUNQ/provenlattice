@@ -4730,13 +4730,25 @@ def _number_literal_int(
     suffix = raw[len(text):]
     if "u" in suffix.lower() or len(text) > 40:
         return None
+    negative = text.startswith("-")
+    digits = text[1:] if text[:1] in {"+", "-"} else text
+    is_decimal = re.fullmatch(r"(?:0|[1-9][0-9]*)", digits) is not None
     try:
-        # Python's base-0 parser rejects C's traditional octal spelling.
-        if re.fullmatch(r"0[0-7]+", text):
-            value = int(text, 8)
+        # Python's base-0 parser rejects C's traditional octal spelling. Parse
+        # the unsigned magnitude so tree-sitter's signed single-token spelling
+        # and its unary-expression spelling have identical octal semantics.
+        if re.fullmatch(r"0[0-7]+", digits):
+            value = int(digits, 8)
         else:
-            value = int(text, 0)
+            value = int(digits, 0)
     except ValueError:
+        return None
+    if negative:
+        value = -value
+    # Only decimal 2147483648 may be accepted by the unary-minus caller as the
+    # magnitude of INT32_MIN. Hex/octal/binary literals of that magnitude can
+    # have unsigned type, whose negation is not the signed value -2147483648.
+    if not is_decimal and abs(value) > 2_147_483_647:
         return None
     return value if minimum <= value <= maximum else None
 
@@ -4765,8 +4777,9 @@ def _const_int(node: Any, source: bytes, *, allow_negative: bool = False) -> int
         argument = node.child_by_field_name("argument")
         while argument is not None and argument.type == "parenthesized_expression":
             argument = argument.named_children[0] if argument.named_children else None
-        # 2147483648 is not a positive signed-int literal, but its negation is
-        # the one additional value admitted by the signed 32-bit range.
+        # Decimal 2147483648 is not a positive signed-int literal, but its
+        # negation is the one additional value admitted by the signed 32-bit
+        # range. _number_literal_int rejects that magnitude for other bases.
         magnitude = _number_literal_int(argument, source, maximum + 1)
         return None if magnitude is None else -magnitude
     if node.type == "number_literal":

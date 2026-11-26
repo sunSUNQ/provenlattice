@@ -152,15 +152,30 @@ void negative_index_facts(int n) {
     negative_index[-n] = 0;
     negative_index[-2147483648] = 0;
     negative_index[-2147483649] = 0;
+    negative_index[-01] = 0;
+    negative_index[-010] = 0;
+    negative_index[- 010] = 0;
+    negative_index[-(010)] = 0;
+    negative_index[-0x1] = 0;
+    negative_index[-(0x7fffffff)] = 0;
+    negative_index[-0x80000000] = 0;
+    negative_index[- 0x80000000] = 0;
+    negative_index[-(0x80000000)] = 0;
+    negative_index[-(020000000000)] = 0;
+    negative_index[-0b10000000000000000000000000000000] = 0;
     negative_index[-1U] = 0;
     negative_index[1 << -1] = 0;
     *(negative_index + -1) = 0;
+    *(negative_index + -010) = 0;
+    *(negative_index + -0x80000000) = 0;
     *(negative_index - -1) = 0;
+    *(negative_index - -0x80000000) = 0;
     *(negative_index - -2147483648) = 0;
 }
 void commuted_subscripts(int i) {
     char swapped[4];
     2[swapped] = 0;
+    (-010)[swapped] = 0;
     i[swapped] = 0;
     i[(swapped)] = 0;
 }
@@ -184,6 +199,8 @@ void cast_array_base(void) {
 void commuted_pointer_offsets(int i, char *p) {
     char offset_array[4];
     *(i+offset_array) = 1;
+    *(-010+offset_array) = 1;
+    *(-0x80000000+offset_array) = 1;
     *(i+p) = 2;
     *(offset_array+i) = 3;
     *(p+i) = 4;
@@ -439,6 +456,7 @@ void unevaluated_and_conditional(bool c, int i) {
     (c ? conditional_left[0] : conditional_right[0]) = 1;
     char cpp_swapped[4];
     2[cpp_swapped] = 0;
+    (-010)[cpp_swapped] = 0;
     i[cpp_swapped] = 0;
 }
 """,
@@ -495,6 +513,8 @@ void cpp_facts(int n) {
     char cppbuf[8];
     cppbuf[3] = 1;
     cppbuf[-1] = 1;
+    cppbuf[-010] = 1;
+    cppbuf[-0x80000000] = 1;
     char *heap = malloc(n);
 }
 """,
@@ -851,6 +871,14 @@ class BufferExtentFactsTests(unittest.TestCase):
         negative = self.access("DEREFERENCE", "cppbuf[-1]", "src/facts.cpp")
         self.assertEqual(negative["status"], "constant")
         self.assertEqual(negative["constant"], -1)
+        octal = self.access("DEREFERENCE", "cppbuf[-010]", "src/facts.cpp")
+        self.assertEqual(octal["status"], "constant")
+        self.assertEqual(octal["constant"], -8)
+        non_decimal_minimum = self.access(
+            "DEREFERENCE", "cppbuf[-0x80000000]", "src/facts.cpp"
+        )
+        self.assertEqual(non_decimal_minimum["status"], "expression")
+        self.assertIsNone(non_decimal_minimum["constant"])
 
     def test_same_named_arrays_keep_declaration_and_owner_identity(self) -> None:
         self.materialize()
@@ -1111,15 +1139,21 @@ class BufferExtentFactsTests(unittest.TestCase):
             if event["owner_qualified_name"] == "negative_index_facts"
             and event["event_type"] == "DEREFERENCE"
         }
-        for line in (
-            "negative_index[-1] = 0;",
-            "negative_index[-(1)] = 0;",
-            "negative_index[- 1] = 0;",
-            "negative_index[-1 + 0] = 0;",
+        for line, expected in (
+            ("negative_index[-1] = 0;", -1),
+            ("negative_index[-(1)] = 0;", -1),
+            ("negative_index[- 1] = 0;", -1),
+            ("negative_index[-1 + 0] = 0;", -1),
+            ("negative_index[-01] = 0;", -1),
+            ("negative_index[-010] = 0;", -8),
+            ("negative_index[- 010] = 0;", -8),
+            ("negative_index[-(010)] = 0;", -8),
+            ("negative_index[-0x1] = 0;", -1),
+            ("negative_index[-(0x7fffffff)] = 0;", -2_147_483_647),
         ):
             access = self.fact(events[line], "memory_access_v1")
             self.assertEqual(access["status"], "constant", line)
-            self.assertEqual(access["constant"], -1, line)
+            self.assertEqual(access["constant"], expected, line)
         minimum = self.fact(
             events["negative_index[-2147483648] = 0;"], "memory_access_v1"
         )
@@ -1129,8 +1163,15 @@ class BufferExtentFactsTests(unittest.TestCase):
         for line in (
             "negative_index[-n] = 0;",
             "negative_index[-2147483649] = 0;",
+            "negative_index[-0x80000000] = 0;",
+            "negative_index[- 0x80000000] = 0;",
+            "negative_index[-(0x80000000)] = 0;",
+            "negative_index[-(020000000000)] = 0;",
+            "negative_index[-0b10000000000000000000000000000000] = 0;",
             "negative_index[-1U] = 0;",
             "negative_index[1 << -1] = 0;",
+            "*(negative_index + -0x80000000) = 0;",
+            "*(negative_index - -0x80000000) = 0;",
             "*(negative_index - -2147483648) = 0;",
         ):
             access = self.fact(events[line], "memory_access_v1")
@@ -1139,6 +1180,8 @@ class BufferExtentFactsTests(unittest.TestCase):
 
         plus = self.fact(events["*(negative_index + -1) = 0;"], "memory_access_v1")
         self.assertEqual((plus["kind"], plus["constant"]), ("pointer_offset", -1))
+        octal = self.fact(events["*(negative_index + -010) = 0;"], "memory_access_v1")
+        self.assertEqual((octal["kind"], octal["constant"]), ("pointer_offset", -8))
         minus = self.fact(events["*(negative_index - -1) = 0;"], "memory_access_v1")
         self.assertEqual((minus["kind"], minus["constant"]), ("pointer_offset", 1))
 
@@ -1170,6 +1213,12 @@ class BufferExtentFactsTests(unittest.TestCase):
             self.assertEqual(constant["expression"], "2")
             self.assertEqual(extent["constant"], 4)
             self.assertEqual(extent["object"]["decl"], f"local:{array}")
+
+            negative_event = self.event("DEREFERENCE", f"(-010)[{array}]", relative)
+            negative = self.fact(negative_event, "memory_access_v1")
+            self.assertEqual(negative["status"], "constant")
+            self.assertEqual(negative["constant"], -8)
+            self.assertEqual(negative["expression"], "(-010)")
 
             dynamic_event = self.event("DEREFERENCE", f"i[{array}]", relative)
             dynamic = self.fact(dynamic_event, "memory_access_v1")
@@ -1634,6 +1683,16 @@ class BufferExtentFactsTests(unittest.TestCase):
                 self.assertEqual(extent["object"]["decl"], declaration)
                 self.assertEqual(extent["constant"], extent_constant)
 
+        octal = self.access(
+            "DEREFERENCE", "*(-010+offset_array)", "src/regressions.c"
+        )
+        self.assertEqual((octal["kind"], octal["constant"]), ("pointer_offset", -8))
+        non_decimal_minimum = self.access(
+            "DEREFERENCE", "*(-0x80000000+offset_array)", "src/regressions.c"
+        )
+        self.assertEqual(non_decimal_minimum["status"], "expression")
+        self.assertIsNone(non_decimal_minimum["constant"])
+
     def test_member_conditional_and_unevaluated_access_direction(self) -> None:
         self.materialize()
         c_relative = "src/regressions.c"
@@ -1883,7 +1942,7 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(self.fact(golden, "buffer_extent_v1")["constant"], 6)
 
     def test_scfg_version_and_dfg_dependency_freshness(self) -> None:
-        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 11)
+        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 12)
         self.assertEqual(ANALYZER_VERSIONS["sparse_dfg:cpp"], 4)
         self.assertEqual(ANALYZER_VERSIONS["events:cpp"], 3)
         self.materialize("sparse_dfg")
