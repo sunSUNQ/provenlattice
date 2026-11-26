@@ -205,6 +205,68 @@ void touch(void) {
 }
 """
 
+SELF_WRITE_POINTERS = r"""
+#include <stdlib.h>
+char *g;
+
+void by_parameter(char *p) {
+    p = malloc(4);
+    p[4] = 0;
+}
+
+void by_global(void) {
+    g = malloc(4);
+    g[4] = 0;
+}
+"""
+
+CONDITIONAL_REBINDING = r"""
+#include <stdlib.h>
+void touch(char *q, int c) {
+    char *p = malloc(4);
+    if (c) { p = q; }
+    p[4] = 0;
+}
+"""
+
+SHADOW_SCOPE_EXIT = r"""
+#include <stdlib.h>
+void touch(void) {
+    char *p;
+    { char *p; p = malloc(4); p[3] = 0; }
+    p = malloc(8);
+    p[8] = 0;
+}
+"""
+
+MULTI_ALLOCATION_BUDGET = r"""
+#include <stdlib.h>
+void sink(void) { }
+void touch(int c) {
+    char *p;
+    if (c) { p = malloc(8); }
+    else { p = malloc(4); sink(); sink(); }
+    p[4] = 0;
+}
+"""
+
+SAMELINE_REBINDING = r"""
+#include <stdlib.h>
+void touch(char *q) {
+    char *p = malloc(4); p = q;
+    p[4] = 0;
+}
+"""
+
+NON_BARE_REBINDING = r"""
+#include <stdlib.h>
+void touch(char *q) {
+    char *p = malloc(4);
+    p = q + 1;
+    p[4] = 0;
+}
+"""
+
 
 class OutOfBoundsWriteTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -420,6 +482,67 @@ class OutOfBoundsWriteTests(unittest.TestCase):
         self.assertEqual(len(unrestricted), 1)
         self.assertEqual(unrestricted[0]["resolution_status"], "resolved")
         self.assertTrue(unrestricted[0]["paths"])
+
+    def test_parameter_and_global_self_writes_are_not_rebindings(self) -> None:
+        self.build(SELF_WRITE_POINTERS)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 2)
+        self.assertEqual(
+            sorted(candidate["metadata"]["extent"] for candidate in candidates),
+            [4, 4])
+        for candidate in candidates:
+            self.assertEqual(candidate["resolution_status"], "resolved")
+            self.assertNotIn(
+                "nearest same-identity",
+                " ".join(candidate["missing_evidence"]))
+
+    def test_conditional_rebinding_keeps_the_unbound_path(self) -> None:
+        self.build(CONDITIONAL_REBINDING)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+
+    def test_shadow_scope_exit_joins_the_outer_allocation(self) -> None:
+        self.build(SHADOW_SCOPE_EXIT)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 8)
+        self.assertEqual(candidates[0]["metadata"]["index"], 8)
+
+    def test_multi_allocation_budget_keeps_the_truncated_smaller_extent(self) -> None:
+        self.build(MULTI_ALLOCATION_BUDGET)
+        constrained = self.query(max_hops=2, max_paths=1)
+        limited = [c for c in constrained["candidates"]
+                   if c["query"] == "out_of_bounds_write"]
+        self.assertEqual(len(limited), 1)
+        self.assertEqual(limited[0]["resolution_status"], "ambiguous")
+        self.assertEqual(limited[0]["metadata"]["extent"], 4)
+        self.assertEqual(limited[0]["paths"], [])
+        self.assertTrue(any("budget" in item
+                            for item in limited[0]["missing_evidence"]))
+        unrestricted = [c for c in self.query()["candidates"]
+                        if c["query"] == "out_of_bounds_write"]
+        self.assertEqual(len(unrestricted), 1)
+        self.assertEqual(unrestricted[0]["resolution_status"], "resolved")
+        self.assertEqual(unrestricted[0]["metadata"]["extent"], 4)
+
+    def test_same_line_rebinding_still_kills_the_allocation(self) -> None:
+        self.build(SAMELINE_REBINDING)
+        env = self.query(confidence_gate=None)
+        self.assertEqual(
+            [c for c in env["candidates"] if c["query"] == "out_of_bounds_write"],
+            [])
+        self.assertGreaterEqual(
+            env["coverage"]["exclusions"].get("reassigned", 0), 1)
+
+    def test_non_bare_rebinding_still_kills_the_allocation(self) -> None:
+        self.build(NON_BARE_REBINDING)
+        env = self.query(confidence_gate=None)
+        self.assertEqual(
+            [c for c in env["candidates"] if c["query"] == "out_of_bounds_write"],
+            [])
+        self.assertGreaterEqual(
+            env["coverage"]["exclusions"].get("reassigned", 0), 1)
 
 
 if __name__ == "__main__":
