@@ -66,11 +66,15 @@ provenlattice defect /path/to/repo --type all \
   `unknown_write_through`，因此该形状是显式 `unknown` 候选，而非 definite。
 - 已知 FN：写入 span 是目标标识符本身，同一赋值右侧的自引用
   （`x = x + 1`）在 V1 中被当作写入之后的读取；`int x = x;` 的初始化自读被当作
-  声明初始化，不产生候选。裸条件读取（`if (x)` / `if (x) return`）上游未发布
-  `local_access_v1`，V1 在 coverage 的 `uninitialized_bare_condition_reads` 中
-  计数，并在 `uninitialized_missing_evidence` 暴露
-  `MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION`，不静默当作安全；条件表达式内的
-  写入按 maybe/unknown 处理，不当作无条件定义。
+  声明初始化，不产生候选。裸条件读取（`if (x)` / `if (p)` / `if (x) return`）
+  上游未发布 `local_access_v1`，V1 在 coverage 的
+  `uninitialized_bare_condition_reads` 中计数，并在
+  `uninitialized_missing_evidence` 暴露
+  `MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION`，不静默当作安全。
+- 条件写：分支条件（BRANCH/CHECK）与声明 initializer 内的写入按
+  maybe/unknown 处理，不当作无条件定义。赋值 RHS / 函数实参中的短路写
+  （`y = (n && (x = 1))`、`g(n && (x = 1))`）缺少 enclosing span，仍为
+  known FN（上游事实缺口，另列 follow-up）。
 
 ## 3. 结果 JSON 结构
 
@@ -153,8 +157,8 @@ provenlattice defect /path/to/repo --type all \
 | FN | CONSUMES | 仅直接传递形状(`f(malloc(n))`),赋值形状走 DATA_FLOW_TO |
 | FN | sparse CFG | goto 目标不建模,短路坍缩为单 BRANCH |
 | 边界 | 全部 | 方法内分析,无跨函数边;无 SSA/points-to |
-| 边界 | uninitialized_use | 仅 straight-line/if-else/early-return；宏/goto/循环/条件表达式/写穿为显式 unknown；条件表达式内的写入按 maybe/unknown |
-| FN | uninitialized_use | `x = x + 1` 的 RHS 读取被当作写入之后；`int x = x;` 自初始化不产生候选；裸条件 `if (x)` 读取上游未发布，仅在 `uninitialized_bare_condition_reads` 计数暴露；参数/静态对象的调用期或零初始化语义不在候选内 |
+| 边界 | uninitialized_use | 仅 straight-line/if-else/early-return；宏/goto/循环/条件表达式/写穿为显式 unknown；分支条件（BRANCH/CHECK）与声明 initializer 内的写入按 maybe/unknown |
+| FN | uninitialized_use | `x = x + 1` 的 RHS 读取被当作写入之后；`int x = x;` 自初始化不产生候选；裸条件 `if (x)` / `if (p)` 读取上游未发布，仅在 `uninitialized_bare_condition_reads` 计数暴露；赋值 RHS / 实参短路写为上游事实缺口；参数/静态对象的调用期或零初始化语义不在候选内 |
 | 边界 | error_handling | 精度受 API contract 知识限制 |
 | 边界 | taint_path | 仅 4 source/3 sink,无 sanitizer/跨函数 |
 | 边界 | out_of_bounds_write | V1 仅报告可证明常量：负下标/动态下标/动态大小/未知 extent/VLA/灵活数组进入 coverage;非 char 元素与堆分配的单位比较记 `unit_mismatch`;堆候选按“later 同身份定义不阻断的可达路径”判定,普通重绑定记 `reassigned`,互斥 release 不排除;`max_hops/max_paths` 耗尽时降级为 ambiguous |

@@ -7881,8 +7881,8 @@ def _uninit_collect(
 ]:
     declarations: dict[str, dict[str, Any]] = {}
     accesses: list[dict[str, Any]] = []
-    branch_spans: dict[tuple[str, str], list[tuple[int, int]]] = defaultdict(list)
-    branch_conditions: list[tuple[str, str]] = []
+    condition_spans: dict[tuple[str, str], list[tuple[int, int]]] = defaultdict(list)
+    condition_expressions: list[tuple[str, str]] = []
     population = {
         "declaration_events": 0,
         "declarations": 0,
@@ -7897,7 +7897,7 @@ def _uninit_collect(
     for event in events:
         event_type = str(_uninit_field(event, "event_type", "") or "")
         annotations = _uninit_annotations(event)
-        if event_type == "BRANCH":
+        if event_type in {"BRANCH", "CHECK"}:
             start = _uninit_number(_uninit_field(event, "start_byte", 0))
             end = _uninit_number(_uninit_field(event, "end_byte", 0))
             owner = str(_uninit_field(event, "owner_symbol_id", "") or "")
@@ -7905,10 +7905,10 @@ def _uninit_collect(
                 _uninit_field(event, "relative_path", "")
                 or annotations.get("relative_path", "") or "")
             if start is not None and end is not None and end > start:
-                branch_spans[(path, owner)].append((start, end))
+                condition_spans[(path, owner)].append((start, end))
             expression = str(annotations.get("expression") or "").strip()
             if expression:
-                branch_conditions.append((owner, expression))
+                condition_expressions.append((owner, expression))
             continue
         if event_type == "DECLARATION":
             fact = _uninit_fact(annotations, "local_declaration_v1")
@@ -7986,16 +7986,17 @@ def _uninit_collect(
         if record["fact"].get("initialized") is not True:
             uninitialized_names_by_owner.setdefault(
                 record["owner_symbol_id"], set()).add(record["name"])
-    for owner, expression in branch_conditions:
+    for owner, expression in condition_expressions:
         if expression in uninitialized_names_by_owner.get(owner, ()):
-            # A bare `if (x)` condition read of an uninitialized local. The
-            # producer does not publish a local_access_v1 fact for this shape,
-            # so the query cannot turn it into a candidate; counting it keeps
-            # the gap visible instead of silently reading as "analyzed and
-            # safe". An initialized local's bare condition is not a gap.
+            # A bare `if (x)` / `if (p)` condition read of an uninitialized
+            # local. The producer publishes no local_access_v1 fact for this
+            # shape (BRANCH for scalars, CHECK for pointers/null tests), so the
+            # query cannot turn it into a candidate; counting it keeps the gap
+            # visible instead of silently reading as "analyzed and safe". An
+            # initialized local's bare condition is not a gap.
             population["bare_condition_reads"] += 1
     # A short-circuit/conditional initializer (`int y = (n && (x = 1));`) has
-    # no BRANCH point of its own, but the initializer span and expression are
+    # no branch point of its own, but the initializer span and expression are
     # published. A write inside such an initializer is not an unconditional
     # definition either, so it joins the same conditional-span index.
     for record in declarations.values():
@@ -8007,10 +8008,10 @@ def _uninit_collect(
             start is not None and end is not None and end > start
             and any(operator in expression for operator in ("&&", "||", "?"))
         ):
-            branch_spans[
+            condition_spans[
                 (record["relative_path"], record["owner_symbol_id"])
             ].append((start, end))
-    return declarations, accesses, population, branch_spans
+    return declarations, accesses, population, condition_spans
 
 
 def _uninit_coverage_reasons(

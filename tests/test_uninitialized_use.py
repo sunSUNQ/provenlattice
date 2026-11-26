@@ -357,6 +357,19 @@ class ConditionalWriteTests(UninitializedUseBase):
         self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
         self.assertIn("path_coverage_incomplete", candidate["missing_evidence"])
 
+    def test_pointer_guard_write_is_maybe(self) -> None:
+        # `p && (x = 1)` is a CHECK condition (not a BRANCH); the write inside
+        # it must not be an unconditional definition.
+        candidate, _ = self.only(
+            "int f(int n, int *p) { int x; if (p && (x = 1)) { } return x; }\n")
+        self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
+        self.assertIn("path_coverage_incomplete", candidate["missing_evidence"])
+
+    def test_negated_pointer_guard_write_is_maybe(self) -> None:
+        candidate, _ = self.only(
+            "int f(int n, int *p) { int x; if (!p && (x = 1)) { } return x; }\n")
+        self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
+
 
 class BareConditionCoverageTests(UninitializedUseBase):
     def test_bare_if_condition_is_counted_not_silent(self) -> None:
@@ -364,6 +377,28 @@ class BareConditionCoverageTests(UninitializedUseBase):
             "int f(int n) { int x; if (x) { return 1; } return 0; }\n")
         env = self.query(defect_type=defect.UNINITIALIZED_USE)
         self.assertEqual(env["status"], "available")
+        self.assertEqual(env["candidates"], [])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_bare_condition_reads"], 1)
+
+    def test_bare_pointer_condition_is_counted_not_silent(self) -> None:
+        # A pointer bare condition is published as CHECK, not BRANCH; without
+        # counting CHECK expressions the gap would read as analyzed-and-safe.
+        self.build(
+            "int f(void) { int *p; if (p) { return 1; } return 0; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(env["status"], "available")
+        self.assertEqual(env["candidates"], [])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_bare_condition_reads"], 1)
+        self.assertIn(
+            "MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION",
+            env["coverage"]["uninitialized_missing_evidence"])
+
+    def test_bare_pointer_condition_return_is_counted(self) -> None:
+        self.build(
+            "int f(void) { int *p; if (p) return 1; return 0; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
         self.assertEqual(env["candidates"], [])
         self.assertGreaterEqual(
             env["coverage"]["uninitialized_bare_condition_reads"], 1)
