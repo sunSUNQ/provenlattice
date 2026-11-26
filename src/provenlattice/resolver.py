@@ -10,7 +10,7 @@ from .models import Edge, Node, ParsedFile, ParsedReference, RawReference
 # Bump when reference metadata semantics change: cached rows whose metadata
 # lacks the current version are re-resolved so full and incremental index
 # runs converge on identical classification.
-CALL_KIND_VERSION = 3
+CALL_KIND_VERSION = 4
 
 # Reference syntaxes that can only ever bind to a type-shaped target. Emitted
 # by the Java extractor (type usages and `new` constructions); no other
@@ -276,6 +276,10 @@ class ReferenceResolver:
                 module = self._absolute_module(source_module, imported.module)
                 imported_candidates.extend(by_qualified.get(f"{module}.{imported.target}", []))
         imported_candidates = list({candidate.id: candidate for candidate in imported_candidates}.values())
+        if (reference.metadata or {}).get("static_import_collision"):
+            # Two static imports of one name: the last alias must not decide
+            # the target. Keep every imported candidate and never resolve.
+            return imported_candidates, None, "static_import_collision", 0.0
         if len(imported_candidates) == 1:
             return imported_candidates, imported_candidates[0], "unique_imported_symbol_resolution", 0.95
         if len(imported_candidates) > 1:

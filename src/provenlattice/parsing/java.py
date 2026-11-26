@@ -86,6 +86,10 @@ class JavaExtractor:
         self.import_aliases: dict[str, tuple[str, str | None]] = {}
         self.type_aliases: set[str] = set()
         self.static_member_aliases: set[str] = set()
+        # Local name -> every class a `import static Class.name;` brings in.
+        # The alias table keeps one winner for rewriting; this table keeps the
+        # collision visible so a bare call is never bound to the last import.
+        self.static_import_modules: dict[str, set[str]] = {}
         self.declared_types: set[str] = set()
         self.locals: set[str] = set()
 
@@ -414,6 +418,7 @@ class JavaExtractor:
             self.import_aliases[target] = (module, target)
             if is_static:
                 self.static_member_aliases.add(target)
+                self.static_import_modules.setdefault(target, set()).add(module)
             else:
                 self.type_aliases.add(target)
 
@@ -448,6 +453,10 @@ class JavaExtractor:
             if suffix:
                 return suffix, module
         return target, None
+
+    def _static_import_collision(self, name: str) -> bool:
+        """Whether more than one class statically imports the same local name."""
+        return len(self.static_import_modules.get(name, ())) > 1
 
     def _base_text(self, node: Any) -> str:
         return self.text(node).split("<", 1)[0].strip()
@@ -485,8 +494,15 @@ class JavaExtractor:
         if object_node is None:
             target = name
             if name in self.import_aliases:
-                target, target_module = self._rewrite(name)
                 metadata["static_import"] = True
+                if self._static_import_collision(name):
+                    # Two `import static A.m;` / `import static B.m;` lines.
+                    # The alias table has one winner, but the call must keep
+                    # every candidate; leave it bare so the resolver's import
+                    # ladder collects all of them instead of the last one.
+                    metadata["static_import_collision"] = True
+                else:
+                    target, target_module = self._rewrite(name)
         else:
             receiver = self.text(object_node).strip()
             if receiver == "this":
