@@ -1,6 +1,7 @@
 # C/C++ Local Declaration, Access, and Control-Position Facts V1
 
-Status: frozen additive output contract for issue-pilot #84. This layer produces
+Status: frozen additive output contract for issue-pilot #84, with the #134
+fact-production corrections. This layer produces
 facts for a later definite-assignment consumer. It does **not** decide
 `uninitialized_use`, mint defect candidates, build SSA or points-to relations,
 add a parallel graph, change storage schema, or extend the public Evidence
@@ -71,6 +72,14 @@ its default constructor is not guessed away. A local `extern` declaration uses
 `initialized=null` and `initializer="not_applicable"` because it is not an
 automatic object definition.
 
+C++ if-init statements are walked before their conditions. Condition declarations
+whose grammar stores the initializer on the declaration itself retain the same
+initializer metadata and initialization WRITE as an ordinary init-declarator.
+A range-for variable remains in the declaration population even though the
+installed grammar does not index its identity: it publishes an unsupported,
+unresolved declaration with method-wide unknown coverage rather than disappearing
+behind `unsupported_loop`.
+
 ## 3. Declaration identity and local accesses
 
 A consumer joins `local_access_v1.declaration` to
@@ -114,6 +123,15 @@ READ; treating every callee as a non-access would hide an uninitialized `fp()`
 use. Other callee shapes retain their existing DEREFERENCE/nested-expression
 handling.
 
+A bare local identifier used as an `if` condition publishes a declaration-linked
+READ before the branch point. Operands in `sizeof`, `alignof`, `decltype`,
+`noexcept`, `requires`, and equivalent unevaluated contexts publish no V1
+READ/WRITE; naming an object in a compile-time operand is not a runtime access.
+The evaluated bound of a VLA type is the explicit exception: `sizeof(int[n])`
+retains its runtime READ of `n`, unless a still-outer unevaluated operand
+suppresses the entire expression. Range-for reads use the same explicitly
+unresolved, unsupported identity boundary as their declaration.
+
 Read-modify-write keeps the existing paired READ/WRITE representation and the
 WRITE's `access_kind="READ_MODIFY_WRITE"`. Writing `*p` or `p[i]` is not a
 direct WRITE of pointer variable `p`; it marks possible write-through coverage
@@ -132,6 +150,7 @@ before the carrier would be threaded. It contains:
   "predecessors": [
     {"event_type": "BRANCH", "ordinal": 0, "flags": ["branch=true"]}
   ],
+  "evaluation_predecessor": null,
   "coverage_status": "complete",
   "coverage_reasons": []
 }
@@ -142,6 +161,14 @@ The owner is inherited from the carrier. A predecessor's
 source snapshot. Entries are sorted and deduplicated; flags are sorted.
 `entry=true` represents the synthetic method-entry open, for which no event id
 is fabricated.
+
+`evaluation_predecessor` is an additive, nullable `(event_type, ordinal, flags)`
+identity for the immediately preceding local access at the same control
+position. It is separate from `predecessors`, whose control-flow meaning is
+unchanged for existing consumers. For `y = (x = y)`, the chain is RHS `READ y` →
+`WRITE x` → outer `WRITE y`; the initial READ has no evaluation predecessor.
+These identities compose without reparsing source or comparing byte spans, and
+they do not turn edgeless accesses into CFG edge endpoints.
 
 For straight-line code, positions chain through actual threaded events. Within
 if/else arms they retain `branch=true` or `branch=false`; after a join they can
@@ -174,9 +201,10 @@ definite-assignment knowledge as complete.
 | `goto` | A `goto` prevents the ordinary structured-walk interpretation from proving positions. |
 | `unsupported_loop` | `while`, `do`, C `for`, or range-for requires a fixpoint outside V1. |
 | `unsupported_conditional` | `switch` or a conditional expression is outside the if/else-only V1 contract. |
+| `unsupported_short_circuit` | A local access in a short-circuit RHS cannot claim the LHS-gated position from the structured walk. The access has no entry/predecessor claim and the method coverage is unknown. |
 | `unsupported_lambda` | Lambda execution is not part of the enclosing method's ordinary control path. |
 | `unsupported_exception` | `try`, `catch`, or `throw` requires exceptional control semantics outside V1. |
-| `unknown_write_through` | An indirect local write, a local address or pointer passed to a call/C++ constructor (including direct/brace initialization and ambiguous function-style construction), or a write through a reference may change an object through an unmodeled target. |
+| `unknown_write_through` | An indirect local write, a local address or pointer passed to a call/C++ constructor (including direct/brace initialization, `new_expression` constructor arguments, and ambiguous function-style construction), or a write through a reference may change an object through an unmodeled target. |
 | `unsupported_reference` | A read through a local reference is outside direct-object V1; no direct access to the referenced object is invented. |
 | `unresolved_declaration` | A required declaration identity cannot be resolved; no scoped token is invented. |
 
@@ -186,14 +214,15 @@ independent and may coexist.
 
 ## 6. Compatibility and versioning
 
-`sparse_cfg:cpp` advances from v6 to v7. Existing v6 materialization is stale
-and is not returned as current facts. `events:cpp` is unchanged.
-`sparse_dfg:cpp` remains v4: its declared sparse-CFG dependency changes to v7,
-which forces rematerialization, while its legacy edge output remains unchanged.
+`sparse_cfg:cpp` advances from v10 to v11 (after #104 advanced v9 to v10).
+Existing v9/v10 materialization is stale and is not returned as current facts.
+`events:cpp` is unchanged. `sparse_dfg:cpp` remains v4: its declared sparse-CFG
+dependency changes to v11, which forces rematerialization, while its legacy
+edge output remains unchanged.
 
 Adding ordinary local READ/WRITE points can renumber source-order READ/WRITE
-ordinals within an owner. Consumers must not assume v6 access event ids survive
-the v7 migration. `DECLARATION` has its own event-type ordinal domain and does
+ordinals within an owner. Consumers must not assume v10 access event ids survive
+the v11 migration. `DECLARATION` has its own event-type ordinal domain and does
 not renumber DEREFERENCE or other event types.
 
 The legacy held-lock fact producer ignores declaration points and ordinary
@@ -205,5 +234,6 @@ facts out of existing query inputs; no defect rule or Evidence schema changes.
 Repeated materialization is byte-stable. Default-index absence, stale-version
 rebuild, deterministic annotations, branch/early-return positions, shadowing,
 partial parse, unsupported constructs, write-through, and legacy DFG/lockset
-compatibility are covered by `tests/test_local_declaration_access_facts.py` and
-the existing sparse CFG/DFG and concurrency regressions.
+compatibility are covered by `tests/test_local_declaration_access_facts.py`,
+`tests/test_sparsecfg_local_access_fact_gaps.py`, and the existing sparse CFG/DFG
+and concurrency regressions.

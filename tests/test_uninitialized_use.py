@@ -344,31 +344,33 @@ class RegistrationTests(UninitializedUseBase):
 
 
 class ConditionalWriteTests(UninitializedUseBase):
-    def test_logical_and_write_is_maybe(self) -> None:
+    def test_logical_and_write_is_unknown(self) -> None:
         candidate, _ = self.only(
             "int f(int n) { int x; if (n && (x = 1)) { } return x; }\n")
-        self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
+        self.assertEqual(candidate["metadata"]["state"], "unknown")
         self.assertEqual(candidate["resolution_status"], "ambiguous")
-        self.assertIn("path_coverage_incomplete", candidate["missing_evidence"])
+        self.assertIn("coverage_unsupported_short_circuit", candidate["missing_evidence"])
 
-    def test_initializer_logical_and_write_is_maybe(self) -> None:
+    def test_initializer_logical_and_write_is_unknown(self) -> None:
         candidate, _ = self.only(
             "int f(int n) { int x; int y = (n && (x = 1)); return x; }\n")
-        self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
-        self.assertIn("path_coverage_incomplete", candidate["missing_evidence"])
+        self.assertEqual(candidate["metadata"]["state"], "unknown")
+        self.assertIn("coverage_unsupported_short_circuit", candidate["missing_evidence"])
 
-    def test_pointer_guard_write_is_maybe(self) -> None:
-        # `p && (x = 1)` is a CHECK condition (not a BRANCH); the write inside
-        # it must not be an unconditional definition.
+    def test_pointer_guard_write_is_unknown(self) -> None:
+        # The short-circuit RHS write is explicit fail-closed coverage rather
+        # than an unconditional definition or a path-sensitive maybe state.
         candidate, _ = self.only(
             "int f(int n, int *p) { int x; if (p && (x = 1)) { } return x; }\n")
-        self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
-        self.assertIn("path_coverage_incomplete", candidate["missing_evidence"])
+        self.assertEqual(candidate["metadata"]["state"], "unknown")
+        self.assertEqual(candidate["resolution_status"], "ambiguous")
+        self.assertIn("coverage_unsupported_short_circuit", candidate["missing_evidence"])
 
-    def test_negated_pointer_guard_write_is_maybe(self) -> None:
+    def test_negated_pointer_guard_write_is_unknown(self) -> None:
         candidate, _ = self.only(
             "int f(int n, int *p) { int x; if (!p && (x = 1)) { } return x; }\n")
-        self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
+        self.assertEqual(candidate["metadata"]["state"], "unknown")
+        self.assertIn("coverage_unsupported_short_circuit", candidate["missing_evidence"])
 
 
 class BareConditionCoverageTests(UninitializedUseBase):
@@ -377,20 +379,24 @@ class BareConditionCoverageTests(UninitializedUseBase):
             "int f(int n) { int x; if (x) { return 1; } return 0; }\n")
         env = self.query(defect_type=defect.UNINITIALIZED_USE)
         self.assertEqual(env["status"], "available")
-        self.assertEqual(env["candidates"], [])
+        self.assertEqual(len(env["candidates"]), 1)
+        self.assertEqual(env["candidates"][0]["metadata"]["state"], "uninitialized")
         self.assertGreaterEqual(
             env["coverage"]["uninitialized_bare_condition_reads"], 1)
 
     def test_bare_pointer_condition_is_counted_not_silent(self) -> None:
-        # A pointer bare condition is published as CHECK, not BRANCH; without
-        # counting CHECK expressions the gap would read as analyzed-and-safe.
+        # A pointer bare condition now has the same declaration-linked READ as
+        # a scalar condition instead of a synthetic missing-evidence gap.
         self.build(
             "int f(void) { int *p; if (p) { return 1; } return 0; }\n")
         env = self.query(defect_type=defect.UNINITIALIZED_USE)
         self.assertEqual(env["status"], "available")
-        self.assertEqual(env["candidates"], [])
+        self.assertEqual(len(env["candidates"]), 1)
+        self.assertEqual(env["candidates"][0]["metadata"]["state"], "uninitialized")
         self.assertGreaterEqual(
             env["coverage"]["uninitialized_bare_condition_reads"], 1)
+        # The declaration-linked READ yields a candidate; the legacy aggregate
+        # coverage marker remains until its consumer is migrated separately.
         self.assertIn(
             "MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION",
             env["coverage"]["uninitialized_missing_evidence"])
@@ -399,7 +405,8 @@ class BareConditionCoverageTests(UninitializedUseBase):
         self.build(
             "int f(void) { int *p; if (p) return 1; return 0; }\n")
         env = self.query(defect_type=defect.UNINITIALIZED_USE)
-        self.assertEqual(env["candidates"], [])
+        self.assertEqual(len(env["candidates"]), 1)
+        self.assertEqual(env["candidates"][0]["metadata"]["state"], "uninitialized")
         self.assertGreaterEqual(
             env["coverage"]["uninitialized_bare_condition_reads"], 1)
 

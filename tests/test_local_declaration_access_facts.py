@@ -523,7 +523,7 @@ class LocalDeclarationAccessFactsTests(unittest.TestCase):
         canonical = json.dumps(first["events"], sort_keys=True, separators=(",", ":"))
         with closing(sqlite3.connect(self.database)) as connection:
             connection.execute(
-                "UPDATE analysis_state SET feature_version=6 WHERE feature='sparse_cfg:cpp'"
+                "UPDATE analysis_state SET feature_version=9 WHERE feature='sparse_cfg:cpp'"
             )
             connection.commit()
         stale = query_analysis(

@@ -143,6 +143,21 @@ void integer_semantics(int *v, int n) {
     char *division = malloc(n / *v);
     char *unary_plus = malloc(1 + +2);
 }
+void negative_index_facts(int n) {
+    char negative_index[4];
+    negative_index[-1] = 0;
+    negative_index[-(1)] = 0;
+    negative_index[- 1] = 0;
+    negative_index[-1 + 0] = 0;
+    negative_index[-n] = 0;
+    negative_index[-2147483648] = 0;
+    negative_index[-2147483649] = 0;
+    negative_index[-1U] = 0;
+    negative_index[1 << -1] = 0;
+    *(negative_index + -1) = 0;
+    *(negative_index - -1) = 0;
+    *(negative_index - -2147483648) = 0;
+}
 void commuted_subscripts(int i) {
     char swapped[4];
     2[swapped] = 0;
@@ -479,6 +494,7 @@ void memory_destination_statement_shadow(void) {
 void cpp_facts(int n) {
     char cppbuf[8];
     cppbuf[3] = 1;
+    cppbuf[-1] = 1;
     char *heap = malloc(n);
 }
 """,
@@ -832,6 +848,9 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(access["access"], "WRITE")
         self.assertEqual(access["expression"], "3")
         self.assertEqual(access["constant"], 3)
+        negative = self.access("DEREFERENCE", "cppbuf[-1]", "src/facts.cpp")
+        self.assertEqual(negative["status"], "constant")
+        self.assertEqual(negative["constant"], -1)
 
     def test_same_named_arrays_keep_declaration_and_owner_identity(self) -> None:
         self.materialize()
@@ -1081,6 +1100,47 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(wrapped["expression"], "0xffffffffU+1U")
         self.assertIsNone(wrapped["constant"])
         self.assertNotEqual(wrapped["status"], "constant")
+
+    def test_negative_index_and_pointer_offset_constants_are_signed_int(self) -> None:
+        self.materialize()
+        relative = "src/regressions.c"
+        lines = SOURCES[relative].splitlines()
+        events = {
+            lines[event["start_line"] - 1].strip(): event
+            for event in self.events(relative)
+            if event["owner_qualified_name"] == "negative_index_facts"
+            and event["event_type"] == "DEREFERENCE"
+        }
+        for line in (
+            "negative_index[-1] = 0;",
+            "negative_index[-(1)] = 0;",
+            "negative_index[- 1] = 0;",
+            "negative_index[-1 + 0] = 0;",
+        ):
+            access = self.fact(events[line], "memory_access_v1")
+            self.assertEqual(access["status"], "constant", line)
+            self.assertEqual(access["constant"], -1, line)
+        minimum = self.fact(
+            events["negative_index[-2147483648] = 0;"], "memory_access_v1"
+        )
+        self.assertEqual(minimum["status"], "constant")
+        self.assertEqual(minimum["constant"], -2_147_483_648)
+
+        for line in (
+            "negative_index[-n] = 0;",
+            "negative_index[-2147483649] = 0;",
+            "negative_index[-1U] = 0;",
+            "negative_index[1 << -1] = 0;",
+            "*(negative_index - -2147483648) = 0;",
+        ):
+            access = self.fact(events[line], "memory_access_v1")
+            self.assertEqual(access["status"], "expression", line)
+            self.assertIsNone(access["constant"], line)
+
+        plus = self.fact(events["*(negative_index + -1) = 0;"], "memory_access_v1")
+        self.assertEqual((plus["kind"], plus["constant"]), ("pointer_offset", -1))
+        minus = self.fact(events["*(negative_index - -1) = 0;"], "memory_access_v1")
+        self.assertEqual((minus["kind"], minus["constant"]), ("pointer_offset", 1))
 
     def test_calloc_like_product_overflow_fails_closed(self) -> None:
         self.materialize()
@@ -1823,7 +1883,7 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(self.fact(golden, "buffer_extent_v1")["constant"], 6)
 
     def test_scfg_version_and_dfg_dependency_freshness(self) -> None:
-        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 9)
+        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 11)
         self.assertEqual(ANALYZER_VERSIONS["sparse_dfg:cpp"], 4)
         self.assertEqual(ANALYZER_VERSIONS["events:cpp"], 3)
         self.materialize("sparse_dfg")
@@ -1834,7 +1894,7 @@ class BufferExtentFactsTests(unittest.TestCase):
                 "AND file_id IN (SELECT file_id FROM files WHERE path='src/facts.c')"
             ).fetchone()
             metadata = json.loads(row["metadata"])
-            metadata["dependencies"]["sparse_cfg:cpp"] = "cpp-sparse_cfg-v8"
+            metadata["dependencies"]["sparse_cfg:cpp"] = "cpp-sparse_cfg-v9"
             connection.execute(
                 "UPDATE analysis_state SET metadata=? WHERE feature='sparse_dfg:cpp' "
                 "AND file_id IN (SELECT file_id FROM files WHERE path='src/facts.c')",

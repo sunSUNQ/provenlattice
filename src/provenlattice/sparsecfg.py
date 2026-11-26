@@ -261,7 +261,7 @@ def _operator_of(node: Any, source: bytes) -> str:
         return _text_of(source, operator).strip()
     for child in node.children:
         if not child.is_named and child.type in {
-            "*", "&", "->", ".", "!", "&&", "||",
+            "*", "&", "->", ".", "!", "&&", "||", "-",
             "==", "!=", "<", ">", "<=", ">=",
         }:
             return _text_of(source, child).strip()
@@ -422,6 +422,10 @@ class SparseCfgBuilder:
         for group in self._hits_by_span.values():
             group.sort(key=lambda hit: (hit.event.event_type, hit.event.ordinal))
         self._points: list[_Point] = []
+        # V1 accesses in walker evaluation order. This is deliberately not
+        # `_points` construction order: an assignment creates its WRITE before
+        # its direct RHS READ, then returns READ before WRITE to the walker.
+        self._evaluation_sequence: list[_Point] = []
         # Edges under construction: (src, dst, flags) where dst is a _Point or
         # the _EXIT marker. `None` never appears -- it is dropped at _emit.
         self._edges: list[tuple[_Point, Any, tuple[str, ...]]] = []
@@ -574,6 +578,38 @@ class SparseCfgBuilder:
         stable syntax identity with `status=unsupported`; they are never
         silently treated as initialized or as ordinary automatic scalars.
         """
+        if node.type in {"for_range_loop", "range_based_for_statement"}:
+            declarator = node.child_by_field_name("declarator")
+            name = _declarator_name(self.source, declarator)
+            if not name:
+                return []
+            # The installed C++ grammar does not give a range declarator a
+            # DeclarationIndex record. Keep the variable in the V1 population
+            # with an explicitly unresolved identity instead of silently
+            # dropping it merely because the enclosing loop is unsupported.
+            self._coverage_reasons.add("unresolved_declaration")
+            fact = {
+                "declaration": "",
+                "decl": "",
+                "storage": STORAGE_LOCAL,
+                "storage_class": "automatic",
+                "type": "",
+                "kind": "unsupported",
+                "status": "unsupported",
+                "initialized": None,
+                "initializer": "unknown",
+                "initializer_expression": None,
+                "initializer_start_byte": None,
+                "initializer_end_byte": None,
+                "zero_initialized": False,
+                "limitation": "range-for declaration identity is unresolved",
+            }
+            return [self._new_point(
+                DECLARATION,
+                declarator,
+                annotations={LOCAL_DECLARATION_KEY: _facts_json(fact)},
+                matched_name=name,
+            )]
         if node.type != "declaration":
             return []
         points: list[_Point] = []
@@ -654,7 +690,8 @@ class SparseCfgBuilder:
 
             value = (
                 declarator.child_by_field_name("value")
-                if declarator.type == "init_declarator" else None
+                if declarator.type == "init_declarator"
+                else node.child_by_field_name("value")
             )
             zero_initialized = storage_class in {"static", "thread_local"}
             initialized: bool | None = False
@@ -756,6 +793,43 @@ class SparseCfgBuilder:
             "primitive_type", "enum_specifier",
         }
 
+    def _is_range_local(self, node: Any, name: str) -> bool:
+        """Whether ``node`` names an unindexed range-for local in scope."""
+        if node is None or node.type != "identifier":
+            return False
+        ancestor = node.parent
+        while ancestor is not None:
+            if ancestor.type in {"for_range_loop", "range_based_for_statement"}:
+                names = self._statement_declaration_names.get(ancestor.start_byte, {})
+                visible_from = names.get(name)
+                if visible_from is not None and node.start_byte >= visible_from:
+                    return True
+            if ancestor.type in {"function_definition", "translation_unit"}:
+                break
+            ancestor = ancestor.parent
+        return False
+
+    def _in_short_circuit_rhs(self, node: Any) -> bool:
+        """Whether an access executes only when a short-circuit RHS runs."""
+        ancestor = node.parent if node is not None else None
+        while ancestor is not None:
+            if (
+                ancestor.type == "binary_expression"
+                and _operator_of(ancestor, self.source)
+                in self.profile.short_circuit_operators
+            ):
+                right = ancestor.child_by_field_name("right")
+                if (
+                    right is not None
+                    and right.start_byte <= node.start_byte
+                    and node.end_byte <= right.end_byte
+                ):
+                    return True
+            if ancestor.type in {"function_definition", "translation_unit"}:
+                break
+            ancestor = ancestor.parent
+        return False
+
     def _unknown_address_of_in_call(self, node: Any) -> None:
         if node.type != "pointer_expression" or _operator_of(node, self.source) != "&":
             return
@@ -773,7 +847,7 @@ class SparseCfgBuilder:
         while ancestor is not None and ancestor.type not in {
             "declaration", "expression_statement", "return_statement",
         }:
-            if ancestor.type == "call_expression":
+            if ancestor.type in {"call_expression", "new_expression"}:
                 record(argument)
                 return
             if ancestor.type == "init_declarator":
@@ -787,7 +861,7 @@ class SparseCfgBuilder:
 
     def _unknown_pointer_argument(self, node: Any) -> None:
         """A call or C++ constructor may write through a local pointer argument."""
-        if node.type == "call_expression":
+        if node.type in {"call_expression", "new_expression"}:
             arguments = node.child_by_field_name("arguments")
         elif node.type == "init_declarator":
             arguments = node.child_by_field_name("value")
@@ -1325,10 +1399,62 @@ class SparseCfgBuilder:
         join key, and no READ/WRITE/DECLARATION endpoint enters existing CFG
         paths.
         """
+        def position_of(point: _Point) -> tuple:
+            owner = (
+                point.owner_kind,
+                point.owner_qualified_name,
+                point.owner_signature,
+            )
+            # Vocabulary hits share a walker-local seq; only the assigned
+            # owner/event/ordinal identity distinguishes their control points.
+            return (
+                owner,
+                tuple(sorted(
+                    (
+                        ("", -1) if open_edge.src is None else (
+                            open_edge.src.event_type, open_edge.src.ordinal,
+                        ),
+                        tuple(sorted(open_edge.flags)),
+                    )
+                    for open_edge in point.control_incoming or ()
+                )),
+            )
+
+        evaluation_predecessor: dict[int, _Open] = {}
+        last_access: dict[tuple, _Point] = {}
+        for point in self._evaluation_sequence:
+            incoming = point.control_incoming
+            if not incoming or point.short_circuit_rhs:
+                continue
+            position = position_of(point)
+            previous = last_access.get(position)
+            if previous is not None:
+                # Edgeless accesses still have language evaluation order.
+                # Chain that order through an additive identity field alongside
+                # the control predecessors, without adding CFG edges or changing
+                # the older control-flow join semantics.
+                # In `y = (x = y)` this publishes READ(y) -> WRITE(x) ->
+                # WRITE(y), rather than pretending all three entered together
+                # or asking a consumer to re-parse source spans.
+                flags = tuple(sorted({
+                    flag for open_edge in incoming for flag in open_edge.flags
+                }))
+                evaluation_predecessor[id(point)] = _Open(previous, flags)
+            last_access[position] = point
+
         for point in self._points:
             incoming = point.control_incoming
             if incoming is None:
                 continue
+            previous = evaluation_predecessor.get(id(point))
+            evaluation = None
+            if previous is not None:
+                evaluation = {
+                    "event_type": previous.src.event_type,
+                    "ordinal": previous.src.ordinal,
+                    "flags": list(previous.flags),
+                }
+            incoming = list(incoming)
             predecessors = []
             entry = False
             seen = set()
@@ -1359,6 +1485,7 @@ class SparseCfgBuilder:
                     }
                     for event_type, ordinal, flags in predecessors
                 ],
+                "evaluation_predecessor": evaluation,
                 "coverage_status": "unknown" if point.local_coverage else "complete",
                 "coverage_reasons": list(point.local_coverage or ()),
             }
@@ -1550,13 +1677,16 @@ class SparseCfgBuilder:
         threaded, event_only = self._own_points(node)
         for point in event_only:
             if point.event_type == DECLARATION or LOCAL_ACCESS_KEY in point.annotations:
-                point.control_incoming = list(current)
+                point.control_incoming = [] if point.short_circuit_rhs else list(current)
+            if LOCAL_ACCESS_KEY in point.annotations:
+                self._evaluation_sequence.append(point)
         noreturn = False
         for point in threaded:
             if LOCAL_ACCESS_KEY in point.annotations:
                 # DEREFERENCE remains threaded; retain the incoming position
                 # before `_connect` replaces it with the dereference itself.
-                point.control_incoming = list(current)
+                point.control_incoming = [] if point.short_circuit_rhs else list(current)
+                self._evaluation_sequence.append(point)
             current = self._connect(current, point)
             if entry is None:
                 entry = point
@@ -2359,7 +2489,16 @@ class SparseCfgBuilder:
                 extent.get("object") if extent is not None else _object_fact(annotations)
             )
             annotations[MEMORY_ACCESS_KEY] = _facts_json(access)
-        return self._new_point("DEREFERENCE", node, annotations=annotations, matched_name=text)
+        point = self._new_point(
+            "DEREFERENCE", node, annotations=annotations, matched_name=text
+        )
+        if LOCAL_ACCESS_KEY in annotations and self._in_short_circuit_rhs(node):
+            # A threaded dereference is still a V1 local access. Its original
+            # CFG edges remain intact, but its annotation must not claim the
+            # short-circuit RHS runs from method entry unconditionally.
+            point.short_circuit_rhs = True
+            self._coverage_reasons.add("unsupported_short_circuit")
+        return point
 
     def _deref_operand(self, node: Any) -> Any:
         # The subject of `p[i]` is `p`, the pointer being indexed -- the index
@@ -2893,15 +3032,20 @@ class SparseCfgBuilder:
         member path: `s->buf = malloc(n)` is `s#buf`, not `s`.
         """
         points: list[_Point] = []
+        write_points: list[_Point] = []
         target = None
         target_field = WRITE_TARGET_FIELDS.get(node.type)
+        if node.type == "declaration" and node.child_by_field_name("value") is not None:
+            # A C++ condition declaration stores its initializer on the
+            # declaration itself rather than in an init_declarator wrapper.
+            target_field = "declarator"
         if target_field is not None:
             target = node.child_by_field_name(target_field)
             written = _outermost_access(target, self.profile.access_node_types)
             if written is not None:
                 point = self._access_point(written, "WRITE", origin=node)
                 if point is not None:
-                    points.append(point)
+                    write_points.append(point)
                 if _is_read_modify_write(node):
                     # The read half of a read-modify-write: `x += y` and `x++`
                     # consume x's own value, so the same subject is read as well
@@ -2942,7 +3086,7 @@ class SparseCfgBuilder:
         # This node is itself an access expression: its parent emits for it.
         # Emitting here too would count `p->buf[i]` three times over.
         if node.type in self.profile.access_node_types:
-            return points
+            return [*points, *write_points]
         for child in node.named_children:
             if child.type not in self.profile.access_node_types:
                 continue
@@ -2951,7 +3095,10 @@ class SparseCfgBuilder:
             point = self._access_point(child, "READ")
             if point is not None:
                 points.append(point)
-        return points
+        # Reads are evaluation predecessors of the write whose value they
+        # produce. Source spans intentionally do not encode this order: an
+        # outer assignment starts before its RHS but completes after it.
+        return [*points, *write_points]
 
     def _bare_alias_source(self, expr: Any, origin: Any, declared: bool = False) -> str:
         """The copied-from root for the bare copy shapes (`q = p`, `q = &p`).
@@ -3042,6 +3189,12 @@ class SparseCfgBuilder:
             return None
         facts = self._subject_facts(expr, subject)
         storage = facts.get("subject_storage")
+        range_local = self._is_range_local(expr, subject)
+        if range_local:
+            # Range declarators have no DeclarationIndex record in the
+            # installed grammar, but their reads still belong to the V1 fact
+            # population as explicitly unresolved/unsupported accesses.
+            storage = STORAGE_LOCAL
         # The STORAGE_LOCAL bare-copy exception: the local writes the alias
         # chain needs are the pointer copies -- `int *q = p;` (declaration)
         # and `q = p;` (assignment, `q` declared pointer). The pointer fact
@@ -3085,7 +3238,27 @@ class SparseCfgBuilder:
         declaration = None
         scoped = ""
         if v1_storage:
+            if _semantic_access_kind(
+                expr, event_type, self.source, origin=origin,
+                cpp=self.profile.name == "cpp",
+            ) is None:
+                # Naming an object in an unevaluated or otherwise non-value
+                # operand is not a runtime V1 access. Ordinary locals have no
+                # legacy carrier and disappear here. Bare-copy/null-write and
+                # function-static events predate V1, however: retain the event
+                # and its legacy annotations, just without a V1 fact.
+                if ordinary_local:
+                    return None
+                v1_storage = False
+        if v1_storage:
             declaration, scoped = self._local_declaration_identity(expr, subject)
+            if range_local and declaration is not None:
+                # The statement-scope overlay returns a real nested declaration
+                # in preference to an outer name. Only an actually unresolved
+                # range declarator uses the explicit unsupported identity.
+                range_local = False
+            if range_local:
+                declaration, scoped = None, ""
             direct = expr.type == "identifier"
             if event_type == "WRITE" and not direct:
                 self._coverage_reasons.add("unknown_write_through")
@@ -3103,7 +3276,8 @@ class SparseCfgBuilder:
             ):
                 if not scoped:
                     self._coverage_reasons.add("unresolved_declaration")
-                return None
+                if not range_local:
+                    return None
         if storage not in ACCESS_STORAGES and not ordinary_local and not bare_copy and not null_write:
             return None
         if storage == STORAGE_PARAMETER and event_type != "WRITE":
@@ -3210,7 +3384,17 @@ class SparseCfgBuilder:
                 "true" if self._conditional_depth == 0 and not self._under_conditional_expression(expr)
                 else "false"
             )
-        return self._new_point(event_type, expr, annotations=annotations, matched_name=text)
+        point = self._new_point(
+            event_type, expr, annotations=annotations, matched_name=text
+        )
+        if v1_storage and self._in_short_circuit_rhs(expr):
+            # The existing structured-walk opens cannot represent the LHS
+            # predicate that gates this access. Never publish the RHS as an
+            # unconditional entry access; retain the fact with an explicitly
+            # unknown position and method-wide fail-closed coverage.
+            point.short_circuit_rhs = True
+            self._coverage_reasons.add("unsupported_short_circuit")
+        return point
 
     def _condition_point(self, condition: Any) -> _Point:
         event_type, subject, polarity, subject_node = self._classify(condition)
@@ -3413,10 +3597,30 @@ class SparseCfgBuilder:
     # control handlers
 
     def _if_statement(self, node: Any, incoming: list[_Open]) -> tuple[_Point | None, list[_Open]]:
-        condition = _unwrap_condition(node.child_by_field_name("condition"))
+        clause = node.child_by_field_name("condition")
+        condition = _unwrap_condition(clause)
         if condition is None:
             return self._plain_generic(node, incoming)
-        entry, cond_opens = self._linearize(condition, incoming)
+        entry: _Point | None = None
+        initializer = (
+            clause.child_by_field_name("initializer")
+            if clause is not None and clause.type == "condition_clause" else None
+        )
+        if initializer is not None:
+            # C++ if-init-statements execute before the condition and their
+            # declaration remains visible in both arms. Skipping the field
+            # would leave later reads pointing at a declaration with no V1
+            # declaration or initialization write.
+            entry, incoming = self._linearize(initializer, incoming)
+        cond_entry, cond_opens = self._linearize(condition, incoming)
+        if condition.type == "identifier":
+            name = self._text(condition)
+            declaration, _scoped = self._local_declaration_identity(condition, name)
+            if declaration is not None or self._is_range_local(condition, name):
+                read = self._access_point(condition, "READ")
+                if read is not None and LOCAL_ACCESS_KEY in read.annotations:
+                    read.control_incoming = [] if read.short_circuit_rhs else list(cond_opens)
+                    self._evaluation_sequence.append(read)
         check = self._condition_point(condition)
         self._connect(cond_opens, check)
         _, true_opens = self._linearize(
@@ -3429,7 +3633,7 @@ class SparseCfgBuilder:
             _, false_opens = self._linearize(alternative, [_Open(check, (BRANCH_FALSE,))])
         else:
             false_opens = [_Open(check, (BRANCH_FALSE,))]
-        return entry or check, [*true_opens, *false_opens]
+        return entry or cond_entry or check, [*true_opens, *false_opens]
 
     def _while_statement(self, node: Any, incoming: list[_Open]) -> tuple[_Point | None, list[_Open]]:
         condition = _unwrap_condition(node.child_by_field_name("condition"))
@@ -3523,6 +3727,8 @@ class SparseCfgBuilder:
         right = node.child_by_field_name("right")
         if right is None:
             return self._plain_generic(node, incoming)
+        for declaration in self._local_declaration_points(node):
+            declaration.control_incoming = list(incoming)
         entry, cond_opens = self._linearize(right, incoming)
         check = self._condition_point(right)
         self._connect(cond_opens, check)
@@ -4297,6 +4503,87 @@ def _cpp_reference_cast_transparency(
     return False
 
 
+def _array_extent(node: Any) -> Any:
+    """The extent expression of a concrete or abstract array declarator."""
+    size = node.child_by_field_name("size")
+    if size is not None:
+        return size
+    declared = node.child_by_field_name("declarator")
+    remaining = [
+        child for child in node.named_children
+        if declared is None or _span(child) != _span(declared)
+    ]
+    return remaining[-1] if remaining else None
+
+
+def _declarator_result_kind(node: Any) -> str:
+    """The result-type constructor selected by C declarator precedence."""
+    if node is None:
+        return "other"
+    kind = node.type
+    parenthesized = {
+        "parenthesized_declarator", "abstract_parenthesized_declarator",
+    }
+    arrays = {"array_declarator", "abstract_array_declarator"}
+    functions = {"function_declarator", "abstract_function_declarator"}
+    pointers = {"pointer_declarator", "abstract_pointer_declarator"}
+    inner = node.child_by_field_name("declarator")
+    if kind in parenthesized:
+        if inner is None and node.named_children:
+            inner = node.named_children[-1]
+        return _declarator_result_kind(inner)
+    if kind in arrays | functions:
+        if inner is not None and inner.type in parenthesized:
+            # In `(*)[n]` the parenthesized pointer is the result constructor;
+            # in `(*[n])(void)` the nested array suffix still wins inside it.
+            return _declarator_result_kind(inner)
+        return "array" if kind in arrays else "function"
+    if kind in pointers:
+        if inner is not None and inner.type in arrays | functions | pointers:
+            # An unparenthesized suffix binds before a pointer prefix: abstract
+            # `*[n]` is an array of pointers, not a pointer to an array.
+            return _declarator_result_kind(inner)
+    return "other"
+
+
+def _in_vla_bound(node: Any, boundary: Any) -> bool:
+    """Whether ``node`` is in an array extent of ``boundary``'s VLA result.
+
+    Starting at the boundary's own type descriptor is essential. Walking from
+    ``node`` would confuse `sizeof(sizeof(int[n]))` with the evaluated outer
+    bound in `sizeof(int[sizeof(int[n])])`: only the latter outer sizeof has an
+    array result type whose extent contains the read.
+    """
+    type_node = boundary.child_by_field_name("type")
+    if type_node is None:
+        return False
+    declarator = type_node.child_by_field_name("declarator")
+    if _declarator_result_kind(declarator) != "array":
+        return False
+    while declarator is not None:
+        if declarator.type in {"array_declarator", "abstract_array_declarator"}:
+            size = _array_extent(declarator)
+            if (
+                size is not None
+                and size.start_byte <= node.start_byte
+                and node.end_byte <= size.end_byte
+            ):
+                return True
+        inner = declarator.child_by_field_name("declarator")
+        if (
+            inner is None
+            and declarator.type in {
+                "parenthesized_declarator", "abstract_parenthesized_declarator",
+            }
+            and declarator.named_children
+        ):
+            inner = declarator.named_children[-1]
+        # Follow declarators only. Function parameters and expressions inside
+        # an extent are not additional result-type array constructors.
+        declarator = inner
+    return False
+
+
 def _semantic_access_kind(
     expr: Any,
     carrier_event_type: str,
@@ -4309,8 +4596,17 @@ def _semantic_access_kind(
     while ancestor is not None:
         if ancestor.type in {
             "sizeof_expression", "alignof_expression", "decltype",
-            "decltype_specifier", "noexcept_expression",
+            "decltype_specifier", "noexcept_expression", "requires_expression",
         }:
+            if (
+                ancestor.type == "sizeof_expression"
+                and _in_vla_bound(expr, ancestor)
+            ):
+                # `sizeof(int[n])` does not evaluate the resulting size, but it
+                # does evaluate the VLA bound. Keep walking outward so a nested
+                # decltype/noexcept still suppresses the whole operand.
+                ancestor = ancestor.parent
+                continue
             return None
         if ancestor.type == "call_expression":
             function = ancestor.child_by_field_name("function")
@@ -4423,55 +4719,78 @@ def _array_extent_base(
     return None
 
 
-def _const_int(node: Any, source: bytes) -> int | None:
-    """Fold only target-independent, non-negative signed-int expressions.
+def _number_literal_int(
+    node: Any, source: bytes, maximum: int, minimum: int = 0
+) -> int | None:
+    """Parse a C/C++ integer literal without applying target-type semantics."""
+    if node is None or node.type != "number_literal":
+        return None
+    raw = _fact_expression_text(source, node)
+    text = _INT_SUFFIX.sub("", raw)
+    suffix = raw[len(text):]
+    if "u" in suffix.lower() or len(text) > 40:
+        return None
+    try:
+        # Python's base-0 parser rejects C's traditional octal spelling.
+        if re.fullmatch(r"0[0-7]+", text):
+            value = int(text, 8)
+        else:
+            value = int(text, 0)
+    except ValueError:
+        return None
+    return value if minimum <= value <= maximum else None
+
+
+def _const_int(node: Any, source: bytes, *, allow_negative: bool = False) -> int | None:
+    """Fold only target-independent signed-int expressions.
 
     Numeric literals and `*`/`<<`/`+` are retained only when every operand and
-    result fits a signed 32-bit int. Unsigned-suffixed literals, negative
-    values, wider results and invalid shift counts return None: without target
-    integer semantics, Python's unbounded arithmetic could otherwise invent a
-    value that C/C++ does not have. The bounds also make malformed/UB source
-    fail closed instead of raising or allocating an enormous integer.
+    result fits a signed 32-bit int. Unsigned-suffixed literals, wider results
+    and invalid shift counts return None: without target integer semantics,
+    Python's unbounded arithmetic could otherwise invent a value that C/C++
+    does not have. Negative constants are opt-in for index/offset consumers;
+    allocation sizes and extents retain the original non-negative contract.
+    The bounds also make malformed/UB source fail closed instead of raising or
+    allocating an enormous integer.
     """
     while node is not None and node.type == "parenthesized_expression":
         node = node.named_children[0] if node.named_children else None
     if node is None:
         return None
     maximum = 2_147_483_647
+    minimum = -maximum - 1 if allow_negative else 0
+    if allow_negative and node.type == "unary_expression" and (
+        _operator_of(node, source) == "-"
+    ):
+        argument = node.child_by_field_name("argument")
+        while argument is not None and argument.type == "parenthesized_expression":
+            argument = argument.named_children[0] if argument.named_children else None
+        # 2147483648 is not a positive signed-int literal, but its negation is
+        # the one additional value admitted by the signed 32-bit range.
+        magnitude = _number_literal_int(argument, source, maximum + 1)
+        return None if magnitude is None else -magnitude
     if node.type == "number_literal":
-        raw = _fact_expression_text(source, node)
-        text = _INT_SUFFIX.sub("", raw)
-        suffix = raw[len(text):]
-        if "u" in suffix.lower() or len(text) > 40:
-            return None
-        try:
-            # Python's base-0 parser rejects C's traditional octal spelling.
-            if re.fullmatch(r"0[0-7]+", text):
-                value = int(text, 8)
-            else:
-                value = int(text, 0)
-        except ValueError:
-            return None
-        return value if 0 <= value <= maximum else None
+        return _number_literal_int(node, source, maximum, minimum)
     if node.type == "binary_expression":
         operator = _operator_of(node, source)
         if operator not in {"*", "<<", "+"}:
             return None
-        left = _const_int(node.child_by_field_name("left"), source)
-        right = _const_int(node.child_by_field_name("right"), source)
+        left = _const_int(
+            node.child_by_field_name("left"), source, allow_negative=allow_negative
+        )
+        right = _const_int(
+            node.child_by_field_name("right"), source, allow_negative=allow_negative
+        )
         if left is None or right is None:
             return None
-        if operator == "*":
-            if right and left > maximum // right:
-                return None
-            return left * right
         if operator == "<<":
-            if right > 30 or left > (maximum >> right):
+            # C/C++ do not define a portable signed result for a negative
+            # left operand or shift count; retain the expression instead.
+            if left < 0 or right < 0 or right > 30 or left > (maximum >> right):
                 return None
             return left << right
-        if left > maximum - right:
-            return None
-        return left + right
+        value = left * right if operator == "*" else left + right
+        return value if minimum <= value <= maximum else None
     return None
 
 
@@ -4637,7 +4956,7 @@ def _access_facts(
                 "expression": None, "constant": None, "status": "unknown",
                 "limitation": "unparsed or multiple subscript indices",
             }
-        value = _const_int(index_node, source)
+        value = _const_int(index_node, source, allow_negative=True)
         fact: dict[str, Any] = {
             "access": access, "kind": "subscript", "unit": "elements",
             "expression": _fact_expression_text(source, index_node), "constant": value,
@@ -4672,12 +4991,14 @@ def _access_facts(
                     "status": "unknown", "limitation": "complex pointer arithmetic",
                 }
             if offset_node is not None:
-                value = _const_int(offset_node, source)
+                value = _const_int(offset_node, source, allow_negative=True)
+                if operator == "-" and value is not None:
+                    value = -value if value > -2_147_483_648 else None
                 offset_text = _fact_expression_text(source, offset_node)
                 fact = {
                     "access": access, "kind": "pointer_offset", "unit": "elements",
                     "expression": offset_text if operator == "+" else f"-({offset_text})",
-                    "constant": value if operator == "+" or value is None else -value,
+                    "constant": value,
                 }
                 if value is not None:
                     fact.update(status="constant", limitation="")
@@ -4941,6 +5262,9 @@ class _Point:
     # Edgeless local facts retain the walker's actual incoming opens until all
     # source-order ordinals have been assigned. None means no V1 association.
     control_incoming: list[_Open] | None = None
+    # A short-circuit RHS has no faithful predecessor in the structured opens.
+    # Keep its V1 position explicitly unknown rather than claiming method entry.
+    short_circuit_rhs: bool = False
     # Frozen method coverage for all three V1 annotation channels.
     local_coverage: tuple[str, ...] | None = None
 
