@@ -267,6 +267,37 @@ void touch(char *q) {
 }
 """
 
+MERGE_REBINDING = r"""
+#include <stdlib.h>
+void sink(void) { }
+void touch(char *q, int c) {
+    char *p = malloc(4);
+    if (c) { sink(); }
+    p = q;
+    p[4] = 0;
+}
+"""
+
+NESTED_CONDITIONAL_REBINDING = r"""
+#include <stdlib.h>
+void sink(void) { }
+void touch(char *q, int c) {
+    char *p = malloc(4);
+    if (c) { sink(); p = q; }
+    p[4] = 0;
+}
+"""
+
+SHADOW_RELEASE = r"""
+#include <stdlib.h>
+void touch(void) {
+    char *p = malloc(4);
+    { char *p = malloc(8); p[0] = 0; }
+    free(p);
+    p[4] = 0;
+}
+"""
+
 
 class OutOfBoundsWriteTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -543,6 +574,32 @@ class OutOfBoundsWriteTests(unittest.TestCase):
             [])
         self.assertGreaterEqual(
             env["coverage"]["exclusions"].get("reassigned", 0), 1)
+
+    def test_unconditional_rebinding_after_a_merge_kills_the_allocation(self) -> None:
+        self.build(MERGE_REBINDING)
+        env = self.query(confidence_gate=None)
+        self.assertEqual(
+            [c for c in env["candidates"] if c["query"] == "out_of_bounds_write"],
+            [])
+        self.assertGreaterEqual(
+            env["coverage"]["exclusions"].get("reassigned", 0), 1)
+
+    def test_conditional_rebinding_after_a_call_keeps_the_other_path(self) -> None:
+        self.build(NESTED_CONDITIONAL_REBINDING)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+        self.assertEqual(candidates[0]["metadata"]["index"], 4)
+
+    def test_shadow_exit_release_blocks_the_outer_allocation(self) -> None:
+        self.build(SHADOW_RELEASE)
+        env = self.query(confidence_gate=None)
+        accesses = [
+            c for c in env["candidates"] if c["query"] == "out_of_bounds_write"
+        ]
+        self.assertEqual(accesses, [])
+        self.assertGreaterEqual(
+            env["coverage"]["exclusions"].get("intervening_release", 0), 1)
 
 
 if __name__ == "__main__":

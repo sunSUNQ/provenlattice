@@ -5380,6 +5380,7 @@ def _blocked_path(
     blocked: frozenset[str],
     max_hops: int,
     max_paths: int,
+    blocked_edges: frozenset[str] = frozenset(),
 ) -> tuple[str, dict[str, Any] | None, bool]:
     """Reachability with the query budgets enforced, not merely reported.
 
@@ -5407,6 +5408,8 @@ def _blocked_path(
             truncated = True
             continue
         for edge_id, dst, _flags in adjacency.get(node, ()):
+            if edge_id in blocked_edges:
+                continue
             if dst in seen or dst in blocked:
                 continue
             next_points = (*path_points, dst)
@@ -5511,9 +5514,19 @@ def out_of_bounds_write(
                 "extent": extent,
             })
         elif event_type == "RELEASE":
-            definitions[(owner, plain, scope)].append({
-                "kind": "release", "event": event, "start": start,
-            })
+            # A release carries no scoped token of its own. Applying it to
+            # every known scope of the same plain token is the fail-closed
+            # reading: it can suppress a candidate, never invent one, and it
+            # covers a `free` that sits just after a shadowed block.
+            release_scopes = (
+                {scope} if _explicit_scope(event) is not None else {
+                    byte for _start, byte in scope_table.get((owner, plain), ())
+                }
+            ) or {None}
+            for release_scope in release_scopes:
+                definitions[(owner, plain, release_scope)].append({
+                    "kind": "release", "event": event, "start": start,
+                })
         elif event_type == "WRITE":
             # Only a write to the pointer value itself is a rebinding. An
             # element write (`p[4] = 0`, `*p = 0`) is an access, not a new
@@ -5531,17 +5544,22 @@ def out_of_bounds_write(
                 continue
             if not local and not annotations.get("subject_decl"):
                 continue
-            control = _annotation_fact(event, _CONTROL_POSITION_KEY) or {}
-            conditional = any(
-                str(item.get("event_type", "")) == "BRANCH"
-                for item in control.get("predecessors") or ()
-            )
             definitions[(owner, plain, scope)].append({
                 "kind": "write", "event": event, "start": start,
-                "conditional": conditional,
             })
     for items in definitions.values():
         items.sort(key=lambda item: (item["start"], str(item["event"].get("event_id", ""))))
+
+    ordinal_index: dict[tuple[str, str, int], list[str]] = defaultdict(list)
+    for point_id, info in points.items():
+        ordinal_index[(
+            str(info.get("owner_symbol_id", "")),
+            str(info.get("event_type", "")),
+            int(info.get("ordinal") or 0),
+        )].append(point_id)
+    ordinal_table = {
+        key: tuple(sorted(value)) for key, value in ordinal_index.items()
+    }
 
     candidates: list[Candidate] = []
     for event in sorted(events, key=lambda item: str(item.get("event_id", ""))):
@@ -5608,7 +5626,7 @@ def out_of_bounds_write(
                 exclusions["unknown_extent"] += 1
                 continue
             resolved = _resolve_heap(
-                event, identity, relevant, points, adjacency,
+                event, identity, relevant, points, adjacency, ordinal_table,
                 max_hops=max_hops, max_paths=max_paths,
             )
             if resolved is None:
@@ -5687,7 +5705,7 @@ def out_of_bounds_write(
             exclusions["no_join"] += 1
             continue
         resolved = _resolve_heap(
-            event, identity, relevant, points, adjacency,
+            event, identity, relevant, points, adjacency, ordinal_table,
             max_hops=max_hops, max_paths=max_paths,
         )
         if resolved is None:
@@ -5728,12 +5746,67 @@ def out_of_bounds_write(
     )
 
 
+def _write_kills_path(
+    write_event: Mapping[str, Any],
+    alloc_id: str,
+    access_id: str,
+    points: Points,
+    adjacency: Adjacency,
+    ordinal_index: Mapping[tuple[str, str, int], tuple[str, ...]],
+    owner: str,
+    *,
+    max_hops: int,
+    max_paths: int,
+) -> bool:
+    """Whether a pointer rebinding executes on every alloc-to-access path.
+
+    Direct predecessors cannot answer "all paths", so each predecessor is
+    turned into a blockade: a non-branch point blocks the point, a branch
+    predecessor blocks only the edge for its arm. If the access is still
+    reachable, the write sits on one arm only and must not kill the
+    allocation; if nothing reaches, every path runs through the write.
+    Unknown predecessor resolution or an exhausted budget is fail-closed and
+    treats the write as a kill.
+    """
+    control = _annotation_fact(write_event, _CONTROL_POSITION_KEY) or {}
+    predecessors = control.get("predecessors") or []
+    if not predecessors:
+        return True
+    blocked_points: set[str] = set()
+    blocked_edges: set[str] = set()
+    for predecessor in predecessors:
+        event_type = str(predecessor.get("event_type", ""))
+        ordinal = int(predecessor.get("ordinal", -1))
+        ids = ordinal_index.get((owner, event_type, ordinal), ())
+        if not ids:
+            return True
+        flags = frozenset(predecessor.get("flags") or ())
+        if event_type == "BRANCH" and flags:
+            matched = False
+            for point_id in ids:
+                for edge_id, _dst, edge_flags in adjacency.get(point_id, ()):
+                    if flags <= frozenset(edge_flags):
+                        blocked_edges.add(edge_id)
+                        matched = True
+            if not matched:
+                blocked_points.update(ids)
+        else:
+            blocked_points.update(ids)
+    status, _path, _truncated = _blocked_path(
+        adjacency, points, alloc_id, access_id,
+        blocked=frozenset(blocked_points), max_hops=max_hops,
+        max_paths=max_paths, blocked_edges=frozenset(blocked_edges),
+    )
+    return status != REACHABLE
+
+
 def _resolve_heap(
     event: Mapping[str, Any],
     identity: tuple[str, str, int | None],
     relevant: Sequence[Mapping[str, Any]],
     points: Points,
     adjacency: Adjacency,
+    ordinal_index: Mapping[tuple[str, str, int], tuple[str, ...]],
     *,
     max_hops: int,
     max_paths: int,
@@ -5773,9 +5846,14 @@ def _resolve_heap(
     blocked_kinds: set[str] = set()
     for alloc in allocs:
         alloc_start = int(alloc["start"])
+        alloc_id = str(alloc["event"].get("event_id", ""))
+        owner = str(event.get("owner_symbol_id", ""))
         killed = any(
-            not item.get("conditional", False)
-            and alloc_start < int(item["start"]) <= access_byte
+            alloc_start < int(item["start"]) <= access_byte
+            and _write_kills_path(
+                item["event"], alloc_id, event_id, points, adjacency,
+                ordinal_index, owner, max_hops=max_hops, max_paths=max_paths,
+            )
             for item in plain_writes
         )
         if killed:
