@@ -1977,7 +1977,10 @@ class BufferExtentFactsTests(unittest.TestCase):
             ).fetchone()[0]
         self.assertEqual(version, 4)
 
-    def test_oob_shaped_array_access_produces_no_defect_candidate(self) -> None:
+    def test_oob_shaped_array_access_is_only_a_b2_candidate(self) -> None:
+        # #82 froze the facts when no bounds query existed. B2 (#93) now
+        # consumes them: the fixture yields exactly the two write-direction
+        # candidates and no unrelated family.
         clean_root = Path(self.temp.name) / "clean_repo"
         write(
             clean_root / "src/clean.c",
@@ -1988,7 +1991,14 @@ class BufferExtentFactsTests(unittest.TestCase):
         analyze_scope(clean_root, "src", ("defect",), database=clean_db)
         result = query_defect_candidates(clean_root, database=clean_db)
         self.assertEqual(result["status"], "available", result.get("reason"))
-        self.assertEqual(result["candidates"], [])
+        self.assertEqual(
+            {candidate["defect_key"] for candidate in result["candidates"]},
+            {"oob_write"})
+        self.assertEqual(len(result["candidates"]), 2)
+        self.assertEqual(
+            sorted(candidate["metadata"]["access_kind"]
+                   for candidate in result["candidates"]),
+            ["memory_length", "subscript"])
 
 
 if __name__ == "__main__":

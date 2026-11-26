@@ -39,7 +39,8 @@ class ExpandCategoriesTests(unittest.TestCase):
         self.assertEqual(
             self._query_names("memory"),
             ["resource_lifetime", "null_flow", "use_after_free",
-             "double_free", "mismatched_free", "uninitialized_use"],
+             "double_free", "mismatched_free", "out_of_bounds_write",
+             "uninitialized_use"],
         )
 
     def test_concurrency(self) -> None:
@@ -55,9 +56,10 @@ class ExpandCategoriesTests(unittest.TestCase):
         self.assertEqual(self._query_names("reliability"), ["error_handling"])
 
     def test_all(self) -> None:
-        # Eleven since M9's `uninitialized_use` joined the family list; the
+        # Twelve since B2's `out_of_bounds_write` and M9's
+        # `uninitialized_use` joined the family list; the
         # count is the length of QUERY_NAMES, so it moves with every new query.
-        self.assertEqual(len(_expand_categories("all")), 11)
+        self.assertEqual(len(_expand_categories("all")), 12)
 
     def test_multi_select_splits_resource_lifetime(self) -> None:
         specs = _expand_categories("memory,concurrency")

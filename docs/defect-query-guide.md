@@ -47,6 +47,7 @@ provenlattice defect /path/to/repo --type all \
 | taint_path | taint | source→sink 传播 |
 | error_handling | 9.1 | 返回值未检查 |
 | mismatched_free | mismatch | 分配器与释放函数不配对（CWE-590/762/763） |
+| out_of_bounds_write | oob_write | 写方向越界：常量下标/偏移、堆分配、`memcpy/memmove/memset` 长度（M5/M6/M8） |
 | uninitialized_use | uninit | 方法内局部对象/局部指针在定义前读取（M9，CWE-457） |
 
 ### uninitialized_use（M9）
@@ -160,6 +161,7 @@ provenlattice defect /path/to/repo --type all \
 | FN | uninitialized_use | `x = x + 1` 的 RHS 读取被当作写入之后；`int x = x;` 自初始化不产生候选；裸条件 `if (x)` / `if (p)` 读取上游未发布，仅在 `uninitialized_bare_condition_reads` 计数暴露；赋值 RHS / 实参短路写为上游事实缺口；参数/静态对象的调用期或零初始化语义不在候选内 |
 | 边界 | error_handling | 精度受 API contract 知识限制 |
 | 边界 | taint_path | 仅 4 source/3 sink,无 sanitizer/跨函数 |
+| 边界 | out_of_bounds_write | V1 仅报告可证明常量：动态下标/动态大小/未知 extent/VLA/灵活数组进入 coverage;负常量下标由 #104 事实支持并报告;非 char 元素与堆分配的单位比较记 `unit_mismatch`;堆候选按“later 同身份定义不阻断的可达路径”判定,普通重绑定记 `reassigned`,互斥 release 不排除;`max_hops/max_paths` 耗尽降级 ambiguous;无 scoped 身份的 release 在 shadow 场景下以显式 ambiguous+limitation 表达 |
 
 ## 7. 故障排查
 

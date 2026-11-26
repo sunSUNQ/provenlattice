@@ -86,7 +86,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--type", default="all",
         help="defect query: all, or one of resource_lifetime, lock_order, "
              "race_condition, null_flow, use_after_free, double_free, "
-             "taint_path, error_handling, mismatched_free, uninitialized_use "
+             "taint_path, error_handling, mismatched_free, out_of_bounds_write, "
+             "uninitialized_use "
              "(or a matrix key 3.1/4.1/4.2/4.3/9.1/taint)")
     defect_query_cmd.add_argument(
         "--category", default=None,
