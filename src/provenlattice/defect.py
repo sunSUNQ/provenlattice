@@ -5777,16 +5777,20 @@ def _writes_kill_path(
     blocked_points: set[str] = set()
     blocked_edges: set[str] = set()
     for write_event in writes:
-        control = _annotation_fact(write_event, _CONTROL_POSITION_KEY) or {}
+        control = _annotation_fact(write_event, _CONTROL_POSITION_KEY)
+        if control is None:
+            # A parameter/global write does not carry the local control fact;
+            # its reachability is unknown, not proven unconditional.
+            return "unknown"
         predecessors = control.get("predecessors") or []
         if not predecessors:
-            return "kill"
+            return "kill" if control.get("entry") else "unknown"
         for predecessor in predecessors:
             event_type = str(predecessor.get("event_type", ""))
             ordinal = int(predecessor.get("ordinal", -1))
             ids = ordinal_index.get((owner, event_type, ordinal), ())
             if not ids:
-                return "kill"
+                return "unknown"
             flags = frozenset(predecessor.get("flags") or ())
             if event_type in {"BRANCH", "CHECK"} and flags:
                 matched = False
@@ -5842,19 +5846,10 @@ def _resolve_heap(
     if not allocs:
         return None
     writes = [item for item in relevant if item["kind"] == "write"]
-    binding_ids = set()
-    for alloc in allocs:
-        preceding = [
-            item for item in writes if int(item["start"]) <= int(alloc["start"])
-        ]
-        if preceding:
-            binding_ids.add(str(max(
-                preceding, key=lambda item: int(item["start"])
-            )["event"].get("event_id", "")))
-    plain_writes = [
-        item for item in writes
-        if str(item["event"].get("event_id", "")) not in binding_ids
-    ]
+    # The allocation's own binding write sits before the ALLOC call, so the
+    # interval test below already excludes it. No write is exempted globally:
+    # another allocation's binding may be a genuine rebinding of this one.
+    plain_writes = writes
     proven: list[tuple[Mapping[str, Any], dict[str, Any] | None, int, bool]] = []
     truncated: list[tuple[Mapping[str, Any], int, bool]] = []
     blocked_kinds: set[str] = set()
@@ -6017,7 +6012,9 @@ def _oob_candidate(
         facts=tuple(facts),
         uncertain_facts=(() if status == RESOLVED else (
             _uncertain(
-                "REACHABILITY" if reachable != REACHABLE else "OBJECT_IDENTITY",
+                "REACHABILITY" if (reachable != REACHABLE or budget_truncated)
+                else "RELEASE_SCOPE" if release_uncertain
+                else "OBJECT_IDENTITY",
                 decisive=True,
                 detail=(
                     "the path search budget was exhausted before the "
@@ -6025,6 +6022,9 @@ def _oob_candidate(
                     if budget_truncated else
                     "control does not prove the allocation reaches the access"
                     if reachable != REACHABLE
+                    else "the free that may kill this allocation cannot be "
+                    "attributed to one declaration under a shadowed name"
+                    if release_uncertain
                     else "the access object has no resolved declaration identity"
                 ),
                 point=event_id, source=_span(info) if info else "",

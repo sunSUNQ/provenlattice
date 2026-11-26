@@ -315,11 +315,39 @@ void touch(char *q, int c) {
 }
 """
 
-INNER_SHADOW_RELEASE = r"""
+JOINT_MIXED_REBINDING = r"""
 #include <stdlib.h>
-void touch(void) {
+void touch(char *q, int c) {
     char *p = malloc(4);
-    { char *p = malloc(8); free(p); }
+    if (c) { p = q; } else { p = malloc(8); }
+    p[4] = 0;
+}
+"""
+
+PARAMETER_CONDITIONAL_REBINDING = r"""
+#include <stdlib.h>
+void touch(char *p, char *q, int c) {
+    p = malloc(4);
+    if (c) { p = q; }
+    p[4] = 0;
+}
+"""
+
+GLOBAL_CONDITIONAL_REBINDING = r"""
+#include <stdlib.h>
+char *g;
+void touch(char *q, int c) {
+    g = malloc(4);
+    if (c) { g = q; }
+    g[4] = 0;
+}
+"""
+
+CHECK_PARAMETER_REBINDING = r"""
+#include <stdlib.h>
+void touch(char *p, char *q, int *guard) {
+    p = malloc(4);
+    if (guard) { p = q; }
     p[4] = 0;
 }
 """
@@ -330,6 +358,15 @@ void touch(void) {
     char *p = malloc(4);
     { char *p = malloc(8); p[0] = 0; }
     free(p);
+    p[4] = 0;
+}
+"""
+
+INNER_SHADOW_RELEASE = r"""
+#include <stdlib.h>
+void touch(void) {
+    char *p = malloc(4);
+    { char *p = malloc(8); free(p); }
     p[4] = 0;
 }
 """
@@ -644,6 +681,7 @@ class OutOfBoundsWriteTests(unittest.TestCase):
         self.assertTrue(any(
             "released declaration" in item
             for item in accesses[0]["missing_evidence"]))
+        self.assertEqual(accesses[0]["uncertain_facts"][0]["fact"], "RELEASE_SCOPE")
 
 
     def test_joint_rebindings_on_all_arms_kill_the_allocation(self) -> None:
@@ -679,6 +717,33 @@ class OutOfBoundsWriteTests(unittest.TestCase):
         self.assertTrue(any(
             "released declaration" in item
             for item in candidates[0]["missing_evidence"]))
+        self.assertEqual(candidates[0]["uncertain_facts"][0]["fact"], "RELEASE_SCOPE")
+
+
+    def test_mixed_arm_rebinding_does_not_keep_the_old_allocation(self) -> None:
+        self.build(JOINT_MIXED_REBINDING)
+        env = self.query(confidence_gate=None)
+        self.assertEqual(
+            [c for c in env["candidates"] if c["query"] == "out_of_bounds_write"],
+            [])
+
+    def test_parameter_conditional_rebinding_keeps_the_other_arm(self) -> None:
+        self.build(PARAMETER_CONDITIONAL_REBINDING)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+
+    def test_global_conditional_rebinding_keeps_the_other_arm(self) -> None:
+        self.build(GLOBAL_CONDITIONAL_REBINDING)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
+
+    def test_check_parameter_rebinding_keeps_the_other_arm(self) -> None:
+        self.build(CHECK_PARAMETER_REBINDING)
+        candidates = self.candidates()
+        self.assertEqual(len(candidates), 1)
+        self.assertEqual(candidates[0]["metadata"]["extent"], 4)
 
 
 if __name__ == "__main__":
