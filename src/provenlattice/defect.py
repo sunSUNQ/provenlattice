@@ -7924,7 +7924,262 @@ def _uninit_disjoint(left: tuple, right: tuple) -> bool:
     return left[2] == right[2] and left_polarity != right_polarity
 
 
-def _uninit_write_reach(write: Mapping[str, Any], use_context: tuple) -> str:
+_UNINIT_EDGE_ALIASES: dict[str, tuple[str, ...]] = {
+    "edge_id": ("edge_id", "analysis_edge_id"),
+    "src": ("src_event_id", "src_id"),
+    "dst": ("dst_event_id", "dst_id"),
+    "relation": ("relation", "kind"),
+    "flags": ("flags",),
+}
+
+
+def _uninit_edge_field(edge: Any, name: str) -> Any:
+    """Read one field from a CONTROL_REACHES edge in either published shape.
+
+    The defect service normalises rows to ``edge_id/src_event_id/
+    dst_event_id/relation``; ``query_analysis`` hands the raw shared producer
+    shape ``analysis_edge_id/src_id/dst_id/kind`` with ``flags`` under
+    ``payload``. Both carry the same fact, so the adapter is a field mapping,
+    not a second graph.
+    """
+    aliases = _UNINIT_EDGE_ALIASES[name]
+    if isinstance(edge, Mapping):
+        for alias in aliases:
+            if alias in edge:
+                return edge[alias]
+        for container in ("metadata", "payload"):
+            nested = edge.get(container)
+            if isinstance(nested, Mapping):
+                for alias in aliases:
+                    if alias in nested:
+                        return nested[alias]
+        return None
+    for alias in aliases:
+        if hasattr(edge, alias):
+            return getattr(edge, alias)
+    for container in ("metadata", "payload"):
+        nested = getattr(edge, container, None)
+        if isinstance(nested, Mapping):
+            for alias in aliases:
+                if alias in nested:
+                    return nested[alias]
+    return None
+
+
+def _uninit_control_adjacency(
+    edges: Iterable[Any],
+) -> dict[str, list[tuple[str, str, frozenset[str]]]]:
+    """`src -> [(edge_id, dst, flags)]` over CONTROL_REACHES only.
+
+    Carriers (declaration/access events) are not CFG nodes; the graph connects
+    the control points they hang off. The same ordering as `build_adjacency`
+    keeps every walk deterministic.
+    """
+    adjacency: dict[str, list[tuple[str, str, frozenset[str]]]] = {}
+    for edge in edges or ():
+        if _uninit_edge_field(edge, "relation") != "CONTROL_REACHES":
+            continue
+        src = str(_uninit_edge_field(edge, "src") or "")
+        dst = str(_uninit_edge_field(edge, "dst") or "")
+        if not src or not dst:
+            continue
+        edge_id = str(_uninit_edge_field(edge, "edge_id") or "")
+        edge_flags = _uninit_edge_field(edge, "flags") or ()
+        if isinstance(edge_flags, str):
+            edge_flags = _uninit_json(edge_flags) or ()
+        flags = frozenset(str(flag) for flag in edge_flags)
+        adjacency.setdefault(src, []).append((edge_id, dst, flags))
+    for neighbours in adjacency.values():
+        neighbours.sort(key=lambda item: (item[1], item[0]))
+    return adjacency
+
+
+def _uninit_cfg_roots(
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+) -> frozenset[str]:
+    """Every node the published CFG never enters: the method entry points."""
+    nodes: set[str] = set(adjacency)
+    targets: set[str] = set()
+    for neighbours in adjacency.values():
+        for _edge_id, dst, _flags in neighbours:
+            nodes.add(dst)
+            targets.add(dst)
+    return frozenset(nodes - targets)
+
+
+def _uninit_cfg_reaches(
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    starts: Iterable[str],
+    target: str,
+    blocked: frozenset[str] = frozenset(),
+) -> bool:
+    """Whether `target` is reachable from any start with `blocked` removed."""
+    if target in blocked:
+        return False
+    queue = deque(sorted(start for start in starts if start not in blocked))
+    seen = set(queue)
+    while queue:
+        current = queue.popleft()
+        if current == target:
+            return True
+        for _edge_id, dst, _flags in adjacency.get(current, ()):
+            if dst in blocked or dst in seen:
+                continue
+            seen.add(dst)
+            queue.append(dst)
+    return False
+
+
+def _uninit_dominates(
+    write_anchor: str,
+    use_anchor: str,
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    roots: frozenset[str],
+    cache: dict[tuple[str, str], bool],
+) -> bool:
+    """Whether every published CFG path to the use passes the write's anchor.
+
+    The write is a carrier, not a node: its execution point is the control
+    point it hangs off (`control_position_v1`). Removing that control point and
+    asking whether the use is still reachable is the bypass search. A use that
+    is not reachable from any root at all cannot be proven dominated -- the
+    graph may be missing the very edge that matters -- so the answer fails
+    closed (`False`) and the caller falls back to `possible`.
+    """
+    key = (write_anchor, use_anchor)
+    if key in cache:
+        return cache[key]
+    if write_anchor == use_anchor:
+        cache[key] = True
+        return True
+    if not _uninit_cfg_reaches(adjacency, roots, use_anchor):
+        cache[key] = False
+        return False
+    dominated = not _uninit_cfg_reaches(
+        adjacency, roots, use_anchor, frozenset({write_anchor}))
+    cache[key] = dominated
+    return dominated
+
+
+def _uninit_position_complete(position: Any) -> bool:
+    """True only when the published control position is fully trustworthy.
+
+    Dominance is a claim about *every* path. A position whose coverage is
+    incomplete may hide an edge (goto, macro, loop, ...), so the query cannot
+    prove either coverage or a bypass from it. Entry writes keep their own
+    contract in `_uninit_write_reach`.
+    """
+    return (
+        isinstance(position, Mapping)
+        and position.get("coverage_status") == "complete"
+        and not position.get("coverage_reasons")
+    )
+
+
+def _uninit_anchor(
+    context: tuple,
+    controls: Mapping[str, Any],
+    owner_symbol_id: str,
+) -> str | None:
+    """The CFG event id a control context hangs off, when resolvable."""
+    if len(context) != 4 or context[0] != "event":
+        return None
+    by_anchor = controls.get("by_anchor") or {}
+    return by_anchor.get((owner_symbol_id, context[1], context[2]))
+
+
+def _uninit_unconditional_dominates(
+    write_contexts: Sequence[tuple],
+    use_context: tuple,
+    *,
+    controls: Mapping[str, Any],
+    owner_symbol_id: str,
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    roots: frozenset[str],
+    cache: dict[tuple[str, str], bool],
+) -> bool:
+    """Dominance for a write that executes on every arm of its anchor points.
+
+    A straight-line write has one flag-free context: its anchor's only outgoing
+    edge is flag-free too, so the write runs whenever that point runs. A write
+    *after* an if/else join publishes one context per arm -- either both
+    `branch=*` arms of one branch point, or the last control point of each arm
+    (`CALL#0`, `CALL#1`) -- and the write runs once control reaches any of
+    them. If every path to the use has to pass through one of those anchors,
+    the write covers the use on all of them.
+
+    A write that sits inside one arm has only that arm's flag, fails the
+    coverage test (its anchor's other outgoing arm is not in its context set),
+    and is left to context matching/disjointness: `branch=*` flags are never
+    read as an unconditional definition.
+    """
+    if not write_contexts:
+        return False
+    anchors: dict[str, set[frozenset[str]]] = {}
+    for context in write_contexts:
+        if len(context) != 4 or context[0] != "event":
+            return False
+        anchor = _uninit_anchor(context, controls, owner_symbol_id)
+        if not anchor:
+            return False
+        anchors.setdefault(anchor, set()).add(frozenset(context[3]))
+    for anchor, published_arms in anchors.items():
+        outgoing_arms = {
+            frozenset(flags) for _edge_id, _dst, flags in adjacency.get(anchor, ())
+        }
+        if not outgoing_arms or not outgoing_arms <= published_arms:
+            return False
+    use_anchor = _uninit_anchor(use_context, controls, owner_symbol_id)
+    if not use_anchor:
+        return False
+    if len(anchors) == 1:
+        return _uninit_dominates(
+            next(iter(anchors)), use_anchor, adjacency, roots, cache)
+    if not _uninit_cfg_reaches(adjacency, roots, use_anchor):
+        return False
+    return not _uninit_cfg_reaches(
+        adjacency, roots, use_anchor, frozenset(anchors))
+
+
+_UNINIT_JUMP_REASONS = frozenset({"goto", "partial_parse"})
+
+
+def _uninit_equality_trusted(position: Any) -> bool:
+    """Whether context equality may still be read from an incomplete position.
+
+    `goto` and a partial parse are the two published reasons that can omit an
+    edge into the carrier itself: a jump target is not modelled, and a partial
+    parse can lose arbitrary control flow. Both make "same direct predecessor"
+    an unsound proof of coverage, so they fail closed. A loop or switch reason
+    describes a construct whose arms *are* published as contexts; equality on
+    those contexts still proves the write executes on the path the use is on,
+    and demoting every such shape would turn known-safe code into candidates.
+    """
+    if _uninit_position_complete(position):
+        return True
+    if not isinstance(position, Mapping):
+        return False
+    reasons = {
+        str(reason)
+        for reason in (position.get("coverage_reasons") or ())
+        if reason
+    }
+    if not reasons:
+        return False
+    return not (reasons & _UNINIT_JUMP_REASONS)
+
+
+def _uninit_write_reach(
+    write: Mapping[str, Any],
+    use_context: tuple,
+    use_position: Any,
+    *,
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    controls: Mapping[str, Any],
+    owner_symbol_id: str,
+    roots: frozenset[str],
+    dominance_cache: dict[tuple[str, str], bool],
+) -> str:
     """How one prior write reaches the use on one control context.
 
     A write inside a branch condition (`n && (x = 1)`) may not execute on the
@@ -7932,6 +8187,14 @@ def _uninit_write_reach(write: Mapping[str, Any], use_context: tuple) -> str:
     `possible` rather than covering the use. The published control positions
     put such a write before the branch point, which is why the context alone
     cannot prove coverage.
+
+    Beyond context equality, a flag-free write covers a use when its control
+    point dominates the use's control point on the published CFG. That is what
+    keeps `x = 1` definite when an unrelated `CALL` sits between the write and
+    the read. Dominance is only trusted when both positions are complete: a
+    goto, macro or loop can leave the CFG without the bypass edge, and claiming
+    coverage from an incomplete graph would silently hide a real
+    uninitialized read.
     """
     if write.get("conditional"):
         return "possible"
@@ -7939,7 +8202,26 @@ def _uninit_write_reach(write: Mapping[str, Any], use_context: tuple) -> str:
     if _UNINIT_ENTRY in write_contexts:
         # A write before the first branch reaches every later path.
         return "covered"
+    complete = (
+        _uninit_position_complete(write.get("position"))
+        and _uninit_position_complete(use_position)
+    )
+    trusted = (
+        _uninit_equality_trusted(write.get("position"))
+        and _uninit_equality_trusted(use_position)
+    )
+    if not complete and not trusted:
+        # An incomplete position can hide the edge that bypasses this write.
+        # Keep the outcome `possible`; the caller's reasons guard turns it into
+        # an explicit `unknown`.
+        return "possible"
     if use_context in write_contexts:
+        return "covered"
+    if complete and _uninit_unconditional_dominates(
+        write_contexts, use_context,
+        controls=controls, owner_symbol_id=owner_symbol_id,
+        adjacency=adjacency, roots=roots, cache=dominance_cache,
+    ):
         return "covered"
     if write_contexts and all(
             _uninit_disjoint(context, use_context) for context in write_contexts):
@@ -7948,7 +8230,15 @@ def _uninit_write_reach(write: Mapping[str, Any], use_context: tuple) -> str:
 
 
 def _uninit_evaluate(
-    use_contexts: tuple[tuple, ...], writes: Sequence[Mapping[str, Any]],
+    use_contexts: tuple[tuple, ...],
+    writes: Sequence[Mapping[str, Any]],
+    use_position: Any,
+    *,
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    controls: Mapping[str, Any],
+    owner_symbol_id: str,
+    roots: frozenset[str],
+    dominance_cache: dict[tuple[str, str], bool],
 ) -> tuple[str | None, tuple[tuple[str, str], ...]]:
     """The state before one use, and one outcome per reaching context.
 
@@ -7961,7 +8251,12 @@ def _uninit_evaluate(
     for context in use_contexts:
         outcome = "uncovered"
         for write in writes:
-            reach = _uninit_write_reach(write, context)
+            reach = _uninit_write_reach(
+                write, context, use_position,
+                adjacency=adjacency, controls=controls,
+                owner_symbol_id=owner_symbol_id, roots=roots,
+                dominance_cache=dominance_cache,
+            )
             if reach == "covered":
                 outcome = "covered"
                 break
@@ -7994,12 +8289,18 @@ def _uninit_collect(
     events: Iterable[Any],
 ) -> tuple[
     dict[str, dict[str, Any]], list[dict[str, Any]], dict[str, int],
-    dict[tuple[str, str], list[tuple[int, int]]],
+    dict[tuple[str, str], list[tuple[int, int]]], dict[str, Any],
 ]:
     declarations: dict[str, dict[str, Any]] = {}
     accesses: list[dict[str, Any]] = []
     condition_spans: dict[tuple[str, str], list[tuple[int, int]]] = defaultdict(list)
     condition_expressions: list[tuple[str, str]] = []
+    # The control-point index: a `control_position_v1` predecessor names its
+    # point by (event_type, ordinal), never by event id. Mapping it back here
+    # is what lets the dominance walk find the CFG node a carrier hangs off.
+    controls: dict[str, Any] = {
+        "by_anchor": {}, "types": {}, "starts": {},
+    }
     population = {
         "declaration_events": 0,
         "declarations": 0,
@@ -8014,6 +8315,19 @@ def _uninit_collect(
     for event in events:
         event_type = str(_uninit_field(event, "event_type", "") or "")
         annotations = _uninit_annotations(event)
+        event_id = str(_uninit_field(event, "event_id", "") or "")
+        owner = str(_uninit_field(event, "owner_symbol_id", "") or "")
+        if event_id:
+            controls["types"][event_id] = event_type
+            start_byte = _uninit_number(_uninit_field(event, "start_byte", None))
+            if start_byte is not None:
+                controls["starts"][event_id] = start_byte
+            ordinal = _uninit_number(_uninit_field(event, "ordinal", None))
+            if ordinal is not None:
+                key = (owner, event_type, ordinal)
+                current = controls["by_anchor"].get(key)
+                if current is None or event_id < current:
+                    controls["by_anchor"][key] = event_id
         if event_type in {"BRANCH", "CHECK"}:
             start = _uninit_number(_uninit_field(event, "start_byte", 0))
             end = _uninit_number(_uninit_field(event, "end_byte", 0))
@@ -8113,22 +8427,31 @@ def _uninit_collect(
             # initialized local's bare condition is not a gap.
             population["bare_condition_reads"] += 1
     # A short-circuit/conditional initializer (`int y = (n && (x = 1));`) has
-    # no branch point of its own, but the initializer span and expression are
-    # published. A write inside such an initializer is not an unconditional
-    # definition either, so it joins the same conditional-span index.
+    # no branch point of its own, but the declaration publishes the producer's
+    # `unsupported_short_circuit` / `unsupported_conditional` coverage reason
+    # and the initializer span. A write inside such an initializer is not an
+    # unconditional definition either, so it joins the same conditional-span
+    # index. The decision is read from those published facts, never from a
+    # substring scan of the initializer text: a `"?"` inside a string, a `'?'`
+    # character or a comment is not a conditional operator, and guessing from
+    # text produced false `maybe_uninitialized` candidates.
     for record in declarations.values():
         fact = record["fact"]
         start = _uninit_number(fact.get("initializer_start_byte"))
         end = _uninit_number(fact.get("initializer_end_byte"))
-        expression = str(fact.get("initializer_expression") or "")
+        reasons = {
+            str(reason)
+            for reason in (fact.get("coverage_reasons") or ())
+            if reason
+        }
         if (
             start is not None and end is not None and end > start
-            and any(operator in expression for operator in ("&&", "||", "?"))
+            and ({"unsupported_short_circuit", "unsupported_conditional"} & reasons)
         ):
             condition_spans[
                 (record["relative_path"], record["owner_symbol_id"])
             ].append((start, end))
-    return declarations, accesses, population, condition_spans
+    return declarations, accesses, population, condition_spans, controls
 
 
 def _uninit_coverage_reasons(
@@ -8153,6 +8476,204 @@ def _uninit_coverage_reasons(
     return reasons
 
 
+def _uninit_route_to_use(
+    anchor: str,
+    use_start: int | None,
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    controls: Mapping[str, Any],
+    max_hops: int,
+) -> tuple[tuple[str, ...], tuple[str, ...], bool]:
+    """The CFG route from a write's anchor to the use's control window.
+
+    The walk stops at the latest published control point whose start byte is at
+    or before the use -- the point that closes the control window the read sits
+    in -- and returns the shortest route to it. That is the route the write's
+    definition travels before the read, and it is read off the breadth-first
+    tree so the points and the edges cannot disagree. The synthetic `cfg-exit`
+    endpoint is deliberately not part of a candidate's path.
+
+    Returns `(points, edges, truncated)`. `max_hops <= 0` forbids the walk;
+    exhausting the hop ceiling before the window is fully explored reports
+    `truncated` instead of silently presenting a shorter route as complete.
+    """
+    if max_hops <= 0:
+        return (), (), True
+    starts = controls.get("starts") or {}
+    predecessor: dict[str, tuple[str, str]] = {}
+    seen = {anchor}
+    queue: deque[tuple[str, int]] = deque([(anchor, 0)])
+    best: str | None = None
+    best_start: int | None = None
+    if (
+        use_start is not None
+        and anchor in starts
+        and starts[anchor] <= use_start
+    ):
+        best = anchor
+        best_start = starts[anchor]
+    budget_hit = False
+    while queue:
+        current, hops = queue.popleft()
+        if hops >= max_hops:
+            if adjacency.get(current):
+                budget_hit = True
+            continue
+        for edge_id, dst, _flags in adjacency.get(current, ()):
+            if dst in seen:
+                continue
+            seen.add(dst)
+            predecessor[dst] = (current, edge_id)
+            start = starts.get(dst)
+            if use_start is not None and start is not None and start <= use_start:
+                if (
+                    best_start is None
+                    or start > best_start
+                    or (start == best_start and dst < str(best))
+                ):
+                    best = dst
+                    best_start = start
+            queue.append((dst, hops + 1))
+    if best is None:
+        return (), (), budget_hit
+    route_points = [best]
+    route_edges: list[str] = []
+    cursor = best
+    while cursor != anchor:
+        step = predecessor.get(cursor)
+        if step is None:  # unreachable by construction; reported as no route
+            return (), (), budget_hit
+        cursor, edge_id = step
+        route_edges.append(edge_id)
+        route_points.append(cursor)
+    route_points.reverse()
+    route_edges.reverse()
+    return tuple(route_points), tuple(route_edges), budget_hit
+
+
+def _uninit_candidate_paths(
+    declaration: Mapping[str, Any],
+    use: Mapping[str, Any],
+    state: str,
+    writes: Sequence[Mapping[str, Any]],
+    contexts: list[dict[str, Any]],
+    *,
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    controls: Mapping[str, Any],
+    owner_symbol_id: str,
+    roots: frozenset[str],
+    dominance_cache: dict[tuple[str, str], bool],
+    max_hops: int,
+    max_paths: int,
+) -> tuple[tuple[dict[str, Any], ...], bool]:
+    """One declaration -> write -> control route -> use evidence path.
+
+    The path is assembled from published facts only: the declaration event,
+    the prior write that covers the use (or the last prior write when none
+    covers it), the real CONTROL_REACHES route from the write's control point
+    to the use's control window, and the use event. Edges exist for consecutive
+    CFG points and are left empty at the carrier boundaries, so
+    `len(path["edges"]) == len(path["points"]) - 1` always holds.
+    """
+    use_id = str(use.get("event_id") or "")
+    if not use_id:
+        return (), False
+    if max_paths <= 0:
+        # A zero path budget means: publish no path evidence, but say so.
+        return (), True
+    if max_hops <= 0:
+        # No control route may be walked; a path without its route would claim
+        # more than the budget allowed.
+        return (), True
+    use_position = use.get("position")
+    use_contexts = tuple(use.get("contexts") or ())
+    ordered = sorted(
+        writes,
+        key=lambda item: (item.get("start_byte") or 0, item.get("event_id") or ""),
+    )
+    selected: Mapping[str, Any] | None = None
+    fallback: Mapping[str, Any] | None = None
+    for write in ordered:
+        reaches = {
+            _uninit_write_reach(
+                write, context, use_position,
+                adjacency=adjacency, controls=controls,
+                owner_symbol_id=owner_symbol_id, roots=roots,
+                dominance_cache=dominance_cache,
+            )
+            for context in use_contexts
+        }
+        if "covered" in reaches:
+            selected = write  # the last covering write is the closest one
+        elif "possible" in reaches:
+            fallback = write
+    if selected is None:
+        # A disjoint write cannot be the definition a definite-uninitialized
+        # candidate is missing; putting it in the path would contradict the
+        # state. Only `possible` writes may illustrate the gap.
+        selected = fallback
+
+    points: list[str] = []
+    types: list[str] = []
+
+    def append(point: str, event_type: str = "") -> None:
+        if not point or (points and points[-1] == point):
+            return
+        points.append(point)
+        types.append(event_type or str(controls.get("types", {}).get(point, "")))
+
+    append(str(declaration.get("event_id") or ""))
+    write_id = str(selected.get("event_id") or "") if selected else ""
+    append(write_id)
+    truncated = False
+    if selected is not None:
+        anchor: str | None = None
+        # Prefer the context that actually covers this use; fall back to any
+        # context so an uncovered write still gets a control route.
+        for context in selected.get("contexts") or ():
+            if any(
+                _uninit_write_reach(
+                    selected, use_context, use_position,
+                    adjacency=adjacency, controls=controls,
+                    owner_symbol_id=owner_symbol_id, roots=roots,
+                    dominance_cache=dominance_cache,
+                ) == "covered"
+                for use_context in use_contexts
+            ):
+                anchor = _uninit_anchor(context, controls, owner_symbol_id)
+                if anchor:
+                    break
+        if anchor is None:
+            for context in selected.get("contexts") or ():
+                anchor = _uninit_anchor(context, controls, owner_symbol_id)
+                if anchor:
+                    break
+        if anchor:
+            route_points, _route_edges, truncated = _uninit_route_to_use(
+                anchor, use.get("start_byte"), adjacency, controls, max_hops)
+            for point in route_points:
+                append(point)
+    append(use_id, str(use.get("event_type") or ""))
+
+    # An edge id exists only where the published CFG connects two consecutive
+    # points; the carrier boundaries are edgeless by construction.
+    edges: list[str] = []
+    for src, dst in zip(points, points[1:]):
+        edge_id = ""
+        for candidate_edge, neighbour, _flags in adjacency.get(src, ()):
+            if neighbour == dst:
+                edge_id = candidate_edge
+                break
+        edges.append(edge_id)
+    path = {
+        "points": points,
+        "types": types,
+        "edges": edges,
+        "state": state,
+        "contexts": contexts,
+    }
+    return (path,), truncated
+
+
 def _uninit_candidate(
     declaration: Mapping[str, Any],
     use: Mapping[str, Any],
@@ -8163,7 +8684,13 @@ def _uninit_candidate(
     *,
     names: Mapping[str, str] | None,
     identity: bool,
-) -> Candidate:
+    adjacency: Mapping[str, list[tuple[str, str, frozenset[str]]]],
+    controls: Mapping[str, Any],
+    roots: frozenset[str],
+    dominance_cache: dict[tuple[str, str], bool],
+    max_hops: int,
+    max_paths: int,
+) -> tuple[Candidate, bool]:
     fact = declaration["fact"]
     token = declaration["token"]
     name = declaration.get("name") or use.get("name") or ""
@@ -8244,15 +8771,13 @@ def _uninit_candidate(
     contexts = _uninit_context_json(
         _uninit_contexts(use_position) if isinstance(use_position, Mapping) else ()
     )
-    paths: tuple[dict[str, Any], ...] = ()
-    if use.get("event_id"):
-        paths = ({
-            "points": [use["event_id"]],
-            "types": [use.get("event_type", "")],
-            "edges": [],
-            "state": state,
-            "contexts": contexts,
-        },)
+    paths, paths_truncated = _uninit_candidate_paths(
+        declaration, use, state, writes, contexts,
+        adjacency=adjacency, controls=controls,
+        owner_symbol_id=owner_symbol_id, roots=roots,
+        dominance_cache=dominance_cache,
+        max_hops=max_hops, max_paths=max_paths,
+    )
 
     return Candidate(
         defect_key=UNINITIALIZED_USE_KEY,
@@ -8308,9 +8833,9 @@ def _uninit_candidate(
             "flow_class": "definite_assignment",
             "reach": "",
             "path_recorded": bool(paths),
-            "paths_truncated": False,
+            "paths_truncated": paths_truncated,
         },
-    )
+    ), paths_truncated
 
 
 def uninitialized_use(
@@ -8345,6 +8870,23 @@ def uninitialized_use(
       evidence accompanies the candidate;
     * ``initialized`` -- a definition reaches every context, so no candidate.
 
+    Definite assignment is decided from the published control positions and
+    the published CONTROL_REACHES graph: a straight-line write covers a later
+    read when the write's control point dominates the read's, so an unrelated
+    `CALL` or ordinary statement between them does not degrade a definite
+    definition to `maybe`. Dominance is only trusted when both positions are
+    complete; a goto, macro or loop can leave the graph without the bypass
+    edge, and the query fails closed to ``unknown`` instead of claiming safety
+    from an incomplete graph.
+
+    A candidate's ``paths`` carries one declaration -> prior write -> control
+    route -> use path. The route comes from the real CONTROL_REACHES edges, the
+    carrier boundaries carry an empty edge id, and ``max_hops`` / ``max_paths``
+    bound the walk: a zero path budget publishes no path and sets
+    ``path_recorded=false``; a hop ceiling that cuts the walk sets
+    ``paths_truncated=true`` and increments
+    ``uninitialized_paths_truncated`` in the coverage block.
+
     A use that is unreachable on the published control positions is not a use.
     A parameter has no published local declaration and therefore no candidate:
     call-site binding belongs to D1, not to this query.
@@ -8363,9 +8905,15 @@ def uninitialized_use(
     definition and keeps a `maybe_uninitialized` state. A missing storage class
     or write target is an explicit ``unknown``, never a default-safe value.
     """
-    del edges  # a pure reader over the published event facts, no walk
     wanted = _wanted(UNINITIALIZED_USE_KEY, defect_keys)
-    declarations, accesses, population, conditional_spans = _uninit_collect(events)
+    declarations, accesses, population, conditional_spans, controls = (
+        _uninit_collect(events))
+    # The carriers have no CFG rows of their own; their `control_position_v1`
+    # predecessors are the points the dominance walk and the evidence path use.
+    adjacency = _uninit_control_adjacency(edges)
+    roots = _uninit_cfg_roots(adjacency)
+    dominance_cache: dict[tuple[str, str], bool] = {}
+    paths_truncated_count = 0
     writes_by_declaration: dict[str, list[dict[str, Any]]] = defaultdict(list)
     unmodelled_writes_by_declaration: dict[
         str, list[dict[str, Any]]] = defaultdict(list)
@@ -8489,7 +9037,12 @@ def uninitialized_use(
                 or reason == "write_target_missing"
                 for reason in reasons
             )
-            state, outcomes = _uninit_evaluate(contexts, writes)
+            state, outcomes = _uninit_evaluate(
+                contexts, writes, position,
+                adjacency=adjacency, controls=controls,
+                owner_symbol_id=use["owner_symbol_id"], roots=roots,
+                dominance_cache=dominance_cache,
+            )
             if state is None:
                 state = _UNINIT_UNKNOWN
                 reasons.add("missing_control_position")
@@ -8509,10 +9062,16 @@ def uninitialized_use(
             counts["maybe"] += 1
         else:
             counts["unknown"] += 1
-        candidates.append(_uninit_candidate(
+        candidate, candidate_paths_truncated = _uninit_candidate(
             declaration, use, state, outcomes, writes, reasons,
             names=names, identity=identity,
-        ))
+            adjacency=adjacency, controls=controls, roots=roots,
+            dominance_cache=dominance_cache,
+            max_hops=max_hops, max_paths=max_paths,
+        )
+        if candidate_paths_truncated:
+            paths_truncated_count += 1
+        candidates.append(candidate)
 
     candidates.sort(key=Candidate.rank_key)
     truncated = len(candidates) > max_candidates
@@ -8539,6 +9098,7 @@ def uninitialized_use(
         "uninitialized_unknown": counts["unknown"],
         "uninitialized_candidates": len(candidates),
         "uninitialized_candidates_by_key": _count_by_key(candidates),
+        "uninitialized_paths_truncated": paths_truncated_count,
         "max_hops": max_hops,
         "max_paths": max_paths,
     }

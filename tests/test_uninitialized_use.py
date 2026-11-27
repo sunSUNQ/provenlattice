@@ -373,6 +373,219 @@ class ConditionalWriteTests(UninitializedUseBase):
         self.assertIn("coverage_unsupported_short_circuit", candidate["missing_evidence"])
 
 
+class StraightLineDominanceTests(UninitializedUseBase):
+    """F5: a straight-line write is not demoted by unrelated control points."""
+
+    def test_write_separated_by_calls_is_definite(self) -> None:
+        self.build(
+            "void sink(int);\n"
+            "int f(void) { int x; sink(0); x = 1; sink(2); return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(env["status"], "available")
+        self.assertEqual(env["candidates"], [])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_uses_initialized"], 1)
+
+    def test_entry_write_then_call_write_read_is_definite(self) -> None:
+        self.build(
+            "void sink(int);\n"
+            "int f(void) { int x = 1; sink(0); x = 2; sink(2); return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(env["candidates"], [])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_uses_initialized"], 1)
+
+    def test_write_then_plain_statement_is_definite(self) -> None:
+        self.build(
+            "int f(void) { int x; x = 1; (void)0; return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(env["candidates"], [])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_uses_initialized"], 1)
+
+    def test_write_after_a_branch_join_is_definite(self) -> None:
+        # The write executes on both arms; the CALL after the join and the
+        # read's control point must not demote it to maybe.
+        self.build(
+            "void sink(int);\n"
+            "int f(int n) { int x; if (n) { sink(1); } else { sink(2); } "
+            "x = 1; sink(3); return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(env["candidates"], [])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_uses_initialized"], 1)
+
+
+class StringInitializerTests(UninitializedUseBase):
+    """F7: only published structural facts decide conditional initializers."""
+
+    def test_plain_string_initializer_is_not_conditional(self) -> None:
+        self.assertEqual(
+            self.candidates(
+                "int f(void) { int x; int y = (x = sizeof(\"a\")); "
+                "return x + y; }\n"),
+            [])
+
+    def test_question_mark_in_string_is_not_a_conditional(self) -> None:
+        self.assertEqual(
+            self.candidates(
+                "int f(void) { int x; int y = (x = sizeof(\"?\")); "
+                "return x + y; }\n"),
+            [])
+
+    def test_question_mark_in_character_is_not_a_conditional(self) -> None:
+        self.assertEqual(
+            self.candidates(
+                "int f(void) { int x; int y = (x = sizeof('?')); "
+                "return x + y; }\n"),
+            [])
+
+    def test_question_mark_in_comment_is_not_a_conditional(self) -> None:
+        self.assertEqual(
+            self.candidates(
+                "int f(void) { int x; int y = (x = 1 /* ? */); "
+                "return x + y; }\n"),
+            [])
+
+
+class CandidatePathTests(UninitializedUseBase):
+    """F8: Candidate paths carry declaration -> write -> branch -> use."""
+
+    def test_maybe_path_contains_the_declaration_write_branch_and_use(
+            self) -> None:
+        candidate, _ = self.only(
+            "int f(int n) { int x; if (n) { x = 1; } return x; }\n")
+        self.assertEqual(candidate["metadata"]["state"], "maybe_uninitialized")
+        self.assertTrue(candidate["metadata"]["path_recorded"])
+        self.assertFalse(candidate["metadata"]["paths_truncated"])
+        self.assertEqual(len(candidate["paths"]), 1)
+        path = candidate["paths"][0]
+        self.assertEqual(
+            path["types"],
+            ["DECLARATION", "WRITE", "BRANCH", "RETURN", "READ"],
+        )
+        # The carrier boundaries are edgeless; the real CONTROL_REACHES edge
+        # between the branch and the return keeps its published id.
+        self.assertEqual(len(path["edges"]), len(path["points"]) - 1)
+        self.assertGreaterEqual(
+            sum(1 for edge_id in path["edges"] if edge_id), 1)
+        self.assertTrue(path["points"][0].startswith("event:"))
+        self.assertEqual(path["state"], "maybe_uninitialized")
+
+    def test_definite_path_still_carries_declaration_and_use(self) -> None:
+        candidate, _ = self.only(
+            "int f(void) { int x; return x; }\n")
+        self.assertTrue(candidate["metadata"]["path_recorded"])
+        self.assertEqual(candidate["paths"][0]["types"], ["DECLARATION", "READ"])
+        self.assertEqual(len(candidate["paths"][0]["edges"]), 1)
+
+    def test_definite_fall_through_path_omits_a_disjoint_write(self) -> None:
+        candidate, _ = self.only(
+            "int f(int n) { int x; if (n) { x = 1; return x; } return x; }\n")
+        self.assertEqual(candidate["metadata"]["state"], "uninitialized")
+        # The only prior write is on the other arm; a path that claimed it
+        # would contradict the definite-uninitialized state.
+        self.assertNotIn("WRITE", candidate["paths"][0]["types"])
+
+
+class PathBudgetTests(UninitializedUseBase):
+    """F9: max_paths / max_hops bound the evidence and are auditable."""
+
+    SOURCE = "int f(int n) { int x; if (n) { x = 1; } return x; }\n"
+
+    def test_zero_path_budget_publishes_no_path(self) -> None:
+        self.build(self.SOURCE)
+        env = self.query(defect_type=defect.UNINITIALIZED_USE, max_paths=0)
+        candidate = env["candidates"][0]
+        self.assertEqual(candidate["paths"], [])
+        self.assertFalse(candidate["metadata"]["path_recorded"])
+        self.assertTrue(candidate["metadata"]["paths_truncated"])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_paths_truncated"], 1)
+
+    def test_zero_hop_budget_publishes_no_route(self) -> None:
+        self.build(self.SOURCE)
+        env = self.query(defect_type=defect.UNINITIALIZED_USE, max_hops=0)
+        candidate = env["candidates"][0]
+        self.assertFalse(candidate["metadata"]["path_recorded"])
+        self.assertTrue(candidate["metadata"]["paths_truncated"])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_paths_truncated"], 1)
+
+    def test_short_hop_budget_reports_truncation(self) -> None:
+        self.build(self.SOURCE)
+        env = self.query(
+            defect_type=defect.UNINITIALIZED_USE, max_hops=1, max_paths=1)
+        candidate = env["candidates"][0]
+        self.assertTrue(candidate["metadata"]["path_recorded"])
+        self.assertTrue(candidate["metadata"]["paths_truncated"])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_paths_truncated"], 1)
+
+    def test_full_budget_records_the_path_without_truncation(self) -> None:
+        self.build(self.SOURCE)
+        env = self.query(
+            defect_type=defect.UNINITIALIZED_USE, max_hops=64, max_paths=8)
+        candidate = env["candidates"][0]
+        self.assertTrue(candidate["metadata"]["path_recorded"])
+        self.assertFalse(candidate["metadata"]["paths_truncated"])
+        self.assertEqual(env["coverage"]["uninitialized_paths_truncated"], 0)
+
+
+class GotoDominanceRegressionTests(UninitializedUseBase):
+    """The dominant write must not hide a goto path that bypasses it."""
+
+    def test_goto_bypass_between_calls_is_not_initialized(self) -> None:
+        self.build(
+            "void sink(int);\n"
+            "int f(int n) { int x; sink(0); if (n) goto L; sink(1); x = 1; "
+            "L: sink(2); return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(len(env["candidates"]), 1)
+        candidate = env["candidates"][0]
+        self.assertIn(
+            candidate["metadata"]["state"], {"unknown", "maybe_uninitialized"})
+        self.assertNotEqual(candidate["metadata"]["state"], "initialized")
+        self.assertEqual(env["coverage"]["uninitialized_uses_initialized"], 0)
+        self.assertIn("goto", candidate["metadata"]["coverage_reasons"])
+
+    def test_goto_bypass_without_calls_is_not_initialized(self) -> None:
+        self.build(
+            "int f(int n) { int x; if (n) goto L; x = 1; L: return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(len(env["candidates"]), 1)
+        candidate = env["candidates"][0]
+        self.assertIn(
+            candidate["metadata"]["state"], {"unknown", "maybe_uninitialized"})
+        self.assertEqual(env["coverage"]["uninitialized_uses_initialized"], 0)
+        self.assertIn("goto", candidate["metadata"]["coverage_reasons"])
+
+
+class SizeofFactRegressionTests(UninitializedUseBase):
+    """F6 end-to-end: produced sizeof facts must stay query-correct."""
+
+    def test_sizeof_assignment_is_not_a_definition(self) -> None:
+        self.build("int f(void) { int x; sizeof(x = 1); return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(len(env["candidates"]), 1)
+        self.assertEqual(env["candidates"][0]["metadata"]["state"],
+                         "uninitialized")
+        self.assertEqual(env["coverage"]["uninitialized_uses_initialized"], 0)
+
+    def test_sizeof_bare_read_is_not_a_read(self) -> None:
+        self.build("int f(void) { int x; return sizeof x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(env["candidates"], [])
+        self.assertEqual(env["coverage"]["uninitialized_uses"], 0)
+
+    def test_sizeof_then_real_write_is_initialized(self) -> None:
+        self.build("int f(void) { int x; sizeof(x); x = 1; return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(env["candidates"], [])
+        self.assertGreaterEqual(
+            env["coverage"]["uninitialized_uses_initialized"], 1)
+
+
 class BareConditionCoverageTests(UninitializedUseBase):
     def test_bare_if_condition_is_counted_not_silent(self) -> None:
         self.build(
