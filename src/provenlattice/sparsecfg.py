@@ -1807,17 +1807,28 @@ class SparseCfgBuilder:
             )
             annotations[BUFFER_EXTENT_KEY] = _facts_json(extent)
         elif event_type == "CALL":
-            access = _memory_call_facts(node, event.matched_name, self.source)
-            if access is not None:
-                object_fact = self._memory_call_object_fact(node)
-                access["object"] = object_fact
-                annotations[MEMORY_ACCESS_KEY] = _facts_json(access)
-                extent = self._memory_call_buffer_extent_fact(node, object_fact)
-                if extent is not None:
-                    annotations[BUFFER_EXTENT_KEY] = _facts_json(extent)
-        arguments = _call_arguments(node, self.source)
-        if arguments:
-            annotations["arguments"] = arguments
+            if not _in_unevaluated_operand(
+                node, self.source, cpp=self.profile.name == "cpp"
+            ):
+                # A memory API named inside `sizeof`/`decltype`/... is not
+                # called. Keep the CALL event and its vocabulary identity (the
+                # call-graph fact), but publish no byte-length/destination
+                # facts for a call that never runs.
+                access = _memory_call_facts(node, event.matched_name, self.source)
+                if access is not None:
+                    object_fact = self._memory_call_object_fact(node)
+                    access["object"] = object_fact
+                    annotations[MEMORY_ACCESS_KEY] = _facts_json(access)
+                    extent = self._memory_call_buffer_extent_fact(node, object_fact)
+                    if extent is not None:
+                        annotations[BUFFER_EXTENT_KEY] = _facts_json(extent)
+        if not _in_unevaluated_operand(node, self.source, cpp=self.profile.name == "cpp"):
+            # Argument names in an unevaluated operand are not runtime values
+            # either. The review of #139 flagged this annotation channel as the
+            # remaining leak (lock-order/call-argument consumers read it).
+            arguments = _call_arguments(node, self.source)
+            if arguments:
+                annotations["arguments"] = arguments
         thread_function = self._thread_function(event_type, event.matched_name, node)
         if thread_function:
             annotations["thread_function"] = thread_function
@@ -2444,6 +2455,12 @@ class SparseCfgBuilder:
         elif kind == "field_expression":
             if _operator_of(node, self.source) not in self.profile.deref_member_operators:
                 return None
+        if _in_unevaluated_operand(node, self.source, cpp=self.profile.name == "cpp"):
+            # `sizeof(a[i])` does not read a[i] at runtime. The structural
+            # point would also thread the non-executed expression into the
+            # control chain (and into atomic/control-position consumers), so it
+            # disappears rather than keeping a carrier with no access fact.
+            return None
         return self._deref_point(node)
 
     def _deref_point(self, node: Any) -> _Point:
@@ -3179,6 +3196,13 @@ class SparseCfgBuilder:
     def _access_point(
         self, expr: Any, event_type: str, origin: Any = None, indirect_callee: bool = False
     ) -> _Point | None:
+        if _in_unevaluated_operand(expr, self.source, cpp=self.profile.name == "cpp"):
+            # No READ/WRITE point for any storage class when the operand is a
+            # compile-time type/size/exception query. This is broader than the
+            # V1 local facts: the legacy access layer (globals, members, and
+            # the bare-copy/null-write carriers) described the same non-runtime
+            # access and is corrected here too.
+            return None
         root, member, this_root, _exact = self._member_chain(expr)
         # `this->m_` names the field directly. Taking only `_root_identifier`
         # here would stop at `this` -- a keyword, not an identifier -- and the
@@ -4584,6 +4608,51 @@ def _in_vla_bound(node: Any, boundary: Any) -> bool:
     return False
 
 
+_UNEVALUATED_CONTEXT_TYPES = frozenset({
+    "sizeof_expression", "alignof_expression", "decltype",
+    "decltype_specifier", "noexcept_expression", "requires_expression",
+})
+
+
+def _in_unevaluated_operand(node: Any, source: bytes, cpp: bool = False) -> bool:
+    """Whether ``node`` sits inside a C/C++ unevaluated operand.
+
+    The single language boundary shared by every access producer: legacy
+    READ/WRITE points, structural DEREFERENCE points, V1 local facts, and CALL
+    memory facts. Naming an object in a compile-time operand is not a runtime
+    access, so none of those producers may describe one.
+
+    ``sizeof`` is the one context with a genuinely evaluated sub-expression:
+    the bound of a VLA type. ``sizeof(int[n])`` does not evaluate the
+    resulting size, but it does evaluate ``n``; keep walking outward so a
+    still-outer ``decltype``/``noexcept``/``sizeof`` suppresses the whole
+    expression. The VLA exception belongs to ``sizeof`` alone -- ``alignof``,
+    ``decltype``, ``noexcept``, and ``requires`` never evaluate their operands.
+
+    ``noexcept(expr)`` parses as a ``call_expression`` in both grammars, but
+    only C++ treats it as an operator; in C it is an ordinary function call
+    and its arguments are evaluated. ``typeid`` and macro-expanded contexts
+    are deliberately outside V1: they keep their existing facts and are
+    documented as unknown/unsupported rather than guessed here.
+    """
+    ancestor = node.parent
+    while ancestor is not None:
+        if ancestor.type in _UNEVALUATED_CONTEXT_TYPES:
+            if (
+                ancestor.type == "sizeof_expression"
+                and _in_vla_bound(node, ancestor)
+            ):
+                ancestor = ancestor.parent
+                continue
+            return True
+        if cpp and ancestor.type == "call_expression":
+            function = ancestor.child_by_field_name("function")
+            if function is not None and _expression_text(source, function) == "noexcept":
+                return True
+        ancestor = ancestor.parent
+    return False
+
+
 def _semantic_access_kind(
     expr: Any,
     carrier_event_type: str,
@@ -4592,27 +4661,8 @@ def _semantic_access_kind(
     cpp: bool = False,
 ) -> str | None:
     """READ/WRITE/RMW for a value access, or None for a non-value use."""
-    ancestor = expr.parent
-    while ancestor is not None:
-        if ancestor.type in {
-            "sizeof_expression", "alignof_expression", "decltype",
-            "decltype_specifier", "noexcept_expression", "requires_expression",
-        }:
-            if (
-                ancestor.type == "sizeof_expression"
-                and _in_vla_bound(expr, ancestor)
-            ):
-                # `sizeof(int[n])` does not evaluate the resulting size, but it
-                # does evaluate the VLA bound. Keep walking outward so a nested
-                # decltype/noexcept still suppresses the whole operand.
-                ancestor = ancestor.parent
-                continue
-            return None
-        if ancestor.type == "call_expression":
-            function = ancestor.child_by_field_name("function")
-            if function is not None and _expression_text(source, function) == "noexcept":
-                return None
-        ancestor = ancestor.parent
+    if _in_unevaluated_operand(expr, source, cpp=cpp):
+        return None
 
     current, parent = _parent_through_parentheses(expr)
     while parent is not None:
