@@ -238,6 +238,15 @@ class ReferenceResolver:
             return [], None, "indirect_call_shape", 0.0
         target = reference.target.strip(".")
         short = target.rsplit(".", 1)[-1]
+        if (reference.metadata or {}).get("static_import_collision"):
+            # Handle the collision before the same-file / qualified / name
+            # ladders: a bare `m` must not bind a C function named `m`, and
+            # only the static imports of this name are candidates.
+            return (
+                self._static_import_candidates(
+                    parsed_file, source_module, target, short, by_qualified),
+                None, "static_import_collision", 0.0,
+            )
         wants_type_target = (reference.metadata or {}).get("syntax") in _TYPE_TARGET_SYNTAXES
         receiver_unsafe = (
             reference.type == "CALLS"
@@ -270,16 +279,17 @@ class ReferenceResolver:
                 selected = self._select_candidate(candidates)
                 return candidates, selected, "import_resolution", 1.0 if selected else 0.0
         imported_candidates: list[Node] = []
+        static_import = bool((reference.metadata or {}).get("static_import"))
         for imported in parsed_file.imports:
+            if static_import and not (imported.metadata or {}).get("static"):
+                # A bare static-imported call must not pick up an ordinary
+                # `import c.m;` class that happens to share the name.
+                continue
             local = imported.alias or imported.target
             if local == target or local == short:
                 module = self._absolute_module(source_module, imported.module)
                 imported_candidates.extend(by_qualified.get(f"{module}.{imported.target}", []))
         imported_candidates = list({candidate.id: candidate for candidate in imported_candidates}.values())
-        if (reference.metadata or {}).get("static_import_collision"):
-            # Two static imports of one name: the last alias must not decide
-            # the target. Keep every imported candidate and never resolve.
-            return imported_candidates, None, "static_import_collision", 0.0
         if len(imported_candidates) == 1:
             return imported_candidates, imported_candidates[0], "unique_imported_symbol_resolution", 0.95
         if len(imported_candidates) > 1:
@@ -294,6 +304,26 @@ class ReferenceResolver:
         if len(candidates) == 1:
             return candidates, candidates[0], "unique_symbol_resolution", 0.75
         return candidates, None, "ambiguous" if candidates else "unresolved", 0.0
+
+    def _static_import_candidates(
+        self,
+        parsed_file: ParsedFile,
+        source_module: str,
+        target: str,
+        short: str,
+        by_qualified: dict[str, list[Node]],
+    ) -> list[Node]:
+        """Only the static imports bound to a colliding bare name."""
+        candidates: list[Node] = []
+        for imported in parsed_file.imports:
+            if not (imported.metadata or {}).get("static"):
+                continue
+            local = imported.alias or imported.target
+            if local != target and local != short:
+                continue
+            module = self._absolute_module(source_module, imported.module)
+            candidates.extend(by_qualified.get(f"{module}.{imported.target}", []))
+        return list({candidate.id: candidate for candidate in candidates}.values())
 
     @staticmethod
     def _select_candidate(candidates: list[Node]) -> Node | None:

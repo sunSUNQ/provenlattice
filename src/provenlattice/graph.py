@@ -13,12 +13,18 @@ from .shard import DirectoryShardStrategy, ShardStrategy, assign_shard, build_sh
 from .storage import SQLiteStorage
 
 
+PARSER_FACTS_VERSION = 2
+
+
 def parsed_to_dict(parsed: ParsedFile) -> dict:
     return {
         "symbols": [asdict(item) for item in parsed.symbols],
         "references": [asdict(item) for item in parsed.references],
         "imports": [asdict(item) for item in parsed.imports],
         "parser": parsed.parser,
+        # Bump when extractor semantics change: incremental reuses this dict
+        # for unchanged files instead of re-parsing them.
+        "parser_facts_version": PARSER_FACTS_VERSION,
     }
 
 
