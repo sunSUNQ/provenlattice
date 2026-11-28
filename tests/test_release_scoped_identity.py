@@ -64,6 +64,53 @@ void global_release(void) {
 }
 """
 
+STATEMENT_HEAD_SHADOWS = """\
+#include <stdlib.h>
+void for_init_shadow(void) {
+    char *p = malloc(4);
+    for (char *p = malloc(8); p; p = 0) {
+        free(p);
+    }
+    free(p);
+    p[4] = 0;
+}
+void if_init_shadow(void) {
+    char *p = malloc(4);
+    if (char *p = malloc(8)) {
+        free(p);
+    }
+    free(p);
+    p[4] = 0;
+}
+void while_init_shadow(void) {
+    char *p = malloc(4);
+    while (char *p = malloc(8)) {
+        free(p);
+        break;
+    }
+    free(p);
+    p[4] = 0;
+}
+void switch_init_shadow(void) {
+    char *p = malloc(4);
+    switch (char *p = malloc(8)) {
+    default:
+        free(p);
+        break;
+    }
+    free(p);
+    p[4] = 0;
+}
+"""
+
+OUT_OF_LINE_MEMBER = """\
+#include <stdlib.h>
+struct S { char *p; };
+void S::m(void) {
+    free(p);
+}
+"""
+
 
 def _materialize(source: str) -> tuple[str, list[dict]]:
     """Run the real pipeline and return (normalized source, events)."""
@@ -91,6 +138,18 @@ def _release(events: list[dict], function: str) -> dict:
     ]
     assert len(matches) == 1, (function, len(matches))
     return matches[0]
+
+
+def _releases(events: list[dict], function: str) -> list[dict]:
+    """All RELEASE events of one function, in source order."""
+    return sorted(
+        (
+            event for event in events
+            if event["event_type"] == "RELEASE"
+            and event["owner_qualified_name"] == function
+        ),
+        key=lambda event: event["start_byte"],
+    )
 
 
 def _access(events: list[dict], function: str, matched: str) -> dict:
@@ -197,6 +256,54 @@ class ReleaseScopedIdentityTests(unittest.TestCase):
             global_release["annotations"]["subject_decl_scoped"], "global:global_buffer"
         )
 
+    def test_statement_head_shadows_release_the_right_declaration(self) -> None:
+        source, events = _materialize(STATEMENT_HEAD_SHADOWS)
+        for function in (
+            "for_init_shadow", "if_init_shadow",
+            "while_init_shadow", "switch_init_shadow",
+        ):
+            start = source.index(f"void {function}")
+            outer = source.index("char *p = malloc(4)", start)
+            inner = source.index("char *p = malloc(8)", start)
+            releases = _releases(events, function)
+            self.assertEqual(len(releases), 2, function)
+            # The release inside the statement names the heading declaration;
+            # the release after it names the outer one again. Reusing the
+            # heading declaration after its statement would name an object the
+            # release cannot reach.
+            self.assertEqual(
+                releases[0]["annotations"]["subject_decl_scoped"],
+                f"local:src/a.cpp:{function}:p:{inner}",
+                function,
+            )
+            self.assertEqual(
+                releases[1]["annotations"]["subject_decl_scoped"],
+                f"local:src/a.cpp:{function}:p:{outer}",
+                function,
+            )
+            self.assertNotEqual(
+                releases[0]["annotations"]["subject_decl_scoped"],
+                releases[1]["annotations"]["subject_decl_scoped"],
+                function,
+            )
+            access = _access(events, function, "p[4]")
+            object_fact = json.loads(
+                access["annotations"]["memory_access_v1"]
+            )["object"]
+            self.assertEqual(
+                releases[1]["annotations"]["subject_decl_scoped"],
+                object_fact["scoped_decl"],
+                function,
+            )
+
+    def test_out_of_line_member_release_keeps_field_identity(self) -> None:
+        _source, events = _materialize(OUT_OF_LINE_MEMBER)
+        release = _release(events, "S.m")
+        self.assertEqual(release["annotations"]["subject_decl"], "field:S:p")
+        self.assertEqual(
+            release["annotations"]["subject_decl_scoped"], "field:S:p"
+        )
+
     def test_scoped_annotation_is_purely_additive(self) -> None:
         _source, events = _materialize(SHADOW_BOTH_DIRECTIONS)
         releases = [e for e in events if e["event_type"] == "RELEASE"]
@@ -207,6 +314,10 @@ class ReleaseScopedIdentityTests(unittest.TestCase):
         )
         self.assertTrue(all(e["event_id"].startswith("event:") for e in releases))
         self.assertEqual(len({e["event_id"] for e in releases}), len(releases))
+        # The new key is actually published where a declaration resolves.
+        self.assertTrue(
+            all("subject_decl_scoped" in e["annotations"] for e in releases)
+        )
         # Only RELEASE carries the new key; ALLOC identity is untouched.
         for event in events:
             if event["event_type"] == "ALLOC":

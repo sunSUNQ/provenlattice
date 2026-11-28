@@ -2092,15 +2092,35 @@ class SparseCfgBuilder:
         publishes it so a shadowed `free(p)` can be tied to the declaration it
         actually releases: the public ``subject_decl`` is frame-blind and
         answers `local:p` for both an inner and an outer shadow.
+
+        Resolution goes through the same statement-scope overlay the access
+        layer uses (``_resolve_extent_declaration``): the index owns only
+        compound scopes, so a for/if/while/switch heading declaration would
+        otherwise stay "visible" after its statement and name an object the
+        release cannot reach. An unindexed heading/capture declaration keeps
+        the name unknown rather than borrowing a same-named class member.
         """
         if self.declarations is None or node is None or not root:
             return ""
-        declaration = self._resolve(node, root)
+        declaration = self._resolve_extent_declaration(node, root)
         if declaration is None:
+            if self._statement_declaration_shadows(node, root):
+                return ""
             declaration = self._resolve_member(node, root)
         if declaration is None:
             return ""
         return self.declarations.scoped_identity(declaration)
+
+    def _statement_declaration_shadows(self, node: Any, name: str) -> bool:
+        """Whether an unindexed statement/capture declaration owns `name` here."""
+        ancestor = node.parent
+        while ancestor is not None:
+            names = self._statement_declaration_names.get(ancestor.start_byte)
+            visible_from = names.get(name) if names is not None else None
+            if visible_from is not None and node.start_byte >= visible_from:
+                return True
+            ancestor = ancestor.parent
+        return False
 
     def _resolve(self, node: Any, name: str) -> Any:
         if self.declarations is None or not name:
