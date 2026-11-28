@@ -125,9 +125,12 @@ handling.
 
 A bare local identifier used as an `if` condition publishes a declaration-linked
 READ before the branch point. Operands in `sizeof`, `alignof`, `decltype`,
-`noexcept`, `requires`, and equivalent unevaluated contexts publish no V1
-READ/WRITE; naming an object in a compile-time operand is not a runtime access.
-The evaluated bound of a VLA type is the explicit exception: `sizeof(int[n])`
+`noexcept`, `requires`, and equivalent unevaluated contexts publish no
+READ/WRITE/DEREFERENCE point and no V1 fact; naming an object in a compile-time
+operand is not a runtime access. This producer boundary is shared with the
+legacy access layer and the structural dereference layer — see
+[`unevaluated-operand-facts-v1.md`](unevaluated-operand-facts-v1.md). The
+evaluated bound of a VLA type is the explicit exception: `sizeof(int[n])`
 retains its runtime READ of `n`, unless a still-outer unevaluated operand
 suppresses the entire expression. Range-for reads use the same explicitly
 unresolved, unsupported identity boundary as their declaration.

@@ -327,11 +327,16 @@ is added and no existing event is renumbered. An expression such as `a[N-1]`
 therefore produces a fact, not an OOB verdict.
 
 Address computation and unevaluated type/size/exception queries are not value
-accesses: `&a[i]`, `&a[i].member`, `sizeof(a[i])`, `decltype(a[i])`, and
-`noexcept(a[i])` have no `memory_access_v1` annotation (a resolvable
-`buffer_extent_v1` may still be present). Member and conditional lvalue paths
-retain their actual direction: `a[i].x = 0` is WRITE, `a[i].x += 1` is
-READ_MODIFY_WRITE, and both selected arms of `(c ? a[i] : b[i]) = 0` are WRITE.
+accesses. `&a[i]` and `&a[i].member` keep their structural DEREFERENCE point (a
+resolvable `buffer_extent_v1` may still be present) but have no
+`memory_access_v1` annotation. `sizeof(a[i])`, `decltype(a[i])`, and
+`noexcept(a[i])` are unevaluated operands: since #139 the producer publishes no
+READ/WRITE/DEREFERENCE point for them at all, and therefore no
+`memory_access_v1` or `buffer_extent_v1` value fact either. See
+[`unevaluated-operand-facts-v1.md`](unevaluated-operand-facts-v1.md). Member and
+conditional lvalue paths retain their actual direction: `a[i].x = 0` is WRITE,
+`a[i].x += 1` is READ_MODIFY_WRITE, and both selected arms of
+`(c ? a[i] : b[i]) = 0` are WRITE.
 An arrow path is different: `a[i]->x = 0` writes `x` but READs the pointer
 stored in `a[i]`, so the subscript's fact is READ rather than WRITE.
 The transparent cancelling `&*` pair is preserved for direction only in C:
@@ -470,8 +475,9 @@ The metadata structure change advances:
   **6 -> 7** for issue-pilot #84, **7 -> 8** for #89 G1 ATOMIC event
   recognition, **8 -> 9** (`cpp-sparse_cfg-v9`) for #94 memory-API destination
   extents, **9 -> 10** for #104 negative index/offset facts, **10 -> 11** for
-  #134 local declaration/access fact gaps, and **11 -> 12** for #141 signed
-  negative-literal boundary corrections;
+  #134 local declaration/access fact gaps, **11 -> 12** for #141 signed
+  negative-literal boundary corrections, and **12 -> 13** for #139 unevaluated
+  operand access facts;
 - `sparse_dfg:cpp`: **3 -> 4** (`cpp-sparse_dfg-v4`), unchanged by #94.
 
 `events:cpp` remained version 2 at the time of the original change because the
@@ -479,7 +485,7 @@ event vocabulary/identity producer was unchanged; it was later advanced to 3 by
 issue-pilot #90 (member-level lock designations), and remains 3 after #94. SCFG
 freshness rejects the old analyzer version/source hash. SDFG also records the
 SCFG dependency contract, so `dependency_staleness` rejects a cache built under
-`cpp-sparse_cfg-v11` even if its own source hash is unchanged.
+`cpp-sparse_cfg-v12` even if its own source hash is unchanged.
 
 No defect query or defect category consumes these annotations in V1. In
 particular, an extent of 4 plus an index of 4 is only a pair of facts; it does not

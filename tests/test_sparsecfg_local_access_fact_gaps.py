@@ -411,7 +411,7 @@ class SparseCfgLocalAccessFactGapTests(unittest.TestCase):
         }
         self.assertEqual(actual, {key: [] for key in actual})
 
-    def test_unevaluated_legacy_pointer_writes_retain_legacy_events(self) -> None:
+    def test_unevaluated_legacy_pointer_writes_publish_no_events(self) -> None:
         env = self.build(
             "void legacy_unevaluated_writes(void) {\n"
             "    int *p = nullptr;\n"
@@ -427,22 +427,19 @@ class SparseCfgLocalAccessFactGapTests(unittest.TestCase):
             if self.annotations(event).get("alias_source") == "p"
             and event["matched_name"] == "q"
         ]
+        self.assertEqual(alias, [])
+        # Only the declaration initializer is a runtime null write. The same
+        # spelling inside sizeof is not evaluated and publishes no event.
         null = [
             event for event in writes
             if self.annotations(event).get("null_source") == "true"
             and event["matched_name"] == "p"
         ]
-        legacy_null = [
-            event for event in null
-            if "local_access_v1" not in self.annotations(event)
-        ]
-        self.assertEqual(len(alias), 1, writes)
-        self.assertGreaterEqual(len(null), 2, writes)
-        self.assertEqual(len(legacy_null), 1, null)
-        for event in [*alias, *legacy_null]:
-            self.assertNotIn("local_access_v1", self.annotations(event), event)
-            self.assertNotIn("control_position_v1", self.annotations(event), event)
-            self.assertEqual(self.annotations(event).get("subject_storage"), "local")
+        self.assertEqual(len(null), 1, writes)
+        # The declaration initializer is a real runtime write and keeps its V1
+        # local-access fact; the same spelling inside sizeof is gone.
+        self.assertIn("local_access_v1", self.annotations(null[0]))
+        self.assertEqual(self.annotations(null[0]).get("subject_storage"), "local")
 
     def test_cpp_condition_declaration_publishes_initializer_and_accesses(self) -> None:
         env = self.build(
