@@ -560,6 +560,22 @@ class GotoDominanceRegressionTests(UninitializedUseBase):
         self.assertEqual(env["coverage"]["uninitialized_uses_initialized"], 0)
         self.assertIn("goto", candidate["metadata"]["coverage_reasons"])
 
+    def test_macro_hidden_goto_is_not_initialized(self) -> None:
+        # The macro expands to a goto the producer never saw; the published
+        # facts are only `macro` coverage, so the context equality must fail
+        # closed exactly like an explicit goto.
+        self.build(
+            "#define M goto L\n"
+            "int f(int n) { int x; if (n) { M; } x = 1; L: return x; }\n")
+        env = self.query(defect_type=defect.UNINITIALIZED_USE)
+        self.assertEqual(len(env["candidates"]), 1)
+        candidate = env["candidates"][0]
+        self.assertIn(
+            candidate["metadata"]["state"], {"unknown", "maybe_uninitialized"})
+        self.assertNotEqual(candidate["metadata"]["state"], "initialized")
+        self.assertEqual(env["coverage"]["uninitialized_uses_initialized"], 0)
+        self.assertIn("macro", candidate["metadata"]["coverage_reasons"])
+
 
 class SizeofFactRegressionTests(UninitializedUseBase):
     """F6 end-to-end: produced sizeof facts must stay query-correct."""
