@@ -43,6 +43,7 @@ def write(root: Path, relative: str, value: str) -> None:
 class StaticImportCollisionTests(unittest.TestCase):
     def _call_reference(
         self, imports: str, extra_files: dict[str, str] | None = None,
+        methods: str = "",
     ) -> tuple[dict, set[str]]:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "repo"
@@ -54,6 +55,7 @@ class StaticImportCollisionTests(unittest.TestCase):
                 "package t;\n"
                 + imports
                 + "public class RefUpdateTest {\n"
+                + methods
                 + "    void test() { assertEquals(\"msg\", \"value\"); }\n"
                 + "}\n"
             ))
@@ -139,6 +141,18 @@ class StaticImportCollisionTests(unittest.TestCase):
             },
         )
         self.assertNotIn("c.m", names)
+
+
+    def test_same_file_method_still_shadows_the_collision(self) -> None:
+        # Java's same-class member wins over static imports; the collision
+        # branch must stay behind the same-file ladder.
+        row, names = self._call_reference(
+            JUNIT_IMPORT + JGIT_IMPORT,
+            methods="    void assertEquals(Object a, Object b) {}\n",
+        )
+        self.assertEqual(row["status"], "resolved")
+        self.assertEqual(row["resolved_name"], "t.RefUpdateTest.assertEquals")
+        self.assertEqual(names, {"t.RefUpdateTest.assertEquals"})
 
 
 class ParserCacheUpgradeTests(unittest.TestCase):

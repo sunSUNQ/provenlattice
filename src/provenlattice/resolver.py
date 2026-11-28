@@ -238,15 +238,6 @@ class ReferenceResolver:
             return [], None, "indirect_call_shape", 0.0
         target = reference.target.strip(".")
         short = target.rsplit(".", 1)[-1]
-        if (reference.metadata or {}).get("static_import_collision"):
-            # Handle the collision before the same-file / qualified / name
-            # ladders: a bare `m` must not bind a C function named `m`, and
-            # only the static imports of this name are candidates.
-            return (
-                self._static_import_candidates(
-                    parsed_file, source_module, target, short, by_qualified),
-                None, "static_import_collision", 0.0,
-            )
         wants_type_target = (reference.metadata or {}).get("syntax") in _TYPE_TARGET_SYNTAXES
         receiver_unsafe = (
             reference.type == "CALLS"
@@ -267,6 +258,16 @@ class ReferenceResolver:
                 # P2-A R1: receiver type unknown -> keep candidates, never bind.
                 return same_file, None, "same_file_resolution", 0.0
             return same_file, None, "same_file_resolution", 0.0
+        if (reference.metadata or {}).get("static_import_collision"):
+            # The same-file ladder keeps Java's shadowing rule. Only when no
+            # same-file member exists does the collision take over: a bare `m`
+            # must not bind a C function named `m`, and only the static imports
+            # of this name are candidates.
+            return (
+                self._static_import_candidates(
+                    parsed_file, source_module, target, short, by_qualified),
+                None, "static_import_collision", 0.0,
+            )
         qualified_candidates = by_qualified.get(target, [])
         if qualified_candidates:
             selected = self._select_candidate(qualified_candidates)
