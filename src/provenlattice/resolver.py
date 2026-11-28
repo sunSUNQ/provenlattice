@@ -10,7 +10,7 @@ from .models import Edge, Node, ParsedFile, ParsedReference, RawReference
 # Bump when reference metadata semantics change: cached rows whose metadata
 # lacks the current version are re-resolved so full and incremental index
 # runs converge on identical classification.
-CALL_KIND_VERSION = 3
+CALL_KIND_VERSION = 4
 
 # Reference syntaxes that can only ever bind to a type-shaped target. Emitted
 # by the Java extractor (type usages and `new` constructions); no other
@@ -258,6 +258,16 @@ class ReferenceResolver:
                 # P2-A R1: receiver type unknown -> keep candidates, never bind.
                 return same_file, None, "same_file_resolution", 0.0
             return same_file, None, "same_file_resolution", 0.0
+        if (reference.metadata or {}).get("static_import_collision"):
+            # The same-file ladder keeps Java's shadowing rule. Only when no
+            # same-file member exists does the collision take over: a bare `m`
+            # must not bind a C function named `m`, and only the static imports
+            # of this name are candidates.
+            return (
+                self._static_import_candidates(
+                    parsed_file, source_module, target, short, by_qualified),
+                None, "static_import_collision", 0.0,
+            )
         qualified_candidates = by_qualified.get(target, [])
         if qualified_candidates:
             selected = self._select_candidate(qualified_candidates)
@@ -270,7 +280,12 @@ class ReferenceResolver:
                 selected = self._select_candidate(candidates)
                 return candidates, selected, "import_resolution", 1.0 if selected else 0.0
         imported_candidates: list[Node] = []
+        static_import = bool((reference.metadata or {}).get("static_import"))
         for imported in parsed_file.imports:
+            if static_import and not (imported.metadata or {}).get("static"):
+                # A bare static-imported call must not pick up an ordinary
+                # `import c.m;` class that happens to share the name.
+                continue
             local = imported.alias or imported.target
             if local == target or local == short:
                 module = self._absolute_module(source_module, imported.module)
@@ -290,6 +305,26 @@ class ReferenceResolver:
         if len(candidates) == 1:
             return candidates, candidates[0], "unique_symbol_resolution", 0.75
         return candidates, None, "ambiguous" if candidates else "unresolved", 0.0
+
+    def _static_import_candidates(
+        self,
+        parsed_file: ParsedFile,
+        source_module: str,
+        target: str,
+        short: str,
+        by_qualified: dict[str, list[Node]],
+    ) -> list[Node]:
+        """Only the static imports bound to a colliding bare name."""
+        candidates: list[Node] = []
+        for imported in parsed_file.imports:
+            if not (imported.metadata or {}).get("static"):
+                continue
+            local = imported.alias or imported.target
+            if local != target and local != short:
+                continue
+            module = self._absolute_module(source_module, imported.module)
+            candidates.extend(by_qualified.get(f"{module}.{imported.target}", []))
+        return list({candidate.id: candidate for candidate in candidates}.values())
 
     @staticmethod
     def _select_candidate(candidates: list[Node]) -> Node | None:

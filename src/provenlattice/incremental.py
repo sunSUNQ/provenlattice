@@ -4,7 +4,7 @@ import json
 import time
 from pathlib import Path
 
-from .graph import build_graph, parsed_from_dict
+from .graph import PARSER_FACTS_VERSION, build_graph, parsed_from_dict
 from .identity import path_id, repository_id, symbol_id
 from .impact import compute_impact_frontier
 from .models import Delta, Metrics, ParsedFile
@@ -68,6 +68,25 @@ def _node_changed(old: dict, new) -> bool:
     return old["metadata"] != json.dumps(new.metadata, sort_keys=True)
 
 
+def _parser_facts_current(storage: SQLiteStorage, repo_id: str) -> bool:
+    """Whether every File node carries the current extractor facts version.
+
+    A cheap aggregate query, not ``parser_cache``: the no-change fast path must
+    stay one small read, yet an old cache must not be reused just because the
+    source hashes match.
+    """
+    total = storage.row(
+        "SELECT COUNT(*) AS count FROM nodes WHERE repo_id=? AND kind='File'",
+        (repo_id,),
+    )
+    current = storage.row(
+        "SELECT COUNT(*) AS count FROM nodes WHERE repo_id=? AND kind='File' "
+        "AND json_extract(metadata, '$.parsed.parser_facts_version')=?",
+        (repo_id, PARSER_FACTS_VERSION),
+    )
+    return int(total["count"]) == int(current["count"])
+
+
 def incremental_update(
     repo: str | Path, database: str | Path | None = None, *, strategy: ShardStrategy | None = None,
     repository_id_override: str | None = None,
@@ -84,6 +103,7 @@ def incremental_update(
             raise RuntimeError("repository is not indexed; run `provenlattice index` first")
         old_states = storage.file_states(repo_id)
         old_fingerprints = storage.shard_fingerprints()
+        parser_facts_ok = _parser_facts_current(storage, repo_id)
 
         current_paths = set(source_by_path)
         old_paths = set(old_states)
@@ -94,7 +114,7 @@ def incremental_update(
             if source_by_path[path].source_hash != old_states[path]["source_hash"]
         }
         changed = added | modified | deleted
-        if not changed:
+        if not changed and parser_facts_ok:
             if not _quick_index_ok(storage, old_states, old_fingerprints):
                 raise RuntimeError(
                     "index integrity check failed (files/shards/file_state mismatch); "
@@ -113,15 +133,27 @@ def incremental_update(
             }
 
         old_cache = storage.parser_cache(repo_id)
+        stale_parser: set[str] = set()
+        if not parser_facts_ok:
+            # Extractor semantics changed: cached parser facts (including the
+            # old last-wins static-import target_module) must be re-parsed even
+            # when the source hash is unchanged.
+            stale_parser = {
+                path for path in current_paths & old_paths
+                if (old_cache.get(path) or {}).get("parser_facts_version")
+                != PARSER_FACTS_VERSION
+            }
+            changed |= stale_parser
         old_nodes = storage.snapshot_ids("nodes")
         old_edges = storage.snapshot_ids("edges")
         old_references = storage.raw_reference_cache(repo_id)
 
+        reparsed = added | modified | stale_parser
         parsed_files = {}
         parse_failures = 0
         syntax_error_files = 0
         for path, source in source_by_path.items():
-            if path in added or path in modified:
+            if path in reparsed:
                 try:
                     parsed_files[path], has_error = parse_file_with_diagnostics(
                         source.path, path, source.language
@@ -147,7 +179,7 @@ def incremental_update(
             and row["kind"] in {"File", "Namespace", "Class", "Struct", "Interface", "Function", "Method", "Type"}
         }
         new_symbol_facts: dict[str, tuple[str, str]] = {}
-        for path in added | modified:
+        for path in reparsed:
             file_id = path_id(repo_id, "File", path)
             module_parts = list(Path(path).with_suffix("").parts)
             if module_parts and module_parts[-1] == "__init__":
@@ -191,7 +223,7 @@ def incremental_update(
         )
         file_shards = {item["path"]: item["shard_id"] for item in files}
         updated_shards = sorted(
-            {file_shards[path] for path in added | modified if path in file_shards}
+            {file_shards[path] for path in reparsed if path in file_shards}
             | {
                 row["shard_id"] for row in old_nodes.values()
                 if row["kind"] == "File" and row["file_id"] in changed_file_ids
@@ -232,7 +264,7 @@ def incremental_update(
         for reference in resolution.references:
             status_counts[reference.status] += 1
         metrics = Metrics(
-            files_scanned=len(sources), files_parsed=len(added | modified) - parse_failures,
+            files_scanned=len(sources), files_parsed=len(reparsed) - parse_failures,
             parse_failures=parse_failures, syntax_error_files=syntax_error_files,
             nodes_created=len(nodes), edges_created=len(edges),
             raw_references=len(resolution.references),
@@ -241,7 +273,7 @@ def incremental_update(
             unresolved_references=status_counts["unresolved"],
             shards_created=len(shards),
             boundary_edges=sum(edge.metadata.get("scope") == "boundary" for edge in edges),
-            files_reparsed=len(added | modified), files_reused=max(len(sources) - len(added | modified), 0),
+            files_reparsed=len(reparsed), files_reused=max(len(sources) - len(reparsed), 0),
             references_reprocessed=resolution.reprocessed, references_reused=resolution.reused,
             shards_updated=len(updated_shards), shards_reused=max(len(shards) - len(updated_shards), 0),
             boundary_edges_reprocessed=boundary_edges_reprocessed,
