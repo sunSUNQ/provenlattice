@@ -8141,19 +8141,27 @@ def _uninit_unconditional_dominates(
         adjacency, roots, use_anchor, frozenset(anchors))
 
 
-_UNINIT_JUMP_REASONS = frozenset({"goto", "partial_parse"})
+_UNINIT_JUMP_REASONS = frozenset({"goto", "partial_parse", "macro"})
 
 
 def _uninit_equality_trusted(position: Any) -> bool:
     """Whether context equality may still be read from an incomplete position.
 
-    `goto` and a partial parse are the two published reasons that can omit an
-    edge into the carrier itself: a jump target is not modelled, and a partial
-    parse can lose arbitrary control flow. Both make "same direct predecessor"
-    an unsound proof of coverage, so they fail closed. A loop or switch reason
-    describes a construct whose arms *are* published as contexts; equality on
-    those contexts still proves the write executes on the path the use is on,
-    and demoting every such shape would turn known-safe code into candidates.
+    `goto`, a partial parse and a macro are the published reasons that can omit
+    an edge into the carrier itself: a jump target is not modelled, a partial
+    parse can lose arbitrary control flow, and a macro can expand to a
+    `goto`/`return`/branch the query never saw. Each makes "same direct
+    predecessor" an unsound proof of coverage, so they fail closed. A loop or
+    switch reason describes a construct whose arms *are* published as contexts;
+    equality on those contexts still proves the write executes on the path the
+    use is on, and demoting every such shape would turn known-safe code into
+    candidates.
+
+    Known FN: a macro *before* an entry write (`M; x = 1; return x;`) still has
+    an `entry` position, and the entry contract (`x = 1` before any branch
+    reaches every later path) runs before this check. The query cannot tell
+    that shape from the safe `x = 1; M; return x;` without a macro span from
+    the producer; #137 keeps the existing contract and documents the gap.
     """
     if _uninit_position_complete(position):
         return True

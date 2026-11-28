@@ -55,7 +55,7 @@
 | error_handling | PR1 | C/C++ | 按需 | ◐ SMOKE + DIAGNOSTIC | overnight | 未检查返回值 | 精度受 API contract 限制 |
 | taint_path | PR1 | C/C++ | 按需 | ◐ SMOKE + DIAGNOSTIC | overnight | source→sink | 4 source/3 sink 仅 |
 | out_of_bounds_write (M5/M6/M8) | B2 V1 (#82/#94/#104 facts) | C/C++ | 按需 | ◐ DIAGNOSTIC | issue-pilot#93 | 写方向越界候选 | 仅常量;负常量下标已支持;非 char 堆访问记 unit_mismatch;shadow 下无 scoped release 记 ambiguous limitation |
-| uninitialized_use | #81（M9）；#137 M9-C | C/C++ | 按需 | ✅ implemented (diagnostic) | M9 Golden + 全量回归 | 局部对象定义前读取 | 仅 straight-line/if-else/early-return；直线写入按 `CONTROL_REACHES` 支配判定（CALL 等控制点不降级），支配仅在 position complete 时成立，宏/goto/循环/写穿 fail-closed 为显式 unknown；分支条件（BRANCH/CHECK）与声明 initializer 内写入按 maybe/unknown，条件性由 producer coverage reason 判定而非文本扫描；Candidate `paths` 含 declaration→write→控制路线→use，`max_paths`/`max_hops` 生效并在 `uninitialized_paths_truncated` 可见；`x = x + 1` / `int x = x;` / 裸条件 `if (x)` / `if (p)` / 赋值 RHS 与实参短路写为已知 FN |
+| uninitialized_use | #81（M9）；#137 M9-C | C/C++ | 按需 | ✅ implemented (diagnostic) | M9 Golden + 全量回归 | 局部对象定义前读取 | 仅 straight-line/if-else/early-return；直线写入按 `CONTROL_REACHES` 支配判定（CALL 等控制点不降级），支配仅在 position complete 时成立；goto/partial_parse/macro 的非 entry 写入覆盖 fail-closed 为显式 unknown，循环/写穿为显式 unknown，macro 位于 entry 写入之前为 known FN（producer 缺口）；分支条件（BRANCH/CHECK）与声明 initializer 内写入按 maybe/unknown，条件性由 producer coverage reason 判定而非文本扫描；Candidate `paths` 含 declaration→write→控制路线→use，`max_paths`/`max_hops` 生效并在 `uninitialized_paths_truncated` 可见；`x = x + 1` / `int x = x;` / 裸条件 `if (x)` / `if (p)` / 赋值 RHS 与实参短路写为已知 FN |
 
 ## L3 Task Services
 

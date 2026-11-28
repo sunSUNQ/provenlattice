@@ -60,20 +60,25 @@ provenlattice defect /path/to/repo --type all \
   带 coverage reason）、`initialized`（不产生候选）。
 - 反例不报：声明初始化、使用前赋值、if/else 两臂均赋值、未初始化分支
   early return、静态零初始化、参数、不可达访问。
-- 边界：只覆盖 straight-line、if/else、early return；宏、goto、循环、
-  switch/条件表达式、lambda/异常、未知写穿、partial parse 为显式
-  `unknown`/coverage，不静默当作安全。局部指针解引用（`*p`）本身会触发
+- 边界：只覆盖 straight-line、if/else、early return；goto、partial parse
+  与 macro 可隐藏未发布的控制流，非 entry 覆盖一律 fail-closed；循环、
+  switch/条件表达式、lambda/异常、未知写穿为显式 `unknown`/coverage，
+  不静默当作安全。局部指针解引用（`*p`）本身会触发
   `unknown_write_through`，因此该形状是显式 `unknown` 候选，而非 definite。
+  已知 FN：macro 位于 entry 写入之前（`M; x = 1; ...`）时，写入仍带
+  `entry` position，查询无法与安全的 `x = 1; M; ...` 区分；V1 保留 #81 的
+  entry 合同，需 producer 补 macro span/position（follow-up）。
 - 支配判定：直线写入（包括 `sink(0); x = 1; sink(2); return x;` 中由 CALL
   隔开的写入）按 `control_position_v1` 与已发布的 `CONTROL_REACHES` 判断
   支配关系；中间的正常控制点不会把 definite 降级为 maybe。写入位于 if/else
   分支之后（两个 arm 的上下文都到达该写入）同样按支配判定。支配只在写、读
   两侧 position 的 `coverage_status=complete` 且 `coverage_reasons` 为空时
-  成立；goto/macro/loop 等不完整形状的**支配判定** fail-closed 为显式
-  `unknown`，不因 CFG 缺少 bypass 边而静默判为 initialized。goto 目标未
-  建模，因此含 goto 方法的非 entry 写入覆盖一律按 `unknown` 处理（包括写入
-  位于 label 之后的安全形状，属于已知精度损失）；loop/switch 仍按已发布的
-  分支上下文判定，已证明的覆盖不会因构造不受支持而降级。
+  成立；goto/partial_parse/macro 等不完整形状的**支配判定与上下文相等
+  判定**均 fail-closed 为显式 `unknown`，不因 CFG 缺少 bypass 边而静默判为
+  initialized。goto 目标未建模，因此含 goto 方法的非 entry 写入覆盖一律按
+  `unknown` 处理（包括写入位于 label 之后的安全形状，属于已知精度损失）；
+  macro 同理，非 entry 的安全 macro 形状也会降级为 `unknown`。loop/switch
+  仍按已发布的分支上下文判定，已证明的覆盖不会因构造不受支持而降级。
 - 路径证据：Candidate 的 `paths` 给出 declaration → prior write → 真实
   `CONTROL_REACHES` 控制路线 → use 的一条证据路径；carrier 边界（声明、
   访问事件本身）使用空 edge id，`len(edges) == len(points) - 1` 恒成立。
@@ -176,7 +181,7 @@ provenlattice defect /path/to/repo --type all \
 | FN | CONSUMES | 仅直接传递形状(`f(malloc(n))`),赋值形状走 DATA_FLOW_TO |
 | FN | sparse CFG | goto 目标不建模,短路坍缩为单 BRANCH |
 | 边界 | 全部 | 方法内分析,无跨函数边;无 SSA/points-to |
-| 边界 | uninitialized_use | 仅 straight-line/if-else/early-return；宏/goto/循环/条件表达式/写穿为显式 unknown；分支条件（BRANCH/CHECK）与声明 initializer 内的写入按 maybe/unknown |
+| 边界 | uninitialized_use | 仅 straight-line/if-else/early-return；goto/partial_parse/macro 的非 entry 覆盖、循环/条件表达式/写穿为显式 unknown；分支条件（BRANCH/CHECK）与声明 initializer 内的写入按 maybe/unknown；macro 位于 entry 写入之前为 known FN（producer 缺口） |
 | FN | uninitialized_use | `x = x + 1` 的 RHS 读取被当作写入之后；`int x = x;` 自初始化不产生候选；裸条件 `if (x)` / `if (p)` 读取上游未发布，仅在 `uninitialized_bare_condition_reads` 计数暴露；赋值 RHS / 实参短路写为上游事实缺口；参数/静态对象的调用期或零初始化语义不在候选内 |
 | 边界 | error_handling | 精度受 API contract 知识限制 |
 | 边界 | taint_path | 仅 4 source/3 sink,无 sanitizer/跨函数 |
