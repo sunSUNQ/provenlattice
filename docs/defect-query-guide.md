@@ -29,6 +29,9 @@ provenlattice defect /path/to/repo --type null_flow --json
 # 全部已注册查询
 provenlattice defect /path/to/repo --type all --json
 
+# 按类别选择（memory / concurrency / dataflow / reliability / all）
+provenlattice defect /path/to/repo --category memory --json
+
 # 带预算限制
 provenlattice defect /path/to/repo --type all \
   --max-candidates 50 --max-paths 16 --max-hops 32 --json
@@ -49,6 +52,7 @@ provenlattice defect /path/to/repo --type all \
 | mismatched_free | mismatch | 分配器与释放函数不配对（CWE-590/762/763） |
 | out_of_bounds_write | oob_write | 写方向越界：常量下标/偏移、堆分配、`memcpy/memmove/memset` 长度（M5/M6/M8） |
 | uninitialized_use | uninit | 方法内局部对象/局部指针在定义前读取（M9，CWE-457） |
+| integer_overflow | 2.1 | 分配大小表达式中的运行时乘/移位（M10，CWE-190/191），candidate-grade |
 
 ### uninitialized_use（M9）
 
@@ -99,6 +103,20 @@ provenlattice defect /path/to/repo --type all \
   子串扫描**：字符串、字符和注释里的 `?` 不影响控制流判定。赋值 RHS /
   函数实参中的短路写（`y = (n && (x = 1))`、`g(n && (x = 1))`）缺少
   enclosing span，仍为 known FN（上游事实缺口，另列 follow-up）。
+
+### integer_overflow（M10）
+
+复用 `sparse_cfg` 为分配大小语句内 emit 的 `ARITH` 点（`*`/`<<` 且非常量
+折叠），只报告「算术结果流向分配大小」的候选：
+
+- 候选状态恒为 `ambiguous`，并显式列出决定缺陷的三个图外事实
+  （`ARITH_WIDTH` / `RANGE_CHECK` / `SOURCE_TRUST`）；常数乘积
+  （`malloc(4 * 8)`）不产生候选，计入 coverage `constant_products`。
+- 不做类型宽度推断、range analysis、输入可信度判定或完整表达式求值。
+- memory category 合同（已冻结）：`integer_overflow` 属于 memory category，
+  因为它的全部人口都是分配大小算术；**纯算术溢出（无内存 sink）不是本查询
+  的形状，也不属于 memory category**。`--type integer_overflow` 与
+  `--type all` 行为不变。
 
 ## 3. 结果 JSON 结构
 

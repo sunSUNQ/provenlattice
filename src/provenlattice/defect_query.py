@@ -77,6 +77,12 @@ CATEGORY_QUERIES: dict[str, tuple[tuple[str, dict[str, object]], ...]] = {
         (defect.MISMATCHED_FREE, {}),
         (defect.OUT_OF_BOUNDS_WRITE, {}),
         (defect.UNINITIALIZED_USE, {}),
+        # M10-C: the integer-overflow query's whole population is allocation-size
+        # arithmetic (an ARITH point inside a malloc/calloc/realloc size), so each
+        # candidate flows into a memory sink and belongs here. Pure arithmetic
+        # with no memory sink is not one of its shapes -- exactly the frozen
+        # category contract. `--type integer_overflow` and `--type all` stay put.
+        (defect.INTEGER_OVERFLOW, {}),
     ),
     "concurrency": (
         (defect.RACE_CONDITION, {}),

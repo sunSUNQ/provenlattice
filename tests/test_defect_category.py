@@ -40,7 +40,7 @@ class ExpandCategoriesTests(unittest.TestCase):
             self._query_names("memory"),
             ["resource_lifetime", "null_flow", "use_after_free",
              "double_free", "mismatched_free", "out_of_bounds_write",
-             "uninitialized_use"],
+             "uninitialized_use", "integer_overflow"],
         )
 
     def test_concurrency(self) -> None:
@@ -170,6 +170,41 @@ class CategorySelectionTests(unittest.TestCase):
             query_defect_candidates(
                 self.root, defect_type="double_free", category="memory")
         self.assertEqual(ctx.exception.code, "invalid_request")
+
+    # A size expression `count * elem` feeds `malloc`: the integer-overflow
+    # query's whole population is allocation-size arithmetic, so a memory run
+    # must surface it. This pins the M10-C frozen category contract.
+    SIZE_ARITH = (
+        "#include <stdlib.h>\n"
+        "int copy_n(void **dst, int count, int elem) {\n"
+        "    void *p = malloc(count * elem);\n"
+        "    if (!p) { return -1; }\n"
+        "    *dst = p;\n"
+        "    return 0;\n"
+        "}\n"
+    )
+
+    def test_memory_surfaces_integer_overflow(self) -> None:
+        self.build(self.SIZE_ARITH)
+        env = self.query(category="memory")
+        self.assertEqual(env["status"], "available")
+        self.assertTrue(
+            any(c["query"] == "integer_overflow" for c in env["candidates"]),
+            "a size-arithmetic allocation must surface integer_overflow in "
+            "the memory category",
+        )
+
+    def test_type_integer_overflow_unchanged_by_category(self) -> None:
+        self.build(self.SIZE_ARITH)
+        by_type = self.query(defect_type="integer_overflow")
+        by_memory = self.query(category="memory")
+        overflow_in_type = [
+            c for c in by_type["candidates"] if c["query"] == "integer_overflow"
+        ]
+        overflow_in_memory = [
+            c for c in by_memory["candidates"] if c["query"] == "integer_overflow"
+        ]
+        self.assertEqual(overflow_in_type, overflow_in_memory)
 
 
 if __name__ == "__main__":
