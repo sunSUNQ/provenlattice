@@ -278,7 +278,7 @@ class UnevaluatedOperandFactsTests(unittest.TestCase):
         self.assertIn("memory_access_v1", self.annotations(points[0]))
 
     def test_analyzer_version_advances(self) -> None:
-        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 13)
+        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 14)
         self.assertEqual(ANALYZER_VERSIONS["sparse_dfg:cpp"], 4)
 
     def test_facts_are_deterministic(self) -> None:

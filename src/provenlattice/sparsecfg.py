@@ -1768,9 +1768,12 @@ class SparseCfgBuilder:
             # one, and two different elements of the array would otherwise look
             # like one lock acquired twice.
             annotations["subject_exact"] = "true" if exact else "false"
-            annotations.update(self._subject_facts(
-                self._subject_node(event_type, event.matched_name, node), subject
-            ))
+            subject_node = self._subject_node(event_type, event.matched_name, node)
+            annotations.update(self._subject_facts(subject_node, subject))
+            if event_type == "RELEASE":
+                scoped = self._scoped_decl_identity(subject_node, subject)
+                if scoped:
+                    annotations["subject_decl_scoped"] = scoped
         elif event_type == "ALLOC" and node.type == "new_expression":
             # An anonymous heap object: it has no name, so there is no name to
             # resolve, but it does have an identity -- the allocation site. That
@@ -2080,6 +2083,44 @@ class SparseCfgBuilder:
         if init_arg0:
             facts["subject_init_arg0"] = init_arg0
         return facts
+
+    def _scoped_decl_identity(self, node: Any, root: str) -> str:
+        """The scope-qualified declaration token behind `root`, or "" (unknown).
+
+        ``scoped_identity`` is the declaration index's additive, frame-aware
+        spelling of the same declaration ``subject_decl`` names. RELEASE
+        publishes it so a shadowed `free(p)` can be tied to the declaration it
+        actually releases: the public ``subject_decl`` is frame-blind and
+        answers `local:p` for both an inner and an outer shadow.
+
+        Resolution goes through the same statement-scope overlay the access
+        layer uses (``_resolve_extent_declaration``): the index owns only
+        compound scopes, so a for/if/while/switch heading declaration would
+        otherwise stay "visible" after its statement and name an object the
+        release cannot reach. An unindexed heading/capture declaration keeps
+        the name unknown rather than borrowing a same-named class member.
+        """
+        if self.declarations is None or node is None or not root:
+            return ""
+        declaration = self._resolve_extent_declaration(node, root)
+        if declaration is None:
+            if self._statement_declaration_shadows(node, root):
+                return ""
+            declaration = self._resolve_member(node, root)
+        if declaration is None:
+            return ""
+        return self.declarations.scoped_identity(declaration)
+
+    def _statement_declaration_shadows(self, node: Any, name: str) -> bool:
+        """Whether an unindexed statement/capture declaration owns `name` here."""
+        ancestor = node.parent
+        while ancestor is not None:
+            names = self._statement_declaration_names.get(ancestor.start_byte)
+            visible_from = names.get(name) if names is not None else None
+            if visible_from is not None and node.start_byte >= visible_from:
+                return True
+            ancestor = ancestor.parent
+        return False
 
     def _resolve(self, node: Any, name: str) -> Any:
         if self.declarations is None or not name:
