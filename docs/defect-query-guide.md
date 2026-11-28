@@ -64,6 +64,22 @@ provenlattice defect /path/to/repo --type all \
   switch/条件表达式、lambda/异常、未知写穿、partial parse 为显式
   `unknown`/coverage，不静默当作安全。局部指针解引用（`*p`）本身会触发
   `unknown_write_through`，因此该形状是显式 `unknown` 候选，而非 definite。
+- 支配判定：直线写入（包括 `sink(0); x = 1; sink(2); return x;` 中由 CALL
+  隔开的写入）按 `control_position_v1` 与已发布的 `CONTROL_REACHES` 判断
+  支配关系；中间的正常控制点不会把 definite 降级为 maybe。写入位于 if/else
+  分支之后（两个 arm 的上下文都到达该写入）同样按支配判定。支配只在写、读
+  两侧 position 的 `coverage_status=complete` 且 `coverage_reasons` 为空时
+  成立；goto/macro/loop 等不完整形状的**支配判定** fail-closed 为显式
+  `unknown`，不因 CFG 缺少 bypass 边而静默判为 initialized。goto 目标未
+  建模，因此含 goto 方法的非 entry 写入覆盖一律按 `unknown` 处理（包括写入
+  位于 label 之后的安全形状，属于已知精度损失）；loop/switch 仍按已发布的
+  分支上下文判定，已证明的覆盖不会因构造不受支持而降级。
+- 路径证据：Candidate 的 `paths` 给出 declaration → prior write → 真实
+  `CONTROL_REACHES` 控制路线 → use 的一条证据路径；carrier 边界（声明、
+  访问事件本身）使用空 edge id，`len(edges) == len(points) - 1` 恒成立。
+  `max_paths=0` 不发布路径且 `path_recorded=false`；`max_hops` 进入真实
+  路径搜索，预算截断时 `paths_truncated=true` 并在 coverage 的
+  `uninitialized_paths_truncated` 计数。
 - 已知 FN：写入 span 是目标标识符本身，同一赋值右侧的自引用
   （`x = x + 1`）在 V1 中被当作写入之后的读取；`int x = x;` 的初始化自读被当作
   声明初始化，不产生候选。裸条件读取（`if (x)` / `if (p)` / `if (x) return`）
@@ -72,9 +88,12 @@ provenlattice defect /path/to/repo --type all \
   `uninitialized_missing_evidence` 暴露
   `MISSING_INPUT_LOCAL_ACCESS_BARE_CONDITION`，不静默当作安全。
 - 条件写：分支条件（BRANCH/CHECK）与声明 initializer 内的写入按
-  maybe/unknown 处理，不当作无条件定义。赋值 RHS / 函数实参中的短路写
-  （`y = (n && (x = 1))`、`g(n && (x = 1))`）缺少 enclosing span，仍为
-  known FN（上游事实缺口，另列 follow-up）。
+  maybe/unknown 处理，不当作无条件定义。initializer 的条件性由已发布的
+  `unsupported_short_circuit` / `unsupported_conditional` coverage reason
+  与 initializer span 判定，**不对 initializer 文本做 `?`/`&&`/`||`
+  子串扫描**：字符串、字符和注释里的 `?` 不影响控制流判定。赋值 RHS /
+  函数实参中的短路写（`y = (n && (x = 1))`、`g(n && (x = 1))`）缺少
+  enclosing span，仍为 known FN（上游事实缺口，另列 follow-up）。
 
 ## 3. 结果 JSON 结构
 
