@@ -1042,9 +1042,16 @@ class BufferExtentFactsTests(unittest.TestCase):
         )
 
         address = self.event("DEREFERENCE", "a[0]", relative)
-        sizeof_operand = self.event("DEREFERENCE", "a[1]", relative)
         self.assertNotIn("memory_access_v1", address.get("annotations", {}))
-        self.assertNotIn("memory_access_v1", sizeof_operand.get("annotations", {}))
+        sizeof_operand = [
+            event for event in self.events(relative)
+            if event["event_type"] == "DEREFERENCE"
+            and event["matched_name"] == "a[1]"
+        ]
+        # `sizeof(a[1])` is not an address computation: it never evaluates the
+        # subscript, so it has neither a value-access fact nor a structural
+        # DEREFERENCE point (and therefore no extent fact either).
+        self.assertEqual(sizeof_operand, [])
         self.assertEqual(self.access("DEREFERENCE", "a[2]", relative)["access"], "WRITE")
         self.assertEqual(
             self.access("DEREFERENCE", "a[3]", relative)["access"],
@@ -1709,8 +1716,14 @@ class BufferExtentFactsTests(unittest.TestCase):
 
         cpp_relative = "src/regressions.cpp"
         for name in ("unevaluated[0]", "unevaluated[1]"):
-            event = self.event("DEREFERENCE", name, cpp_relative)
-            self.assertNotIn("memory_access_v1", event.get("annotations", {}))
+            # decltype/noexcept operands are unevaluated: no structural point
+            # (and therefore no value-access or extent fact) is published.
+            matches = [
+                event for event in self.events(cpp_relative)
+                if event["event_type"] == "DEREFERENCE"
+                and event["matched_name"] == name
+            ]
+            self.assertEqual(matches, [])
         for name in ("conditional_left[0]", "conditional_right[0]"):
             self.assertEqual(
                 self.access("DEREFERENCE", name, cpp_relative)["access"], "WRITE"
@@ -1942,7 +1955,7 @@ class BufferExtentFactsTests(unittest.TestCase):
         self.assertEqual(self.fact(golden, "buffer_extent_v1")["constant"], 6)
 
     def test_scfg_version_and_dfg_dependency_freshness(self) -> None:
-        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 13)
+        self.assertEqual(ANALYZER_VERSIONS["sparse_cfg:cpp"], 14)
         self.assertEqual(ANALYZER_VERSIONS["sparse_dfg:cpp"], 4)
         self.assertEqual(ANALYZER_VERSIONS["events:cpp"], 3)
         self.materialize("sparse_dfg")
